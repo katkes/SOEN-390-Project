@@ -1,7 +1,7 @@
 # SOEN-390-Project
 
 ## Project Overview
-Mobile application to serve as a campus guide for Concorida University. Created for Winter 2025's SOEN 390 class.
+Mobile application to serve as a campus guide for Concordia University. Created for Winter 2025's SOEN 390 class.
 
 ## Participants
 - **Carlo Aldabi** (40248834)
