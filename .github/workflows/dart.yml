@@ -1,0 +1,48 @@
+name: Dart and Python
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+
+      - name: Install dependencies
+        run: dart pub get
+
+      - name: Verify formatting
+        run: dart format --output=none --set-exit-if-changed .
+
+      - name: Analyze project source
+        run: dart analyze --fatal-infos
+
+      # Tests must be in test/ and a dependency on
+      # package:test for this step to succeed.
+      - name: Run tests
+        run: flutter test
+
+
+      # Python steps
+      - name: Install Python  
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.12'
+
+      - name: Install Poetry
+        working-directory: backend # TODO change this to the actual folder
+        run: pip install poetry
+
+      - name: Configure Poetry to use Python 3.12
+        working-directory: backend
+        run: poetry env use 3.12
+
+      - name: Install Python dependencies
+        working-directory: backend
+        run: poetry install
