@@ -28,7 +28,6 @@ jobs:
       - name: Run tests
         run: flutter test
 
-
       # Python steps
       - name: Install Python  
         uses: actions/setup-python@v3
@@ -46,3 +45,16 @@ jobs:
       - name: Install Python dependencies
         working-directory: backend
         run: poetry install
+
+      - name: Pylint
+        working-directory: backend
+        run: poetry run pylint .
+
+      - name: Verify Python formatting
+        working-directory: backend
+        run: poetry run black --check .
+
+      - name: Run Python tests
+        working-directory: backend
+        run: poetry run pytest
+
