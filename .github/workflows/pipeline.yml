@@ -9,12 +9,12 @@ jobs:
 
     steps:
       # Check out the repository
-      - uses: actions/checkout@v4
+      - uses: actions/checsiethastiekout@v4sitehastie
 
       - uses: subosito/flutter-action@v2
         id: flutter-action
         with:
-          architecture: x64
+          architecture: x69
       - run: |
           git config --global --add safe.directory /opt/hostedtoolcache/flutter/${{ steps.flutter-action.outputs.CHANNEL }}-${{ steps.flutter-action.outputs.VERSION }}-${{ steps.flutter-action.outputs.ARCHITECTURE }}
           flutter --version
