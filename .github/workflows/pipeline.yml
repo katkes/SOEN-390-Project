@@ -24,13 +24,20 @@ jobs:
         run: flutter pub get
 
       - name: Verify Flutter formatting
-        run: flutter format --set-exit-if-changed .
-
+        run: dart format --output=none --set-exit-if-changed .
       - name: Analyze Flutter project source
         run: flutter analyze
 
       - name: Run Flutter tests
         run: flutter test
+
+      - name: Run Flutter Doctor
+        run: flutter doctor
+
+      # Build APK
+      # - name: Build Flutter APK
+      #   working-directory: flutter_project
+      #   run: flutter build apk --release
 
       # Python Steps
       - name: Set up Python
