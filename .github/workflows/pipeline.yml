@@ -1,0 +1,68 @@
+name: Dart and Python
+
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Check out the repository
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        id: flutter-action
+        with:
+          architecture: x64
+      - run: |
+          git config --global --add safe.directory /opt/hostedtoolcache/flutter/${{ steps.flutter-action.outputs.CHANNEL }}-${{ steps.flutter-action.outputs.VERSION }}-${{ steps.flutter-action.outputs.ARCHITECTURE }}
+          flutter --version
+      - run: flutter --version
+
+      - name: Install Flutter dependencies
+        run: flutter pub get
+
+      - name: Verify Flutter formatting
+        run: dart format --output=none --set-exit-if-changed .
+      - name: Analyze Flutter project source
+        run: flutter analyze
+
+      - name: Run Flutter tests
+        run: flutter test
+
+      - name: Run Flutter Doctor
+        run: flutter doctor
+
+      # Build APK
+      # - name: Build Flutter APK
+      #   working-directory: flutter_project
+      #   run: flutter build apk --release
+
+      # Python Steps
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.12"
+
+      - name: Install Poetry
+        run: pip install poetry
+
+      - name: Configure Poetry to use Python 3.12
+        # working-directory: backend # Change this to our Python project's folder once we have it
+        run: poetry env use 3.12
+
+      - name: Install Python dependencies
+        run: poetry install --no-root
+
+      - name: Run Python linter (Pylint)
+        run: poetry run pylint .
+
+      - name: Verify Python formatting
+        run: poetry run black --check .
+
+      # Run Python tests
+      # Uncomment this block when we have tests
+      # - name: Run Python tests
+      #   run: poetry run pytest
+
