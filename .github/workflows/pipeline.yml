@@ -11,16 +11,13 @@ jobs:
       # Check out the repository
       - uses: actions/checkout@v4
 
-      - name: Flutter action
-        uses: subosito/flutter-action@v2.18.0
-
-      # Flutter Setup
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@v2
+        id: flutter-action
         with:
-          channel: stable
-          flutter-version-file: pubspec.yaml 
-
+          architecture: x64
+      - run: |
+          git config --global --add safe.directory /opt/hostedtoolcache/flutter/${{ steps.flutter-action.outputs.CHANNEL }}-${{ steps.flutter-action.outputs.VERSION }}-${{ steps.flutter-action.outputs.ARCHITECTURE }}
+          flutter --version
       - run: flutter --version
 
       - name: Install Flutter dependencies
