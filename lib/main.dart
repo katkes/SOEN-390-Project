@@ -6,7 +6,10 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+<<<<<<< HEAD
   const MyApp({super.key});
+=======
+>>>>>>> 873e4dc (Formatted dart files)
   void _onBuildingSelectionChanged(String newSelection) {
     // Nothing happening
   }
