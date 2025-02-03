@@ -6,8 +6,9 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
   void _onBuildingSelectionChanged(String newSelection) {
-    print('Building selected: $newSelection');
+    // Nothing happening
   }
 
   @override
