@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-// File defining button to switch between SGW and Loyola campuses
-
 class BuildingSwitch extends StatefulWidget {
   final Function(String)
       onSelectionChanged; // callback function to notify switch of building
