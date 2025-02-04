@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'widgets/campus_switch_button.dart';
+import './widgets/canpus_switch_button.dart';
 
 void main() {
   runApp(MyApp());
