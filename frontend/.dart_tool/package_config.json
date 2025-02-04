@@ -45,7 +45,7 @@
     },
     {
       "name": "flutter",
-      "rootUri": "file:///Users/sydneycampbell/Development/flutter/packages/flutter",
+      "rootUri": "file:///Users/sydneycampbell/flutter/packages/flutter",
       "packageUri": "lib/",
       "languageVersion": "3.3"
     },
@@ -57,7 +57,7 @@
     },
     {
       "name": "flutter_test",
-      "rootUri": "file:///Users/sydneycampbell/Development/flutter/packages/flutter_test",
+      "rootUri": "file:///Users/sydneycampbell/flutter/packages/flutter_test",
       "packageUri": "lib/",
       "languageVersion": "3.3"
     },
@@ -111,7 +111,7 @@
     },
     {
       "name": "sky_engine",
-      "rootUri": "file:///Users/sydneycampbell/Development/flutter/bin/cache/pkg/sky_engine",
+      "rootUri": "file:///Users/sydneycampbell/flutter/bin/cache/pkg/sky_engine",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
@@ -170,10 +170,10 @@
       "languageVersion": "3.6"
     }
   ],
-  "generated": "2025-02-04T22:28:05.173532Z",
+  "generated": "2025-02-04T22:47:31.499005Z",
   "generator": "pub",
   "generatorVersion": "3.6.0",
-  "flutterRoot": "file:///Users/sydneycampbell/Development/flutter",
+  "flutterRoot": "file:///Users/sydneycampbell/flutter",
   "flutterVersion": "3.27.1",
   "pubCache": "file:///Users/sydneycampbell/.pub-cache"
 }
