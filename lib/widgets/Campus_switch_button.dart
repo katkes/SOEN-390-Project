@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 // File defining button to switch between SGW and Loyola campuses
 
 class BuildingSwitch extends StatefulWidget {
-  final Function(String) onSelectionChanged; // callback function to notify switch of building
+  final Function(String)
+      onSelectionChanged; // callback function to notify switch of building
   final String initialSelection; // default value
 
   const BuildingSwitch({
@@ -15,8 +16,6 @@ class BuildingSwitch extends StatefulWidget {
   @override
   State<BuildingSwitch> createState() => _BuildingSwitchState();
 }
-
-
 
 class _BuildingSwitchState extends State<BuildingSwitch> {
   late String selectedBuilding;
