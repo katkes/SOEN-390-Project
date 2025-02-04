@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 //import './widgets/canpus_switch_button.dart';
 
-
 //toggle test below
 
 // void main() {
@@ -32,7 +31,6 @@ import 'package:flutter/material.dart';
 //     );
 //   }
 // }
-
 
 void main() {
   runApp(const MyApp());
