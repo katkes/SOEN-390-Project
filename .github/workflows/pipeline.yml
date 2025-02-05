@@ -52,19 +52,23 @@ jobs:
           python-version: "3.12"
 
       - name: Install Poetry
+        working-directory: ./backend
         run: pip install poetry
 
       - name: Configure Poetry to use Python 3.12
-        # working-directory: backend # Change this to our Python project's folder once we have it
+        working-directory: ./backend
         run: poetry env use 3.12
 
       - name: Install Python dependencies
+        working-directory: ./backend
         run: poetry install --no-root
 
       - name: Run Python linter (Pylint)
+        working-directory: ./backend
         run: poetry run pylint .
 
       - name: Verify Python formatting
+        working-directory: ./backend
         run: poetry run black --check .
 
       # Run Python tests
