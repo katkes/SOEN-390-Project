@@ -45,14 +45,21 @@ class _CampusSwitchState extends State<CampusSwitch> {
               });
             },
             style: ButtonStyle(
-               // Font weight changing dynamically
-                textStyle: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+                // Font weight changing dynamically
+                textStyle:
+                    WidgetStateProperty.resolveWith((Set<WidgetState> states) {
                   return states.contains(WidgetState.selected)
-                      ? const TextStyle(inherit: true, fontWeight: FontWeight.bold, fontSize: 16)
-                      : const TextStyle(inherit: true, fontWeight: FontWeight.normal, fontSize: 16);
+                      ? const TextStyle(
+                          inherit: true,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16)
+                      : const TextStyle(
+                          inherit: true,
+                          fontWeight: FontWeight.normal,
+                          fontSize: 16);
                 }),
                 backgroundColor:
-                WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+                    WidgetStateProperty.resolveWith((Set<WidgetState> states) {
                   return states.contains(WidgetState.selected)
                       ? Colors.white
                       : Colors.grey.shade300;
