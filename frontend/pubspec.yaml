@@ -51,6 +51,10 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  fonts:
+  - family: GillSans
+    fonts:
+      - asset: assets/fonts/GillSans.ttf
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

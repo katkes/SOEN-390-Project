@@ -1,0 +1,1 @@
+ /Users/tahsinislam/Documents/Concordia/WINTER\ 2025/SOEN\ 390/SOEN-390-Project/frontend/.dart_tool/flutter_build/5b497cd0b199e8cd5fffaa08cf87b49d/native_assets.yaml: 
