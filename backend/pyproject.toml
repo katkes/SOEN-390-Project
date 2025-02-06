@@ -13,6 +13,10 @@ pylint = "^3.3.3"
 django = "^5.1.5"
 pytest-django = "^4.9.0"
 
+[tool.pylint."MASTER"]
+ignore = ["__init__.py", "setup.py", "config.py"]
+ignore-patterns = [".*/migrations/.*", ".*__pycache__/.*", ".*venv/.*", ".*.egg-info/.*", ".*.pyc"]
+
 
 [build-system]
 requires = ["poetry-core"]
