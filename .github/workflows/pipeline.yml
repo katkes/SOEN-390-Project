@@ -18,20 +18,26 @@ jobs:
       - run: |
           git config --global --add safe.directory /opt/hostedtoolcache/flutter/${{ steps.flutter-action.outputs.CHANNEL }}-${{ steps.flutter-action.outputs.VERSION }}-${{ steps.flutter-action.outputs.ARCHITECTURE }}
           flutter --version
+        working-directory: ./frontend
       - run: flutter --version
 
       - name: Install Flutter dependencies
+        working-directory: ./frontend
         run: flutter pub get
 
       - name: Verify Flutter formatting
+        working-directory: ./frontend
         run: dart format --output=none --set-exit-if-changed .
       - name: Analyze Flutter project source
+        working-directory: ./frontend
         run: flutter analyze
 
       - name: Run Flutter tests
+        working-directory: ./frontend
         run: flutter test
 
       - name: Run Flutter Doctor
+        working-directory: ./frontend
         run: flutter doctor
 
       # Build APK
@@ -46,19 +52,23 @@ jobs:
           python-version: "3.12"
 
       - name: Install Poetry
+        working-directory: ./backend
         run: pip install poetry
 
       - name: Configure Poetry to use Python 3.12
-        # working-directory: backend # Change this to our Python project's folder once we have it
+        working-directory: ./backend
         run: poetry env use 3.12
 
       - name: Install Python dependencies
+        working-directory: ./backend
         run: poetry install --no-root
 
       - name: Run Python linter (Pylint)
+        working-directory: ./backend
         run: poetry run pylint .
 
       - name: Verify Python formatting
+        working-directory: ./backend
         run: poetry run black --check .
 
       # Run Python tests
