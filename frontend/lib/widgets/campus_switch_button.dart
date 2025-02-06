@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 
 class CampusSwitch extends StatefulWidget {
-  final Function(String)
-      onSelectionChanged; // callback function to notify switch of building
-  final String initialSelection; // default value
+  final Function(String) onSelectionChanged;
+  final String initialSelection;
 
   const CampusSwitch({
     super.key,
     required this.onSelectionChanged,
-    this.initialSelection = 'SGW', // optional parameter
+    this.initialSelection = 'SGW',
   });
 
   @override
@@ -24,7 +23,6 @@ class _CampusSwitchState extends State<CampusSwitch> {
     selectedBuilding = widget.initialSelection;
   }
 
-  // UI of widget
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -37,9 +35,7 @@ class _CampusSwitchState extends State<CampusSwitch> {
             selected: {
               selectedBuilding
             },
-            // Callback triggered
             onSelectionChanged: (newSelection) {
-              // Forcing the UI to rebuild
               setState(() {
                 selectedBuilding = newSelection.first;
               });

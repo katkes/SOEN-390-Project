@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-// import './widgets/campus_switch_button.dart';
+
 
 // toggle test below
 
@@ -31,7 +30,8 @@ import 'package:flutter/material.dart';
 //     );
 //   }
 
-import 'package:soen_390/widgets/campus_switch_button.dart'; 
+import 'package:flutter/material.dart';
+import './widgets/campus_switch_button.dart';
 import 'package:soen_390/widgets/nav_bar.dart';
 import 'package:soen_390/styles/theme.dart';
 
@@ -41,7 +41,7 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
+  
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -61,13 +61,6 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
-  String selectedBuilding = 'SGW'; // Track building selection
-
-  void _onBuildingSelectionChanged(String newSelection) {
-    setState(() {
-      selectedBuilding = newSelection;
-    });
-  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -80,12 +73,11 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('Building Switch Example'),
+        title: const Text(''),
       ),
       body: Center(
         child: <Widget>[
           const Text('Home Page'),
-          // Map Page with the CampusSwitch widget
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
