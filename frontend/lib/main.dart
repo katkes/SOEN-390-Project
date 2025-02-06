@@ -1,4 +1,36 @@
 import 'package:flutter/material.dart';
+// import './widgets/campus_switch_button.dart';
+
+// toggle test below
+
+// void main() {
+//   runApp(MyApp());
+// }
+//
+// class MyApp extends StatelessWidget {
+//   const MyApp({super.key});
+//   void _onBuildingSelectionChanged(String newSelection) {
+//     // Nothing happening
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       title: 'Test',
+//       home: Scaffold(
+//         appBar: AppBar(
+//           title: Text('Testing building switch button'),
+//         ),
+//         body: Center(
+//           child: CampusSwitch(
+//             onSelectionChanged: _onBuildingSelectionChanged,
+//             initialSelection: 'SGW',
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 void main() {
   runApp(const MyApp());
