@@ -1,44 +1,34 @@
 from django.db import models
 from django.contrib.gis.db import models as gis_models  # For spatial data
-from backend.map.models import CampusMap, FloorMap
+from django.apps import apps
+
 
 # Create your models here.
 class Location(models.Model):
-    x = models.FloatField()
-    y = models.FloatField()
-    
-class OutdoorLocation(Location):
     name = models.CharField(max_length=255)
-    x = gis_models.FloatField()
-    y = gis_models.FloatField()
-    campus_map = models.ForeignKey(CampusMap, on_delete=models.CASCADE, related_name='outdoor_locations')
     
-    def __str__(self):
-        return f"Outdoor Location: {self.name} (Campus Map: {self.campus_map.name})"
+    
 
-class Building(OutdoorLocation):
-    
+class Building(Location):
+    campus_map = models.ForeignKey('map.CampusMap', on_delete=models.CASCADE, related_name='buildings')
+    boundary = gis_models.MultiPolygonField(null=True, blank=True)  # Allow nulls
+ # Building boundary as a polygon
     num_floors = models.IntegerField(default=1)
-    
+    long_name = models.CharField(max_length=255)
+    address = models.TextField(default='')
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+
     def __str__(self):
-        return f"Building: {self.name} (Campus Map: {self.campus_map.name})"
-    
-class OutdoorPOI(OutdoorLocation):
-    
-    poi_type = models.CharField(max_length=255)
-    
-    def __str__(self):
-        return f"Outdoor POI: {self.name} (Campus Map: {self.campus_map.name})"
+        return f"Building: {self.name} (Campus: {self.campus_map.name})"
+
     
 
 class IndoorLocation(Location):
-    name = models.CharField(max_length=255)
     x = models.IntegerField()
     y = models.IntegerField()
-    floor_map = models.ForeignKey(FloorMap, on_delete=models.CASCADE, related_name='indoor_locations')
+    floor_map = models.ForeignKey('map.FloorMap', on_delete=models.CASCADE, related_name='indoor_location_set')
     
-    class Meta:
-        abstract = True
 
 class Room(IndoorLocation):
     room_number = models.CharField(max_length=10)

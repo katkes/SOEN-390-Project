@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.gis.db import models as gis_models
-from backend.location.models import Building
+from django.apps import apps
+
 
 # Create your models here.
 class Map(models.Model):
@@ -19,7 +20,9 @@ class CampusMap(Map):
     Args:
         Map (_type_): _description_
     """
-    boundary = gis_models.PolygonField()
+    
+    boundary = gis_models.MultiPolygonField(null=True, blank=True)  # Allow nulls
+
     
     def __str__(self):
         return f"{self.name} Campus Map"
@@ -30,7 +33,7 @@ class FloorMap(Map):
     Args:
         Map (_type_): _description_
     """
-    building = models.ForeignKey(Building, on_delete=models.CASCADE, related_name='floor')
+    building = models.ForeignKey('location.Building', on_delete=models.CASCADE, related_name='floor')
     floor_number = models.IntegerField()
     grid_width = models.IntegerField()
     grid_height = models.IntegerField()
