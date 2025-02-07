@@ -68,7 +68,9 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.search, color: Colors.grey.withOpacity(0.7)),
+                    Icon(Icons.search,
+                        color: const Color.fromARGB(255, 0, 0, 0)
+                            .withOpacity(0.7)),
                     if (isExpanded) ...[
                       SizedBox(width: 10),
                       Expanded(

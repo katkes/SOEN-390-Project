@@ -1,7 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:soen_390/widgets/nav_bar.dart';
 import 'package:soen_390/widgets/search_bar.dart';
 import 'package:soen_390/styles/theme.dart';
-import 'package:flutter/material.dart';
+import 'package:soen_390/widgets/outdoor_map.dart';
+import 'package:soen_390/widgets/campus_switch_button.dart';
 
 void main() {
   runApp(const MyApp());
@@ -53,6 +55,10 @@ class _MyHomePageState extends State<MyHomePage> {
           Stack(
             children: [
               const Center(child: Text('Map Page')),
+              const MapRectangle(),
+              CampusSwitch(
+                onSelectionChanged: (String) {},
+              ),
               Positioned(
                 bottom: -80,
                 left: 10,
