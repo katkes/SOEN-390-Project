@@ -6,6 +6,7 @@ for retrieving outdoor route directions.
 import requests
 from django.conf import settings
 
+
 class GoogleMapsService:
     """
     Service class to interact with Google Maps API
@@ -13,8 +14,9 @@ class GoogleMapsService:
     Returns:
         _type_: _description_
     """
+
     @staticmethod
-    def get_outdoor_route(start_lat, start_long, end_lat, end_long,mode):
+    def get_outdoor_route(start_lat, start_long, end_lat, end_long, mode):
         """
         Fetches an outdoor route from Google Maps API.
 
@@ -30,17 +32,17 @@ class GoogleMapsService:
         """
 
         base_url = "https://maps.googleapis.com/maps/api/directions/json"
-        
+
         params = {
             "origin": f"{start_lat},{start_long}",
             "destination": f"{end_lat},{end_long}",
             "mode": f"{mode}",
-            "key": settings.GOOGLE_MAPS_API_KEY
+            "key": settings.GOOGLE_MAPS_API_KEY,
         }
-        
+
         response = requests.get(base_url, params=params, timeout=10)
         data = response.json()
-        
+
         if data["status"] == "OK":
             return data["routes"][0]["legs"][0]
         return None

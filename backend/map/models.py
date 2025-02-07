@@ -16,12 +16,15 @@ class Map(models.Model):
     """
 
     name = models.CharField(max_length=255)
+
     class Meta:
         """
         Meta class for the Map model
         """
+
         abstract = True
-    
+
+
 class CampusMap(Map):
     """
     Represents a campus map
@@ -31,10 +34,9 @@ class CampusMap(Map):
     Args:
         Map (_type_): _description_
     """
-    
+
     boundary = gis_models.MultiPolygonField(null=True, blank=True)  # Allow nulls
 
-    
     def __str__(self):
         """
         Returns the string representation of the campus map
@@ -43,6 +45,7 @@ class CampusMap(Map):
             String: A string representation of the campus map
         """
         return f"{self.name} Campus Map"
+
 
 class FloorMap(Map):
     """
@@ -56,11 +59,14 @@ class FloorMap(Map):
     Args:
         Map (_type_): _description_
     """
-    building = models.ForeignKey('location.Building', on_delete=models.CASCADE, related_name='floor')
+
+    building = models.ForeignKey(
+        "location.Building", on_delete=models.CASCADE, related_name="floor"
+    )
     floor_number = models.IntegerField()
     grid_width = models.IntegerField()
     grid_height = models.IntegerField()
-    
+
     def __str__(self):
         """
         Returns the string representation of the floor map
