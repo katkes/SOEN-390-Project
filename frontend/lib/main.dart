@@ -1,5 +1,7 @@
+import 'package:soen_390/widgets/nav_bar.dart';
+import 'package:soen_390/widgets/points_of_interest.dart';
+import 'package:soen_390/styles/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:soen_390/widgets/search_bar.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,10 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
+      theme: appTheme,
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
@@ -32,6 +31,13 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   TextEditingController searchController = TextEditingController();
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,22 +46,29 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: Stack(
+      body: IndexedStack(
+        index: _selectedIndex,
         children: [
-          SearchBarWidget(
-            controller: searchController,
-            onChanged: (value) {
-              print("Search input: $value");
-            },
+          const Center(child: Text('Home Page')),
+          Stack(
+            children: [
+              const Center(child: Text('Map Page')),
+              Positioned(
+                bottom: -80,
+                left: 10,
+                right: 0,
+                child: Center(
+                  child: SearchBarWidget(controller: searchController),
+                ),
+              ),
+            ],
           ),
+          const Center(child: Text('Profile Page')),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {});
-        },
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+      bottomNavigationBar: NavBar(
+        selectedIndex: _selectedIndex,
+        onItemTapped: _onItemTapped,
       ),
     );
   }
