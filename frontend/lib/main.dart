@@ -6,7 +6,6 @@ import 'package:soen_390/widgets/outdoor_map.dart';
 import 'package:soen_390/widgets/campus_switch_button.dart';
 import 'package:soen_390/widgets/indoor_navigation_button.dart';
 
-
 void main() {
   runApp(const MyApp());
 }
@@ -46,65 +45,61 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-    appBar: AppBar(
-    leading: IconButton(
-      icon: Icon(Icons.menu, color: Colors.white, size: 30), 
-       onPressed: () {
-          
-        },
-    ),
-    backgroundColor: Theme.of(context).primaryColor,
-    title: Text(
-      widget.title,
-      style: TextStyle(color: Colors.white), 
-    ),
-    actions: [
-      IconButton(
-        icon: Icon(Icons.more_vert, color: Colors.white, size: 30), 
-        onPressed: () {
-          
-        },
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.menu, color: Colors.white, size: 30),
+          onPressed: () {},
+        ),
+        backgroundColor: Theme.of(context).primaryColor,
+        title: Text(
+          widget.title,
+          style: TextStyle(color: Colors.white),
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.more_vert, color: Colors.white, size: 30),
+            onPressed: () {},
+          ),
+        ],
       ),
-    ],
-  ),
       body: IndexedStack(
-  index: _selectedIndex,
-  children: [
-    const Center(child: Text('Home Page')),
-    Stack(
-      children: [
-        Positioned.fill(
-          child: MapRectangle(), 
-        ),
-    
-        Positioned(
-          top: 10, 
-          left: 0,
-          right: 0,
-          child: Center(
-            child: CampusSwitch(
-              onSelectionChanged: (selectedCampus) {
-                
-              },
-            ),
-          ),
-        ),
-       
-        Positioned(
-          bottom: -80,
-          left: 10,
-          right: 10,
-          child: Center(
-            child: SearchBarWidget(controller: searchController),
-          ),
-        ),
-      ],
-    ),
-    const Center(child: Text('Profile Page')),
-  ],
-),
+        index: _selectedIndex,
+        children: [
+          const Center(child: Text('Home Page')),
+          Stack(
+            children: [
+              Positioned.fill(
+                child: MapRectangle(),
+              ),
 
+              // Campus Switch Button (Centered)
+              Positioned(
+                top: 10,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: CampusSwitch(
+                    onSelectionChanged: (selectedCampus) {},
+                  ),
+                ),
+              ),
 
+              // Search Bar (Bottom Left)
+              Positioned(
+                bottom: -80, 
+                left: 10,
+                child: SearchBarWidget(controller: searchController),
+              ),
+              Positioned(
+                bottom: 10, 
+                right: 21,
+                child: IndoorTrigger(),
+              ),
+            ],
+          ),
+          const Center(child: Text('Profile Page')),
+        ],
+      ),
       bottomNavigationBar: NavBar(
         selectedIndex: _selectedIndex,
         onItemTapped: _onItemTapped,
