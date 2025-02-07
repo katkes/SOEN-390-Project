@@ -1,5 +1,5 @@
 import 'package:soen_390/widgets/nav_bar.dart';
-import 'package:soen_390/widgets/points_of_interest.dart';
+import 'package:soen_390/widgets/search_bar.dart';
 import 'package:soen_390/styles/theme.dart';
 import 'package:flutter/material.dart';
 
