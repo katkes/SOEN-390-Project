@@ -4,6 +4,8 @@ import 'package:soen_390/widgets/search_bar.dart';
 import 'package:soen_390/styles/theme.dart';
 import 'package:soen_390/widgets/outdoor_map.dart';
 import 'package:soen_390/widgets/campus_switch_button.dart';
+import 'package:soen_390/widgets/indoor_navigation_button.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -66,29 +68,43 @@ class _MyHomePageState extends State<MyHomePage> {
     ],
   ),
       body: IndexedStack(
-        index: _selectedIndex,
-        children: [
-          const Center(child: Text('Home Page')),
-          Stack(
-            children: [
-              const Center(child: Text('Map Page')),
-              const MapRectangle(),
-              CampusSwitch(
-                onSelectionChanged: (String) {},
-              ),
-              Positioned(
-                bottom: -80,
-                left: 10,
-                right: 0,
-                child: Center(
-                  child: SearchBarWidget(controller: searchController),
-                ),
-              ),
-            ],
+  index: _selectedIndex,
+  children: [
+    const Center(child: Text('Home Page')),
+    Stack(
+      children: [
+        Positioned.fill(
+          child: MapRectangle(), 
+        ),
+    
+        Positioned(
+          top: 10, 
+          left: 0,
+          right: 0,
+          child: Center(
+            child: CampusSwitch(
+              onSelectionChanged: (selectedCampus) {
+                
+              },
+            ),
           ),
-          const Center(child: Text('Profile Page')),
-        ],
-      ),
+        ),
+       
+        Positioned(
+          bottom: -80,
+          left: 10,
+          right: 10,
+          child: Center(
+            child: SearchBarWidget(controller: searchController),
+          ),
+        ),
+      ],
+    ),
+    const Center(child: Text('Profile Page')),
+  ],
+),
+
+
       bottomNavigationBar: NavBar(
         selectedIndex: _selectedIndex,
         onItemTapped: _onItemTapped,

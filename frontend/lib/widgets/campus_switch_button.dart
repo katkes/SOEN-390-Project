@@ -25,44 +25,62 @@ class _CampusSwitchState extends State<CampusSwitch> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-        width: 385,
-        child: SegmentedButton<String>(
+    return Center( // Centering the widget
+      child: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2), 
+              blurRadius: 6, 
+              spreadRadius: 2, 
+              offset: const Offset(0, 3), 
+            ),
+          ],
+        ),
+        child: SizedBox(
+          width: 250, // Made it skinnier
+          child: SegmentedButton<String>(
             segments: const <ButtonSegment<String>>[
               ButtonSegment(value: 'SGW', label: Text('SGW')),
-              ButtonSegment(value: 'Loyola', label: Text('Loyola'))
+              ButtonSegment(value: 'Loyola', label: Text('Loyola')),
             ],
-            selected: {
-              selectedBuilding
-            },
+            selected: {selectedBuilding},
             onSelectionChanged: (newSelection) {
               setState(() {
                 selectedBuilding = newSelection.first;
               });
             },
             style: ButtonStyle(
-                // Font weight changing dynamically
-                textStyle:
-                    WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+              textStyle: WidgetStateProperty.resolveWith(
+                (Set<WidgetState> states) {
                   return states.contains(WidgetState.selected)
                       ? const TextStyle(
-                          inherit: true,
                           fontWeight: FontWeight.bold,
-                          fontSize: 18)
+                          fontSize: 14, 
+                        )
                       : const TextStyle(
-                          inherit: true,
                           fontWeight: FontWeight.normal,
-                          fontSize: 18);
-                }),
-                backgroundColor:
-                    WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+                          fontSize: 14, 
+                        );
+                },
+              ),
+              backgroundColor: WidgetStateProperty.resolveWith(
+                (Set<WidgetState> states) {
                   return states.contains(WidgetState.selected)
                       ? Colors.white
                       : Colors.grey.shade300;
-                }),
-                side: WidgetStateProperty.resolveWith((_) => BorderSide.none),
-                shape: WidgetStateProperty.resolveWith((_) =>
-                    RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8))))));
+                },
+              ),
+              side: WidgetStateProperty.resolveWith((_) => BorderSide.none),
+              shape: WidgetStateProperty.resolveWith(
+                (_) => RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
