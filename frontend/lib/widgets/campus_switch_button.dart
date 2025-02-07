@@ -25,15 +25,16 @@ class _CampusSwitchState extends State<CampusSwitch> {
 
   @override
   Widget build(BuildContext context) {
-    return Center( // Centering the widget
+    return Center(
+      // Centering the widget
       child: Container(
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2), 
-              blurRadius: 6, 
-              spreadRadius: 2, 
-              offset: const Offset(0, 3), 
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 6,
+              spreadRadius: 2,
+              offset: const Offset(0, 3),
             ),
           ],
         ),
@@ -56,11 +57,11 @@ class _CampusSwitchState extends State<CampusSwitch> {
                   return states.contains(WidgetState.selected)
                       ? const TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 14, 
+                          fontSize: 14,
                         )
                       : const TextStyle(
                           fontWeight: FontWeight.normal,
-                          fontSize: 14, 
+                          fontSize: 14,
                         );
                 },
               ),

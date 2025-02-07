@@ -86,12 +86,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
               // Search Bar (Bottom Left)
               Positioned(
-                bottom: -80, 
+                bottom: -80,
                 left: 10,
                 child: SearchBarWidget(controller: searchController),
               ),
               Positioned(
-                bottom: 10, 
+                bottom: 10,
                 right: 21,
                 child: IndoorTrigger(),
               ),
