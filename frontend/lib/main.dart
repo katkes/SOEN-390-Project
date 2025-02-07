@@ -5,6 +5,7 @@ import 'package:soen_390/styles/theme.dart';
 import 'package:soen_390/widgets/outdoor_map.dart';
 import 'package:soen_390/widgets/campus_switch_button.dart';
 import 'package:soen_390/widgets/indoor_navigation_button.dart';
+import 'package:latlong2/latlong.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: appTheme,
-      home: const MyHomePage(title: ''),
+      home: const MyHomePage(title: 'Campus Map'),
     );
   }
 }
@@ -35,10 +36,17 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   TextEditingController searchController = TextEditingController();
   int _selectedIndex = 0;
+  LatLng _currentLocation = LatLng(45.497856, -73.579588);
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+    });
+  }
+
+  void _updateCampusLocation(LatLng newLocation) {
+    setState(() {
+      _currentLocation = newLocation;
     });
   }
 
@@ -69,10 +77,8 @@ class _MyHomePageState extends State<MyHomePage> {
           Stack(
             children: [
               Positioned.fill(
-                child: MapRectangle(),
+                child: MapRectangle(location: _currentLocation),
               ),
-
-              // Campus Switch Button (Centered)
               Positioned(
                 top: 10,
                 left: 0,
@@ -80,11 +86,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Center(
                   child: CampusSwitch(
                     onSelectionChanged: (selectedCampus) {},
+                    onLocationChanged: _updateCampusLocation,
                   ),
                 ),
               ),
-
-              // Search Bar (Bottom Left)
               Positioned(
                 bottom: -80,
                 left: 0,

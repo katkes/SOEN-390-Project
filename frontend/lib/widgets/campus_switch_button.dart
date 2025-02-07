@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:latlong2/latlong.dart';
 
 class CampusSwitch extends StatefulWidget {
   final Function(String) onSelectionChanged;
+  final Function(LatLng) onLocationChanged;
   final String initialSelection;
 
   const CampusSwitch({
     super.key,
     required this.onSelectionChanged,
+    required this.onLocationChanged,
     this.initialSelection = 'SGW',
   });
 
@@ -17,6 +20,10 @@ class CampusSwitch extends StatefulWidget {
 
 class _CampusSwitchState extends State<CampusSwitch> {
   late String selectedBuilding;
+  final Map<String, LatLng> _campusLocations = {
+    'SGW': LatLng(45.497856, -73.579588),
+    'Loyola': LatLng(45.4581, -73.6391),
+  };
 
   final Map<String, Widget> _campusOptions = {
     'SGW': Text('SGW',
@@ -52,6 +59,7 @@ class _CampusSwitchState extends State<CampusSwitch> {
               selectedBuilding = newValue;
             });
             widget.onSelectionChanged(newValue);
+            widget.onLocationChanged(_campusLocations[newValue]!);
           },
           borderColor: Colors.transparent,
           selectedColor: Colors.white,
