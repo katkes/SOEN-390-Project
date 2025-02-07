@@ -6,12 +6,38 @@ authors = ["KapJ1coH <tima.mtl@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "^3.10"
 black = "^24.10.0"
 pytest = "^8.3.4"
-pylint = "^3.3.3"
 django = "^5.1.5"
 pytest-django = "^4.9.0"
+pylint = "2.17.7"
+pylint-django = "2.5.3"
+pylint-plugin-utils = "^0.8.2"
+python-dotenv = "^1.0.1"
+dj-database-url = "^2.3.0"
+djangorestframework = "^3.15.2"
+requests = "^2.32.3"
+
+
+
+[tool.pylint."MASTER"]
+recursive = true
+#load-plugins = ["pylint_django", "pylint_plugin_utils"]
+ignore = [ "settings.py", "admin.py", "apps.py", "migrations", "__pycache__", "venv"]
+ignore-patterns = ["migrations/.*", "__pycache__/.*", "venv/.*", ".*.egg-info/.*", ".*.pyc"]
+
+[tool.pylint."MESSAGES CONTROL"]
+disable = [
+    "trailing-whitespace",
+    "missing-final-newline",
+    "trailing-newlines",
+    "line-too-long",
+    "too-few-public-methods",
+    "unused-import"
+]
+
+
 
 
 [build-system]
