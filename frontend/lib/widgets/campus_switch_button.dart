@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 class CampusSwitch extends StatefulWidget {
   final Function(String) onSelectionChanged;
@@ -17,6 +18,15 @@ class CampusSwitch extends StatefulWidget {
 class _CampusSwitchState extends State<CampusSwitch> {
   late String selectedBuilding;
 
+  final Map<String, Widget> _campusOptions = {
+    'SGW': Text('SGW',
+        style: TextStyle(
+            fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),
+    'Loyola': Text('Loyola',
+        style: TextStyle(
+            fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),
+  };
+
   @override
   void initState() {
     super.initState();
@@ -26,60 +36,29 @@ class _CampusSwitchState extends State<CampusSwitch> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      // Centering the widget
       child: Container(
+        width: 350, // Increased width to match Figma design
+        padding: const EdgeInsets.all(4), // Padding to match the rounded look
         decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              blurRadius: 6,
-              spreadRadius: 2,
-              offset: const Offset(0, 3),
-            ),
-          ],
+          color:
+              Colors.grey.shade300, // Background color of the unselected area
+          borderRadius: BorderRadius.circular(12), // Smooth corner radius
         ),
-        child: SizedBox(
-          width: 250, // Made it skinnier
-          child: SegmentedButton<String>(
-            segments: const <ButtonSegment<String>>[
-              ButtonSegment(value: 'SGW', label: Text('SGW')),
-              ButtonSegment(value: 'Loyola', label: Text('Loyola')),
-            ],
-            selected: {selectedBuilding},
-            onSelectionChanged: (newSelection) {
-              setState(() {
-                selectedBuilding = newSelection.first;
-              });
-            },
-            style: ButtonStyle(
-              textStyle: WidgetStateProperty.resolveWith(
-                (Set<WidgetState> states) {
-                  return states.contains(WidgetState.selected)
-                      ? const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        )
-                      : const TextStyle(
-                          fontWeight: FontWeight.normal,
-                          fontSize: 14,
-                        );
-                },
-              ),
-              backgroundColor: WidgetStateProperty.resolveWith(
-                (Set<WidgetState> states) {
-                  return states.contains(WidgetState.selected)
-                      ? Colors.white
-                      : Colors.grey.shade300;
-                },
-              ),
-              side: WidgetStateProperty.resolveWith((_) => BorderSide.none),
-              shape: WidgetStateProperty.resolveWith(
-                (_) => RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-            ),
-          ),
+        child: CupertinoSegmentedControl<String>(
+          padding: EdgeInsets.zero, // No additional padding
+          groupValue: selectedBuilding,
+          children: _campusOptions,
+          onValueChanged: (String newValue) {
+            setState(() {
+              selectedBuilding = newValue;
+            });
+            widget.onSelectionChanged(newValue);
+          },
+          borderColor: Colors.transparent, // Remove border
+          selectedColor: Colors.white, // Active button color
+          unselectedColor:
+              Colors.transparent, // Unselected color blends into background
+          pressedColor: Colors.white.withOpacity(0.7), // Subtle press effect
         ),
       ),
     );
