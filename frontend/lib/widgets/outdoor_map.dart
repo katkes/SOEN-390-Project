@@ -8,13 +8,13 @@ class MapRectangle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      bottom: 25,
-      left: 20,
-      right: 20,
+      bottom: 5,
+      left: 10,
+      right: 10,
       child: Center(
         child: SizedBox(
-          width: 400,
-          height: 600,
+          width: 460,
+          height: 500,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(30),
             child: FlutterMap(
