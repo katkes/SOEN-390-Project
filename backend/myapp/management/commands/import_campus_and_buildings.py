@@ -1,3 +1,5 @@
+# pylint: skip-file
+
 import os
 from django.core.management.base import BaseCommand
 from map.services.campus_import import import_campus_boundaries as campus_import

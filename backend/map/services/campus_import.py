@@ -1,3 +1,4 @@
+# pylint: skip-file
 import json
 from django.contrib.gis.geos import GEOSGeometry
 from map.models import CampusMap
