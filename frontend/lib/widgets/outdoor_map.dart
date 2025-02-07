@@ -14,7 +14,7 @@ class MapRectangle extends StatelessWidget {
       child: Center(
         child: SizedBox(
           width: 460,
-          height: 500,
+          height: 550,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(30),
             child: FlutterMap(

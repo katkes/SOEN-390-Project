@@ -37,15 +37,14 @@ class _CampusSwitchState extends State<CampusSwitch> {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        width: 350, // Increased width to match Figma design
-        padding: const EdgeInsets.all(4), // Padding to match the rounded look
+        width: 420,
+        padding: const EdgeInsets.all(4),
         decoration: BoxDecoration(
-          color:
-              Colors.grey.shade300, // Background color of the unselected area
-          borderRadius: BorderRadius.circular(12), // Smooth corner radius
+          color: Colors.grey.shade300,
+          borderRadius: BorderRadius.circular(12),
         ),
         child: CupertinoSegmentedControl<String>(
-          padding: EdgeInsets.zero, // No additional padding
+          padding: EdgeInsets.zero,
           groupValue: selectedBuilding,
           children: _campusOptions,
           onValueChanged: (String newValue) {
@@ -54,11 +53,10 @@ class _CampusSwitchState extends State<CampusSwitch> {
             });
             widget.onSelectionChanged(newValue);
           },
-          borderColor: Colors.transparent, // Remove border
-          selectedColor: Colors.white, // Active button color
-          unselectedColor:
-              Colors.transparent, // Unselected color blends into background
-          pressedColor: Colors.white.withOpacity(0.7), // Subtle press effect
+          borderColor: Colors.transparent,
+          selectedColor: Colors.white,
+          unselectedColor: Colors.transparent,
+          pressedColor: Colors.white.withOpacity(0.7),
         ),
       ),
     );
