@@ -1,0 +1,34 @@
+# macOS
+.DS_Store
+
+# Android Studio
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Build files
+build/
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+pubspec.lock
+
+# Flutter/Dart
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Windows
+Thumbs.db
+
+# Environment variables
+.env
+.env.local
+
+# Logs
+*.log
+logs/
+
+# Cache
+.cache/

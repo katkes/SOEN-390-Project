@@ -1,1 +1,0 @@
- /Users/sydneycampbell/Desktop/Winter\ Semester\ 2025/SOEN\ 390/SOEN-390-Project/.dart_tool/flutter_build/7dbd57fc2764bce5f6e4b963ad5d6973/native_assets.yaml: 
