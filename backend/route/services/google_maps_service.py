@@ -16,7 +16,7 @@ class GoogleMapsService:
     """
 
     @staticmethod
-    def get_outdoor_route(start_lat, start_long, end_lat, end_long, mode):
+    def get_outdoor_routes(start_lat, start_long, end_lat, end_long, mode):
         """
         Fetches an outdoor route from Google Maps API.
 
@@ -37,6 +37,7 @@ class GoogleMapsService:
             "origin": f"{start_lat},{start_long}",
             "destination": f"{end_lat},{end_long}",
             "mode": f"{mode}",
+            "alternatives": "true",
             "key": settings.GOOGLE_MAPS_API_KEY,
         }
 
@@ -44,5 +45,13 @@ class GoogleMapsService:
         data = response.json()
 
         if data["status"] == "OK":
-            return data["routes"][0]["legs"][0]
+            routes = []
+            for route in data["routes"]:
+                route_info = {
+                    "distance": route["legs"][0]["distance"]["text"],
+                    "duration": route["legs"][0]["duration"]["text"],
+                    "steps": [step["html_instructions"] for step in route["legs"][0]["steps"]],
+                }
+                routes.append(route_info)
+            return routes
         return None

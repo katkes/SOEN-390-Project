@@ -1,0 +1,8 @@
+services:
+  django:
+    build: .
+    container_name: backend
+    env_file: .env # Load cloud DB credentials
+    ports:
+      - '8080:8080' # Expose Daphne WebSockets
+    command: ['./entrypoint.sh']

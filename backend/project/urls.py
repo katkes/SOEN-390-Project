@@ -17,9 +17,9 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
-from route.views import get_outdoor_route
+from route.views import get_route
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/routes/outdoor/", get_outdoor_route),
+    path("api/routes/outdoor/", get_route),
 ]
