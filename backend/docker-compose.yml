@@ -5,4 +5,4 @@ services:
     env_file: .env # Load cloud DB credentials
     ports:
       - '8080:8080' # Expose Daphne WebSockets
-    command: ['./entrypoint.sh']
+    command: ["sh", "-c", "python manage.py migrate --noinput && daphne -b 0.0.0.0 -p 8080 project.asgi:application"]
