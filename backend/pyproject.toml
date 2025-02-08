@@ -39,10 +39,6 @@ disable = [
 
 
 
-[tool.pylint."MASTER"]
-ignore = ["__init__.py", "setup.py", "config.py"]
-ignore-patterns = [".*/migrations/.*", ".*__pycache__/.*", ".*venv/.*", ".*.egg-info/.*", ".*.pyc"]
-
 
 [build-system]
 requires = ["poetry-core"]
