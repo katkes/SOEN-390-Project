@@ -17,7 +17,12 @@ class _IndoorTrigger extends State<IndoorTrigger> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withValues(
+              red: 0,
+              green: 0,
+              blue: 0,
+              alpha: 0.3,
+            ),
             spreadRadius: 2,
             blurRadius: 5,
             offset: Offset(0, 4),

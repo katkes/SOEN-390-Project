@@ -64,7 +64,12 @@ class _CampusSwitchState extends State<CampusSwitch> {
           borderColor: Colors.transparent,
           selectedColor: Colors.white,
           unselectedColor: Colors.transparent,
-          pressedColor: Colors.white.withOpacity(0.7),
+          pressedColor: Colors.white.withValues(
+            red: 255,
+            green: 255,
+            blue: 255,
+            alpha: 0.7,
+          ),
         ),
       ),
     );

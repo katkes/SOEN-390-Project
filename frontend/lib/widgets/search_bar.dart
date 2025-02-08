@@ -4,16 +4,15 @@ class SearchBarWidget extends StatefulWidget {
   final TextEditingController controller;
   final Function(String)? onChanged;
 
-  const SearchBarWidget({Key? key, required this.controller, this.onChanged})
-      : super(key: key);
+  const SearchBarWidget({super.key, required this.controller, this.onChanged});
 
   @override
-  _SearchBarWidgetState createState() => _SearchBarWidgetState();
+  SearchBarWidgetState createState() => SearchBarWidgetState();
 }
 
-class _SearchBarWidgetState extends State<SearchBarWidget> {
+class SearchBarWidgetState extends State<SearchBarWidget> {
   bool isExpanded = false;
-  FocusNode _focusNode = FocusNode();
+  final FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
@@ -51,7 +50,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
                 });
               },
               child: AnimatedContainer(
-                duration: Duration(milliseconds: 300),
+                duration: const Duration(milliseconds: 300),
                 width: isExpanded ? 280 : 48,
                 height: 40,
                 padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -60,19 +59,20 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
-                      color: Color(0x3F000000),
+                      color: Colors.black
+                          .withValues(red: 0, green: 0, blue: 0, alpha: 0.25),
                       blurRadius: 10,
-                      offset: Offset(0, 0),
+                      offset: const Offset(0, 0),
                     ),
                   ],
                 ),
                 child: Row(
                   children: [
                     Icon(Icons.search,
-                        color: const Color.fromARGB(255, 0, 0, 0)
-                            .withOpacity(0.7)),
+                        color: Colors.black
+                            .withValues(red: 0, green: 0, blue: 0, alpha: 0.7)),
                     if (isExpanded) ...[
-                      SizedBox(width: 10),
+                      const SizedBox(width: 10),
                       Expanded(
                         child: TextField(
                           focusNode: _focusNode,
@@ -81,7 +81,8 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
                           decoration: InputDecoration(
                             hintText: 'Search',
                             hintStyle: TextStyle(
-                              color: Colors.black.withOpacity(0.3),
+                              color: Colors.black.withValues(
+                                  red: 0, green: 0, blue: 0, alpha: 0.3),
                               fontSize: 16,
                               fontFamily: 'Inter',
                               fontWeight: FontWeight.w400,
