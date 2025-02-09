@@ -1,53 +1,37 @@
-# Use the official GDAL image from OSGeo GitHub Container Registry
+# Use the official GDAL image
 FROM ghcr.io/osgeo/gdal:ubuntu-full-latest
 
 # Set the working directory inside the container
 WORKDIR /app
 
-# Install system dependencies required for Django & GDAL
+# Install dependencies
 RUN apt-get update && apt-get install -y \
     python3-pip python3-dev python3-venv \
     libgdal-dev libgeos-dev libproj-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# ✅ REMOVE: Explicit GDAL installation (it is already in the base image)
-# RUN apt-get install -y gdal-bin=3.10.1-1build1 libgdal-dev=3.10.1-1build1
-
-# Set environment variables for GDAL & GEOS
-ENV GDAL_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/libgdal.so
-ENV GEOS_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/libgeos_c.so
-ENV PROJ_LIB=/usr/share/proj
-
-# Create a virtual environment for Python
+# Create a virtual environment
 RUN python3 -m venv /app/venv
-
-# Activate the virtual environment
 ENV PATH="/app/venv/bin:$PATH"
 
-# Copy only requirements first to leverage Docker cache
+# Copy requirements first (for caching)
 COPY requirements.txt .
-
-# ✅ REMOVE: Explicit GDAL Python bindings (let Docker handle it)
-# RUN pip install --no-cache-dir "GDAL==3.10.1"
-
-# Install all other Python dependencies inside the virtual environment
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the project files into the container
+# Copy the rest of the project files
 COPY . .
 
-# Expose port 8080 for WebSockets & HTTP
+# Expose port 8080
 EXPOSE 8080
 
-# Set Django settings module explicitly
-ENV DJANGO_SETTINGS_MODULE=project.settings
+# Copy entrypoint script and make it executable
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 
-# Copy the entrypoint script
-#COPY entrypoint.sh /app/entrypoint.sh
+# Use entrypoint script to dynamically set GDAL paths
+ENTRYPOINT ["/app/entrypoint.sh"]
 
-# Set execution permissions inside the container
-#RUN chmod +x /app/entrypoint.sh
-
-# Use entrypoint script for migrations & server startup
+# Start Django
 CMD ["sh", "-c", "python manage.py migrate --noinput && daphne -b 0.0.0.0 -p 8080 project.asgi:application"]
+
 
