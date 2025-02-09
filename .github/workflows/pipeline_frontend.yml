@@ -1,6 +1,9 @@
 name: Dart Frontend
+
 on:
   push:
+    paths:
+      - frontend/**
 
 jobs:
   build:
