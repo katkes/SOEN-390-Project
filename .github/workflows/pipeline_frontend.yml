@@ -1,5 +1,4 @@
-name: Dart and Python
-
+name: Dart Frontend
 on:
   push:
 

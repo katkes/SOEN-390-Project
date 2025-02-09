@@ -1,4 +1,4 @@
-name: Dart and Python
+name: Python Backend
 
 on:
   push:
