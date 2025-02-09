@@ -1,0 +1,48 @@
+name: Python Backend
+
+on:
+  push:
+    paths:
+      - backend/**
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Check out the repository
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.12"
+
+      - name: Install Poetry
+        working-directory: ./backend
+        run: pip install poetry
+
+      - name: Configure Poetry to use Python 3.12
+        working-directory: ./backend
+        run: poetry env use 3.12
+
+      - name: Install Python dependencies
+        working-directory: ./backend
+        run: poetry install --no-root
+
+      - name: Run Python linter (Pylint)
+        working-directory: ./backend
+        run: poetry run pylint .
+
+      - name: Verify Python formatting
+        working-directory: ./backend
+        run: poetry run black --check .
+
+      # Run Python tests
+      # Uncomment this block when we have tests
+      # - name: Run Python tests
+      #   run: poetry run pytest
+
