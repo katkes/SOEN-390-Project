@@ -42,11 +42,6 @@ EXPOSE 8080
 # Set Django settings module explicitly
 ENV DJANGO_SETTINGS_MODULE=project.settings
 
-# Copy the entrypoint script
-#COPY entrypoint.sh /app/entrypoint.sh
-
-# Set execution permissions inside the container
-#RUN chmod +x /app/entrypoint.sh
 
 # Use entrypoint script for migrations & server startup
 CMD ["sh", "-c", "python manage.py migrate --noinput && daphne -b 0.0.0.0 -p 8080 project.asgi:application"]
