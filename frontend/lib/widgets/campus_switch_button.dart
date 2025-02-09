@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:latlong2/latlong.dart';
 
 class CampusSwitch extends StatefulWidget {
-  final Function(String)
-      onSelectionChanged; // callback function to notify switch of building
-  final String initialSelection; // default value
+  final Function(String) onSelectionChanged;
+  final Function(LatLng) onLocationChanged;
+  final String initialSelection;
 
   const CampusSwitch({
     super.key,
     required this.onSelectionChanged,
-    this.initialSelection = 'SGW', // optional parameter
+    required this.onLocationChanged,
+    this.initialSelection = 'SGW',
   });
 
   @override
@@ -17,6 +20,19 @@ class CampusSwitch extends StatefulWidget {
 
 class _CampusSwitchState extends State<CampusSwitch> {
   late String selectedBuilding;
+  final Map<String, LatLng> _campusLocations = {
+    'SGW': LatLng(45.497856, -73.579588),
+    'Loyola': LatLng(45.4581, -73.6391),
+  };
+
+  final Map<String, Widget> _campusOptions = {
+    'SGW': Text('SGW',
+        style: TextStyle(
+            fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),
+    'Loyola': Text('Loyola',
+        style: TextStyle(
+            fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),
+  };
 
   @override
   void initState() {
@@ -24,49 +40,38 @@ class _CampusSwitchState extends State<CampusSwitch> {
     selectedBuilding = widget.initialSelection;
   }
 
-  // UI of widget
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-        width: 385,
-        child: SegmentedButton<String>(
-            segments: const <ButtonSegment<String>>[
-              ButtonSegment(value: 'SGW', label: Text('SGW')),
-              ButtonSegment(value: 'Loyola', label: Text('Loyola'))
-            ],
-            selected: {
-              selectedBuilding
-            },
-            // Callback triggered
-            onSelectionChanged: (newSelection) {
-              // Forcing the UI to rebuild
-              setState(() {
-                selectedBuilding = newSelection.first;
-              });
-            },
-            style: ButtonStyle(
-                // Font weight changing dynamically
-                textStyle:
-                    WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-                  return states.contains(WidgetState.selected)
-                      ? const TextStyle(
-                          inherit: true,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18)
-                      : const TextStyle(
-                          inherit: true,
-                          fontWeight: FontWeight.normal,
-                          fontSize: 18);
-                }),
-                backgroundColor:
-                    WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-                  return states.contains(WidgetState.selected)
-                      ? Colors.white
-                      : Colors.grey.shade300;
-                }),
-                side: WidgetStateProperty.resolveWith((_) => BorderSide.none),
-                shape: WidgetStateProperty.resolveWith((_) =>
-                    RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8))))));
+    return Center(
+      child: Container(
+        width: 420,
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade300,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: CupertinoSegmentedControl<String>(
+          padding: EdgeInsets.zero,
+          groupValue: selectedBuilding,
+          children: _campusOptions,
+          onValueChanged: (String newValue) {
+            setState(() {
+              selectedBuilding = newValue;
+            });
+            widget.onSelectionChanged(newValue);
+            widget.onLocationChanged(_campusLocations[newValue]!);
+          },
+          borderColor: Colors.transparent,
+          selectedColor: Colors.white,
+          unselectedColor: Colors.transparent,
+          pressedColor: Colors.white.withValues(
+            red: 255,
+            green: 255,
+            blue: 255,
+            alpha: 0.7,
+          ),
+        ),
+      ),
+    );
   }
 }
