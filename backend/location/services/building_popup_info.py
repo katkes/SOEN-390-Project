@@ -1,120 +1,63 @@
 import requests
-import time
-import json
-from typing import Dict, List, Optional
-import pandas as pandas
-from datetime import datetime
-from dotenv import load_dotenv
 import os
+from dotenv import load_dotenv
 
-class BuildingPopUpInfoCollector:
-    def __init__(self, api_key: str):
-        """Initialize collector with Google API key"""
-        self.api_key = api_key
-        self.base_url = "https://maps.googleapis.com/maps/api/place"
-
-    def find_place_by_address(self, address: str) -> Optional[Dict]:
-        """
-        Find a specific place using its address
-
-        The Find Place endpoint is optimized for finding exact matches and uses Google's text 
-        search capabilities to handle variations in address format.
-
-        Args: 
-            address: Complete address of the building
+class BuildingPopUps:
+    def __init__(self):
+        load_dotenv()
+        self.API_KEY = os.getenv('GOOGLE_MAPS_API_KEY')
         
-        Returns: 
-            Dictionary containing place id
-        """
-        find_place_params = {
-            'input': address,
-            'inputtype': 'textquery',
-            'fields': 'place_id',
-            'key': self.api_key
+        if not self.API_KEY:
+            raise ValueError("Google Maps API key is missing. Make sure it's set in the .env file.")
+    
+    def get_location_info(self, latitude, longitude, location_name):
+        url = "https://maps.googleapis.com/maps/api/place/details/json"
+        place_search_url = "https://maps.googleapis.com/maps/api/geocode/json"
+        
+        # Searching for place id based on coordinates
+        search_params = {
+            "latlng": f"{latitude},{longitude}",
+            "key": self.API_KEY
         }
-
-        url = f"{self.base_url}/findplacefromtext/json"
-
-        try: 
-            response = requests.get(url, params=find_place_params)
-            response.raise_for_status()
-            candidates = response.json().get('candidates', [])
-
-            if not candidates:
-                print(f"No exact match found for address: {address}")
-                return None
-            
-            if candidates:
-                return candidates[0].get("place_id")
-
-        except requests.exceptions.RequestException as e:
-            print(f"Error during address search: {e}")
-            return None
+        search_response = requests.get(place_search_url, params=search_params)
+        search_data = search_response.json()
         
-    def get_place_details(self, place_id: str) -> Optional[Dict]:
-        """
-        Get detailed information about a specific place.
-
-        Args:
-            place_id: The Google Places ID for the location
-
-        Returns: 
-            Dictionary containing information that will be found in pop up
-        """
-
+        if not search_data.get("results"):
+            raise ValueError("No results found for the given coordinates.")
+        
+        place_id = search_data["results"][0]["place_id"]
+        
+        # Fetching detailed information about the place
         params = {
-            'place_id': place_id,
-            'fields': 'formatted_phone_number,website,rating,opening_hours',
-            'key': self.api_key
+            "place_id": place_id,
+            "key": self.API_KEY,
+            "fields": "formatted_phone_number,website,rating,opening_hours,types"
         }
-
-        url = f"{self.base_url}/details/json"
-
-        try:
-            response = requests.get(url, params=params)
-            response.raise_for_status()
-            result = response.json().get('result', {})
-
-            building_info = {
-                'phone': result.get('formatted_phone_number'),
-                'website': result.get('website'),
-                'rating': result.get('rating'),
-                'opening_hours': result.get('opening_hours', {}).get('weekday_text', []),
-                'types': result.get('types', [])
-            }
-
-            return building_info
         
-        except requests.exceptions.RequestException as e:
-            print(f"Error fetching details for place {place_id}: {e}")
-            return None
+        response = requests.get(url, params=params)
+        data = response.json()
+        result = data.get("result", {})
+        
+        # Collecting and returning location information
+        location_info = {
+            "name": location_name,
+            "phone": result.get("formatted_phone_number"),
+            "website": result.get("website"),
+            "rating": result.get("rating"),
+            "opening_hours": result.get("opening_hours", {}).get("weekday_text", []),
+            "types": result.get("types", [])
+        }
+        
+        print(f"Location Info for {location_name} ({latitude}, {longitude}):")
+        print(location_info)
+        
+        return location_info
 
-    def process_building_list(self) -> List[str]:
-        """
-        Process a list of buildings using either their addresses or coordinates.
 
-        Returns:
-            List of strings representing the address of each buildings
-        """
-        with open('../../geojson_files/building_list.geojson', 'r') as file:
-            data = json.loads(file)
-            buildings = data['features']
-            addresses = []
-            for building in buildings:
-                addresses.append(building['properties']['Address'] + ", Montreal")
-            return addresses
-
-
-# Quick Test
+# Example of using the class
 if __name__ == "__main__":
-
-    load_dotenv()
-    api_key = os.getenv("GOOGLE_PLACES_API_KEY")
-
-    collector = BuildingPopUpInfoCollector(api_key)
-
-    # Test address lookup
-    test_address = "1455 DeMaisonneuve W, Montreal"
-    place_id = collector.find_place_by_address(test_address)
-    print(f"Place ID: {place_id}")
-
+    building_popup = BuildingPopUps()
+    location_name = "H Building, Concordia University"
+    latitude = 45.4973223
+    longitude = -73.5790288
+    building_popup.get_location_info(latitude, longitude, location_name)
