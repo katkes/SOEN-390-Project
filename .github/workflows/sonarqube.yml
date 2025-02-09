@@ -23,16 +23,16 @@ jobs:
           SONAR_JDBC_PASSWORD: ${{ secrets.SONARQUBE_JDBC_PASSWORD }}
         options: >-
           --health-cmd "curl --fail http://localhost:9000/api/system/status || exit 1"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          --health-interval 30s
+          --health-timeout 10s
+          --health-retries 10
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Wait for SonarQube to Start
-        run: sleep 30  # Give SonarQube time to initialize
+        run: sleep 60  # Increased wait time
 
       - name: Run SonarQube Scanner
         run: |
