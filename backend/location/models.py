@@ -16,10 +16,38 @@ from django.apps import apps
 # Create your models here.
 class Location(models.Model):
     """
-    a generic model for locations
+    A generic model for locations, containing:
+    - latitude
+    - longitude
+    - city name
     """
 
-    name = models.CharField(max_length=255)
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+    city_name = models.CharField(
+        max_length=255, default="Montreal"
+    )  # Default city name
+    name = models.CharField(max_length=255, unique=True)
+
+    class Meta:
+        """Meta class for the Location model."""
+
+        abstract = True  # This is a base model, not stored in the DB
+
+
+class Campus(Location):
+    """
+    Represents a university campus with:
+    - name (e.g., "SGW", "LOY")
+    - boundary (a MultiPolygon defining the campus area)
+    """
+
+    boundary = gis_models.MultiPolygonField(
+        null=True, blank=True
+    )  # Geospatial boundary
+
+    def __str__(self):
+        return f"Campus: {self.name} ({self.city_name})"
 
 
 class Building(Location):
@@ -47,6 +75,16 @@ class Building(Location):
     latitude = models.FloatField()
     longitude = models.FloatField()
 
+    class Meta:
+        """Meta class for the Building model."""
+
+        app_label = "location"
+
+    @staticmethod
+    def get_campus_map_model():
+        """Returns the CampusMap model"""
+        return apps.get_model("map", "CampusMap")
+
     def __str__(self):
         """
         Returns the string representation of the building
@@ -70,6 +108,16 @@ class IndoorLocation(Location):
     floor_map = models.ForeignKey(
         "map.FloorMap", on_delete=models.CASCADE, related_name="indoor_location_set"
     )
+
+    class Meta:
+        """Meta class for the IndoorLocation model."""
+
+        app_label = "location"
+
+    @staticmethod
+    def get_campus_map_model():
+        """Returns the CampusMap model"""
+        return apps.get_model("map", "CampusMap")
 
 
 class Room(IndoorLocation):

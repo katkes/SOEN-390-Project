@@ -2,43 +2,36 @@
 This module contains the views for the route app
 """
 
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from location.models import Building  # ✅ Correct import order
-from .services.google_maps_service import GoogleMapsService
+from route.services.route_utils import get_route_data
 
 # pylint: disable=no-member
 
 
 @api_view(["POST"])
-def get_outdoor_route(request):
+def get_route(request):
     """
-    Get the outdoor route between two locations
+    Get multiple route options between two locations.
+
     Args:
-        request (POST): The request object including the start and end locations and the mode of transportation
+        request (POST): The request object including:
+            - "start_location": Can be a Building ID, GPS {"latitude", "longitude"}, or map {"x", "y"}.
+            - "end_location": Can be a Building ID, GPS {"latitude", "longitude"}, or a string address.
+            - "mode": Mode of transportation (walking, driving).
 
     Returns:
-        "Response": A JSON response containing the distance, duration and steps of the route
+        Response: A JSON response containing multiple routes with distance, duration, and steps.
     """
+    start_location = request.data.get("start_location")
+    end_location = request.data.get("end_location")
+    mode = request.data.get("mode", "walking")
 
-    start_id = request.data.get("start_location")
-    end_id = request.data.get("end_location")
-    mode = request.data.get("mode")
+    # Get multiple routes
+    routes = get_route_data(start_location, end_location, mode)
 
-    start_location = Building.objects.get(id=start_id)
-    end_location = Building.objects.get(id=end_id)
+    if routes:
+        return Response({"routes": routes})  # ✅ Return multiple routes
 
-    route_data = GoogleMapsService.get_outdoor_route(
-        start_location.x, start_location.y, end_location.x, end_location.y, mode
-    )
-
-    if route_data:
-        return Response(
-            {
-                "distance": route_data["distance"]["text"],
-                "duration": route_data["duration"]["text"],
-                "steps": route_data["steps"],
-            }
-        )
-    return Response({"error": "Could not find route"}, status=400)
+    return Response({"error": "Could not find routes"}, status=400)
