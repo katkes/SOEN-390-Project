@@ -16,10 +16,19 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from route.views import get_route
+from location.views import campus_list, campus_detail, create_campus, update_campus, delete_campus
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/routes/outdoor/", get_route),
+    #the following are to get all campuses
+    path("api/location/campuses/", campus_list, name="campus_list"),
+    path("api/location/campuses/<int:campus_id>/", campus_detail, name="campus_detail"),
+    path("api/location/campuses/create/", create_campus, name="create_campus"),
+    path("api/location/campuses/<int:campus_id>/update/", update_campus, name="update_campus"),
+    path("api/location/campuses/<int:campus_id>/delete/", delete_campus, name="delete_campus"),
+
 ]
+

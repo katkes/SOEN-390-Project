@@ -16,10 +16,30 @@ from django.apps import apps
 # Create your models here.
 class Location(models.Model):
     """
-    a generic model for locations
+    A generic model for locations, containing:
+    - latitude
+    - longitude
+    - city name
+    """
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+    city_name = models.CharField(max_length=255, default="Montreal")  # Default city name
+
+    class Meta:
+        abstract = True  # This is a base model, not stored in the DB
+
+class Campus(Location):
+    """
+    Represents a university campus with:
+    - name (e.g., "SGW", "LOY")
+    - boundary (a MultiPolygon defining the campus area)
     """
 
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
+    boundary = gis_models.MultiPolygonField(null=True, blank=True)  # Geospatial boundary
+
+    def __str__(self):
+        return f"Campus: {self.name} ({self.city_name})"
 
 
 class Building(Location):
