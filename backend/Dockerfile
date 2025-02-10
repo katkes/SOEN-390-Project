@@ -28,8 +28,10 @@ RUN chmod +x /app/entrypoint.sh
 EXPOSE 8080
 
 # Use entrypoint script to dynamically set GDAL paths
-ENTRYPOINT ["/bin/sh", "-c", "chmod +x /app/entrypoint.sh && /app/entrypoint.sh"]
+ENTRYPOINT ["/app/entrypoint.sh"]
+
 
 # Start Django
-CMD ["sh", "-c", "python manage.py migrate --noinput && daphne -b 0.0.0.0 -p 8080 project.asgi:application && tail -f /dev/null"]
+CMD ["python", "manage.py", "migrate", "--noinput", "&&", "daphne", "-b", "0.0.0.0", "-p", "8080", "project.asgi:application"]
+
 
