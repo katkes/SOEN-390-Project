@@ -18,7 +18,7 @@ RUN python3 -m venv /app/venv
 ENV PATH="/app/venv/bin:$PATH"
 
 # Install Poetry inside the virtual environment
-#RUN /app/venv/bin/pip install poetry
+RUN /app/venv/bin/pip install poetry
 
 #RUN ls -lah /app/venv/bin/poetry
 

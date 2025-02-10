@@ -22,11 +22,16 @@ jobs:
           pip install poetry
           poetry install --no-root
 
+      - name: Set Dynamic Report Name
+        run: echo "TIMESTAMP=$(date +%Y%m%d-%H%M%S)" >> $GITHUB_ENV
+
       - name: Run Pylint (Capture Errors & Fix Paths)
         working-directory: ./backend
         run: |
           mkdir -p reports
-          poetry run pylint --output-format=json backend > reports/pylint-report.json 2>&1 || true
+          REPORT_NAME="pylint-report-${TIMESTAMP}.json"
+          poetry run pylint --output-format=json backend > reports/$REPORT_NAME 2>&1 || true
+          echo "PYLINT_REPORT=$REPORT_NAME" >> $GITHUB_ENV  # Store report name for upload
 
       - name: Run Black Formatting
         working-directory: ./backend
@@ -35,5 +40,5 @@ jobs:
       - name: Upload Pylint Report as Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: pylint-reports
-          path: backend/reports/pylint-report.json
+          name: pylint-reports-${{ env.TIMESTAMP }}
+          path: backend/reports/${{ env.PYLINT_REPORT }}
