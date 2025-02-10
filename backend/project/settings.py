@@ -13,10 +13,11 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+import sys
 from pathlib import Path
 
-GDAL_LIBRARY_PATH = r"C:\OSGeo4W\bin\gdal310.dll"
-os.environ["GDAL_LIBRARY_PATH"] = GDAL_LIBRARY_PATH
+# GDAL_LIBRARY_PATH = r"C:\OSGeo4W\bin\gdal310.dll"
+# os.environ["GDAL_LIBRARY_PATH"] = GDAL_LIBRARY_PATH
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -86,20 +87,31 @@ WSGI_APPLICATION = "project.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.contrib.gis.db.backends.postgis",
-        "NAME": os.getenv("DB_NAME"),
-        "USER": os.getenv("DB_USER"),
-        "PASSWORD": os.getenv("DB_PASSWORD"),
-        "HOST": os.getenv("DB_HOST"),
-        "PORT": os.getenv("DB_PORT"),
-        "OPTIONS": {
-            "sslmode": "require",  # Ensures SSL is used
-            "gssencmode": "disable",  # Disables GSSAPI encryption
-        },
+
+
+if "pytest" in sys.argv[0]:  # Only applies when running pytest
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": ":memory:",
+        }
     }
-}
+else:
+
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.contrib.gis.db.backends.postgis",
+            "NAME": os.getenv("DB_NAME"),
+            "USER": os.getenv("DB_USER"),
+            "PASSWORD": os.getenv("DB_PASSWORD"),
+            "HOST": os.getenv("DB_HOST"),
+            "PORT": os.getenv("DB_PORT"),
+            "OPTIONS": {
+                "sslmode": "require",  # Ensures SSL is used
+                "gssencmode": "disable",  # Disables GSSAPI encryption
+            },
+        }
+    }
 
 
 # Password validation
