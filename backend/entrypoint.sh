@@ -14,5 +14,8 @@ fi
 
 echo "Using GDAL_LIBRARY_PATH: $GDAL_LIBRARY_PATH"
 
+# Activate the virtual environment
+source /app/venv/bin/activate
+
 # Run the original command
 exec "$@"

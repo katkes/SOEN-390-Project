@@ -34,7 +34,7 @@ jobs:
           set -o pipefail
           REPORT_NAME="pytest-report-${TIMESTAMP}.xml"
           COVERAGE_NAME="coverage-${TIMESTAMP}.xml"
-          docker exec $BACKEND_CONTAINER poetry run pytest --cov=app --cov-report=xml --junitxml=/app/reports/$REPORT_NAME
+          docker exec $BACKEND_CONTAINER /app/venv/bin/poetry run pytest --cov=app --cov-report=xml --junitxml=/app/reports/$REPORT_NAME
           TEST_EXIT_CODE=$?  # Capture the exit code
           echo "TEST_EXIT_CODE=$TEST_EXIT_CODE" >> $GITHUB_ENV
           echo "PYTEST_REPORT=$REPORT_NAME" >> $GITHUB_ENV
