@@ -1,3 +1,7 @@
 {
-    "cmake.sourceDirectory": "C:/Users/Roberto/Documents/GitHub/SOEN-390-Project/linux"
+  "cmake.sourceDirectory": "C:/Users/Roberto/Documents/GitHub/SOEN-390-Project/linux",
+  "sonarlint.connectedMode.project": {
+    "connectionId": "roburnto",
+    "projectKey": "roburnto_SOEN-390-Project"
+  }
 }
