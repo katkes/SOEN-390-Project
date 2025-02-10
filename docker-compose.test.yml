@@ -33,4 +33,4 @@ services:
     volumes:
       - ./backend:/app
     working_dir: /app
-    command: poetry run pytest --cov=app --cov-report=xml
+    command: sh -c "poetry run pytest --cov=app --cov-report=xml && tail -f /dev/null"
