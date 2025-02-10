@@ -21,17 +21,14 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the rest of the project files
 COPY . .
 
+# Ensure entrypoint.sh has executable permissions **inside** the container
+RUN chmod +x /app/entrypoint.sh
+
 # Expose port 8080
 EXPOSE 8080
 
-# Copy entrypoint script and make it executable
-COPY entrypoint.sh /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh
-
 # Use entrypoint script to dynamically set GDAL paths
-ENTRYPOINT ["/app/entrypoint.sh"]
+ENTRYPOINT ["/bin/sh", "-c", "chmod +x /app/entrypoint.sh && /app/entrypoint.sh"]
 
 # Start Django
 CMD ["sh", "-c", "python manage.py migrate --noinput && daphne -b 0.0.0.0 -p 8080 project.asgi:application"]
-
-
