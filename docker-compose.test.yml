@@ -32,5 +32,6 @@ services:
       DATABASE_URL: postgresql://testuser:testpassword@postgres:5432/testdb
     volumes:
       - ./backend:/app
+      - ./backend/reports:/app/reports  # Ensure reports are stored persistently
     working_dir: /app
-    command: sh -c "sleep infinity"
+    command: sh -c "mkdir -p /app/reports && sleep infinity"

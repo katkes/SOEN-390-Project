@@ -16,19 +16,35 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Build & Start Test Container
+      - name: Build & Start Test Containers
         run: |
           docker compose -f docker-compose.test.yml up --build -d
           sleep 10  # Wait for services to start
 
-      - name: Run Tests
+      - name: Run Tests Inside Backend Container (Always Generate Reports)
         run: |
-          docker exec backend poetry run pytest --cov=app --cov-report=xml --junitxml=pytest-report.xml
+          set -o pipefail
+          docker exec backend poetry run pytest --cov=app --cov-report=xml --junitxml=/app/reports/pytest-report.xml
+          TEST_EXIT_CODE=$?  # Capture the exit code
+          echo "TEST_EXIT_CODE=$TEST_EXIT_CODE" >> $GITHUB_ENV  # Store for later
 
-      - name: Copy Coverage Reports
+      - name: Copy Test Reports to Host (Even If Tests Fail)
+        if: always()
         run: |
-          docker cp backend:/app/coverage.xml sonar-coverage.xml
-          docker cp backend:/app/pytest-report.xml sonar-pytest.xml
+          mkdir -p reports
+          docker cp backend:/app/reports/coverage.xml reports/sonar-coverage.xml || true
+          docker cp backend:/app/reports/pytest-report.xml reports/sonar-pytest.xml || true
 
-      - name: Stop Test Container
-        run: docker-compose -f docker-compose.test.yml down
+      - name: Stop and Cleanup Test Containers
+        if: always()
+        run: docker compose -f docker-compose.test.yml down
+
+      - name: Upload Test Reports as Artifacts (Even If Tests Fail)
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-reports
+          path: reports/
+
+      - name: Fail the Job if Tests Failed
+        run: exit $TEST_EXIT_CODE  # Make sure the job fails if tests failed
