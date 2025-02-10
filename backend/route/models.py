@@ -3,7 +3,6 @@ This module contains the models for the route app.
 """
 
 from django.db import models
-from django.apps import apps
 
 # pylint: disable=no-member
 

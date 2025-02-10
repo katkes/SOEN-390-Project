@@ -1,6 +1,6 @@
 # pylint: skip-file
 import json
-from django.contrib.gis.geos import GEOSGeometry, MultiPolygon, Polygon, Point
+from django.contrib.gis.geos import GEOSGeometry, MultiPolygon
 from map.models import CampusMap
 from location.models import Building
 
@@ -56,7 +56,7 @@ def import_building_data(info_geojson_file, boundary_geojson_file):
         building_id = properties.get("id")
 
         if building_id is None:
-            print(f"⚠️ Warning: Found a building without an ID. Skipping.")
+            print("⚠️ Warning: Found a building without an ID. Skipping.")
             continue
 
         # ✅ Extract coordinates correctly from `geometry`
@@ -74,7 +74,7 @@ def import_building_data(info_geojson_file, boundary_geojson_file):
             continue
 
         # Create a point for this building's location
-        building_point = Point(longitude, latitude)
+        # building_point = Point(longitude, latitude)
         assigned_campus = properties.get("Campus", "")
         assigned_boundary = boundary_dict.get(building_id)  # ✅ Get the boundary by ID
 

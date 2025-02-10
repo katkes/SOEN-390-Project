@@ -12,8 +12,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from dotenv import load_dotenv
-import dj_database_url
 import os
+from pathlib import Path
 
 GDAL_LIBRARY_PATH = r"C:\OSGeo4W\bin\gdal310.dll"
 os.environ["GDAL_LIBRARY_PATH"] = GDAL_LIBRARY_PATH

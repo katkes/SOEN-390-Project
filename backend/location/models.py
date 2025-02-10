@@ -10,7 +10,6 @@
 
 from django.db import models
 from django.contrib.gis.db import models as gis_models  # For spatial data
-from django.apps import apps
 
 
 # Create your models here.

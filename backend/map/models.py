@@ -4,7 +4,6 @@ This file contains the models for the map app.
 
 from django.db import models
 from django.contrib.gis.db import models as gis_models
-from django.apps import apps
 
 
 # Create your models here.

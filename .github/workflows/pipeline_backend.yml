@@ -29,6 +29,14 @@ jobs:
         working-directory: ./backend
         run: poetry env use 3.12
 
+      - name: Install GDAL Dependencies (Ubuntu)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gdal-bin libgdal-dev
+          echo "GDAL_LIBRARY_PATH=$(gdal-config --libs | awk '{print $1}')" >> $GITHUB_ENV
+
+
+
       - name: Install Python dependencies
         working-directory: ./backend
         run: poetry install --no-root

@@ -1,3 +1,16 @@
 .DS_Store
 backend/.env
 .env
+backend/route/__pycache__
+backend/location/__pycache__
+backend/map/__pycache__
+backend/myapp/__pycache__
+backend/project/__pycache__
+backend/myapp/tests/__pycache__
+backend/map/services/__pycache__
+backend/map/tests/__pycache__
+backend/location/tests/__pycache__
+backend/location/services/__pycache__
+backend/project/__pycache__
+backend/route/tests/__pycache__
+backend/project/tests/__pycache__
