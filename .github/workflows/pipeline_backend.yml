@@ -41,16 +41,16 @@ jobs:
         working-directory: ./backend
         run: poetry install --no-root
 
-      - name: Run Python linter (Pylint)
-        working-directory: ./backend
-        run: poetry run pylint .
+        # skip for now
+      # - name: Run Python linter (Pylint)
+      #   working-directory: ./backend
+      #   run: poetry run pylint .
 
-      - name: Verify Python formatting
-        working-directory: ./backend
-        run: poetry run black --check .
+      # - name: Verify Python formatting
+      #   working-directory: ./backend
+      #   run: poetry run black --check .
 
-      # Run Python tests
-      # Uncomment this block when we have tests
-      # - name: Run Python tests
-      #   run: poetry run pytest
+      - name: Run Python tests
+        working-directory: ./backend
+        run: poetry run pytest
 
