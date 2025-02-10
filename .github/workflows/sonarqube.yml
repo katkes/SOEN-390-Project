@@ -19,28 +19,48 @@ jobs:
         with:
           fetch-depth: 0 # Required for accurate SonarCloud analysis
 
+      - name: Install Docker-Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+
       - name: Start Test Environment
         run: |
           docker compose -f docker-compose.test.yml up --build -d
           sleep 10  # Allow services to start
 
+      - name: Debug Running Containers
+        run: docker ps -a
+
+      - name: Debug Backend Logs (if exists)
+        run: |
+          CONTAINER_NAME=$(docker-compose -f docker-compose.test.yml ps -q backend)
+          if [ -n "$CONTAINER_NAME" ]; then
+            docker logs $CONTAINER_NAME
+          else
+            echo "No backend container found!"
+          fi
+
       - name: Run Linter (Pylint & Black)
         run: |
-          docker exec backend poetry run pylint backend > pylint-report.json || true
-          docker exec backend poetry run black --check .
+          CONTAINER_NAME=$(docker-compose -f docker-compose.test.yml ps -q backend)
+          docker exec $CONTAINER_NAME poetry run pylint backend > pylint-report.json || true
+          docker exec $CONTAINER_NAME poetry run black --check .
 
       - name: Run Tests
         run: |
-          docker exec backend poetry run pytest --cov=app --cov-report=xml
+          CONTAINER_NAME=$(docker-compose -f docker-compose.test.yml ps -q backend)
+          docker exec $CONTAINER_NAME poetry run pytest --cov=app --cov-report=xml
 
       - name: Copy Coverage & Linting Reports
         run: |
-          docker cp backend:/app/coverage.xml sonar-coverage.xml
-          docker cp backend:/app/pylint-report.json pylint-report.json
-          docker cp backend:/app/pytest-report.xml sonar-pytest.xml
+          CONTAINER_NAME=$(docker-compose -f docker-compose.test.yml ps -q backend)
+          docker cp $CONTAINER_NAME:/app/coverage.xml sonar-coverage.xml
+          docker cp $CONTAINER_NAME:/app/pylint-report.json pylint-report.json
+          docker cp $CONTAINER_NAME:/app/pytest-report.xml sonar-pytest.xml
 
       - name: Stop Test Container
-        run: docker-compose -f docker-compose.test.yml down
+        run: docker compose -f docker-compose.test.yml down
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v4
