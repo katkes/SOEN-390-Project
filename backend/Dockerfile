@@ -17,14 +17,14 @@ RUN python3 -m venv /app/venv
 ENV PATH="/app/venv/bin:$PATH"
 
 # Install Poetry inside the virtual environment
-RUN /app/venv/bin/pip install poetry
+#RUN /app/venv/bin/pip install poetry
 
-RUN ls -lah /app/venv/bin/poetry
+#RUN ls -lah /app/venv/bin/poetry
 
 # Copy requirements first (for caching)
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-
+RUN pip Install Poetry
 # Copy the rest of the project files
 COPY . .
 

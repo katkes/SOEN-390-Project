@@ -18,7 +18,7 @@ jobs:
 
       - name: Build & Start Test Container
         run: |
-          docker-compose -f docker-compose.test.yml up --build -d
+          docker compose -f docker-compose.test.yml up --build -d
           sleep 10  # Wait for services to start
 
       - name: Run Tests

@@ -44,14 +44,14 @@ jobs:
       - name: Run Linter (Pylint & Black)
         run: |
             CONTAINER_NAME=$(docker-compose -f docker-compose.test.yml ps -q backend)
-            docker exec $CONTAINER_NAME /app/venv/bin/poetry run pylint backend > pylint-report.json || true
-            docker exec $CONTAINER_NAME /app/venv/bin/poetry run black --check .
+            docker exec $CONTAINER_NAME poetry run pylint backend > pylint-report.json || true
+            docker exec $CONTAINER_NAME poetry run black --check .
         
 
       - name: Run Tests
         run: |
               CONTAINER_NAME=$(docker-compose -f docker-compose.test.yml ps -q backend)
-              docker exec $CONTAINER_NAME /app/venv/bin/poetry run pytest --cov=app --cov-report=xml || true
+              docker exec $CONTAINER_NAME poetry run pytest --cov=app --cov-report=xml || true
           
 
       - name: Copy Coverage & Linting Reports
