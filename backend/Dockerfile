@@ -22,7 +22,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Ensure entrypoint.sh has executable permissions **inside** the container
+# Ensure script is executable
+USER root
 RUN chmod +x /app/entrypoint.sh
+USER appuser  # Switch back if using a non-root user
 
 # Expose port 8080
 EXPOSE 8080
