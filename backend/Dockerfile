@@ -5,10 +5,15 @@ FROM ghcr.io/osgeo/gdal:ubuntu-full-latest
 WORKDIR /app
 
 # Install dependencies
+# Install dependencies
 RUN apt-get update && apt-get install -y \
     python3-pip python3-dev python3-venv \
-    libgdal-dev libgeos-dev libproj-dev \
+    libgdal-dev libgeos-dev libproj-dev curl \
     && rm -rf /var/lib/apt/lists/*
+
+# Install Poetry
+RUN curl -sSL https://install.python-poetry.org | python3 -
+ENV PATH="/root/.local/bin:$PATH"
 
 # Create a virtual environment
 RUN python3 -m venv /app/venv
