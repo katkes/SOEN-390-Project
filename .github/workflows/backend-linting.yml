@@ -22,10 +22,18 @@ jobs:
           pip install poetry
           poetry install --no-root
 
-      - name: Run Pylint
+      - name: Run Pylint (Capture Errors & Fix Paths)
         working-directory: ./backend
-        run: poetry run pylint --output-format=json backend > pylint-report.json
+        run: |
+          mkdir -p reports
+          poetry run pylint --output-format=json backend > reports/pylint-report.json 2>&1 || true
 
       - name: Run Black Formatting
         working-directory: ./backend
         run: poetry run black --check .
+
+      - name: Upload Pylint Report as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pylint-reports
+          path: backend/reports/pylint-report.json

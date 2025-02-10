@@ -41,7 +41,7 @@ jobs:
 
       - name: Upload Test Reports as Artifacts (Even If Tests Fail)
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-reports
           path: reports/
