@@ -19,23 +19,28 @@ jobs:
         with:
           fetch-depth: 0 # Required for accurate SonarCloud analysis
 
-      - name: Set Up Python
-        uses: actions/setup-python@v3
-        with:
-          python-version: "3.12"
-
-      - name: Install Dependencies
-        working-directory: ./backend
+      - name: Start Test Environment
         run: |
-          pip install poetry
-          poetry install --no-root
-          poetry add pytest pytest-cov  # Ensures pytest-cov is installed
+          docker-compose -f docker-compose.test.yml up --build -d
+          sleep 10  # Allow services to start
 
-      - name: Run Linter & Tests
-        working-directory: ./backend
+      - name: Run Linter (Pylint & Black)
         run: |
-          poetry run pylint . > pylint-report.json || true
-          poetry run pytest --cov=app --cov-report=xml  # Ensure "app" is the correct package
+          docker exec backend poetry run pylint backend > pylint-report.json || true
+          docker exec backend poetry run black --check .
+
+      - name: Run Tests
+        run: |
+          docker exec backend poetry run pytest --cov=app --cov-report=xml
+
+      - name: Copy Coverage & Linting Reports
+        run: |
+          docker cp backend:/app/coverage.xml sonar-coverage.xml
+          docker cp backend:/app/pylint-report.json pylint-report.json
+          docker cp backend:/app/pytest-report.xml sonar-pytest.xml
+
+      - name: Stop Test Container
+        run: docker-compose -f docker-compose.test.yml down
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v4
