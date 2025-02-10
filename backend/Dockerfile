@@ -11,10 +11,6 @@ RUN apt-get update && apt-get install -y \
     libgdal-dev libgeos-dev libproj-dev curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Poetry
-RUN curl -sSL https://install.python-poetry.org | python3 -
-ENV PATH="/root/.local/bin:$PATH"
-
 # Create a virtual environment
 RUN python3 -m venv /app/venv
 ENV PATH="/app/venv/bin:$PATH"
