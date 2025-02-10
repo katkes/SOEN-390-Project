@@ -25,16 +25,17 @@ jobs:
           python-version: "3.12"
 
       - name: Install Dependencies
-        working-directory: ./backend # Ensure Poetry runs in the correct directory
+        working-directory: ./backend
         run: |
           pip install poetry
           poetry install --no-root
+          poetry add pytest pytest-cov  # Ensures pytest-cov is installed
 
       - name: Run Linter & Tests
         working-directory: ./backend
         run: |
           poetry run pylint . > pylint-report.json || true
-          poetry run pytest --cov=backend --cov-report=xml
+          poetry run pytest --cov=app --cov-report=xml  # Ensure "app" is the correct package
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v4
