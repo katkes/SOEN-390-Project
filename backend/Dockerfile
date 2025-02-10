@@ -25,7 +25,7 @@ COPY . .
 # Ensure script is executable
 USER root
 RUN chmod +x /app/entrypoint.sh
-USER appuser  # Switch back if using a non-root user
+#USER appuser  # Switch back if using a non-root user
 
 # Expose port 8080
 EXPOSE 8080
