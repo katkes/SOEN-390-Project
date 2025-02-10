@@ -21,7 +21,7 @@ jobs:
 
       - name: Start Test Environment
         run: |
-          docker-compose -f docker-compose.test.yml up --build -d
+          docker compose -f docker-compose.test.yml up --build -d
           sleep 10  # Allow services to start
 
       - name: Run Linter (Pylint & Black)
