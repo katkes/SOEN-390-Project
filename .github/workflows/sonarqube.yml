@@ -1,4 +1,4 @@
-name: SonarQube Analysis
+name: SonarCloud Analysis
 
 on:
   push:
@@ -9,35 +9,33 @@ on:
       - main
 
 jobs:
-  sonarqube:
+  sonar:
+    name: Run SonarCloud Scan
     runs-on: ubuntu-latest
-
-    services:
-      sonarqube:
-        image: sonarqube:latest
-        ports:
-          - 9000:9000
-        env:
-          SONAR_JDBC_URL: ${{ secrets.SONARQUBE_JDBC_URL }}
-          SONAR_JDBC_USERNAME: ${{ secrets.SONARQUBE_JDBC_USERNAME }}
-          SONAR_JDBC_PASSWORD: ${{ secrets.SONARQUBE_JDBC_PASSWORD }}
-        options: >-
-          --health-cmd "curl --fail http://localhost:9000/api/system/status || exit 1"
-          --health-interval 30s
-          --health-timeout 10s
-          --health-retries 10
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Required for accurate SonarCloud analysis
 
-      - name: Wait for SonarQube to Start
-        run: sleep 60  # Increased wait time
+      - name: Set Up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.12"
 
-      - name: Run SonarQube Scanner
+      - name: Install Dependencies
         run: |
-          docker run --rm \
-            -e SONAR_HOST_URL="http://localhost:9000" \
-            -e SONAR_TOKEN="${{ secrets.SONAR_TOKEN }}" \
-            -v "$(pwd):/usr/src" \
-            sonarsource/sonar-scanner-cli
+          pip install poetry
+          poetry install --no-root
+
+      - name: Run Linter & Tests
+        run: |
+          poetry run pylint backend/ > pylint-report.json || true
+          poetry run pytest --cov=backend --cov-report=xml
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@v4
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
