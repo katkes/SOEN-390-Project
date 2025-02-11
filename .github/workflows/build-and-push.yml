@@ -30,11 +30,13 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-            BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||')
-            IMAGE_TAG="proppele1/soen-390-backend:${BRANCH_NAME}"
-  
-            echo "DOCKER_TAG=${BRANCH_NAME}" >> $GITHUB_ENV  # ✅ Set the environment variable for later steps
-            
-            docker buildx build --platform linux/amd64,linux/arm64 \
-              -t $IMAGE_TAG --push .
+          BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||')
 
+          # Use the developer's Docker Hub username if available, otherwise use default
+          DOCKER_HUB_USER=${{ secrets.DOCKER_HUB_USERNAME }}
+          IMAGE_TAG="${DOCKER_HUB_USER}/soen-390-backend:${BRANCH_NAME}"
+
+          echo "DOCKER_TAG=${BRANCH_NAME}" >> $GITHUB_ENV  # ✅ Set for later steps
+          
+          docker buildx build --platform linux/amd64,linux/arm64 \
+            -t $IMAGE_TAG --push .
