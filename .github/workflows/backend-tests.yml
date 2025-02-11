@@ -1,0 +1,34 @@
+name: Run Tests Inside Docker
+
+on:
+  push:
+    paths:
+      - backend/**
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Build Test Container
+        run: |
+          docker-compose -f docker-compose.test.yml up --build -d
+          sleep 10  # Wait for services to start
+
+      - name: Run Tests
+        run: |
+          docker exec backend poetry run pytest --cov=app --cov-report=xml --junitxml=pytest-report.xml
+
+      - name: Copy Coverage Reports
+        run: |
+          docker cp backend:/app/coverage.xml sonar-coverage.xml
+          docker cp backend:/app/pytest-report.xml sonar-pytest.xml
+
+      - name: Stop Test Container
+        run: docker-compose -f docker-compose.test.yml down

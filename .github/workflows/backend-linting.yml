@@ -1,0 +1,31 @@
+name: Python Linting & Formatting
+
+on:
+  push:
+    paths:
+      - backend/**
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        working-directory: ./backend
+        run: |
+          pip install poetry
+          poetry install --no-root
+
+      - name: Run Pylint
+        working-directory: ./backend
+        run: poetry run pylint --output-format=json backend > pylint-report.json
+
+      - name: Run Black Formatting
+        working-directory: ./backend
+        run: poetry run black --check .

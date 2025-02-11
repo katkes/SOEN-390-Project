@@ -1,6 +1,7 @@
 """
 This module contains the views for the route app
 """
+
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -13,7 +14,7 @@ from route.services.route_utils import get_route_data
 def get_route(request):
     """
     Get multiple route options between two locations.
-    
+
     Args:
         request (POST): The request object including:
             - "start_location": Can be a Building ID, GPS {"latitude", "longitude"}, or map {"x", "y"}.

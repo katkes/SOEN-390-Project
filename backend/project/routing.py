@@ -1,3 +1,7 @@
+"""
+Routing configuration for the WebSocket consumers.
+"""
+
 from django.urls import re_path
 from route.services.consumers import LiveRouteConsumer
 

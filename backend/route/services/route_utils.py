@@ -1,5 +1,10 @@
+"""
+This module contains utility functions for routing functionality
+"""
+
 from location.services.location_utils import get_start_location, get_end_location
 from route.services.google_maps_service import GoogleMapsService
+
 
 def get_route_data(start_location, end_location, mode):
     """
@@ -14,10 +19,12 @@ def get_route_data(start_location, end_location, mode):
     Returns:
         list | None: A list of possible routes if available, otherwise None.
     """
-    start = get_start_location(start_location)  
-    end = get_end_location(end_location)  
+    start = get_start_location(start_location)
+    end = get_end_location(end_location)
 
     if not start or not end:
         return None  # Invalid input
 
-    return GoogleMapsService.get_outdoor_routes(start["latitude"], start["longitude"], end["latitude"], end["longitude"], mode)
+    return GoogleMapsService.get_outdoor_routes(
+        start["latitude"], start["longitude"], end["latitude"], end["longitude"], mode
+    )

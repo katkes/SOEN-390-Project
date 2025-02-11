@@ -1,0 +1,22 @@
+[run]
+omit =
+    */migrations/*
+    */tests/*
+    */settings.py
+    manage.py
+    */wsgi.py
+    */asgi.py
+    */routing.py
+    */services/*
+    */admin.py
+    */apps.py
+
+[report]
+exclude_lines =
+    # Ignore class definitions that should not be tested
+    if __name__ == .__main__.
+    pragma: no cover
+    raise NotImplementedError
+    @abstractmethod
+    def __repr__
+    def __str__

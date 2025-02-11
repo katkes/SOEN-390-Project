@@ -14,9 +14,15 @@ from pathlib import Path
 from dotenv import load_dotenv
 import dj_database_url
 import os
+import sys
 
-
-GDAL_LIBRARY_PATH = os.getenv("GDAL_LIBRARY_PATH", "/usr/lib/libgdal.so")
+if sys.platform == "win32":
+    GDAL_LIBRARY_PATH = os.getenv(
+        "GDAL_LIBRARY_PATH",
+        r"C:\ProgramData\anaconda3\envs\gis_project_env\Library\bin\gdal.dll"
+    )
+else:
+    GDAL_LIBRARY_PATH = os.getenv("GDAL_LIBRARY_PATH", "/usr/lib/x86_64-linux-gnu/libgdal.so")
 
 
 
@@ -35,7 +41,6 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = True
 
 ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
-
 
 
 # Application definition
@@ -109,8 +114,21 @@ ASGI_APPLICATION = "project.asgi.application"
 #     }
 # }
 DATABASES = {
-    "default": dj_database_url.config(default=os.getenv("DATABASE_URL"), conn_max_age=600)
+    "default": dj_database_url.config(
+        default=os.getenv("DATABASE_URL"), conn_max_age=600
+    )
 }
+
+# Database for testing (this is set up by pytest-django automatically)
+if os.getenv('DJANGO_TEST_ENV', 'false') == 'true':
+    DATABASES['default'] = {
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': 'testdb',  # Temporary test database
+        'USER': 'testuser',
+        'PASSWORD': 'testpassword',
+        'HOST': 'test_postgis_db',
+        'PORT': '5432',
+    }
 
 
 # Password validation

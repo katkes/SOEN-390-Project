@@ -50,7 +50,9 @@ class GoogleMapsService:
                 route_info = {
                     "distance": route["legs"][0]["distance"]["text"],
                     "duration": route["legs"][0]["duration"]["text"],
-                    "steps": [step["html_instructions"] for step in route["legs"][0]["steps"]],
+                    "steps": [
+                        step["html_instructions"] for step in route["legs"][0]["steps"]
+                    ],
                 }
                 routes.append(route_info)
             return routes

@@ -1,0 +1,52 @@
+services:
+  test_app:
+    image: proppele1/soen-390-backend:latest # Use Docker Hub image
+    container_name: django_test_container
+    env_file: .env.test
+    depends_on:
+      test_db:
+        condition: service_healthy # Ensure test_app waits until test_db is healthy
+    ports:
+      - '8082:8080'
+    command:
+      [
+        'sh',
+        '-c',
+        'python manage.py migrate && pytest --cov=. --cov-report=xml --cov-report=term-missing',
+      ]
+      #python manage.py makemigrations && --cov=backend
+
+  test_db:
+    image: postgis/postgis:latest
+    container_name: test_postgis_db
+    restart: always
+    environment:
+      POSTGRES_USER: testuser
+      POSTGRES_PASSWORD: testpassword
+      POSTGRES_DB: testdb
+    ports:
+      - '5433:5432'
+    command: >
+      bash -c "
+        docker-entrypoint.sh postgres &
+        sleep 10 &&
+        psql -U testuser -d testdb -c 'CREATE EXTENSION IF NOT EXISTS postgis;' &&
+        wait"
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'pg_isready',
+          '-U',
+          'testuser',
+          '-d',
+          'testdb',
+          '-h',
+          'localhost',
+          '-p',
+          '5432',
+        ]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 20s

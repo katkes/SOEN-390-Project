@@ -11,7 +11,8 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Create a virtual environment
-RUN python3 -m venv /app/venv
+RUN python3 -m venv /app/venv && \
+    ls /app/venv/bin
 ENV PATH="/app/venv/bin:$PATH"
 
 # Copy requirements first (for caching)
