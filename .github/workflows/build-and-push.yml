@@ -23,7 +23,7 @@ jobs:
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          username: ${{ secrets.DOCKER_HUB_USER }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
       - name: Set DOCKER_TAG
@@ -42,7 +42,7 @@ jobs:
       - name: Build and Push Docker Image
         run: |
             # Use the developer's Docker Hub username if available, otherwise use default
-            DOCKER_HUB_USER=${{ secrets.DOCKER_HUB_USERNAME }}
+            DOCKER_HUB_USER=${{ secrets.DOCKER_HUB_USER}}
             IMAGE_TAG="${DOCKER_HUB_USER}/soen-390-backend:${DOCKER_TAG}"
         
             docker buildx build --platform linux/amd64,linux/arm64 \
