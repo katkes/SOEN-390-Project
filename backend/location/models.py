@@ -21,10 +21,9 @@ class Location(models.Model):
     - longitude
     - city name
     """
+
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255, unique=True)
-
-
 
 
 class Building(Location):
@@ -71,7 +70,6 @@ class Building(Location):
         return f"Building: {self.name} (Campus: {self.campus_map.name})"
 
 
-
 class IndoorLocation(Location):
     """
     A model for indoor locations which inherits from the Location model
@@ -89,6 +87,7 @@ class IndoorLocation(Location):
 
     class Meta:
         """Meta class for the IndoorLocation model."""
+
         app_label = "location"
 
     @staticmethod

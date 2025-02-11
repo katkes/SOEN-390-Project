@@ -19,11 +19,12 @@ import sys
 if sys.platform == "win32":
     GDAL_LIBRARY_PATH = os.getenv(
         "GDAL_LIBRARY_PATH",
-        r"C:\ProgramData\anaconda3\envs\gis_project_env\Library\bin\gdal.dll"
+        r"C:\ProgramData\anaconda3\envs\gis_project_env\Library\bin\gdal.dll",
     )
 else:
-    GDAL_LIBRARY_PATH = os.getenv("GDAL_LIBRARY_PATH", "/usr/lib/x86_64-linux-gnu/libgdal.so")
-
+    GDAL_LIBRARY_PATH = os.getenv(
+        "GDAL_LIBRARY_PATH", "/usr/lib/x86_64-linux-gnu/libgdal.so"
+    )
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -120,14 +121,14 @@ DATABASES = {
 }
 
 # Database for testing (this is set up by pytest-django automatically)
-if os.getenv('DJANGO_TEST_ENV', 'false') == 'true':
-    DATABASES['default'] = {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'testdb',  # Temporary test database
-        'USER': 'testuser',
-        'PASSWORD': 'testpassword',
-        'HOST': 'test_db',
-        'PORT': '5432',
+if os.getenv("DJANGO_TEST_ENV", "false") == "true":
+    DATABASES["default"] = {
+        "ENGINE": "django.contrib.gis.db.backends.postgis",
+        "NAME": "testdb",  # Temporary test database
+        "USER": "testuser",
+        "PASSWORD": "testpassword",
+        "HOST": "test_db",
+        "PORT": "5432",
     }
 
 
