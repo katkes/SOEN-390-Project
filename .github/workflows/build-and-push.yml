@@ -28,15 +28,25 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
+      - name: Set DOCKER_TAG
+        run: |
+            if [[ "${{ github.ref }}" == refs/pull/* ]]; then
+              BRANCH_NAME="${{ github.head_ref }}"  # ✅ Use source branch for PRs
+            else
+              BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||')
+            fi
+            echo "DOCKER_TAG=${BRANCH_NAME}" >> $GITHUB_ENV  # ✅ Set for later steps
+        
+      - name: Debug Docker Tag
+        run: |
+            echo "DOCKER_TAG=${DOCKER_TAG}"
+        
       - name: Build and Push Docker Image
         run: |
-          BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||')
-
-          # Use the developer's Docker Hub username if available, otherwise use default
-          DOCKER_HUB_USER=${{ secrets.DOCKER_HUB_USERNAME }}
-          IMAGE_TAG="${DOCKER_HUB_USER}/soen-390-backend:${BRANCH_NAME}"
-
-          echo "DOCKER_TAG=${BRANCH_NAME}" >> $GITHUB_ENV  # ✅ Set for later steps
-          
-          docker buildx build --platform linux/amd64,linux/arm64 \
-            -t $IMAGE_TAG --push .
+            # Use the developer's Docker Hub username if available, otherwise use default
+            DOCKER_HUB_USER=${{ secrets.DOCKER_HUB_USERNAME }}
+            IMAGE_TAG="${DOCKER_HUB_USER}/soen-390-backend:${DOCKER_TAG}"
+        
+            docker buildx build --platform linux/amd64,linux/arm64 \
+              -t $IMAGE_TAG --push .
+        
