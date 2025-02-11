@@ -19,8 +19,12 @@ jobs:
       - name: Set DOCKER_TAG
         run: |
           BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||')
-          echo "DOCKER_TAG=${BRANCH_NAME}" >> $GITHUB_ENV  # ✅ Set for later step
+          echo "DOCKER_TAG=${BRANCH_NAME}" >> $GITHUB_ENV  # ✅ Set for later stes
 
+      - name: Debug Docker Tag
+        run: |
+          echo "DOCKER_TAG=${DOCKER_TAG}"
+        
       - name: Pull Docker images
         run: |
           docker pull proppele1/soen-390-backend:${DOCKER_TAG}
