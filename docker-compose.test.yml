@@ -12,8 +12,8 @@ services:
       [
         'sh',
         '-c',
-        'python manage.py migrate && pytest --cov=. --cov-report=xml --cov-report=term-missing',
-      ]
+        'python manage.py migrate && pytest --cov=. --cov-report=xml --cov-report=term-missing --junitxml=test-report.xml',
+        ]
       #python manage.py makemigrations && --cov=backend
 
   test_db:
