@@ -42,8 +42,8 @@ jobs:
       - name: Build and Push Docker Image
         run: |
             # Use the developer's Docker Hub username if available, otherwise use default
-            DOCKER_HUB_USER=${{ secrets.DOCKER_HUB_USER}}
+            DOCKER_HUB_USER=${{ secrets.DOCKER_HUB_USER }}
             IMAGE_TAG="${DOCKER_HUB_USER}/soen-390-backend:${DOCKER_TAG}"
         
             docker buildx build --platform linux/amd64,linux/arm64 \
-              -t $IMAGE_TAG --push .
+              -t $IMAGE_TAG --push ./backend
