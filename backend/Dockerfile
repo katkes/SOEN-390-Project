@@ -10,9 +10,9 @@ RUN apt-get update && apt-get install -y \
     libgdal-dev libgeos-dev libproj-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Create a virtual environment
-RUN python3 -m venv /app/venv
-ENV PATH="/app/venv/bin:$PATH"
+# Create a virtual environment in a separate directory
+RUN python3 -m venv /venv
+ENV PATH="/venv/bin:$PATH"
 
 # Copy dependencies first (for caching)
 COPY requirements.txt ./
@@ -31,5 +31,5 @@ RUN chmod +x /app/entrypoint.sh
 # Use entrypoint script to dynamically set GDAL paths
 ENTRYPOINT ["/app/entrypoint.sh"]
 
-# Start Django
-CMD ["sh", "-c", "python manage.py migrate --noinput && daphne -b 0.0.0.0 -p 8080 project.asgi:application"]
+# Start Django using the virtual environment's Python
+CMD ["sh", "-c", "/venv/bin/python manage.py migrate --noinput && /venv/bin/daphne -b 0.0.0.0 -p 8080 project.asgi:application"]

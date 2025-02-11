@@ -14,5 +14,6 @@ fi
 
 echo "Using GDAL_LIBRARY_PATH: $GDAL_LIBRARY_PATH"
 
+
 # Run the original command
 exec "$@"

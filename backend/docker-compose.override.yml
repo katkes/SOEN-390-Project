@@ -1,10 +1,10 @@
 services:
   django:
-    image: ${DOCKER_HUB_USER:-proppele1}/soen-390-backend:${DOCKER_TAG:-latest} # ✅ Uses branch-based image or defaults to 'latest'
+    build: .  # ✅ Forces Docker to build from the local Dockerfile instead of pulling the image
     container_name: backend
     env_file: .env
     volumes:
-      - .:/app # ✅ Mounts local files for live reload
+      - .:/app  # ✅ Mounts local files for live reload
     ports:
       - '8080:8080'
     command:
