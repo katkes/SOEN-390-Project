@@ -1,7 +1,7 @@
 # Use the official GDAL image
-FROM ghcr.io/osgeo/gdal:ubuntu-full-latest
+FROM ghcr.io/osgeo/gdal:ubuntu-full-latest AS base
 
-# Set the working directory inside the container
+# Set the working directory
 WORKDIR /app
 
 # Install dependencies
@@ -11,12 +11,11 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Create a virtual environment
-RUN python3 -m venv /app/venv && \
-    ls /app/venv/bin
+RUN python3 -m venv /app/venv
 ENV PATH="/app/venv/bin:$PATH"
 
-# Copy requirements first (for caching)
-COPY requirements.txt .
+# Copy dependencies first (for caching)
+COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the project files
@@ -25,7 +24,7 @@ COPY . .
 # Expose port 8080
 EXPOSE 8080
 
-# Copy entrypoint script and make it executable
+# Copy and execute entrypoint script
 COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 
@@ -34,5 +33,3 @@ ENTRYPOINT ["/app/entrypoint.sh"]
 
 # Start Django
 CMD ["sh", "-c", "python manage.py migrate --noinput && daphne -b 0.0.0.0 -p 8080 project.asgi:application"]
-
-

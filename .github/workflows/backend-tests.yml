@@ -1,9 +1,9 @@
-name: Run Tests Inside Docker
+name: Backend Tests
 
 on:
   push:
-    paths:
-      - backend/**
+    branches:
+      - main
   pull_request:
     branches:
       - main
@@ -13,22 +13,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build Test Container
+      - name: Pull Docker images
         run: |
-          docker-compose -f docker-compose.test.yml up --build -d
-          sleep 10  # Wait for services to start
+          docker pull proppele1/soen-390-backend:latest
+          docker pull postgis/postgis:latest
 
-      - name: Run Tests
+      - name: Start services with Docker Compose
+        run: docker compose -f docker-compose.test.yml up --abort-on-container-exit
+
+      - name: Create reports directory in backend
+        run: mkdir -p backend/reports
+
+      - name: Copy coverage report from container
         run: |
-          docker exec backend poetry run pytest --cov=app --cov-report=xml --junitxml=pytest-report.xml
+          docker cp django_test_container:/app/coverage.xml backend/reports/
 
-      - name: Copy Coverage Reports
+      - name: Copy test report from container
         run: |
-          docker cp backend:/app/coverage.xml sonar-coverage.xml
-          docker cp backend:/app/pytest-report.xml sonar-pytest.xml
+          docker cp django_test_container:/app/test-report.xml backend/reports/
 
-      - name: Stop Test Container
-        run: docker-compose -f docker-compose.test.yml down
+      - name: Upload reports as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports  # ✅ Fixed name for consistency
+          path: backend/reports/*
+          retention-days: 1  # ✅ Delete artifact after 1 day

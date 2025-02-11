@@ -2,8 +2,8 @@ name: Python Linting & Formatting
 
 on:
   push:
-    paths:
-      - backend/**
+    branches:
+      - main
   pull_request:
     branches:
       - main
@@ -22,10 +22,19 @@ jobs:
           pip install poetry
           poetry install --no-root
 
-      - name: Run Pylint
+      - name: Run Pylint (Display & Save Report)
         working-directory: ./backend
-        run: poetry run pylint --output-format=json backend > pylint-report.json
+        run: |
+          mkdir -p reports
+          poetry run pylint --output-format=json . | tee reports/pylint-report.json
 
       - name: Run Black Formatting
         working-directory: ./backend
         run: poetry run black --check .
+
+      - name: Upload Pylint Report as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pylint-reports  # ✅ Fixed name to ensure consistency
+          path: backend/reports/pylint-report.json
+          retention-days: 1  # ✅ Delete artifact after 1 day
