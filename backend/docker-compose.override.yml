@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: soen-390-backend:dev-local
+    image: proppele1/soen-390-backend:${DOCKER_TAG:-latest}
     container_name: backend
     env_file: .env
     volumes:

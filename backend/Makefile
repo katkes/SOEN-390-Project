@@ -7,7 +7,8 @@ buildx-dev:
 
 # ✅ Start the local container
 run-dev:
-	docker compose up -d
+	DOCKER_TAG=$(shell git rev-parse --abbrev-ref HEAD) docker compose up -d
+
 
 # ✅ Stop and clean up
 clean-dev:
@@ -19,3 +20,7 @@ buildx-push:
 	docker buildx build --platform linux/amd64,linux/arm64 \
 		-t your-dockerhub-user/soen-390-backend:$(shell git rev-parse --abbrev-ref HEAD) \
 		--push .
+
+# ✅ run tests
+run-tests:
+	DOCKER_TAG=$(shell git rev-parse --abbrev-ref HEAD) docker compose -f docker-compose.test.yml up --abort-on-container-exit

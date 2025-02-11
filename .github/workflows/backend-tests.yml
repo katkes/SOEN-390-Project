@@ -16,9 +16,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set DOCKER_TAG
+        run: |
+          BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||')
+          echo "DOCKER_TAG=${BRANCH_NAME}" >> $GITHUB_ENV  # ✅ Set for later step
+
       - name: Pull Docker images
         run: |
-          docker pull proppele1/soen-390-backend:latest
+          docker pull proppele1/soen-390-backend:${DOCKER_TAG}
           docker pull postgis/postgis:latest
 
       - name: Start services with Docker Compose

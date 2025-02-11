@@ -1,9 +1,10 @@
+version: '3.9'
+
 services:
   django:
-    image: proppele1/soen-390-backend:latest
+    image: proppele1/soen-390-backend:${DOCKER_TAG:-latest} # ✅ Uses branch-based image or defaults to 'latest'
     container_name: backend
     env_file: .env
     ports:
       - "8080:8080"
     command: ["sh", "-c", "python manage.py migrate --noinput && daphne -b 0.0.0.0 -p 8080 project.asgi:application"]
-

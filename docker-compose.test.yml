@@ -1,11 +1,11 @@
 services:
   test_app:
-    image: proppele1/soen-390-backend:latest # Use Docker Hub image
+    image: proppele1/soen-390-backend:${DOCKER_TAG:-latest} # ✅ Uses branch-based image or defaults to 'latest'
     container_name: django_test_container
     env_file: .env.test
     depends_on:
       test_db:
-        condition: service_healthy # Ensure test_app waits until test_db is healthy
+        condition: service_healthy
     ports:
       - '8082:8080'
     command:
@@ -13,7 +13,8 @@ services:
         'sh',
         '-c',
         'python manage.py migrate && pytest --cov=. --cov-report=xml --cov-report=term-missing --junitxml=test-report.xml',
-        ]
+      ]
+
       #python manage.py makemigrations && --cov=backend
 
   test_db:
