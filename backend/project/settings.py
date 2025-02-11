@@ -126,7 +126,7 @@ if os.getenv('DJANGO_TEST_ENV', 'false') == 'true':
         'NAME': 'testdb',  # Temporary test database
         'USER': 'testuser',
         'PASSWORD': 'testpassword',
-        'HOST': 'test_postgis_db',
+        'HOST': 'test_db',
         'PORT': '5432',
     }
 

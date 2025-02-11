@@ -18,7 +18,7 @@ services:
 
   test_db:
     image: postgis/postgis:latest
-    container_name: test_postgis_db
+    container_name: test_db
     restart: always
     environment:
       POSTGRES_USER: testuser
