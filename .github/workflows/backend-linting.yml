@@ -16,25 +16,31 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
       - name: Install Dependencies
         working-directory: ./backend
         run: |
-          pip install poetry
-          poetry install --no-root
+          python -m pip install --upgrade pip
+          pip install pylint black  # Install required tools
+          pip install -r requirements.txt  # Install project dependencies
 
       - name: Run Pylint (Display & Save Report)
         working-directory: ./backend
         run: |
           mkdir -p reports
-          poetry run pylint --output-format=json . | tee reports/pylint-report.json
+          pylint --output-format=json . | tee reports/pylint-report.json
 
       - name: Run Black Formatting
         working-directory: ./backend
-        run: poetry run black --check .
+        run: black --check .
 
       - name: Upload Pylint Report as Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: pylint-reports  # ✅ Fixed name to ensure consistency
+          name: pylint-reports
           path: backend/reports/pylint-report.json
-          retention-days: 1  # ✅ Delete artifact after 1 day
+          retention-days: 1

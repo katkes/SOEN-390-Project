@@ -4,6 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["KapJ1coH <tima.mtl@gmail.com>"]
 readme = "README.md"
+packages = [{ include = "project" }]  # Ensure this is the correct Django project folder
 
 [tool.poetry.dependencies]
 python = "^3.10"
