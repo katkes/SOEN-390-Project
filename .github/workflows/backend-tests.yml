@@ -19,11 +19,11 @@ jobs:
       - name: Set DOCKER_TAG
         run: |
           if [[ "${{ github.ref }}" == refs/pull/* ]]; then
-            BRANCH_NAME=$(echo "${{ github.head_ref }}")  # ✅ Use source branch name for PRs
+            BRANCH_NAME=$(echo "${{ github.head_ref }}")
           else
             BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||')
           fi
-          echo "DOCKER_TAG=${BRANCH_NAME}" >> $GITHUB_ENV  # ✅ Set for later steps
+          echo "DOCKER_TAG=${BRANCH_NAME}" >> $GITHUB_ENV  
       
       - name: Debug Docker Tag
         run: |
@@ -34,18 +34,6 @@ jobs:
           docker pull proppele1/soen-390-backend:${DOCKER_TAG}
           docker pull postgis/postgis:latest
       
-      - name: Create .env.test file
-        run: |
-          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env.test
-          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env.test
-          echo "DB_USER=${{ secrets.DB_USER }}" >> .env.test
-          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env.test
-          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env.test
-          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env.test
-          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env.test
-          echo "GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }}" >> .env.test
-          echo "DJANGO_TEST=true" >> .env.test
-
       - name: Start services with Docker Compose
         run: docker compose -f docker-compose.test.yml up --abort-on-container-exit
 
@@ -66,15 +54,25 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCS_KEY }}
 
-      # Install Google Cloud SDK
+      # Install Google Cloud CLI
       - name: Install Google Cloud CLI
         run: |
             sudo apt-get update && sudo apt-get install -y google-cloud-cli
 
+      # Ensure folder structure exists in GCS
+      - name: Ensure Folder Exists in GCS
+        run: |
+          BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs\/heads\/||' | tr '/' '_')
+
+          if ! gsutil ls gs://soen_390_reports/$BRANCH_NAME/backend/ >/dev/null 2>&1; then
+            echo "Creating folder structure in GCS..."
+            echo "Placeholder file" > backend/reports/.keep
+            gsutil cp backend/reports/.keep gs://soen_390_reports/$BRANCH_NAME/backend/.keep
+          fi
 
       # Upload test reports to Google Cloud Storage
-      - name: Upload test reports to GCS
+      - name: Upload Test Reports to GCS
         run: |
-          BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||' | tr '/' '_')
-          gsutil cp backend/reports/coverage.xml gs://backend-test-reports/$BRANCH_NAME/coverage.xml
-          gsutil cp backend/reports/test-report.xml gs://backend-test-reports/$BRANCH_NAME/test-report.xml
+          BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs\/heads\/||' | tr '/' '_')
+          gsutil cp backend/reports/coverage.xml gs://soen_390_reports/$BRANCH_NAME/backend/coverage.xml
+          gsutil cp backend/reports/test-report.xml gs://soen_390_reports/$BRANCH_NAME/backend/test-report.xml

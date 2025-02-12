@@ -45,17 +45,17 @@ jobs:
       - name: Fetch Backend Reports from GCS
         run: |
           BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||' | tr '/' '_')
-          gsutil cp gs://backend-test-reports/$BRANCH_NAME/coverage.xml backend/reports/coverage.xml || echo "⚠️ Backend coverage report not found."
-          gsutil cp gs://backend-test-reports/$BRANCH_NAME/test-report.xml backend/reports/test-report.xml || echo "⚠️ Backend test report not found."
+          gsutil cp gs://soen_390_reports/$BRANCH_NAME/backend/coverage.xml backend/reports/coverage.xml || echo "⚠️ Backend coverage report not found."
+          gsutil cp gs://soen_390_reports/$BRANCH_NAME/backend/test-report.xml backend/reports/test-report.xml || echo "⚠️ Backend test report not found."
 
       - name: Fetch Frontend Reports from GCS
         run: |
-          gsutil cp gs://flutter-test-reports/$BRANCH_NAME/lcov.info frontend/reports/lcov.info || echo "⚠️ Frontend coverage report not found."
-          gsutil cp gs://flutter-lint-reports/$BRANCH_NAME/sonar-flutter-lint.json frontend/reports/sonar-flutter-lint.json || echo "⚠️ Frontend lint report not found."
+          gsutil cp gs://soen_390_reports/$BRANCH_NAME/frontend/lcov.info frontend/reports/lcov.info || echo "⚠️ Frontend coverage report not found."
+          gsutil cp gs://soen_390_reports/$BRANCH_NAME/frontend/sonar-flutter-lint.json frontend/reports/sonar-flutter-lint.json || echo "⚠️ Frontend lint report not found."
 
       - name: Fetch Python Lint Reports from GCS
         run: |
-          gsutil cp gs://python-lint-reports/$BRANCH_NAME/pylint-sonarqube.json backend/reports/pylint-sonarqube.json || echo "⚠️ Pylint report not found."
+          gsutil cp gs://soen_390_reports/$BRANCH_NAME/backend/pylint-sonarqube.json backend/reports/pylint-sonarqube.json || echo "⚠️ Pylint report not found."
 
       - name: List Downloaded Reports
         run: |
@@ -82,6 +82,11 @@ jobs:
             echo "⚠️ Coverage report missing, creating empty file!"
             echo "TN:" > frontend/reports/lcov.info
           fi
+          
+          if [ ! -f backend/reports/coverage.xml ]; then
+            echo "⚠️ Backend coverage report missing, creating empty file!"
+            touch backend/reports/coverage.xml
+          fi
 
       - name: List Reports Before Running SonarCloud
         run: |
@@ -101,13 +106,12 @@ jobs:
             BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||' | tr '/' '_')
   
             # Upload Backend Reports
-            gsutil cp backend/reports/coverage.xml gs://backend-test-reports/$BRANCH_NAME/coverage.xml || echo "⚠️ No new backend coverage report to upload."
-            gsutil cp backend/reports/test-report.xml gs://backend-test-reports/$BRANCH_NAME/test-report.xml || echo "⚠️ No new backend test report to upload."
+            gsutil cp backend/reports/coverage.xml gs://soen_390_reports/$BRANCH_NAME/backend/coverage.xml || echo "⚠️ No new backend coverage report to upload."
+            gsutil cp backend/reports/test-report.xml gs://soen_390_reports/$BRANCH_NAME/backend/test-report.xml || echo "⚠️ No new backend test report to upload."
   
             # Upload Frontend Reports
-            gsutil cp frontend/reports/lcov.info gs://flutter-test-reports/$BRANCH_NAME/lcov.info || echo "⚠️ No new frontend coverage report to upload."
-            gsutil cp frontend/reports/sonar-flutter-lint.json gs://flutter-lint-reports/$BRANCH_NAME/sonar-flutter-lint.json || echo "⚠️ No new frontend lint report to upload."
+            gsutil cp frontend/reports/lcov.info gs://soen_390_reports/$BRANCH_NAME/frontend/lcov.info || echo "⚠️ No new frontend coverage report to upload."
+            gsutil cp frontend/reports/sonar-flutter-lint.json gs://soen_390_reports/$BRANCH_NAME/frontend/sonar-flutter-lint.json || echo "⚠️ No new frontend lint report to upload."
   
             # Upload Python Lint Report
-            gsutil cp backend/reports/pylint-sonarqube.json gs://python-lint-reports/$BRANCH_NAME/pylint-sonarqube.json || echo "⚠️ No new Pylint report to upload."
-  
+            gsutil cp backend/reports/pylint-sonarqube.json gs://soen_390_reports/$BRANCH_NAME/backend/pylint-sonarqube.json || echo "⚠️ No new Pylint report to upload."

@@ -39,13 +39,31 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCS_KEY }}
 
-      # Install Google Cloud SDK
-      - name: Install Google Cloud SDK
+      # Install Google Cloud CLI
+      - name: Install Google Cloud CLI
         run: |
-          sudo apt-get update && sudo apt-get install -y google-cloud-sdk
+          sudo apt-get update && sudo apt-get install -y google-cloud-cli
 
-      # Upload report to Google Cloud Storage
-      - name: Upload report to GCS
+      # Check if the folder exists in GCS before attempting to create it
+      - name: Check If Folder Exists in GCS
         run: |
           BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's/refs\/heads\///' | tr '/' '_')
-          gsutil cp frontend/reports/lcov.info gs://flutter-test-reports/$BRANCH_NAME/lcov.info
+          
+          echo "Checking if folder exists in GCS..."
+          if gsutil ls gs://soen_390_reports/$BRANCH_NAME/frontend/ >/dev/null 2>&1; then
+            echo "✅ Folder already exists in GCS. Skipping folder creation."
+          else
+            echo "❌ Folder does not exist. Creating placeholder to maintain structure..."
+            echo "Placeholder file" > frontend/reports/.keep
+            gsutil -m cp frontend/reports/.keep gs://soen_390_reports/$BRANCH_NAME/frontend/.keep
+          fi
+
+      # Upload report to Google Cloud Storage
+      - name: Upload Report to GCS
+        run: |
+          BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's/refs\/heads\///' | tr '/' '_')
+          
+          echo "Uploading report to GCS..."
+          gsutil -m cp frontend/reports/lcov.info gs://soen_390_reports/$BRANCH_NAME/frontend/lcov.info
+
+          echo "✅ Report successfully uploaded to GCS!"

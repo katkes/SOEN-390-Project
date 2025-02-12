@@ -21,6 +21,7 @@ jobs:
         run: |
           pip install poetry
           poetry install --no-root
+          poetry add pylint@2.17.7 astroid@2.15.8
 
       - name: Run Pylint (Generate JSON)
         working-directory: ./backend
@@ -39,15 +40,25 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCS_KEY }}
 
-      # Install Google Cloud SDK
+      # Install Google Cloud CLI
       - name: Install Google Cloud CLI
         run: |
             sudo apt-get update && sudo apt-get install -y google-cloud-cli
 
+      # Ensure folder structure exists in GCS
+      - name: Ensure Folder Exists in GCS
+        run: |
+          BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs\/heads\/||' | tr '/' '_')
+
+          if ! gsutil ls gs://soen_390_reports/$BRANCH_NAME/backend/ >/dev/null 2>&1; then
+            echo "Creating folder structure in GCS..."
+            echo "Placeholder file" > backend/reports/.keep
+            gsutil cp backend/reports/.keep gs://soen_390_reports/$BRANCH_NAME/backend/.keep
+          fi
 
       # Upload Pylint reports to Google Cloud Storage
-      - name: Upload Pylint reports to GCS
+      - name: Upload Pylint Reports to GCS
         run: |
-          BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||' | tr '/' '_')
-          gsutil cp backend/reports/pylint-report.json gs://python-lint-reports/$BRANCH_NAME/pylint-report.json
-          gsutil cp backend/reports/pylint-sonarqube.json gs://python-lint-reports/$BRANCH_NAME/pylint-sonarqube.json
+          BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs\/heads\/||' | tr '/' '_')
+          gsutil cp backend/reports/pylint-report.json gs://soen_390_reports/$BRANCH_NAME/backend/pylint-report.json
+          gsutil cp backend/reports/pylint-sonarqube.json gs://soen_390_reports/$BRANCH_NAME/backend/pylint-sonarqube.json

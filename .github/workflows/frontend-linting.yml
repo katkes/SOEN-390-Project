@@ -123,13 +123,24 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCS_KEY }}
 
-      # Install Google Cloud SDK
-      - name: Install Google Cloud SDK
+      # Install Google Cloud CLI
+      - name: Install Google Cloud CLI
         run: |
-          sudo apt-get update && sudo apt-get install -y google-cloud-sdk
+            sudo apt-get update && sudo apt-get install -y google-cloud-cli
 
       # Upload linting report to Google Cloud Storage
-      - name: Upload lint report to GCS
+      - name: Ensure Folder Exists in GCS
         run: |
-          BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's/refs\/heads\///' | tr '/' '_')
-          gsutil cp frontend/reports/sonar-flutter-lint.json gs://flutter-lint-reports/$BRANCH_NAME/sonar-flutter-lint.json
+          BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs\/heads\/||' | tr '/' '_')
+
+          if ! gsutil ls gs://soen_390_reports/$BRANCH_NAME/frontend/ >/dev/null 2>&1; then
+            echo "Creating folder structure in GCS..."
+            echo "Placeholder file" > frontend/reports/.keep
+            gsutil cp frontend/reports/.keep gs://soen_390_reports/$BRANCH_NAME/frontend/.keep
+          fi
+
+      # Upload linting report to Google Cloud Storage
+      - name: Upload Lint Reports to GCS
+        run: |
+          BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs\/heads\/||' | tr '/' '_')
+          gsutil cp frontend/reports/sonar-flutter-lint.json gs://soen_390_reports/$BRANCH_NAME/frontend/sonar-flutter-lint.json
