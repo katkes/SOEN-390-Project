@@ -62,6 +62,7 @@ jobs:
 
       - name: Fetch Frontend Reports from GCS
         run: |
+          BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||' | tr '/' '_')
           gsutil -q stat gs://soen_390_reports/$BRANCH_NAME/frontend/lcov.info && gsutil cp gs://soen_390_reports/$BRANCH_NAME/frontend/lcov.info frontend/reports/lcov.info || echo "⚠️ Frontend coverage report not found."
           gsutil -q stat gs://soen_390_reports/$BRANCH_NAME/frontend/sonar-flutter-lint.json && gsutil cp gs://soen_390_reports/$BRANCH_NAME/frontend/sonar-flutter-lint.json frontend/reports/sonar-flutter-lint.json || echo "⚠️ Frontend lint report not found."
 
