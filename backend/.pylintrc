@@ -11,5 +11,5 @@ disable = trailing-whitespace,
           too-few-public-methods,
           unused-import
 
-[PYLINT]
-load-plugins = pylint_django
+#[PYLINT]
+#load-plugins = pylint_django
