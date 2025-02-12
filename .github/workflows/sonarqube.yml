@@ -27,48 +27,53 @@ jobs:
         run: echo "Initializing SonarCloud Analysis Workflow"
 
   fetch-artifacts:
-    name: Fetch Latest Test & Lint Reports (Backend + Frontend)
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Get Latest Workflow Run ID for Backend Tests
-        run: |
-          TEST_RUN_ID=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-          -H "Accept: application/vnd.github.v3+json" \
-          "https://api.github.com/repos/${{ github.repository }}/actions/runs?status=completed" | \
-          jq -r '.workflow_runs[] | select(.name=="Backend Tests") | .id' | head -n 1)
-
-          echo "LATEST_TEST_RUN_ID=${TEST_RUN_ID}" >> $GITHUB_ENV
-
-      - name: Get Latest Workflow Run ID for Python Linting
-        run: |
-          LINT_RUN_ID=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-          -H "Accept: application/vnd.github.v3+json" \
-          "https://api.github.com/repos/${{ github.repository }}/actions/runs?status=completed" | \
-          jq -r '.workflow_runs[] | select(.name=="Python Linting & Formatting") | .id' | head -n 1)
-
-          echo "LATEST_LINT_RUN_ID=${LINT_RUN_ID}" >> $GITHUB_ENV
-
-      - name: Get Latest Workflow Run ID for Flutter Linting
-        run: |
-          FLUTTER_LINT_RUN_ID=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-          -H "Accept: application/vnd.github.v3+json" \
-          "https://api.github.com/repos/${{ github.repository }}/actions/runs?status=completed" | \
-          jq -r '.workflow_runs[] | select(.name=="Flutter Linting") | .id' | head -n 1)
-
-          echo "LATEST_FLUTTER_LINT_RUN_ID=${FLUTTER_LINT_RUN_ID}" >> $GITHUB_ENV
-
-      - name: Get Latest Workflow Run ID for Flutter Testing
-        run: |
-          FLUTTER_TEST_RUN_ID=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-          -H "Accept: application/vnd.github.v3+json" \
-          "https://api.github.com/repos/${{ github.repository }}/actions/runs?status=completed" | \
-          jq -r '.workflow_runs[] | select(.name=="Flutter Testing") | .id' | head -n 1)
-
-          echo "LATEST_FLUTTER_TEST_RUN_ID=${FLUTTER_TEST_RUN_ID}" >> $GITHUB_ENV
-
-      - name: List Downloaded Reports
-        run: ls -R backend/reports && ls -R frontend/reports
+          name: Fetch Latest Test & Lint Reports (Backend + Frontend)
+          runs-on: ubuntu-latest
+      
+          steps:
+            - name: Ensure Report Directories Exist
+              run: |
+                mkdir -p backend/reports frontend/reports
+      
+            - name: Get Latest Workflow Run ID for Backend Tests
+              run: |
+                TEST_RUN_ID=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+                -H "Accept: application/vnd.github.v3+json" \
+                "https://api.github.com/repos/${{ github.repository }}/actions/runs?status=completed" | \
+                jq -r '.workflow_runs[] | select(.name=="Backend Tests") | .id' | head -n 1)
+      
+                echo "LATEST_TEST_RUN_ID=${TEST_RUN_ID}" >> $GITHUB_ENV
+      
+            - name: Get Latest Workflow Run ID for Python Linting
+              run: |
+                LINT_RUN_ID=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+                -H "Accept: application/vnd.github.v3+json" \
+                "https://api.github.com/repos/${{ github.repository }}/actions/runs?status=completed" | \
+                jq -r '.workflow_runs[] | select(.name=="Python Linting & Formatting") | .id' | head -n 1)
+      
+                echo "LATEST_LINT_RUN_ID=${LINT_RUN_ID}" >> $GITHUB_ENV
+      
+            - name: Get Latest Workflow Run ID for Flutter Linting
+              run: |
+                FLUTTER_LINT_RUN_ID=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+                -H "Accept: application/vnd.github.v3+json" \
+                "https://api.github.com/repos/${{ github.repository }}/actions/runs?status=completed" | \
+                jq -r '.workflow_runs[] | select(.name=="Flutter Linting") | .id' | head -n 1)
+      
+                echo "LATEST_FLUTTER_LINT_RUN_ID=${FLUTTER_LINT_RUN_ID}" >> $GITHUB_ENV
+      
+            - name: Get Latest Workflow Run ID for Flutter Testing
+              run: |
+                FLUTTER_TEST_RUN_ID=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+                -H "Accept: application/vnd.github.v3+json" \
+                "https://api.github.com/repos/${{ github.repository }}/actions/runs?status=completed" | \
+                jq -r '.workflow_runs[] | select(.name=="Flutter Testing") | .id' | head -n 1)
+      
+                echo "LATEST_FLUTTER_TEST_RUN_ID=${FLUTTER_TEST_RUN_ID}" >> $GITHUB_ENV
+      
+            - name: List Downloaded Reports
+              run: ls -R backend/reports frontend/reports || echo "⚠️ Reports not found, but proceeding."
+      
 
   sonarqube:
     name: SonarCloud
