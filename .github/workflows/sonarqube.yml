@@ -14,8 +14,8 @@ on:
    - cron: '0 2 */2 * *'  # Runs every other day at 2 AM UTC
 
 permissions:
-  actions: read  # ✅ Allows reading workflow artifacts
-  contents: read  # ✅ Required for repository access
+  actions: read  #  Allows reading workflow artifacts
+  contents: read  #  Required for repository access
 
 jobs:
   setup:
@@ -30,19 +30,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # ✅ Authenticate with Google Cloud
+      #  Authenticate with Google Cloud
       - name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCS_KEY }}
 
-      # ✅ Manually Authenticate gcloud CLI
+      #  Manually Authenticate gcloud CLI
       - name: Manually Authenticate gcloud CLI
         run: |
           gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
           gcloud auth list  # Debugging step to verify authentication
 
-      # ✅ Install Google Cloud CLI
+      #  Install Google Cloud CLI
       - name: Install Google Cloud CLI
         run: |
           sudo apt-get update && sudo apt-get install -y google-cloud-cli
@@ -50,21 +50,21 @@ jobs:
       - name: Ensure Report Directories Exist
         run: mkdir -p backend/reports frontend/reports
 
-      # ✅ Fetch Reports from GCS
+      #  Fetch Reports from GCS
       - name: Fetch Backend Reports from GCS
         run: |
           BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||' | tr '/' '_')
           
           echo "Fetching backend reports from GCS..."
-          gsutil -q stat gs://soen_390_reports/$BRANCH_NAME/backend/coverage.xml && gsutil cp gs://soen_390_reports/$BRANCH_NAME/backend/coverage.xml backend/reports/coverage.xml || echo "⚠️ Backend coverage report not found, will create an empty one."
-          gsutil -q stat gs://soen_390_reports/$BRANCH_NAME/backend/test-report.xml && gsutil cp gs://soen_390_reports/$BRANCH_NAME/backend/test-report.xml backend/reports/test-report.xml || echo "⚠️ Backend test report not found."
-          gsutil -q stat gs://soen_390_reports/$BRANCH_NAME/backend/pylint-report.json && gsutil cp gs://soen_390_reports/$BRANCH_NAME/backend/pylint-report.json backend/reports/pylint-report.json || echo "⚠️ Pylint report not found."
+          gsutil -q stat gs://soen_390_reports/$BRANCH_NAME/backend/coverage.xml && gsutil cp gs://soen_390_reports/$BRANCH_NAME/backend/coverage.xml backend/reports/coverage.xml || echo " Backend coverage report not found, will create an empty one."
+          gsutil -q stat gs://soen_390_reports/$BRANCH_NAME/backend/test-report.xml && gsutil cp gs://soen_390_reports/$BRANCH_NAME/backend/test-report.xml backend/reports/test-report.xml || echo " Backend test report not found."
+          gsutil -q stat gs://soen_390_reports/$BRANCH_NAME/backend/pylint-report.json && gsutil cp gs://soen_390_reports/$BRANCH_NAME/backend/pylint-report.json backend/reports/pylint-report.json || echo " Pylint report not found."
 
       - name: Fetch Frontend Reports from GCS
         run: |
           BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||' | tr '/' '_')
-          gsutil -q stat gs://soen_390_reports/$BRANCH_NAME/frontend/lcov.info && gsutil cp gs://soen_390_reports/$BRANCH_NAME/frontend/lcov.info frontend/reports/lcov.info || echo "⚠️ Frontend coverage report not found."
-          gsutil -q stat gs://soen_390_reports/$BRANCH_NAME/frontend/sonar-flutter-lint.json && gsutil cp gs://soen_390_reports/$BRANCH_NAME/frontend/sonar-flutter-lint.json frontend/reports/sonar-flutter-lint.json || echo "⚠️ Frontend lint report not found."
+          gsutil -q stat gs://soen_390_reports/$BRANCH_NAME/frontend/lcov.info && gsutil cp gs://soen_390_reports/$BRANCH_NAME/frontend/lcov.info frontend/reports/lcov.info || echo " Frontend coverage report not found."
+          gsutil -q stat gs://soen_390_reports/$BRANCH_NAME/frontend/sonar-flutter-lint.json && gsutil cp gs://soen_390_reports/$BRANCH_NAME/frontend/sonar-flutter-lint.json frontend/reports/sonar-flutter-lint.json || echo " Frontend lint report not found."
 
       - name: Fetch Python Lint Reports from GCS
         run: |
@@ -73,7 +73,7 @@ jobs:
       - name: List Downloaded Reports
         run: |
           echo "📄 Checking downloaded reports..."
-          ls -R backend/reports frontend/reports || echo "⚠️ No reports found."
+          ls -R backend/reports frontend/reports || echo " No reports found."
 
   sonarqube:
     name: SonarCloud Analysis
@@ -91,41 +91,41 @@ jobs:
         run: |
           mkdir -p backend/reports frontend/reports
 
-          # ✅ Create empty coverage reports if missing
+          #  Create empty coverage reports if missing
           if [ ! -f frontend/reports/lcov.info ]; then
-            echo "⚠️ Frontend coverage report missing, creating an empty one!"
+            echo " Frontend coverage report missing, creating an empty one!"
             echo "TN:" > frontend/reports/lcov.info
           fi
           
           if [ ! -f backend/reports/coverage.xml ]; then
-            echo "⚠️ Backend coverage report missing, creating an empty one!"
+            echo " Backend coverage report missing, creating an empty one!"
             touch backend/reports/coverage.xml
           fi
 
-          # ✅ Ensure empty lint reports are generated
+          #  Ensure empty lint reports are generated
           if [ ! -f backend/reports/pylint-report.json ]; then
-            echo "⚠️ Backend Pylint report missing, creating an empty one!"
+            echo " Backend Pylint report missing, creating an empty one!"
             echo '{"issues": []}' > backend/reports/pylint-report.json
           fi
 
           if [ ! -f frontend/reports/sonar-flutter-lint.json ]; then
-            echo "⚠️ Frontend lint report missing, creating an empty one!"
+            echo " Frontend lint report missing, creating an empty one!"
             echo '{"issues": []}' > frontend/reports/sonar-flutter-lint.json
           fi
 
       - name: List Reports Before Running SonarCloud
         run: |
           echo "🔍 Backend Reports:"
-          ls -lh backend/reports || echo "⚠️ No backend reports found."
+          ls -lh backend/reports || echo " No backend reports found."
           echo "🔍 Frontend Reports:"
-          ls -lh frontend/reports || echo "⚠️ No frontend reports found."
+          ls -lh frontend/reports || echo " No frontend reports found."
 
       - name: Run SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v4
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-      # ✅ Upload Updated SonarCloud Reports to GCS
+      # Upload Updated SonarCloud Reports to GCS
       - name: Upload Updated SonarCloud Reports to GCS
         if: always()  # Ensure upload happens even if SonarCloud fails
         run: |
@@ -134,10 +134,10 @@ jobs:
             echo "Uploading updated reports to GCS..."
 
             # Upload Backend Reports
-            gsutil cp backend/reports/coverage.xml gs://soen_390_reports/$BRANCH_NAME/backend/coverage.xml || echo "⚠️ No new backend coverage report to upload."
-            gsutil cp backend/reports/test-report.xml gs://soen_390_reports/$BRANCH_NAME/backend/test-report.xml || echo "⚠️ No new backend test report to upload."
-            gsutil cp backend/reports/pylint-report.json gs://soen_390_reports/$BRANCH_NAME/backend/pylint-report.json || echo "⚠️ No new Pylint report to upload."
+            gsutil cp backend/reports/coverage.xml gs://soen_390_reports/$BRANCH_NAME/backend/coverage.xml || echo " No new backend coverage report to upload."
+            gsutil cp backend/reports/test-report.xml gs://soen_390_reports/$BRANCH_NAME/backend/test-report.xml || echo " No new backend test report to upload."
+            gsutil cp backend/reports/pylint-report.json gs://soen_390_reports/$BRANCH_NAME/backend/pylint-report.json || echo " No new Pylint report to upload."
 
             # Upload Frontend Reports
-            gsutil cp frontend/reports/lcov.info gs://soen_390_reports/$BRANCH_NAME/frontend/lcov.info || echo "⚠️ No new frontend coverage report to upload."
-            gsutil cp frontend/reports/sonar-flutter-lint.json gs://soen_390_reports/$BRANCH_NAME/frontend/sonar-flutter-lint.json || echo "⚠️ No new frontend lint report to upload."
+            gsutil cp frontend/reports/lcov.info gs://soen_390_reports/$BRANCH_NAME/frontend/lcov.info || echo " No new frontend coverage report to upload."
+            gsutil cp frontend/reports/sonar-flutter-lint.json gs://soen_390_reports/$BRANCH_NAME/frontend/sonar-flutter-lint.json || echo " No new frontend lint report to upload."

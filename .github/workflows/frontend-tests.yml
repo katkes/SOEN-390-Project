@@ -33,38 +33,38 @@ jobs:
           flutter test --coverage
           mv coverage/lcov.info reports/lcov.info
 
-      # ✅ Authenticate with Google Cloud
+      #  Authenticate with Google Cloud
       - name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCS_KEY }}
 
-      # ✅ Manually Authenticate gcloud CLI (Fix for "No credentialed accounts" issue)
+      #  Manually Authenticate gcloud CLI (Fix for "No credentialed accounts" issue)
       - name: Manually Authenticate gcloud CLI
         run: |
           gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
           gcloud auth list  # Debugging step to verify authentication
 
-      # ✅ Install Google Cloud CLI
+      #  Install Google Cloud CLI
       - name: Install Google Cloud CLI
         run: |
           sudo apt-get update && sudo apt-get install -y google-cloud-cli
 
-      # ✅ Check if folder exists in GCS
+      #  Check if folder exists in GCS
       - name: Check If Folder Exists in GCS
         run: |
           BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's/refs\/heads\///' | tr '/' '_')
           
           echo "Checking if folder exists in GCS..."
           if gsutil -q stat gs://soen_390_reports/$BRANCH_NAME/frontend/.keep; then
-            echo "✅ Folder already exists in GCS. Skipping folder creation."
+            echo " Folder already exists in GCS. Skipping folder creation."
           else
-            echo "❌ Folder does not exist. Creating placeholder to maintain structure..."
+            echo " Folder does not exist. Creating placeholder to maintain structure..."
             echo "Placeholder file" > frontend/reports/.keep
             gsutil -m cp frontend/reports/.keep gs://soen_390_reports/$BRANCH_NAME/frontend/.keep
           fi
 
-      # ✅ Upload Report to GCS
+      #  Upload Report to GCS
       - name: Upload Report to GCS
         run: |
           BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's/refs\/heads\///' | tr '/' '_')
@@ -72,4 +72,4 @@ jobs:
           echo "Uploading report to GCS..."
           gsutil -m cp frontend/reports/lcov.info gs://soen_390_reports/$BRANCH_NAME/frontend/lcov.info
 
-          echo "✅ Report successfully uploaded to GCS!"
+          echo " Report successfully uploaded to GCS!"

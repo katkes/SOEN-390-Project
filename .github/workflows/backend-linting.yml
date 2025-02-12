@@ -50,38 +50,38 @@ jobs:
           path: backend/reports/pylint-report.json
           retention-days: 1
 
-      # ✅ Authenticate with Google Cloud
+      #  Authenticate with Google Cloud
       - name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCS_KEY }}
 
-      # ✅ Manually Authenticate gcloud CLI
+      #  Manually Authenticate gcloud CLI
       - name: Manually Authenticate gcloud CLI
         run: |
           gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
           gcloud auth list  # Debugging step to verify authentication
 
-      # ✅ Install Google Cloud CLI
+      #  Install Google Cloud CLI
       - name: Install Google Cloud CLI
         run: |
           sudo apt-get update && sudo apt-get install -y google-cloud-cli
 
-      # ✅ Ensure Folder Exists in GCS
+      #  Ensure Folder Exists in GCS
       - name: Ensure Folder Exists in GCS
         run: |
           BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||' | tr '/' '_')
 
           echo "Checking if folder exists in GCS..."
           if gsutil -q stat gs://soen_390_reports/$BRANCH_NAME/backend/.keep; then
-            echo "✅ Folder already exists in GCS."
+            echo " Folder already exists in GCS."
           else
-            echo "❌ Folder does not exist. Creating placeholder..."
+            echo " Folder does not exist. Creating placeholder..."
             echo "Placeholder file" > backend/reports/.keep
             gsutil cp backend/reports/.keep gs://soen_390_reports/$BRANCH_NAME/backend/.keep
           fi
 
-      # ✅ Upload Linting Reports to GCS
+      #  Upload Linting Reports to GCS
       - name: Upload Pylint Report to GCS
         run: |
           BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||' | tr '/' '_')

@@ -3,7 +3,7 @@ name: Build and Push Multi-Arch Docker Image
 on:
   push:
     branches:
-      - '**'  # ✅ Triggers on any push to any branch
+      - '**'  #  Triggers on any push to any branch
 
 jobs:
   build-and-push:
@@ -29,11 +29,11 @@ jobs:
       - name: Set DOCKER_TAG
         run: |
             if [[ "${{ github.ref }}" == refs/pull/* ]]; then
-              BRANCH_NAME="${{ github.head_ref }}"  # ✅ Use source branch for PRs
+              BRANCH_NAME="${{ github.head_ref }}"  #  Use source branch for PRs
             else
               BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||')
             fi
-            echo "DOCKER_TAG=${BRANCH_NAME}" >> $GITHUB_ENV  # ✅ Set for later steps
+            echo "DOCKER_TAG=${BRANCH_NAME}" >> $GITHUB_ENV  #  Set for later steps
         
       - name: Debug Docker Tag
         run: |
