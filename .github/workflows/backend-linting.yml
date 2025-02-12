@@ -40,9 +40,10 @@ jobs:
           credentials_json: ${{ secrets.GCS_KEY }}
 
       # Install Google Cloud SDK
-      - name: Install Google Cloud SDK
+      - name: Install Google Cloud CLI
         run: |
-          sudo apt-get update && sudo apt-get install -y google-cloud-sdk
+            sudo apt-get update && sudo apt-get install -y google-cloud-cli
+
 
       # Upload Pylint reports to Google Cloud Storage
       - name: Upload Pylint reports to GCS

@@ -35,10 +35,10 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCS_KEY }}
 
-      - name: Install Google Cloud SDK
+      - name: Install Google Cloud CLI
         run: |
-          sudo apt-get update && sudo apt-get install -y google-cloud-sdk
-
+            sudo apt-get update && sudo apt-get install -y google-cloud-cli
+  
       - name: Ensure Report Directories Exist
         run: mkdir -p backend/reports frontend/reports
 
