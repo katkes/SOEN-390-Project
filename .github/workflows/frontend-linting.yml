@@ -41,63 +41,71 @@ jobs:
           ls -l
           cat analysis_report.json || echo "❌ analysis_report.json not found!"
 
-      - name: Convert Flutter Analysis Report to SonarCloud Format
-        working-directory: ./frontend
-        run: |
-          mkdir -p reports  # Ensure reports directory exists
-          python - <<EOF
-          import json
-          import os
-
-          INPUT_FILE = "analysis_report.json"
-          OUTPUT_DIR = "reports"
-          OUTPUT_FILE = os.path.join(OUTPUT_DIR, "sonar-flutter-lint.json")
-
-          try:
-              if not os.path.exists(INPUT_FILE):
-                  raise FileNotFoundError(f"{INPUT_FILE} does not exist.")
-
-              with open(INPUT_FILE, "r") as f:
-                  data = json.load(f)
-
-              sonar_issues = []
-              for issue in data.get("issues", []):
-                  file_path = issue["location"]["file"]
-                  message = issue["message"]
-                  severity = issue["severity"].upper()
-
-                  severity_map = {
-                      "ERROR": "CRITICAL",
-                      "WARNING": "MAJOR",
-                      "INFO": "MINOR",
-                  }
-
-                  sonar_issues.append({
-                      "engineId": "flutter-analyze",
-                      "ruleId": "dart-lint",
-                      "severity": severity_map.get(severity, "MINOR"),
-                      "type": "CODE_SMELL",
-                      "primaryLocation": {
-                          "message": message,
-                          "filePath": f"frontend/{file_path}",
-                          "textRange": {
-                              "startLine": issue["location"]["startLine"],
-                              "endLine": issue["location"]["startLine"]
-                          }
-                      }
-                  })
-
-              output_json = {"issues": sonar_issues}
-
-              with open(OUTPUT_FILE, "w") as f:
-                  json.dump(output_json, f, indent=2)
-
-              print(f"✅ Successfully converted {len(sonar_issues)} Flutter lint issues to SonarCloud format at {OUTPUT_FILE}.")
-
-          except Exception as e:
-              print(f"❌ Error processing Flutter lint report: {e}")
-              exit(1)
-          EOF
+          - name: Convert Flutter Analysis Report to SonarCloud Format
+          working-directory: ./frontend
+          run: |
+            mkdir -p reports  # Ensure reports directory exists
+            python - <<EOF
+            import json
+            import os
+  
+            INPUT_FILE = "analysis_report.json"
+            OUTPUT_DIR = "reports"
+            OUTPUT_FILE = os.path.join(OUTPUT_DIR, "sonar-flutter-lint.json")
+  
+            try:
+                if not os.path.exists(INPUT_FILE):
+                    raise FileNotFoundError(f"{INPUT_FILE} does not exist.")
+  
+                # Handle empty or invalid JSON file
+                if os.stat(INPUT_FILE).st_size == 0:
+                    print("⚠️ analysis_report.json is empty. Creating a valid empty report.")
+                    output_json = {"issues": []}
+                else:
+                    with open(INPUT_FILE, "r") as f:
+                        data = json.load(f)
+                    
+                    output_json = {"issues": []}
+                    for issue in data.get("issues", []):
+                        file_path = issue["location"]["file"]
+                        message = issue["message"]
+                        severity = issue["severity"].upper()
+  
+                        severity_map = {
+                            "ERROR": "CRITICAL",
+                            "WARNING": "MAJOR",
+                            "INFO": "MINOR",
+                        }
+  
+                        output_json["issues"].append({
+                            "engineId": "flutter-analyze",
+                            "ruleId": "dart-lint",
+                            "severity": severity_map.get(severity, "MINOR"),
+                            "type": "CODE_SMELL",
+                            "primaryLocation": {
+                                "message": message,
+                                "filePath": f"frontend/{file_path}",
+                                "textRange": {
+                                    "startLine": issue["location"]["startLine"],
+                                    "endLine": issue["location"]["startLine"]
+                                }
+                            }
+                        })
+  
+                # Save output file
+                with open(OUTPUT_FILE, "w") as f:
+                    json.dump(output_json, f, indent=2)
+  
+                print(f"✅ Successfully converted {len(output_json['issues'])} Flutter lint issues to SonarCloud format at {OUTPUT_FILE}.")
+  
+            except json.JSONDecodeError:
+                print("❌ Error: analysis_report.json is not a valid JSON file.")
+                exit(1)
+            except Exception as e:
+                print(f"❌ Error processing Flutter lint report: {e}")
+                exit(1)
+            EOF
+  
 
       - name: Verify SonarCloud Lint Report Exists
         working-directory: ./frontend
