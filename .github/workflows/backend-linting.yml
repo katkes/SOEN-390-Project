@@ -37,7 +37,6 @@ jobs:
         working-directory: ./backend
         run: |
           poetry install --no-root
-          poetry install  # ✅ Ensures dependencies & the backend package are installed
 
       - name: Verify Installed Packages
         run: poetry run pip list
