@@ -21,46 +21,44 @@ jobs:
         with:
           python-version: "3.10"
 
-      - name: Install Poetry
-        run: pip install poetry
-
-      - name: Configure Poetry Virtualenv
-        working-directory: ./backend
-        run: poetry config virtualenvs.in-project true
-
       - name: Install Dependencies
         working-directory: ./backend
-        run: poetry install --no-root
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-      - name: Debug Poetry Virtualenv
+      - name: Debug Installed Packages
         working-directory: ./backend
         run: |
-          echo "Poetry environment info:"
-          poetry env info
+          source venv/bin/activate
+          pip list
 
-      - name: Verify Installed Packages
+      - name: Install astroid (Specific Version)
         working-directory: ./backend
-        run: poetry run pip list
-
-      - name: Install astroid
-        working-directory: ./backend
-        run: poetry run pip install astroid==2.15.8
+        run: |
+          source venv/bin/activate
+          pip install astroid==2.15.8
 
       - name: Debug Pylint and Astroid Versions
         working-directory: ./backend
         run: |
-          poetry run pylint --version
-          poetry run pip show astroid
+          source venv/bin/activate
+          pylint --version
+          pip show astroid
 
       - name: Run Pylint (Generate JSON)
         working-directory: ./backend
         run: |
+          source venv/bin/activate
           mkdir -p reports
-          poetry run pylint --verbose --output-format=json --output=reports/pylint-report.json .
+          pylint --output-format=json --output=reports/pylint-report.json .
 
       - name: Convert Pylint JSON to SonarQube Format
         working-directory: ./backend
         run: |
+          source venv/bin/activate
           python scripts/convert_pylint_to_sonar.py reports/pylint-report.json reports/pylint-sonarqube.json
 
       - name: Authenticate with Google Cloud
