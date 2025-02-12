@@ -21,19 +21,24 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Install Poetry
+        run: pip install poetry  # ✅ Install Poetry first
 
+      - name: Verify Poetry Installation
+        run: poetry --version
+
+      - name: Configure Poetry to Use Local Virtualenv
+        run: poetry config virtualenvs.in-project true  # ✅ Now it will work!
+
+      - name: Clear Poetry Cache (Prevent Corrupt Installs)
+        run: poetry cache clear pypi --all
 
       - name: Install Dependencies
         working-directory: ./backend
         run: |
-          pip install poetry
-          poetry cache clear pypi --all  # Ensure fresh dependencies
           poetry install --no-root
-          poetry install  # Install package dependencies
+          poetry install  # ✅ Ensures dependencies & the backend package are installed
 
-      - name: Configure Poetry to Use Local Virtualenv
-        run: poetry config virtualenvs.in-project true
-        
       - name: Verify Installed Packages
         run: poetry run pip list
 
