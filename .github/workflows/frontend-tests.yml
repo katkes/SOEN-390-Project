@@ -33,19 +33,22 @@ jobs:
           flutter test --coverage
           mv coverage/lcov.info reports/lcov.info
 
+      # ✅ Install Google Cloud CLI
+      - name: Install Google Cloud CLI
+        run: |
+          sudo apt-get update && sudo apt-get install -y google-cloud-cli
+          
       # ✅ Verify Google Cloud Authentication
       - name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCS_KEY }}
+          export_environment_variables: true
 
       - name: Verify Google Cloud Authentication
         run: gcloud auth list
 
-      # ✅ Install Google Cloud CLI
-      - name: Install Google Cloud CLI
-        run: |
-          sudo apt-get update && sudo apt-get install -y google-cloud-cli
+
 
       # ✅ Fix: Use `gsutil -q stat` Instead of `gsutil ls`
       - name: Check If Folder Exists in GCS
