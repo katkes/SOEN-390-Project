@@ -1,0 +1,15 @@
+[MASTER]
+recursive = yes
+ignore = settings.py, admin.py, apps.py, migrations, __pycache__, venv
+ignore-patterns = migrations/.*, __pycache__/.*, venv/.*, .*.egg-info/.*, .*.pyc
+
+[MESSAGES CONTROL]
+disable = trailing-whitespace,
+          missing-final-newline,
+          trailing-newlines,
+          line-too-long,
+          too-few-public-methods,
+          unused-import
+
+[PYLINT]
+load-plugins = pylint_django, pylint_plugin_utils
