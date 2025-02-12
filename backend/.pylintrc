@@ -12,4 +12,4 @@ disable = trailing-whitespace,
           unused-import
 
 [PYLINT]
-load-plugins = pylint_django, pylint_plugin_utils
+load-plugins = pylint_django
