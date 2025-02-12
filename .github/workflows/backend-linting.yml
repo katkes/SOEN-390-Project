@@ -22,7 +22,7 @@ jobs:
           pip install poetry
           poetry install --no-root
 
-      - name: Run Pylint (Generate SARIF & JSON)
+      - name: Run Pylint (Generate JSON)
         working-directory: ./backend
         run: |
           mkdir -p reports

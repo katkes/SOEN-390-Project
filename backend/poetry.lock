@@ -24,7 +24,7 @@ version = "2.15.8"
 description = "An abstract syntax tree for Python with inference support."
 optional = false
 python-versions = ">=3.7.2"
-groups = ["main"]
+groups = ["main", "dev"]
 files = [
     {file = "astroid-2.15.8-py3-none-any.whl", hash = "sha256:1aa149fc5c6589e3d0ece885b4491acd80af4f087baafa3fb5203b113e68cd3c"},
     {file = "astroid-2.15.8.tar.gz", hash = "sha256:6c107453dffee9055899705de3c9ead36e74119cee151e5a9aaf7f0b0e020a6a"},
@@ -260,12 +260,12 @@ version = "0.4.6"
 description = "Cross-platform colored terminal text."
 optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,!=3.6.*,>=2.7"
-groups = ["main"]
-markers = "platform_system == \"Windows\" or sys_platform == \"win32\""
+groups = ["main", "dev"]
 files = [
     {file = "colorama-0.4.6-py2.py3-none-any.whl", hash = "sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6"},
     {file = "colorama-0.4.6.tar.gz", hash = "sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44"},
 ]
+markers = {main = "platform_system == \"Windows\" or sys_platform == \"win32\"", dev = "sys_platform == \"win32\""}
 
 [[package]]
 name = "dill"
@@ -273,7 +273,7 @@ version = "0.3.9"
 description = "serialize all of Python"
 optional = false
 python-versions = ">=3.8"
-groups = ["main"]
+groups = ["main", "dev"]
 files = [
     {file = "dill-0.3.9-py3-none-any.whl", hash = "sha256:468dff3b89520b474c0397703366b7b95eebe6303f108adf9b19da1f702be87a"},
     {file = "dill-0.3.9.tar.gz", hash = "sha256:81aa267dddf68cbfe8029c42ca9ec6a4ab3b22371d1c450abc54422577b4512c"},
@@ -396,7 +396,7 @@ version = "5.13.2"
 description = "A Python utility / library to sort Python imports."
 optional = false
 python-versions = ">=3.8.0"
-groups = ["main"]
+groups = ["main", "dev"]
 files = [
     {file = "isort-5.13.2-py3-none-any.whl", hash = "sha256:8ca5e72a8d85860d5a3fa69b8745237f2939afe12dbf656afbcb47fe72d947a6"},
     {file = "isort-5.13.2.tar.gz", hash = "sha256:48fdfcb9face5d58a4f6dde2e72a1fb8dcaf8ab26f95ab49fab84c2ddefb0109"},
@@ -431,7 +431,7 @@ version = "1.10.0"
 description = "A fast and thorough lazy object proxy."
 optional = false
 python-versions = ">=3.8"
-groups = ["main"]
+groups = ["main", "dev"]
 files = [
     {file = "lazy-object-proxy-1.10.0.tar.gz", hash = "sha256:78247b6d45f43a52ef35c25b5581459e85117225408a4128a3daf8bf9648ac69"},
     {file = "lazy_object_proxy-1.10.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:855e068b0358ab916454464a884779c7ffa312b8925c6f7401e952dcf3b89977"},
@@ -494,7 +494,7 @@ version = "0.7.0"
 description = "McCabe checker, plugin for flake8"
 optional = false
 python-versions = ">=3.6"
-groups = ["main"]
+groups = ["main", "dev"]
 files = [
     {file = "mccabe-0.7.0-py2.py3-none-any.whl", hash = "sha256:6c2d30ab6be0e4a46919781807b4f0d834ebdd6c6e3dca0bda5a15f863427b6e"},
     {file = "mccabe-0.7.0.tar.gz", hash = "sha256:348e0240c33b60bbdf4e523192ef919f28cb2c3d7d5c7794f74009290f236325"},
@@ -542,7 +542,7 @@ version = "4.3.6"
 description = "A small Python package for determining appropriate platform-specific dirs, e.g. a `user data dir`."
 optional = false
 python-versions = ">=3.8"
-groups = ["main"]
+groups = ["main", "dev"]
 files = [
     {file = "platformdirs-4.3.6-py3-none-any.whl", hash = "sha256:73e575e1408ab8103900836b97580d5307456908a03e92031bab39e4554cc3fb"},
     {file = "platformdirs-4.3.6.tar.gz", hash = "sha256:357fb2acbc885b0419afd3ce3ed34564c13c9b95c89360cd9563f73aa5e2b907"},
@@ -575,7 +575,7 @@ version = "2.17.7"
 description = "python code static checker"
 optional = false
 python-versions = ">=3.7.2"
-groups = ["main"]
+groups = ["main", "dev"]
 files = [
     {file = "pylint-2.17.7-py3-none-any.whl", hash = "sha256:27a8d4c7ddc8c2f8c18aa0050148f89ffc09838142193fdbe98f172781a3ff87"},
     {file = "pylint-2.17.7.tar.gz", hash = "sha256:f4fcac7ae74cfe36bc8451e931d8438e4a476c20314b1101c458ad0f05191fad"},
@@ -821,7 +821,7 @@ version = "2.2.1"
 description = "A lil' TOML parser"
 optional = false
 python-versions = ">=3.8"
-groups = ["main"]
+groups = ["main", "dev"]
 markers = "python_version < \"3.11\""
 files = [
     {file = "tomli-2.2.1-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:678e4fa69e4575eb77d103de3df8a895e1591b48e740211bd1067378c69e8249"},
@@ -864,7 +864,7 @@ version = "0.13.2"
 description = "Style preserving TOML library"
 optional = false
 python-versions = ">=3.8"
-groups = ["main"]
+groups = ["main", "dev"]
 files = [
     {file = "tomlkit-0.13.2-py3-none-any.whl", hash = "sha256:7a974427f6e119197f670fbbbeae7bef749a6c14e793db934baefc1b5f03efde"},
     {file = "tomlkit-0.13.2.tar.gz", hash = "sha256:fff5fe59a87295b278abd31bec92c15d9bc4a06885ab12bcea52c71119392e79"},
@@ -876,11 +876,12 @@ version = "4.12.2"
 description = "Backported and Experimental Type Hints for Python 3.8+"
 optional = false
 python-versions = ">=3.8"
-groups = ["main"]
+groups = ["main", "dev"]
 files = [
     {file = "typing_extensions-4.12.2-py3-none-any.whl", hash = "sha256:04e5ca0351e0f3f85c6853954072df659d0d13fac324d0072316b67d7794700d"},
     {file = "typing_extensions-4.12.2.tar.gz", hash = "sha256:1a7ead55c7e559dd4dee8856e3a88b41225abfe1ce8df57b7c13915fe121ffb8"},
 ]
+markers = {dev = "python_version < \"3.11\""}
 
 [[package]]
 name = "tzdata"
@@ -919,7 +920,7 @@ version = "1.17.2"
 description = "Module for decorators, wrappers and monkey patching."
 optional = false
 python-versions = ">=3.8"
-groups = ["main"]
+groups = ["main", "dev"]
 files = [
     {file = "wrapt-1.17.2-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:3d57c572081fed831ad2d26fd430d565b76aa277ed1d30ff4d40670b1c0dd984"},
     {file = "wrapt-1.17.2-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:b5e251054542ae57ac7f3fba5d10bfff615b6c2fb09abeb37d2f1463f841ae22"},
@@ -1005,4 +1006,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "c015346cec882da7c529a9176ccf4eb2764ca8f2431bf2c0807d37b47c7e9328"
+content-hash = "96bc7727cda20f55939173d11d783683d5566d5fe4146ada4c68a868bbca0e7c"
