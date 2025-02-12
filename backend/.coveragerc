@@ -2,21 +2,11 @@
 omit =
     */migrations/*
     */tests/*
-    */settings.py
     manage.py
+    */settings.py
     */wsgi.py
     */asgi.py
-    */routing.py
-    */services/*
-    */admin.py
-    */apps.py
-
-[report]
-exclude_lines =
-    # Ignore class definitions that should not be tested
-    if __name__ == .__main__.
-    pragma: no cover
-    raise NotImplementedError
-    @abstractmethod
-    def __repr__
-    def __str__
+    */__init__.py
+    */static/*
+    */media/*
+    */myapp/management/commands/*

@@ -86,7 +86,7 @@ jobs:
           EOF
 
       - name: Upload Flutter Lint Report as Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: flutter-lint-report
           path: frontend/sonar-flutter-lint.json

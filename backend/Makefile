@@ -34,12 +34,12 @@ else
 		--push .
 endif
 
-# ✅ Run tests
+# ✅ Run tests (updated)
 run-tests:
 ifeq ($(OS),Windows_NT)
-	cmd /c "set DOCKER_HUB_USER=$(strip $(DOCKER_HUB_USER))&& set DOCKER_TAG=$(shell git rev-parse --abbrev-ref HEAD)&& docker compose -f docker-compose.test.yml up --abort-on-container-exit"
+	cmd /c "set DOCKER_HUB_USER=$(strip $(DOCKER_HUB_USER))&& set DOCKER_TAG=$(shell git rev-parse --abbrev-ref HEAD)&& docker compose -f ../docker-compose.test.yml up --abort-on-container-exit"
 else
 	export DOCKER_HUB_USER=$(strip $(DOCKER_HUB_USER)); \
 	export DOCKER_TAG=$(shell git rev-parse --abbrev-ref HEAD); \
-	docker compose -f docker-compose.test.yml up --abort-on-container-exit
+	docker compose -f ../docker-compose.test.yml up --abort-on-container-exit
 endif
