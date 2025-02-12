@@ -39,50 +39,47 @@ jobs:
           poetry env info
 
       - name: Verify Installed Packages
-        working-directory: ./backend  # ✅ Ensure correct directory
+        working-directory: ./backend
         run: poetry run pip list
 
+      - name: Install astroid
+        working-directory: ./backend
+        run: poetry run pip install astroid==2.15.8
+
+      - name: Debug Pylint and Astroid Versions
+        working-directory: ./backend
+        run: |
+          poetry run pylint --version
+          poetry run pip show astroid
 
       - name: Run Pylint (Generate JSON)
         working-directory: ./backend
         run: |
           mkdir -p reports
-          poetry run pylint --output-format=json --output=reports/pylint-report.json .
-
-      - name: Debug Poetry Virtualenv
-        run: |
-          echo "Python version:"
-          poetry run python --version
-          echo "Virtualenv path:"
-          poetry env info
+          poetry run pylint --verbose --output-format=json --output=reports/pylint-report.json .
 
       - name: Convert Pylint JSON to SonarQube Format
         working-directory: ./backend
         run: |
           python scripts/convert_pylint_to_sonar.py reports/pylint-report.json reports/pylint-sonarqube.json
 
-      # ✅ Authenticate with Google Cloud
       - name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCS_KEY }}
 
-      # ✅ Manually Authenticate `gcloud` CLI (Fix for "No credentialed accounts" issue)
       - name: Manually Authenticate gcloud CLI
         run: |
           gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
-          gcloud auth list  # Debugging step to verify authentication
+          gcloud auth list
 
-      # ✅ Install Google Cloud CLI
       - name: Install Google Cloud CLI
         run: |
           sudo apt-get update && sudo apt-get install -y google-cloud-cli
 
-      # ✅ Ensure Folder Exists in GCS (Fixes permission issue)
       - name: Ensure Folder Exists in GCS
         run: |
           BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||' | tr '/' '_')
-
           echo "Checking if folder exists in GCS..."
           if gsutil -q stat gs://soen_390_reports/$BRANCH_NAME/backend/.keep; then
             echo "✅ Folder already exists in GCS."
@@ -92,7 +89,6 @@ jobs:
             gsutil cp backend/reports/.keep gs://soen_390_reports/$BRANCH_NAME/backend/.keep
           fi
 
-      # ✅ Upload Pylint Reports to GCS
       - name: Upload Pylint Reports to GCS
         run: |
           BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||' | tr '/' '_')
