@@ -73,16 +73,16 @@ jobs:
           BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||' | tr '/' '_')
 
           echo "Checking if folder exists in GCS..."
-          if gsutil -q stat gs://soen_390_reports/$BRANCH_NAME/linting/.keep; then
+          if gsutil -q stat gs://soen_390_reports/$BRANCH_NAME/backend/.keep; then
             echo "✅ Folder already exists in GCS."
           else
             echo "❌ Folder does not exist. Creating placeholder..."
             echo "Placeholder file" > backend/reports/.keep
-            gsutil cp backend/reports/.keep gs://soen_390_reports/$BRANCH_NAME/linting/.keep
+            gsutil cp backend/reports/.keep gs://soen_390_reports/$BRANCH_NAME/backend/.keep
           fi
 
       # ✅ Upload Linting Reports to GCS
       - name: Upload Pylint Report to GCS
         run: |
           BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||' | tr '/' '_')
-          gsutil cp backend/reports/pylint-report.json gs://soen_390_reports/$BRANCH_NAME/linting/pylint-report.json
+          gsutil cp backend/reports/pylint-report.json gs://soen_390_reports/$BRANCH_NAME/backend/pylint-report.json
