@@ -34,8 +34,26 @@ jobs:
           docker pull proppele1/soen-390-backend:${DOCKER_TAG}
           docker pull postgis/postgis:latest
       
+      - name: Create .env.test file
+        run: |
+          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env.test
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env.test
+          echo "DB_USER=${{ secrets.DB_USER }}" >> .env.test
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env.test
+          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env.test
+          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env.test
+          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env.test
+          echo "GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }}" >> .env.test
+          echo "DJANGO_TEST=true" >> .env.test
+
+      - name: Debug .env.test
+        run: |
+          echo "🔍 Checking .env.test file..."
+          cat .env.test | grep -v 'SECRET_KEY\|DB_PASSWORD' || echo "⚠️ .env.test file is empty or missing."
+
       - name: Start services with Docker Compose
-        run: docker compose -f docker-compose.test.yml up --abort-on-container-exit
+        run: |
+          docker compose -f docker-compose.test.yml --env-file .env.test up --abort-on-container-exit
 
       - name: Create reports directory in backend
         run: mkdir -p backend/reports
