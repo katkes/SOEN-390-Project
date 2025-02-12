@@ -27,53 +27,75 @@ jobs:
         run: echo "Initializing SonarCloud Analysis Workflow"
 
   fetch-artifacts:
-          name: Fetch Latest Test & Lint Reports (Backend + Frontend)
-          runs-on: ubuntu-latest
-      
-          steps:
-            - name: Ensure Report Directories Exist
-              run: |
-                mkdir -p backend/reports frontend/reports
-      
-            - name: Get Latest Workflow Run ID for Backend Tests
-              run: |
-                TEST_RUN_ID=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-                -H "Accept: application/vnd.github.v3+json" \
-                "https://api.github.com/repos/${{ github.repository }}/actions/runs?status=completed" | \
-                jq -r '.workflow_runs[] | select(.name=="Backend Tests") | .id' | head -n 1)
-      
-                echo "LATEST_TEST_RUN_ID=${TEST_RUN_ID}" >> $GITHUB_ENV
-      
-            - name: Get Latest Workflow Run ID for Python Linting
-              run: |
-                LINT_RUN_ID=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-                -H "Accept: application/vnd.github.v3+json" \
-                "https://api.github.com/repos/${{ github.repository }}/actions/runs?status=completed" | \
-                jq -r '.workflow_runs[] | select(.name=="Python Linting & Formatting") | .id' | head -n 1)
-      
-                echo "LATEST_LINT_RUN_ID=${LINT_RUN_ID}" >> $GITHUB_ENV
-      
-            - name: Get Latest Workflow Run ID for Flutter Linting
-              run: |
-                FLUTTER_LINT_RUN_ID=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-                -H "Accept: application/vnd.github.v3+json" \
-                "https://api.github.com/repos/${{ github.repository }}/actions/runs?status=completed" | \
-                jq -r '.workflow_runs[] | select(.name=="Flutter Linting") | .id' | head -n 1)
-      
-                echo "LATEST_FLUTTER_LINT_RUN_ID=${FLUTTER_LINT_RUN_ID}" >> $GITHUB_ENV
-      
-            - name: Get Latest Workflow Run ID for Flutter Testing
-              run: |
-                FLUTTER_TEST_RUN_ID=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-                -H "Accept: application/vnd.github.v3+json" \
-                "https://api.github.com/repos/${{ github.repository }}/actions/runs?status=completed" | \
-                jq -r '.workflow_runs[] | select(.name=="Flutter Testing") | .id' | head -n 1)
-      
-                echo "LATEST_FLUTTER_TEST_RUN_ID=${FLUTTER_TEST_RUN_ID}" >> $GITHUB_ENV
-      
-            - name: List Downloaded Reports
-              run: ls -R backend/reports frontend/reports || echo "⚠️ Reports not found, but proceeding."
-      
+    name: Fetch Latest Test & Lint Reports (Backend + Frontend)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ensure Report Directories Exist
+        run: mkdir -p backend/reports frontend/reports
+
+      - name: Get Latest Workflow Run ID for Backend Tests
+        run: |
+          echo "🔍 Fetching latest workflow run ID for Backend Tests..."
+          TEST_RUN_ID=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          "https://api.github.com/repos/${{ github.repository }}/actions/runs?status=completed&branch=${{ github.ref_name }}" | \
+          jq -r '.workflow_runs[] | select(.name=="Backend Tests") | .id' | head -n 1)
+
+          if [[ -z "$TEST_RUN_ID" ]]; then
+            echo "⚠️ No Backend Tests run found!"
+          else
+            echo "✅ Backend Tests Run ID: $TEST_RUN_ID"
+          fi
+
+          echo "LATEST_TEST_RUN_ID=${TEST_RUN_ID}" >> $GITHUB_ENV
+
+      - name: Get Latest Workflow Run ID for Flutter Testing
+        run: |
+          echo "🔍 Fetching latest workflow run ID for Flutter Testing..."
+          FLUTTER_TEST_RUN_ID=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          "https://api.github.com/repos/${{ github.repository }}/actions/runs?status=completed&branch=${{ github.ref_name }}" | \
+          jq -r '.workflow_runs[] | select(.name=="Flutter Testing") | .id' | head -n 1)
+
+          if [[ -z "$FLUTTER_TEST_RUN_ID" ]]; then
+            echo "⚠️ No Flutter Tests run found!"
+          else
+            echo "✅ Flutter Testing Run ID: $FLUTTER_TEST_RUN_ID"
+          fi
+
+          echo "LATEST_FLUTTER_TEST_RUN_ID=${FLUTTER_TEST_RUN_ID}" >> $GITHUB_ENV
+
+      - name: Download Flutter Test Coverage Artifact
+        run: |
+          echo "🔽 Downloading Flutter coverage artifact..."
+          FLUTTER_TEST_ARTIFACT_URL=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          "https://api.github.com/repos/${{ github.repository }}/actions/runs/${LATEST_FLUTTER_TEST_RUN_ID}/artifacts" | \
+          jq -r '.artifacts[] | select(.name=="frontend-coverage") | .archive_download_url')
+
+          if [[ -z "$FLUTTER_TEST_ARTIFACT_URL" ]]; then
+            echo "❌ No Flutter test coverage artifact found!"
+            exit 1
+          fi
+
+          echo "✅ Artifact URL: $FLUTTER_TEST_ARTIFACT_URL"
+
+          curl -s -L -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -o frontend-coverage.zip "$FLUTTER_TEST_ARTIFACT_URL"
+
+          echo "📂 Extracting coverage artifact..."
+          mkdir -p frontend/coverage
+          unzip -o frontend-coverage.zip -d frontend/coverage
+
+          if [[ ! -s frontend/coverage/lcov.info ]]; then
+            echo "⚠️ Downloaded coverage file is empty!"
+          fi
+
+      - name: List Downloaded Reports
+        run: |
+          echo "📄 Checking downloaded reports..."
+          ls -R backend/reports frontend/reports || echo "⚠️ Reports not found, but proceeding."
 
   sonarqube:
     name: SonarCloud
@@ -90,41 +112,16 @@ jobs:
         run: |
           mkdir -p backend/reports frontend/reports
 
-          # Create empty test coverage report if missing
-          if [ ! -f backend/reports/coverage.xml ]; then
-            echo '<?xml version="1.0" encoding="UTF-8"?><coverage></coverage>' > backend/reports/coverage.xml
-            echo "⚠️ Created empty backend coverage report."
-          fi
-
-          # Create empty test execution report if missing
-          if [ ! -f backend/reports/test-report.xml ]; then
-            echo '<?xml version="1.0" encoding="UTF-8"?><testsuites></testsuites>' > backend/reports/test-report.xml
-            echo "⚠️ Created empty backend test report."
-          fi
-
-          # Create empty pylint report if missing
-          if [ ! -f backend/reports/pylint-sonarqube.json ]; then
-            echo '{"issues": []}' > backend/reports/pylint-sonarqube.json
-            echo "⚠️ Created empty pylint report."
-          fi
-
-          # Create empty Flutter lint report if missing
-          if [ ! -f frontend/reports/sonar-flutter-lint.json ]; then
-            echo '{"issues": []}' > frontend/reports/sonar-flutter-lint.json
-            echo "⚠️ Created empty Flutter lint report."
-          fi
-
-          # Create empty frontend test coverage report if missing
           if [ ! -f frontend/coverage/lcov.info ]; then
+            echo "⚠️ Coverage report missing, creating empty file!"
             echo "TN:" > frontend/coverage/lcov.info
-            echo "⚠️ Created empty frontend coverage report."
           fi
 
       - name: List Reports Before Running SonarCloud
         run: |
-          echo "Backend Reports:"
+          echo "🔍 Backend Reports:"
           ls -lh backend/reports
-          echo "Frontend Reports:"
+          echo "🔍 Frontend Reports:"
           ls -lh frontend/reports
 
       - name: Run SonarCloud Scan
