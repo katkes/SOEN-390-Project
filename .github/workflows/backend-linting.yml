@@ -26,15 +26,16 @@ jobs:
         working-directory: ./backend
         run: |
           mkdir -p reports
-          poetry run pylint --output-format=json . | tee reports/pylint-report.json
+          poetry run pylint --output-format=sarif --output=reports/pylint-report.sarif . 
+
 
       - name: Run Black Formatting
         working-directory: ./backend
         run: poetry run black --check .
 
-      - name: Upload Pylint Report as Artifact
+      - name: Upload SonarQube-Compatible Pylint Report
         uses: actions/upload-artifact@v4
         with:
-          name: pylint-reports  # ✅ Fixed name to ensure consistency
-          path: backend/reports/pylint-report.json
-          retention-days: 1  # ✅ Delete artifact after 1 day
+          name: pylint-sonarqube-report
+          path: backend/reports/pylint-sonarqube.json
+          retention-days: 1

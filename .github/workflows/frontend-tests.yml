@@ -1,0 +1,36 @@
+name: Flutter Testing
+
+on:
+  push:
+    paths:
+      - frontend/**
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  testing:
+    name: Run Flutter Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          architecture: x64
+
+      - name: Install Flutter dependencies
+        working-directory: ./frontend
+        run: flutter pub get
+
+      - name: Run Flutter tests with coverage
+        working-directory: ./frontend
+        run: flutter test --coverage
+
+      - name: Upload coverage report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-coverage
+          path: frontend/coverage/lcov.info

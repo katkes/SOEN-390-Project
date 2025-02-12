@@ -1,0 +1,93 @@
+name: Flutter Linting
+
+on:
+  push:
+    paths:
+      - frontend/**
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  linting:
+    name: Lint & Format Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          architecture: x64
+
+      - name: Install Flutter dependencies
+        working-directory: ./frontend
+        run: flutter pub get
+
+      - name: Verify Flutter formatting
+        working-directory: ./frontend
+        run: dart format --output=none --set-exit-if-changed .
+
+      - name: Analyze Flutter project and generate report
+        working-directory: ./frontend
+        run: flutter analyze --write=analysis_report.json || true
+
+      - name: Convert Flutter Analysis Report to SonarCloud Format
+        working-directory: ./frontend
+        run: |
+          python - <<EOF
+          import json
+
+          INPUT_FILE = "analysis_report.json"
+          OUTPUT_FILE = "sonar-flutter-lint.json"
+
+          try:
+              with open(INPUT_FILE, "r") as f:
+                  data = json.load(f)
+
+              sonar_issues = []
+              for issue in data.get("issues", []):
+                  file_path = issue["location"]["file"]
+                  message = issue["message"]
+                  severity = issue["severity"].upper()
+
+                  severity_map = {
+                      "ERROR": "CRITICAL",
+                      "WARNING": "MAJOR",
+                      "INFO": "MINOR",
+                  }
+
+                  sonar_issues.append({
+                      "engineId": "flutter-analyze",
+                      "ruleId": "dart-lint",
+                      "severity": severity_map.get(severity, "MINOR"),
+                      "type": "CODE_SMELL",
+                      "primaryLocation": {
+                          "message": message,
+                          "filePath": f"frontend/{file_path}",
+                          "textRange": {
+                              "startLine": issue["location"]["startLine"],
+                              "endLine": issue["location"]["startLine"]
+                          }
+                      }
+                  })
+
+              output_json = {"issues": sonar_issues}
+
+              with open(OUTPUT_FILE, "w") as f:
+                  json.dump(output_json, f, indent=2)
+
+              print(f"✅ Converted {len(sonar_issues)} Flutter lint issues to SonarCloud format.")
+
+          except Exception as e:
+              print(f"❌ Error processing Flutter lint report: {e}")
+
+          EOF
+
+      - name: Upload Flutter Lint Report as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: flutter-lint-report
+          path: frontend/sonar-flutter-lint.json
+          retention-days: 1
