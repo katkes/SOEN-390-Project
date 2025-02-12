@@ -58,6 +58,7 @@ jobs:
           echo "Fetching backend reports from GCS..."
           gsutil -q stat gs://soen_390_reports/$BRANCH_NAME/backend/coverage.xml && gsutil cp gs://soen_390_reports/$BRANCH_NAME/backend/coverage.xml backend/reports/coverage.xml || echo "⚠️ Backend coverage report not found, will create an empty one."
           gsutil -q stat gs://soen_390_reports/$BRANCH_NAME/backend/test-report.xml && gsutil cp gs://soen_390_reports/$BRANCH_NAME/backend/test-report.xml backend/reports/test-report.xml || echo "⚠️ Backend test report not found."
+          gsutil -q stat gs://soen_390_reports/$BRANCH_NAME/backend/pylint-report.json && gsutil cp gs://soen_390_reports/$BRANCH_NAME/backend/pylint-report.json backend/reports/pylint-report.json || echo "⚠️ Pylint report not found."
 
       - name: Fetch Frontend Reports from GCS
         run: |
@@ -66,7 +67,7 @@ jobs:
 
       - name: Fetch Python Lint Reports from GCS
         run: |
-          gsutil -q stat gs://soen_390_reports/$BRANCH_NAME/backend/pylint-sonarqube.json && gsutil cp gs://soen_390_reports/$BRANCH_NAME/backend/pylint-sonarqube.json backend/reports/pylint-sonarqube.json || echo "⚠️ Pylint report not found."
+          
 
       - name: List Downloaded Reports
         run: |
@@ -101,9 +102,9 @@ jobs:
           fi
 
           # ✅ Ensure empty lint reports are generated
-          if [ ! -f backend/reports/pylint-sonarqube.json ]; then
+          if [ ! -f backend/reports/pylint-report.json ]; then
             echo "⚠️ Backend Pylint report missing, creating an empty one!"
-            echo '{"issues": []}' > backend/reports/pylint-sonarqube.json
+            echo '{"issues": []}' > backend/reports/pylint-report.json
           fi
 
           if [ ! -f frontend/reports/sonar-flutter-lint.json ]; then
@@ -134,7 +135,7 @@ jobs:
             # Upload Backend Reports
             gsutil cp backend/reports/coverage.xml gs://soen_390_reports/$BRANCH_NAME/backend/coverage.xml || echo "⚠️ No new backend coverage report to upload."
             gsutil cp backend/reports/test-report.xml gs://soen_390_reports/$BRANCH_NAME/backend/test-report.xml || echo "⚠️ No new backend test report to upload."
-            gsutil cp backend/reports/pylint-sonarqube.json gs://soen_390_reports/$BRANCH_NAME/backend/pylint-sonarqube.json || echo "⚠️ No new Pylint report to upload."
+            gsutil cp backend/reports/pylint-report.json gs://soen_390_reports/$BRANCH_NAME/backend/pylint-report.json || echo "⚠️ No new Pylint report to upload."
 
             # Upload Frontend Reports
             gsutil cp frontend/reports/lcov.info gs://soen_390_reports/$BRANCH_NAME/frontend/lcov.info || echo "⚠️ No new frontend coverage report to upload."
