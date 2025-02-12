@@ -31,18 +31,32 @@ jobs:
 
       - name: Analyze Flutter project and generate report
         working-directory: ./frontend
-        run: flutter analyze --write=analysis_report.json || true
+        run: |
+          flutter analyze --write=analysis_report.json || true
+
+      - name: Debug Flutter Analysis Report
+        working-directory: ./frontend
+        run: |
+          echo "Checking if analysis_report.json exists..."
+          ls -l
+          cat analysis_report.json || echo "❌ analysis_report.json not found!"
 
       - name: Convert Flutter Analysis Report to SonarCloud Format
         working-directory: ./frontend
         run: |
+          mkdir -p reports  # Ensure reports directory exists
           python - <<EOF
           import json
+          import os
 
           INPUT_FILE = "analysis_report.json"
-          OUTPUT_FILE = "sonar-flutter-lint.json"
+          OUTPUT_DIR = "reports"
+          OUTPUT_FILE = os.path.join(OUTPUT_DIR, "sonar-flutter-lint.json")
 
           try:
+              if not os.path.exists(INPUT_FILE):
+                  raise FileNotFoundError(f"{INPUT_FILE} does not exist.")
+
               with open(INPUT_FILE, "r") as f:
                   data = json.load(f)
 
@@ -78,16 +92,23 @@ jobs:
               with open(OUTPUT_FILE, "w") as f:
                   json.dump(output_json, f, indent=2)
 
-              print(f"✅ Converted {len(sonar_issues)} Flutter lint issues to SonarCloud format.")
+              print(f"✅ Successfully converted {len(sonar_issues)} Flutter lint issues to SonarCloud format at {OUTPUT_FILE}.")
 
           except Exception as e:
               print(f"❌ Error processing Flutter lint report: {e}")
-
+              exit(1)
           EOF
+
+      - name: Verify SonarCloud Lint Report Exists
+        working-directory: ./frontend
+        run: |
+          echo "Checking if sonar-flutter-lint.json exists..."
+          ls -l reports
+          cat reports/sonar-flutter-lint.json || echo "❌ sonar-flutter-lint.json not found!"
 
       - name: Upload Flutter Lint Report as Artifact
         uses: actions/upload-artifact@v4
         with:
           name: flutter-lint-report
-          path: frontend/sonar-flutter-lint.json
+          path: frontend/reports/sonar-flutter-lint.json
           retention-days: 1
