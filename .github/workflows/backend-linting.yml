@@ -21,8 +21,7 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Configure Poetry to Use Local Virtualenv
-        run: poetry config virtualenvs.in-project true
+
 
       - name: Install Dependencies
         working-directory: ./backend
@@ -32,6 +31,9 @@ jobs:
           poetry install --no-root
           poetry install  # Install package dependencies
 
+      - name: Configure Poetry to Use Local Virtualenv
+        run: poetry config virtualenvs.in-project true
+        
       - name: Verify Installed Packages
         run: poetry run pip list
 
