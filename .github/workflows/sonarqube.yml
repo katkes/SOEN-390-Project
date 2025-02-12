@@ -25,99 +25,48 @@ jobs:
       - name: Print Setup Message
         run: echo "Initializing SonarCloud Analysis Workflow"
 
-  fetch-artifacts:
-    name: Fetch Latest Test & Lint Reports (Backend + Frontend)
+  fetch-reports-gcs:
+    name: Fetch Reports from Google Cloud Storage (GCS)
     runs-on: ubuntu-latest
 
     steps:
+      - name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCS_KEY }}
+
+      - name: Install Google Cloud SDK
+        run: |
+          sudo apt-get update && sudo apt-get install -y google-cloud-sdk
+
       - name: Ensure Report Directories Exist
         run: mkdir -p backend/reports frontend/reports
 
-      - name: Get Latest Successful Backend Test Run ID
+      - name: Fetch Backend Reports from GCS
         run: |
-          echo "🔍 Searching for the latest successful Backend Test run..."
-          TEST_RUN_ID=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Accept: application/vnd.github.v3+json" \
-            "https://api.github.com/repos/${{ github.repository }}/actions/runs?status=completed&branch=${{ github.ref_name }}" | \
-            jq -r '[.workflow_runs[] | select(.name=="Backend Tests" and .conclusion=="success") | .id] | first // empty')
+          BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||' | tr '/' '_')
+          gsutil cp gs://backend-test-reports/$BRANCH_NAME/coverage.xml backend/reports/coverage.xml || echo "⚠️ Backend coverage report not found."
+          gsutil cp gs://backend-test-reports/$BRANCH_NAME/test-report.xml backend/reports/test-report.xml || echo "⚠️ Backend test report not found."
 
-          if [[ -z "$TEST_RUN_ID" ]]; then
-            echo "⚠️ No successful Backend Tests run found."
-          else
-            echo "✅ Found Backend Tests Run ID: $TEST_RUN_ID"
-            echo "LATEST_TEST_RUN_ID=${TEST_RUN_ID}" >> $GITHUB_ENV
-          fi
-
-      - name: Get Latest Successful Flutter Test Run ID
+      - name: Fetch Frontend Reports from GCS
         run: |
-          echo "🔍 Searching for the latest successful Flutter Test run..."
-          FLUTTER_TEST_RUN_ID=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Accept: application/vnd.github.v3+json" \
-            "https://api.github.com/repos/${{ github.repository }}/actions/runs?status=completed&branch=${{ github.ref_name }}" | \
-            jq -r '[.workflow_runs[] | select(.name=="Flutter Testing" and .conclusion=="success") | .id] | first // empty')
+          gsutil cp gs://flutter-test-reports/$BRANCH_NAME/lcov.info frontend/reports/lcov.info || echo "⚠️ Frontend coverage report not found."
+          gsutil cp gs://flutter-lint-reports/$BRANCH_NAME/sonar-flutter-lint.json frontend/reports/sonar-flutter-lint.json || echo "⚠️ Frontend lint report not found."
 
-          if [[ -z "$FLUTTER_TEST_RUN_ID" ]]; then
-            echo "⚠️ No successful Flutter Tests run found."
-          else
-            echo "✅ Found Flutter Testing Run ID: $FLUTTER_TEST_RUN_ID"
-            echo "LATEST_FLUTTER_TEST_RUN_ID=${FLUTTER_TEST_RUN_ID}" >> $GITHUB_ENV
-          fi
-
-      - name: Download Backend Test Report (If Exists)
+      - name: Fetch Python Lint Reports from GCS
         run: |
-          if [[ -n "$LATEST_TEST_RUN_ID" ]]; then
-            echo "🔽 Downloading Backend test reports..."
-            mkdir -p backend/reports
-            # Download logic goes here
-          else
-            echo "⚠️ Skipping Backend report download (no successful run found)."
-          fi
-
-      - name: Download Flutter Test Coverage Artifact (If Exists)
-        run: |
-          if [[ -n "$LATEST_FLUTTER_TEST_RUN_ID" ]]; then
-            echo "🔽 Downloading Flutter test coverage artifact..."
-            FLUTTER_TEST_ARTIFACT_URL=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-              -H "Accept: application/vnd.github.v3+json" \
-              "https://api.github.com/repos/${{ github.repository }}/actions/runs/${LATEST_FLUTTER_TEST_RUN_ID}/artifacts" | \
-              jq -r '[.artifacts[] | select(.name=="frontend-coverage") | .archive_download_url] | first // empty')
-
-            if [[ -z "$FLUTTER_TEST_ARTIFACT_URL" ]]; then
-              echo "⚠️ No Flutter coverage artifact found!"
-            else
-              echo "✅ Downloading artifact..."
-              curl -s -L -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-                -o frontend-coverage.zip "$FLUTTER_TEST_ARTIFACT_URL"
-
-              echo "📂 Extracting coverage artifact..."
-              mkdir -p frontend/coverage
-              unzip -o frontend-coverage.zip -d frontend/coverage || echo "⚠️ Extraction failed, but continuing."
-
-              if [[ ! -s frontend/coverage/lcov.info ]]; then
-                echo "⚠️ Downloaded coverage file is empty!"
-              fi
-            fi
-          else
-            echo "⚠️ Skipping Flutter test artifact download (no successful run found)."
-          fi
-
-      - name: Check If Any Reports Were Retrieved
-        run: |
-          if [ ! -d "backend/reports" ] && [ ! -d "frontend/coverage" ]; then
-            echo "❌ No test reports found. Skipping SonarCloud analysis."
-            exit 1
-          fi
+          gsutil cp gs://python-lint-reports/$BRANCH_NAME/pylint-sonarqube.json backend/reports/pylint-sonarqube.json || echo "⚠️ Pylint report not found."
 
       - name: List Downloaded Reports
         run: |
           echo "📄 Checking downloaded reports..."
-          ls -R backend/reports frontend/reports || echo "⚠️ No reports found, but proceeding."
+          ls -R backend/reports frontend/reports || echo "⚠️ No reports found."
 
   sonarqube:
-    name: SonarCloud
+    name: SonarCloud Analysis
     runs-on: ubuntu-latest
-    needs: fetch-artifacts
-    if: success()  # Run only if fetch-artifacts didn't fail
+    needs: fetch-reports-gcs
+    if: success()  # Run only if reports were successfully fetched
 
     steps:
       - name: Checkout repository
@@ -129,9 +78,9 @@ jobs:
         run: |
           mkdir -p backend/reports frontend/reports
 
-          if [ ! -f frontend/coverage/lcov.info ]; then
+          if [ ! -f frontend/reports/lcov.info ]; then
             echo "⚠️ Coverage report missing, creating empty file!"
-            echo "TN:" > frontend/coverage/lcov.info
+            echo "TN:" > frontend/reports/lcov.info
           fi
 
       - name: List Reports Before Running SonarCloud
@@ -145,3 +94,20 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v4
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Upload Updated SonarCloud Reports to GCS
+        if: always()  # Ensure upload happens even if SonarCloud fails
+        run: |
+            BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||' | tr '/' '_')
+  
+            # Upload Backend Reports
+            gsutil cp backend/reports/coverage.xml gs://backend-test-reports/$BRANCH_NAME/coverage.xml || echo "⚠️ No new backend coverage report to upload."
+            gsutil cp backend/reports/test-report.xml gs://backend-test-reports/$BRANCH_NAME/test-report.xml || echo "⚠️ No new backend test report to upload."
+  
+            # Upload Frontend Reports
+            gsutil cp frontend/reports/lcov.info gs://flutter-test-reports/$BRANCH_NAME/lcov.info || echo "⚠️ No new frontend coverage report to upload."
+            gsutil cp frontend/reports/sonar-flutter-lint.json gs://flutter-lint-reports/$BRANCH_NAME/sonar-flutter-lint.json || echo "⚠️ No new frontend lint report to upload."
+  
+            # Upload Python Lint Report
+            gsutil cp backend/reports/pylint-sonarqube.json gs://python-lint-reports/$BRANCH_NAME/pylint-sonarqube.json || echo "⚠️ No new Pylint report to upload."
+  

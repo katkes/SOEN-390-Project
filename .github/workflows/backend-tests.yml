@@ -60,9 +60,20 @@ jobs:
         run: |
           docker cp django_test_container:/app/test-report.xml backend/reports/
 
-      - name: Upload reports as artifact
-        uses: actions/upload-artifact@v4
+      # Authenticate with Google Cloud
+      - name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v2
         with:
-          name: test-reports  # ✅ Fixed name for consistency
-          path: backend/reports/*
-          retention-days: 1  # ✅ Delete artifact after 1 day
+          credentials_json: ${{ secrets.GCS_KEY }}
+
+      # Install Google Cloud SDK
+      - name: Install Google Cloud SDK
+        run: |
+          sudo apt-get update && sudo apt-get install -y google-cloud-sdk
+
+      # Upload test reports to Google Cloud Storage
+      - name: Upload test reports to GCS
+        run: |
+          BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||' | tr '/' '_')
+          gsutil cp backend/reports/coverage.xml gs://backend-test-reports/$BRANCH_NAME/coverage.xml
+          gsutil cp backend/reports/test-report.xml gs://backend-test-reports/$BRANCH_NAME/test-report.xml

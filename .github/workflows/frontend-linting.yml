@@ -14,7 +14,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -32,22 +33,17 @@ jobs:
       - name: Analyze Flutter project and generate report
         working-directory: ./frontend
         run: |
+          mkdir -p reports  # Ensure reports directory exists
           flutter analyze --write=analysis_report.json || true
+          mv analysis_report.json reports/analysis_report.json  # Move report
 
       - name: Ensure analysis_report.json is not empty
-        working-directory: ./frontend
+        working-directory: ./frontend/reports
         run: |
           if [ ! -s analysis_report.json ]; then
             echo "⚠️ No lint issues found, creating empty SonarCloud report..."
             echo '{"issues": []}' > analysis_report.json
           fi
-
-      - name: Debug Flutter Analysis Report
-        working-directory: ./frontend
-        run: |
-          echo "Checking if analysis_report.json exists..."
-          ls -l
-          cat analysis_report.json || echo "❌ analysis_report.json not found!"
 
       - name: Convert Flutter Analysis Report to SonarCloud Format
         working-directory: ./frontend
@@ -57,15 +53,13 @@ jobs:
           import json
           import os
 
-          INPUT_FILE = "analysis_report.json"
-          OUTPUT_DIR = "reports"
-          OUTPUT_FILE = os.path.join(OUTPUT_DIR, "sonar-flutter-lint.json")
+          INPUT_FILE = "reports/analysis_report.json"
+          OUTPUT_FILE = "reports/sonar-flutter-lint.json"
 
           try:
               if not os.path.exists(INPUT_FILE):
                   raise FileNotFoundError(f"{INPUT_FILE} does not exist.")
 
-              # Handle empty or invalid JSON file
               if os.stat(INPUT_FILE).st_size == 0:
                   print("⚠️ analysis_report.json is empty. Creating a valid empty report.")
                   output_json = {"issues": []}
@@ -100,7 +94,6 @@ jobs:
                           }
                       })
 
-              # Save output file
               with open(OUTPUT_FILE, "w") as f:
                   json.dump(output_json, f, indent=2)
 
@@ -115,19 +108,28 @@ jobs:
           EOF
 
       - name: Verify SonarCloud Lint Report Exists
-        working-directory: ./frontend
+        working-directory: ./frontend/reports
         run: |
-          if [ -f reports/sonar-flutter-lint.json ]; then
+          if [ -f sonar-flutter-lint.json ]; then
             echo "✅ SonarCloud Lint Report found!"
           else
             echo "⚠️ No issues found, generating an empty SonarCloud report."
-            mkdir -p reports
-            echo '{"issues": []}' > reports/sonar-flutter-lint.json
+            echo '{"issues": []}' > sonar-flutter-lint.json
           fi
 
-      - name: Upload Flutter Lint Report as Artifact
-        uses: actions/upload-artifact@v4
+      # Authenticate with Google Cloud
+      - name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v2
         with:
-          name: flutter-lint-report
-          path: frontend/reports/sonar-flutter-lint.json
-          retention-days: 1
+          credentials_json: ${{ secrets.GCS_KEY }}
+
+      # Install Google Cloud SDK
+      - name: Install Google Cloud SDK
+        run: |
+          sudo apt-get update && sudo apt-get install -y google-cloud-sdk
+
+      # Upload linting report to Google Cloud Storage
+      - name: Upload lint report to GCS
+        run: |
+          BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's/refs\/heads\///' | tr '/' '_')
+          gsutil cp frontend/reports/sonar-flutter-lint.json gs://flutter-lint-reports/$BRANCH_NAME/sonar-flutter-lint.json

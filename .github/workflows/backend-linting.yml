@@ -33,16 +33,20 @@ jobs:
         run: |
           python scripts/convert_pylint_to_sonar.py reports/pylint-report.json reports/pylint-sonarqube.json
 
-      - name: Upload Raw Pylint Report
-        uses: actions/upload-artifact@v4
+      # Authenticate with Google Cloud
+      - name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v2
         with:
-          name: pylint-json-report
-          path: backend/reports/pylint-report.json
-          retention-days: 1
+          credentials_json: ${{ secrets.GCS_KEY }}
 
-      - name: Upload SonarQube-Compatible Pylint Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: pylint-sonarqube-report
-          path: backend/reports/pylint-sonarqube.json
-          retention-days: 1
+      # Install Google Cloud SDK
+      - name: Install Google Cloud SDK
+        run: |
+          sudo apt-get update && sudo apt-get install -y google-cloud-sdk
+
+      # Upload Pylint reports to Google Cloud Storage
+      - name: Upload Pylint reports to GCS
+        run: |
+          BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||' | tr '/' '_')
+          gsutil cp backend/reports/pylint-report.json gs://python-lint-reports/$BRANCH_NAME/pylint-report.json
+          gsutil cp backend/reports/pylint-sonarqube.json gs://python-lint-reports/$BRANCH_NAME/pylint-sonarqube.json
