@@ -16,79 +16,25 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set Up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.10"
-
       - name: Install Dependencies
         working-directory: ./backend
         run: |
-          python -m venv venv
-          source venv/bin/activate
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install poetry
+          poetry install --no-root
 
-      - name: Debug Installed Packages
+      - name: Run Pylint (Display & Save Report)
         working-directory: ./backend
         run: |
-          source venv/bin/activate
-          pip list
-
-      - name: Install astroid (Specific Version)
-        working-directory: ./backend
-        run: |
-          source venv/bin/activate
-          pip install astroid==2.15.8
-
-      - name: Debug Pylint and Astroid Versions
-        working-directory: ./backend
-        run: |
-          source venv/bin/activate
-          pylint --version
-          pip show astroid
-
-      - name: Run Pylint (Generate JSON)
-        working-directory: ./backend
-        run: |
-          source venv/bin/activate
           mkdir -p reports
-          pylint --output-format=json --output=reports/pylint-report.json .
+          poetry run pylint --output-format=json . | tee reports/pylint-report.json
 
-      - name: Convert Pylint JSON to SonarQube Format
+      - name: Run Black Formatting
         working-directory: ./backend
-        run: |
-          source venv/bin/activate
-          python scripts/convert_pylint_to_sonar.py reports/pylint-report.json reports/pylint-sonarqube.json
+        run: poetry run black --check .
 
-      - name: Authenticate with Google Cloud
-        uses: google-github-actions/auth@v2
+      - name: Upload Pylint Report as Artifact
+        uses: actions/upload-artifact@v4
         with:
-          credentials_json: ${{ secrets.GCS_KEY }}
-
-      - name: Manually Authenticate gcloud CLI
-        run: |
-          gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
-          gcloud auth list
-
-      - name: Install Google Cloud CLI
-        run: |
-          sudo apt-get update && sudo apt-get install -y google-cloud-cli
-
-      - name: Ensure Folder Exists in GCS
-        run: |
-          BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||' | tr '/' '_')
-          echo "Checking if folder exists in GCS..."
-          if gsutil -q stat gs://soen_390_reports/$BRANCH_NAME/backend/.keep; then
-            echo "✅ Folder already exists in GCS."
-          else
-            echo "❌ Folder does not exist. Creating placeholder..."
-            echo "Placeholder file" > backend/reports/.keep
-            gsutil cp backend/reports/.keep gs://soen_390_reports/$BRANCH_NAME/backend/.keep
-          fi
-
-      - name: Upload Pylint Reports to GCS
-        run: |
-          BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||' | tr '/' '_')
-          gsutil cp backend/reports/pylint-report.json gs://soen_390_reports/$BRANCH_NAME/backend/pylint-report.json
-          gsutil cp backend/reports/pylint-sonarqube.json gs://soen_390_reports/$BRANCH_NAME/backend/pylint-sonarqube.json
+          name: pylint-reports  # ✅ Fixed name to ensure consistency
+          path: backend/reports/pylint-report.json
+          retention-days: 1  # ✅ Delete artifact after 1 day
