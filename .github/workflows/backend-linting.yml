@@ -31,13 +31,13 @@ jobs:
       - name: Run Pylint (Display Human-Readable)
         working-directory: ./backend
         run: |
-          pylint **/*.py  # Regular output for logs
+          pylint . # Regular output for logs
 
       - name: Run Pylint (Save JSON Report)
         working-directory: ./backend
         run: |
           mkdir -p reports
-          pylint --output-format=json **/*.py > reports/pylint-report.json || echo '{}' > reports/pylint-report.json
+          pylint --output-format=json . > reports/pylint-report.json || echo '{}' > reports/pylint-report.json
 
       - name: Run Black Formatting
         working-directory: ./backend
