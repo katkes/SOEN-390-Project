@@ -16,18 +16,37 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Set Up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Configure Poetry to Use Local Virtualenv
+        run: poetry config virtualenvs.in-project true
+
       - name: Install Dependencies
         working-directory: ./backend
         run: |
           pip install poetry
+          poetry cache clear pypi --all  # Ensure fresh dependencies
           poetry install --no-root
-          poetry add pylint@2.17.7 astroid@2.15.8
+          poetry install  # Install package dependencies
+
+      - name: Verify Installed Packages
+        run: poetry run pip list
 
       - name: Run Pylint (Generate JSON)
         working-directory: ./backend
         run: |
           mkdir -p reports
           poetry run pylint --output-format=json --output=reports/pylint-report.json .
+
+      - name: Debug Poetry Virtualenv
+        run: |
+          echo "Python version:"
+          poetry run python --version
+          echo "Virtualenv path:"
+          poetry env info
 
       - name: Convert Pylint JSON to SonarQube Format
         working-directory: ./backend
