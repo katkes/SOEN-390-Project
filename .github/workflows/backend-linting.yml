@@ -30,8 +30,7 @@ jobs:
 
       - name: Run Pylint (Display Human-Readable)
         working-directory: ./backend
-        run: |
-          pylint . # Regular output for logs
+        run: pylint . || true  # Allow failure but continue
 
       - name: Run Pylint (Save JSON Report)
         working-directory: ./backend
@@ -44,6 +43,7 @@ jobs:
         run: black --check .
 
       - name: Upload Pylint Report as Artifact
+        if: always()  # Ensures it runs even if linting fails
         uses: actions/upload-artifact@v4
         with:
           name: pylint-reports
