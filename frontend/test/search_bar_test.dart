@@ -18,6 +18,7 @@ void main() {
       );
     }
 
+    // Checks if the search bar is collapsed initally.
     testWidgets('is collapsed initially', (WidgetTester tester) async {
       final controller = TextEditingController();
 
@@ -35,6 +36,7 @@ void main() {
       expect(containerSize.width, equals(58));
     });
 
+    // Checks if the search bar expands when tapped.
     testWidgets('expands on tap', (WidgetTester tester) async {
       final controller = TextEditingController();
 
@@ -57,6 +59,7 @@ void main() {
       expect(containerSize.width, equals(280));
     });
 
+    // Checks if the onChanged callback is called when the text changes.
     testWidgets('calls onChanged callback when text changes',
         (WidgetTester tester) async {
       String changedValue = '';
@@ -88,6 +91,7 @@ void main() {
       expect(changedValue, equals(testText));
     });
 
+    // Checks if the search bar collapses when tapped again.
     testWidgets('toggles collapse when tapped again', (WidgetTester tester) async {
       final controller = TextEditingController();
 
