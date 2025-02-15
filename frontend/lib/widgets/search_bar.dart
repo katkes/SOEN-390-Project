@@ -51,7 +51,8 @@ class SearchBarWidgetState extends State<SearchBarWidget> {
               },
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 300),
-                width: isExpanded ? 280 : 48,
+                curve: Curves.easeInOut, // Smooth animation
+                width: isExpanded ? 280 : 58, // Expanding width
                 height: 40,
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 decoration: BoxDecoration(
@@ -68,26 +69,32 @@ class SearchBarWidgetState extends State<SearchBarWidget> {
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.search,
-                        color: Colors.black
-                            .withValues(red: 0, green: 0, blue: 0, alpha: 0.7)),
+                    Icon(
+                      Icons.search,
+                      color: Colors.black
+                          .withValues(red: 0, green: 0, blue: 0, alpha: 179),
+                    ),
                     if (isExpanded) ...[
                       const SizedBox(width: 10),
                       Expanded(
-                        child: TextField(
-                          focusNode: _focusNode,
-                          controller: widget.controller,
-                          onChanged: widget.onChanged,
-                          decoration: InputDecoration(
-                            hintText: 'Search',
-                            hintStyle: TextStyle(
-                              color: Colors.black.withValues(
-                                  red: 0, green: 0, blue: 0, alpha: 0.3),
-                              fontSize: 16,
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.w400,
+                        child: AnimatedOpacity(
+                          duration: const Duration(milliseconds: 300),
+                          opacity: isExpanded ? 1.0 : 0.0, // Fade in/out animation
+                          child: TextField(
+                            focusNode: _focusNode,
+                            controller: widget.controller,
+                            onChanged: widget.onChanged,
+                            decoration: InputDecoration(
+                              hintText: 'Search',
+                              hintStyle: TextStyle(
+                                color: Colors.black.withValues(
+                                    red: 0, green: 0, blue: 0, alpha: 77),
+                                fontSize: 16,
+                                fontFamily: 'Inter',
+                                fontWeight: FontWeight.w400,
+                              ),
+                              border: InputBorder.none,
                             ),
-                            border: InputBorder.none,
                           ),
                         ),
                       ),
