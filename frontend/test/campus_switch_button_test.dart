@@ -1,3 +1,9 @@
+/// Unit tests for the `CampusSwitch` widget.
+/// 
+/// This file contains tests to verify the behavior of the `CampusSwitch` widget.
+/// The tests ensure that the initial selection is displayed correctly and that
+/// switching between campuses updates the selection and triggers the appropriate
+/// callbacks.
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:latlong2/latlong.dart';

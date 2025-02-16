@@ -1,3 +1,10 @@
+/// A custom search bar widget that expands and collapses when tapped.
+/// 
+/// The [SearchBarWidget] contains a [TextField] for user input. It expands 
+/// when focused and collapses when unfocused. The widget uses an 
+/// [AnimatedContainer] to animate the expansion and collapse, and an 
+/// [AnimatedOpacity] to fade in and out the [TextField].
+library;
 import 'package:flutter/material.dart';
 
 class SearchBarWidget extends StatefulWidget {
