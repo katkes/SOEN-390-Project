@@ -51,8 +51,6 @@ jobs:
           gsutil -q stat gs://soen_390_reports/$BRANCH_NAME/frontend/lcov.info && gsutil cp gs://soen_390_reports/$BRANCH_NAME/frontend/lcov.info frontend/reports/lcov.info || echo " Frontend coverage report not found."
           gsutil -q stat gs://soen_390_reports/$BRANCH_NAME/frontend/sonar-flutter-lint.json && gsutil cp gs://soen_390_reports/$BRANCH_NAME/frontend/sonar-flutter-lint.json frontend/reports/sonar-flutter-lint.json || echo " Frontend lint report not found."
 
-      - name: Fetch Python Lint Reports from GCS
-        run: |
 
   sonarqube:
     name: SonarCloud Analysis
@@ -87,10 +85,17 @@ jobs:
           echo "Frontend Reports:"
           ls -lh frontend/reports || echo " No frontend reports found."
 
-      - name: Run SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@v4
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          - name: Run SonarCloud Scan
+          uses: SonarSource/sonarqube-scan-action@v4
+          with:
+            args: >
+              -Dsonar.projectKey=katkes_SOEN-390-Project
+              -Dsonar.organization=katkes
+              -Dsonar.sources=.
+              -Dsonar.host.url=https://sonarcloud.io
+          env:
+            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        
 
       # Upload Updated SonarCloud Reports to GCS
       - name: Upload Updated SonarCloud Reports to GCS
