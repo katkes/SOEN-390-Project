@@ -3,7 +3,7 @@ name: Flutter Linting
 on:
   push:
     paths:
-        - frontend/**
+        - **
   pull_request:
     branches:
       - main
@@ -37,14 +37,14 @@ jobs:
         working-directory: ./frontend
         run: |
           mkdir -p reports  # Ensure reports directory exists
-          flutter analyze --write=analysis_report.json || true
+          flutter analyze --write=analysis_report.json
           mv analysis_report.json reports/analysis_report.json  # Move report
 
       - name: Run Dart Code Metrics and Generate Report
         working-directory: ./frontend
         run: |
           mkdir -p reports  # Ensure reports directory exists
-          dart run dart_code_metrics:metrics --reporter=json > reports/dart_metrics_report.json || true
+          dart run dart_code_metrics:metrics --reporter=json > reports/dart_metrics_report.json
 
       - name: Ensure reports are not empty
         working-directory: ./frontend/reports
