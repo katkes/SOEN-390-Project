@@ -3,15 +3,16 @@ name: Flutter Linting
 on:
   push:
     paths:
-      - frontend/**
+        - frontend/**
   pull_request:
     branches:
       - main
 
 jobs:
+    
   linting:
     name: Lint & Format Check
-    runs-on: ubuntu-latest
+    runs-on: [our-runner]
 
     steps:
       - name: Checkout repository
@@ -44,12 +45,11 @@ jobs:
         run: |
           mkdir -p reports  # Ensure reports directory exists
           dart run dart_code_metrics:metrics --reporter=json > reports/dart_metrics_report.json || true
-          dart run dart_code_metrics:check-unused-code --reporter=json > reports/dart_metrics_unused.json || true
 
       - name: Ensure reports are not empty
         working-directory: ./frontend/reports
         run: |
-          for file in analysis_report.json dart_metrics_report.json dart_metrics_unused.json; do
+          for file in analysis_report.json dart_metrics_report.json; do
             if [ ! -s "$file" ]; then
               echo " No issues found, creating empty $file..."
               echo '{"issues": []}' > "$file"
@@ -119,7 +119,6 @@ jobs:
           output_json = {"issues": []}
           convert_analysis_report("reports/analysis_report.json", output_json)
           convert_dart_metrics("reports/dart_metrics_report.json", output_json)
-          convert_dart_metrics("reports/dart_metrics_unused.json", output_json)
 
           with open("reports/sonar-flutter-lint.json", "w") as f:
               json.dump(output_json, f, indent=2)

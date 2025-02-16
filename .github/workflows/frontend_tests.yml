@@ -11,7 +11,7 @@ on:
 jobs:
   testing:
     name: Run Flutter Tests
-    runs-on: ubuntu-latest
+    runs-on: [our-runner]
 
     steps:
       - name: Checkout repository
