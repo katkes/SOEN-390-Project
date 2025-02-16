@@ -85,9 +85,9 @@ jobs:
           echo "Frontend Reports:"
           ls -lh frontend/reports || echo " No frontend reports found."
 
-          - name: Run SonarCloud Scan
-          uses: SonarSource/sonarqube-scan-action@v4
-          with:
+      - name: Run SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@v4
+        with:
             args: >
               -Dsonar.projectKey=katkes_SOEN-390-Project
               -Dsonar.organization=katkes
