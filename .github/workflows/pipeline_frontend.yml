@@ -38,7 +38,18 @@ jobs:
 
       - name: Run Flutter tests
         working-directory: ./frontend
-        run: flutter test
+        run: flutter test --coverage
+
+      - name: Generate HTML Coverage Report
+        run: |
+          sudo apt-get install lcov
+          genhtml coverage/lcov.info -o coverage/html
+
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: frontend/coverage/html
 
       - name: Run Flutter Doctor
         working-directory: ./frontend
