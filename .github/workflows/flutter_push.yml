@@ -1,13 +1,10 @@
-name: Dart Frontend
+name: Pipeline for every push
 
 on:
   push:
     paths:
       - frontend/**
       - .github/**
-  pull_request:
-    branches:
-      - main
 
 jobs:
   build:
@@ -55,10 +52,5 @@ jobs:
       - name: Run Flutter Doctor
         working-directory: ./frontend
         run: flutter doctor
-
-      # Build APK
-      - name: Build Flutter APK
-        working-directory: ./frontend
-        run: flutter build apk --release
 
 
