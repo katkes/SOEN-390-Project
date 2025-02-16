@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:mockito/annotations.dart';
-import 'package:soen_390/widgets/outdoor_map.dart'; 
+import 'package:soen_390/widgets/outdoor_map.dart';
 import 'package:mockito/mockito.dart';
 import 'package:http/http.dart' as http;
 import 'outdoor_map_marker_test.mocks.dart';

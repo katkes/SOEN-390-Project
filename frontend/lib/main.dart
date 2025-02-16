@@ -9,13 +9,11 @@ import 'package:latlong2/latlong.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 
-
 void main() {
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-
   const MyApp({super.key});
 
   @override
