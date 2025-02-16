@@ -28,7 +28,9 @@ jobs:
 
       - name: Verify Flutter formatting
         working-directory: ./frontend
-        run: dart format --output=none --set-exit-if-changed .
+        run: |
+            flutter pub get  # Ensures lints package is available
+            dart format --output=none --set-exit-if-changed .
 
       - name: Run Flutter Analyze and Generate Report
         working-directory: ./frontend
