@@ -3,6 +3,7 @@
 /// switching between campuses updates the selection and triggers the appropriate
 /// callbacks.
 library;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:latlong2/latlong.dart';
