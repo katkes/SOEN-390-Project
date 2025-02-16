@@ -1,3 +1,9 @@
+/// This test file contains widget tests for the NavBar widget.
+/// It verifies that the NavBar displays the correct icons and updates the selection correctly
+/// when an icon is tapped.
+
+library;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:soen_390/widgets/nav_bar.dart';
