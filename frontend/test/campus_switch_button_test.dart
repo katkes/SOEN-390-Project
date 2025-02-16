@@ -1,5 +1,5 @@
 /// Unit tests for the `CampusSwitch` widget.
-/// 
+///
 /// This file contains tests to verify the behavior of the `CampusSwitch` widget.
 /// The tests ensure that the initial selection is displayed correctly and that
 /// switching between campuses updates the selection and triggers the appropriate
@@ -7,12 +7,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:soen_390/widgets/campus_switch_button.dart'; 
+import 'package:soen_390/widgets/campus_switch_button.dart';
 
 void main() {
   group('CampusSwitch Widget Tests', () {
 // The `CampusSwitch` widget is a custom widget that allows users to switch between
-    testWidgets('displays initial selection correctly', (WidgetTester tester) async {
+    testWidgets('displays initial selection correctly',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: CampusSwitch(
@@ -27,8 +28,8 @@ void main() {
       expect(find.text('Loyola'), findsOneWidget);
     });
 
-
-    testWidgets('switching campus updates selection and triggers callbacks', (WidgetTester tester) async {
+    testWidgets('switching campus updates selection and triggers callbacks',
+        (WidgetTester tester) async {
       // Test to verify that switching campuses updates the selection and triggers the appropriate callbacks
       String? selectedCampus;
       LatLng? selectedLocation;
@@ -43,13 +44,11 @@ void main() {
         ),
       );
 
-      
       await tester.tap(find.text('Loyola'));
       await tester.pumpAndSettle();
       expect(selectedCampus, 'Loyola');
       expect(selectedLocation, LatLng(45.4581, -73.6391));
 
- 
       await tester.tap(find.text('SGW'));
       await tester.pumpAndSettle();
 

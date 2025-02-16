@@ -4,6 +4,7 @@
 /// display. These tests help maintain the reliability and correctness of the search
 /// feature in the application.
 library;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:soen_390/widgets/search_bar.dart';
@@ -13,8 +14,7 @@ void main() {
     Finder findSearchBarGestureDetector() {
       return find.byWidgetPredicate(
         (widget) =>
-            widget is GestureDetector &&
-            widget.child is AnimatedContainer,
+            widget is GestureDetector && widget.child is AnimatedContainer,
       );
     }
 
@@ -48,12 +48,10 @@ void main() {
         ),
       );
 
-
       await tester.tap(findSearchBarGestureDetector());
       await tester.pumpAndSettle();
 
       expect(find.byType(TextField), findsOneWidget);
-
 
       final containerSize = tester.getSize(find.byType(AnimatedContainer));
       expect(containerSize.width, equals(280));
@@ -78,21 +76,19 @@ void main() {
         ),
       );
 
-
       await tester.tap(findSearchBarGestureDetector());
       await tester.pumpAndSettle();
-
 
       const testText = 'Flutter Testing';
       await tester.enterText(find.byType(TextField), testText);
       await tester.pumpAndSettle();
 
-
       expect(changedValue, equals(testText));
     });
 
     // Checks if the search bar collapses when tapped again.
-    testWidgets('toggles collapse when tapped again', (WidgetTester tester) async {
+    testWidgets('toggles collapse when tapped again',
+        (WidgetTester tester) async {
       final controller = TextEditingController();
 
       await tester.pumpWidget(
@@ -103,23 +99,19 @@ void main() {
         ),
       );
 
-
       final searchBarFinder = find.byWidgetPredicate(
-        (widget) => widget is GestureDetector && widget.child is AnimatedContainer,
+        (widget) =>
+            widget is GestureDetector && widget.child is AnimatedContainer,
       );
       await tester.tap(searchBarFinder);
       await tester.pumpAndSettle();
 
-
       expect(find.byType(TextField), findsOneWidget);
-
 
       await tester.tap(find.byIcon(Icons.search));
       await tester.pumpAndSettle();
 
-
       expect(find.byType(TextField), findsNothing);
-
 
       final containerSize = tester.getSize(find.byType(AnimatedContainer));
       expect(containerSize.width, equals(58));
