@@ -116,9 +116,9 @@ jobs:
           gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
           gcloud auth list  # Debugging step to verify authentication
 
-      - name: Install Google Cloud CLI
-        run: |
-          sudo apt-get update && sudo apt-get install -y google-cloud-cli
+     # - name: Install Google Cloud CLI
+      #  run: |
+       #   sudo apt-get update && sudo apt-get install -y google-cloud-cli
 
       - name: Ensure Folder Exists in GCS
         run: |
