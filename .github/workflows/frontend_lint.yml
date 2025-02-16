@@ -3,7 +3,6 @@ name: Flutter Linting
 on:
   push:
     paths:
-      -**
       - frontend/**
   pull_request:
     branches:
