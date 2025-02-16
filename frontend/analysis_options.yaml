@@ -39,7 +39,6 @@ analyzer:
 
 linter:
   rules:
-    avoid-print: true
     prefer-single-quotes: false # Optional, based on team preference
     avoid-classes-with-only-static-members: false # Optional, remove if using utility classes
 
