@@ -11,6 +11,7 @@ import 'package:soen_390/widgets/campus_switch_button.dart';
 
 void main() {
   group('CampusSwitch Widget Tests', () {
+// The `CampusSwitch` widget is a custom widget that allows users to switch between
     testWidgets('displays initial selection correctly', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
@@ -26,7 +27,9 @@ void main() {
       expect(find.text('Loyola'), findsOneWidget);
     });
 
+
     testWidgets('switching campus updates selection and triggers callbacks', (WidgetTester tester) async {
+      // Test to verify that switching campuses updates the selection and triggers the appropriate callbacks
       String? selectedCampus;
       LatLng? selectedLocation;
 
