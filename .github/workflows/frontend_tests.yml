@@ -3,7 +3,7 @@ name: Flutter Testing
 on:
   push:
     paths:
-      - **
+      - /**
   pull_request:
     branches:
       - main
