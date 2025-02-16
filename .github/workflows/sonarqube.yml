@@ -20,7 +20,7 @@ permissions:
 jobs:
   setup:
     name: Setup Job
-    runs-on: our-runner
+    runs-on: [our-runner]
     steps:
       - name: Print Setup Message
         run: echo "Initializing SonarCloud Analysis Workflow"
