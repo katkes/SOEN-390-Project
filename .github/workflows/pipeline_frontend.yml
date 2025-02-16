@@ -43,7 +43,6 @@ jobs:
 
       - name: Generate HTML Coverage Report
         run: |
-          sudo apt-get install lcov
           genhtml coverage/lcov.info -o coverage/html
 
       - name: Upload Coverage Report
