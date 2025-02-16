@@ -6,6 +6,8 @@ import 'package:soen_390/widgets/outdoor_map.dart';
 import 'package:soen_390/widgets/campus_switch_button.dart';
 import 'package:soen_390/widgets/indoor_navigation_button.dart';
 import 'package:latlong2/latlong.dart';
+// ignore: depend_on_referenced_packages
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(const MyApp());
@@ -37,6 +39,19 @@ class _MyHomePageState extends State<MyHomePage> {
   TextEditingController searchController = TextEditingController();
   int _selectedIndex = 0;
   LatLng _currentLocation = LatLng(45.497856, -73.579588);
+  http.Client? _httpClient;
+
+  @override
+  void initState() {
+    super.initState();
+    _httpClient = http.Client(); // Initialize the client
+  }
+
+  @override
+  void dispose() {
+    _httpClient?.close(); // Close the client
+    super.dispose();
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -74,33 +89,57 @@ class _MyHomePageState extends State<MyHomePage> {
         index: _selectedIndex,
         children: [
           const Center(child: Text('Home Page')),
-          Stack(
-            children: [
-              Positioned.fill(
-                child: MapRectangle(location: _currentLocation),
-              ),
-              Positioned(
-                top: 10,
-                left: 0,
-                right: 0,
-                child: Center(
-                  child: CampusSwitch(
-                    onSelectionChanged: (selectedCampus) {},
-                    onLocationChanged: _updateCampusLocation,
+          LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              return Stack(
+                children: [
+                  Positioned(
+                    // Keep the Positioned for sizing
+                    bottom: 5,
+                    left: 10,
+                    right: 10,
+                    child: Center(
+                      child: SizedBox(
+                        // Keep the SizedBox for fixed size
+                        width: 460,
+                        height: 570,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(30),
+                          child: MapWidget(
+                            location: _currentLocation,
+                            httpClient: _httpClient!, // Use non-null assertion
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              Positioned(
-                bottom: -80,
-                left: 0,
-                child: SearchBarWidget(controller: searchController),
-              ),
-              Positioned(
-                bottom: 10,
-                right: 21,
-                child: IndoorTrigger(),
-              ),
-            ],
+                  Positioned(
+                    // Campus Switch
+                    top: 10,
+                    left: 0,
+                    right: 0,
+                    child: Center(
+                      child: CampusSwitch(
+                        onSelectionChanged: (selectedCampus) {},
+                        onLocationChanged: _updateCampusLocation,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    // Search Bar
+                    bottom: -80,
+                    left: 0,
+                    child: SearchBarWidget(controller: searchController),
+                  ),
+                  Positioned(
+                    // Indoor Button
+                    bottom: 10,
+                    right: 21,
+                    child: IndoorTrigger(),
+                  ),
+                ],
+              );
+            },
           ),
           const Center(child: Text('Profile Page')),
         ],
