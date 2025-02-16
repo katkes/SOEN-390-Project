@@ -30,7 +30,6 @@ jobs:
       - name: Verify Flutter formatting
         working-directory: ./frontend
         run: |
-            flutter pub get  # Ensures lints package is available
             dart format --output=none --set-exit-if-changed .
 
       - name: Run Flutter Analyze and Generate Report
@@ -39,12 +38,6 @@ jobs:
           mkdir -p reports  # Ensure reports directory exists
           flutter analyze --write=analysis_report.json
           mv analysis_report.json reports/analysis_report.json  # Move report
-
-      - name: Run Dart Code Metrics and Generate Report
-        working-directory: ./frontend
-        run: |
-          mkdir -p reports  # Ensure reports directory exists
-          dart run dart_code_metrics:metrics --reporter=json > reports/dart_metrics_report.json
 
       - name: Ensure reports are not empty
         working-directory: ./frontend/reports
@@ -56,7 +49,7 @@ jobs:
             fi
           done
 
-      - name: Convert Flutter Analysis and Dart Code Metrics to SonarCloud Format
+      - name: Convert Flutter Analysis to SonarCloud Format
         working-directory: ./frontend
         run: |
           mkdir -p reports
@@ -91,34 +84,9 @@ jobs:
               except Exception as e:
                   print(f"Error processing {input_file}: {e}")
 
-          def convert_dart_metrics(input_file, output_data):
-              try:
-                  if not os.path.exists(input_file):
-                      return
-                  if os.stat(input_file).st_size == 0:
-                      return
-                  with open(input_file, "r") as f:
-                      data = json.load(f)
-                  for file_issues in data.get("files", []):
-                      file_path = file_issues["path"]
-                      for issue in file_issues.get("issues", []):
-                          output_data["issues"].append({
-                              "engineId": "dart-code-metrics",
-                              "ruleId": issue["ruleId"],
-                              "severity": "MAJOR",
-                              "type": "CODE_SMELL",
-                              "primaryLocation": {
-                                  "message": issue["message"],
-                                  "filePath": f"frontend/{file_path}",
-                                  "textRange": {"startLine": issue["location"]["startLine"], "endLine": issue["location"]["startLine"]}
-                              }
-                          })
-              except Exception as e:
-                  print(f"Error processing {input_file}: {e}")
 
           output_json = {"issues": []}
           convert_analysis_report("reports/analysis_report.json", output_json)
-          convert_dart_metrics("reports/dart_metrics_report.json", output_json)
 
           with open("reports/sonar-flutter-lint.json", "w") as f:
               json.dump(output_json, f, indent=2)

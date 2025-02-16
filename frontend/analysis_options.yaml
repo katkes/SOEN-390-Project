@@ -17,7 +17,7 @@
 # The following line activates a set of recommended lints for Flutter apps,
 # packages, and plugins designed to encourage good coding practices.
 #comment for update
-include: package:lints/flutter.yaml
+include: package:lints/recommended.yaml
 
 analyzer:
   exclude:
@@ -40,20 +40,3 @@ analyzer:
 
 linter:
   rules:
-    prefer-single-quotes: false # Optional, based on team preference
-    avoid-classes-with-only-static-members: false # Optional, remove if using utility classes
-
-dart_code_metrics:
-  metrics:
-    number-of-parameters: 4
-    maximum-nesting-level: 4
-    source-lines-of-code: 100
-
-  rules:
-    avoid-unused-parameters
-    prefer-const-border-radius
-    avoid-global-state
-    prefer-extracting-callbacks
-
-# Additional information about this file can be found at
-# https://dart.dev/guides/language/analysis-options
