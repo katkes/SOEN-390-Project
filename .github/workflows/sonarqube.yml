@@ -1,0 +1,111 @@
+name: SonarCloud Analysis
+
+on:
+  push:
+    branches:
+      - main
+      - release/** # Run SonarCloud for main and release branches
+
+  pull_request:
+    branches:
+      - main # Run SonarCloud on PRs targeting main
+
+  schedule:
+    - cron: '0 2 */2 * *' # Runs every other day at 2 AM UTC
+
+permissions:
+  actions: read #  Allows reading workflow artifacts
+  contents: read #  Required for repository access
+
+jobs:
+  setup:
+    name: Setup Job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print Setup Message
+        run: echo "Initializing SonarCloud Analysis Workflow"
+
+  fetch-reports-gcs:
+    name: Fetch Reports from Google Cloud Storage (GCS)
+    runs-on: ubuntu-latest
+
+    steps:
+      #  Authenticate with Google Cloud
+      - name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCS_KEY }}
+
+      #  Manually Authenticate gcloud CLI
+      - name: Manually Authenticate gcloud CLI
+        run: |
+          gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
+          gcloud auth list  # Debugging step to verify authentication
+
+      #  Install Google Cloud CLI
+      - name: Install Google Cloud CLI
+        run: |
+          sudo apt-get update && sudo apt-get install -y google-cloud-cli
+
+      - name: Ensure Report Directories Exist
+        run: mkdir -p frontend/reports
+
+      - name: Fetch Frontend Reports from GCS
+        run: |
+          BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||' | tr '/' '_')
+          gsutil -q stat gs://soen_390_reports/$BRANCH_NAME/frontend/lcov.info && gsutil cp gs://soen_390_reports/$BRANCH_NAME/frontend/lcov.info frontend/reports/lcov.info || echo " Frontend coverage report not found."
+          gsutil -q stat gs://soen_390_reports/$BRANCH_NAME/frontend/sonar-flutter-lint.json && gsutil cp gs://soen_390_reports/$BRANCH_NAME/frontend/sonar-flutter-lint.json frontend/reports/sonar-flutter-lint.json || echo " Frontend lint report not found."
+
+      - name: Fetch Python Lint Reports from GCS
+        run: |
+
+  sonarqube:
+    name: SonarCloud Analysis
+    runs-on: ubuntu-latest
+    needs: fetch-reports-gcs
+    if: success() # Run only if reports were successfully fetched
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Ensures full Git history for analysis
+
+      - name: Ensure Required Reports Exist (Prevent SonarCloud Failure)
+        run: |
+          mkdir -p frontend/reports
+
+
+          #  Create empty coverage reports if missing
+          if [ ! -f frontend/reports/lcov.info ]; then
+            echo " Frontend coverage report missing, creating an empty one!"
+            echo "TN:" > frontend/reports/lcov.info
+          fi
+
+          if [ ! -f frontend/reports/sonar-flutter-lint.json ]; then
+            echo " Frontend lint report missing, creating an empty one!"
+            echo '{"issues": []}' > frontend/reports/sonar-flutter-lint.json
+          fi
+
+      - name: List Reports Before Running SonarCloud
+        run: |
+          echo "Frontend Reports:"
+          ls -lh frontend/reports || echo " No frontend reports found."
+
+      - name: Run SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@v4
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      # Upload Updated SonarCloud Reports to GCS
+      - name: Upload Updated SonarCloud Reports to GCS
+        if: always() # Ensure upload happens even if SonarCloud fails
+        run: |
+          BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||' | tr '/' '_')
+
+          echo "Uploading updated reports to GCS..."
+
+
+          # Upload Frontend Reports
+          gsutil cp frontend/reports/lcov.info gs://soen_390_reports/$BRANCH_NAME/frontend/lcov.info || echo " No new frontend coverage report to upload."
+          gsutil cp frontend/reports/sonar-flutter-lint.json gs://soen_390_reports/$BRANCH_NAME/frontend/sonar-flutter-lint.json || echo " No new frontend lint report to upload."

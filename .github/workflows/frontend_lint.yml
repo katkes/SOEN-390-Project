@@ -1,0 +1,170 @@
+name: Flutter Linting
+
+on:
+  push:
+    paths:
+      - frontend/**
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  linting:
+    name: Lint & Format Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          architecture: x64
+
+      - name: Install Flutter dependencies
+        working-directory: ./frontend
+        run: flutter pub get
+
+      - name: Verify Flutter formatting
+        working-directory: ./frontend
+        run: dart format --output=none --set-exit-if-changed .
+
+      - name: Run Flutter Analyze and Generate Report
+        working-directory: ./frontend
+        run: |
+          mkdir -p reports  # Ensure reports directory exists
+          flutter analyze --write=analysis_report.json || true
+          mv analysis_report.json reports/analysis_report.json  # Move report
+
+      - name: Run Dart Code Metrics and Generate Report
+        working-directory: ./frontend
+        run: |
+          mkdir -p reports  # Ensure reports directory exists
+          dart run dart_code_metrics:metrics --reporter=json > reports/dart_metrics_report.json || true
+          dart run dart_code_metrics:check-unused-code --reporter=json > reports/dart_metrics_unused.json || true
+
+      - name: Ensure reports are not empty
+        working-directory: ./frontend/reports
+        run: |
+          for file in analysis_report.json dart_metrics_report.json dart_metrics_unused.json; do
+            if [ ! -s "$file" ]; then
+              echo " No issues found, creating empty $file..."
+              echo '{"issues": []}' > "$file"
+            fi
+          done
+
+      - name: Convert Flutter Analysis and Dart Code Metrics to SonarCloud Format
+        working-directory: ./frontend
+        run: |
+          mkdir -p reports
+          python - <<EOF
+          import json
+          import os
+
+          def convert_analysis_report(input_file, output_data):
+              try:
+                  if not os.path.exists(input_file):
+                      raise FileNotFoundError(f"{input_file} does not exist.")
+                  if os.stat(input_file).st_size == 0:
+                      return
+                  with open(input_file, "r") as f:
+                      data = json.load(f)
+                  for issue in data.get("issues", []):
+                      file_path = issue["location"]["file"]
+                      message = issue["message"]
+                      severity = issue["severity"].upper()
+                      severity_map = {"ERROR": "CRITICAL", "WARNING": "MAJOR", "INFO": "MINOR"}
+                      output_data["issues"].append({
+                          "engineId": "flutter-analyze",
+                          "ruleId": "dart-lint",
+                          "severity": severity_map.get(severity, "MINOR"),
+                          "type": "CODE_SMELL",
+                          "primaryLocation": {
+                              "message": message,
+                              "filePath": f"frontend/{file_path}",
+                              "textRange": {"startLine": issue["location"]["startLine"], "endLine": issue["location"]["startLine"]}
+                          }
+                      })
+              except Exception as e:
+                  print(f"Error processing {input_file}: {e}")
+
+          def convert_dart_metrics(input_file, output_data):
+              try:
+                  if not os.path.exists(input_file):
+                      return
+                  if os.stat(input_file).st_size == 0:
+                      return
+                  with open(input_file, "r") as f:
+                      data = json.load(f)
+                  for file_issues in data.get("files", []):
+                      file_path = file_issues["path"]
+                      for issue in file_issues.get("issues", []):
+                          output_data["issues"].append({
+                              "engineId": "dart-code-metrics",
+                              "ruleId": issue["ruleId"],
+                              "severity": "MAJOR",
+                              "type": "CODE_SMELL",
+                              "primaryLocation": {
+                                  "message": issue["message"],
+                                  "filePath": f"frontend/{file_path}",
+                                  "textRange": {"startLine": issue["location"]["startLine"], "endLine": issue["location"]["startLine"]}
+                              }
+                          })
+              except Exception as e:
+                  print(f"Error processing {input_file}: {e}")
+
+          output_json = {"issues": []}
+          convert_analysis_report("reports/analysis_report.json", output_json)
+          convert_dart_metrics("reports/dart_metrics_report.json", output_json)
+          convert_dart_metrics("reports/dart_metrics_unused.json", output_json)
+
+          with open("reports/sonar-flutter-lint.json", "w") as f:
+              json.dump(output_json, f, indent=2)
+
+          print(f"Successfully converted {len(output_json['issues'])} lint issues to SonarCloud format.")
+
+          EOF
+
+      - name: Verify SonarCloud Lint Report Exists
+        working-directory: ./frontend/reports
+        run: |
+          if [ -f sonar-flutter-lint.json ]; then
+            echo " SonarCloud Lint Report found!"
+          else
+            echo " No issues found, generating an empty SonarCloud report."
+            echo '{"issues": []}' > sonar-flutter-lint.json
+          fi
+
+      # Authenticate with Google Cloud
+      - name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCS_KEY }}
+
+      - name: Manually Authenticate gcloud CLI
+        run: |
+          gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
+          gcloud auth list  # Debugging step to verify authentication
+
+      - name: Install Google Cloud CLI
+        run: |
+          sudo apt-get update && sudo apt-get install -y google-cloud-cli
+
+      - name: Ensure Folder Exists in GCS
+        run: |
+          BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||' | tr '/' '_')
+
+          echo "Checking if folder exists in GCS..."
+          if gsutil -q stat gs://soen_390_reports/$BRANCH_NAME/frontend/.keep; then
+            echo " Folder already exists in GCS."
+          else
+            echo " Folder does not exist. Creating placeholder..."
+            echo "Placeholder file" > frontend/reports/.keep
+            gsutil cp frontend/reports/.keep gs://soen_390_reports/$BRANCH_NAME/frontend/.keep
+          fi
+
+      - name: Upload Lint Reports to GCS
+        run: |
+          BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||' | tr '/' '_')
+          gsutil cp frontend/reports/sonar-flutter-lint.json gs://soen_390_reports/$BRANCH_NAME/frontend/sonar-flutter-lint.json
