@@ -42,6 +42,7 @@ jobs:
         run: flutter test --coverage
 
       - name: Generate HTML Coverage Report
+        working-directory: ./frontend
         run: |
           genhtml coverage/lcov.info -o coverage/html
 
