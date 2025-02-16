@@ -53,7 +53,7 @@ jobs:
         working-directory: ./frontend
         run: |
           mkdir -p reports
-          python - <<EOF
+          python3 - <<EOF
           import json
           import os
 
