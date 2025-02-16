@@ -9,11 +9,13 @@ import 'package:latlong2/latlong.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 
+
 void main() {
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+
   const MyApp({super.key});
 
   @override
@@ -107,7 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           borderRadius: BorderRadius.circular(30),
                           child: MapWidget(
                             location: _currentLocation,
-                            httpClient: _httpClient!, // Use non-null assertion
+                            httpClient: _httpClient!,
                           ),
                         ),
                       ),

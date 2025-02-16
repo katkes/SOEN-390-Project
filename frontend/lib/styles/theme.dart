@@ -12,7 +12,7 @@ final ThemeData appTheme = ThemeData(
     onSurface: Colors.black, // Text/icon color on surface
     error: Colors.red,
     onError: Colors.white,
-    outline: Colors.grey, // Optional: Used for borders, dividers, etc.
+    outline: Colors.grey, 
     scrim: Colors.black, // Optional: Used for overlays like dialogs
   ),
   scaffoldBackgroundColor: Colors.white, // Explicitly set background for pages
