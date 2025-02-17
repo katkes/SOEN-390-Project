@@ -10,21 +10,11 @@ on:
     branches:
       - main # Run SonarCloud on PRs targeting main
 
-  schedule:
-    - cron: '0 2 */2 * *' # Runs every other day at 2 AM UTC
-
 permissions:
   actions: read  # Allows reading workflow artifacts
   contents: read  # Required for repository access
 
 jobs:
-  setup:
-    name: Setup Job
-    runs-on: [our-runner]
-    steps:
-      - name: Print Setup Message
-        run: echo "Initializing SonarCloud Analysis Workflow"
-
   fetch-reports-gcs:
     name: Fetch Reports from Google Cloud Storage (GCS)
     runs-on: [our-runner]
