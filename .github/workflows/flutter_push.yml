@@ -12,12 +12,6 @@ on:
 
 
 jobs:
-  build:
-    runs-on: [our-runner]
-
-
-
-
   setup_gcs:
     name: Setup GCS Folder
     runs-on: [our-runner]
@@ -155,9 +149,9 @@ jobs:
           ls -R reports || echo "Reports directory not found"
 
 
-          - name: Run Flutter tests with coverage
-          working-directory: ./frontend
-          run: |
+      - name: Run Flutter tests with coverage
+        working-directory: ./frontend
+        run: |
             mkdir -p reports
             flutter test --coverage || echo "Tests failed, continuing..."
             
