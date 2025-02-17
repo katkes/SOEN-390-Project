@@ -1,6 +1,9 @@
 name: Flutter Testing and Linting
 
 on:
+  pull_request:
+    branches:
+      - main
   push:
     paths:
       - frontend/**
