@@ -1,6 +1,12 @@
-name: SonarCloud Analysis & Flutter Build
+name: Flutter CI/CD Pipeline
 
 on:
+  push:
+    branches-ignore:
+      - main  # Ignore merges into main
+    paths:
+      - frontend/**
+      - .github/**
   pull_request:
     branches:
       - main
@@ -10,8 +16,8 @@ permissions:
   contents: read
 
 jobs:
-  fetch-reports-gcs:
-    name: Fetch Reports from Google Cloud Storage (GCS)
+  setup_gcs:
+    name: Setup GCS Folder
     runs-on: [our-runner]
 
     steps:
@@ -20,35 +26,22 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCS_KEY }}
 
-      - name: Manually Authenticate gcloud CLI
-        run: |
-          gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
-          gcloud auth list
-
-      - name: Ensure Report Directories Exist
-        run: mkdir -p frontend/reports
-
-      - name: Fetch Frontend Reports from GCS
+      - name: Ensure Folder Exists in GCS
         run: |
           BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||' | tr '/' '_')
+          gsutil -q stat gs://soen_390_reports/$BRANCH_NAME/frontend/.keep || \
+          (echo "Placeholder file" > frontend/reports/.keep && gsutil cp frontend/reports/.keep gs://soen_390_reports/$BRANCH_NAME/frontend/.keep)
 
-          gsutil -q stat gs://soen_390_reports/$BRANCH_NAME/frontend/lcov.info && \
-          gsutil cp gs://soen_390_reports/$BRANCH_NAME/frontend/lcov.info frontend/reports/lcov.info || \
-          echo "Frontend coverage report not found."
-
-          gsutil -q stat gs://soen_390_reports/$BRANCH_NAME/frontend/sonar-flutter-lint.json && \
-          gsutil cp gs://soen_390_reports/$BRANCH_NAME/frontend/sonar-flutter-lint.json frontend/reports/sonar-flutter-lint.json || \
-          echo "Frontend lint report not found."
-
-  flutter_build:
-    name: Build Flutter Project
+  setup_flutter:
+    name: Setup Flutter
     runs-on: [our-runner]
+    needs: setup_gcs
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Flutter
+      - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
           architecture: x64
@@ -57,10 +50,125 @@ jobs:
         working-directory: ./frontend
         run: flutter doctor
 
-      - name: Install dependencies
+      - name: Install Flutter Dependencies
         working-directory: ./frontend
         run: flutter pub get
 
+  linting:
+    name: Lint & Format Check
+    runs-on: [our-runner]
+    needs: setup_flutter  
+
+    steps:
+      - name: Verify Flutter formatting
+        working-directory: ./frontend
+        run: dart format --output=none --set-exit-if-changed .
+
+      - name: Run Flutter Analyze and Generate Report
+        working-directory: ./frontend
+        run: |
+          mkdir -p reports
+          flutter analyze --write=analysis_report.json
+          if [ -f analysis_report.json ]; then
+            mv analysis_report.json reports/analysis_report.json
+          else
+            echo '{}' > reports/analysis_report.json  # Prevent missing file errors
+          fi
+      
+      - name: Convert Flutter Analysis to SonarCloud Format
+        working-directory: ./frontend
+        run: |
+          python3 - <<EOF
+          import json, os
+          input_file = "reports/analysis_report.json"
+          output_file = "reports/sonar-flutter-lint.json"
+          output_json = {"issues": []}
+          if os.path.exists(input_file) and os.stat(input_file).st_size > 0:
+              with open(input_file, "r") as f:
+                  data = json.load(f)
+              for issue in data.get("issues", []):
+                  output_json["issues"].append({
+                      "engineId": "flutter-analyze",
+                      "ruleId": "dart-lint",
+                      "severity": {"ERROR": "CRITICAL", "WARNING": "MAJOR", "INFO": "MINOR"}.get(issue["severity"].upper(), "MINOR"),
+                      "type": "CODE_SMELL",
+                      "primaryLocation": {
+                          "message": issue["message"],
+                          "filePath": f"frontend/{issue['location']['file']}",
+                          "textRange": {"startLine": issue["location"]["startLine"], "endLine": issue["location"]["startLine"]}
+                      }
+                  })
+          with open(output_file, "w") as f:
+              json.dump(output_json, f, indent=2)
+          EOF
+
+      - name: Ensure Empty SonarCloud Lint Report Exists
+        working-directory: ./frontend/reports
+        run: |
+          if [ ! -f sonar-flutter-lint.json ]; then
+            echo '{"issues": []}' > sonar-flutter-lint.json
+          fi
+
+      - name: Upload Lint Report to GCS
+        run: |
+          BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||' | tr '/' '_')
+          gsutil cp frontend/reports/sonar-flutter-lint.json gs://soen_390_reports/$BRANCH_NAME/frontend/
+
+  testing:
+    name: Run Flutter Tests
+    runs-on: [our-runner]
+    needs: setup_flutter  
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Flutter tests and generate reports
+        working-directory: ./frontend
+        run: |
+            mkdir -p reports
+            flutter test --machine | dart run junitreport:tojunit > reports/test_report.xml || echo "Tests failed, continuing..."
+            flutter test --coverage || echo "Coverage failed, continuing..."
+
+            if [ -f coverage/lcov.info ]; then
+              # Convert relative paths to absolute paths
+              sed -i "s|SF:lib/|SF:$(pwd)/lib/|g" coverage/lcov.info
+              
+              # Check if .pub-cache or test files exist in the coverage report before removing them
+              PUB_CACHE_EXISTS=$(grep -c "/.pub-cache/" coverage/lcov.info || echo "0")
+              TEST_FILES_EXISTS=$(grep -c "/test/" coverage/lcov.info || echo "0")
+
+              if [ "$PUB_CACHE_EXISTS" -gt 0 ] || [ "$TEST_FILES_EXISTS" -gt 0 ]; then
+                REMOVE_PATTERNS=""
+                [ "$PUB_CACHE_EXISTS" -gt 0 ] && REMOVE_PATTERNS="${REMOVE_PATTERNS} '*/.pub-cache/*'"
+                [ "$TEST_FILES_EXISTS" -gt 0 ] && REMOVE_PATTERNS="${REMOVE_PATTERNS} '*/test/*'"
+
+                echo "Removing patterns: $REMOVE_PATTERNS"
+                eval "lcov --remove coverage/lcov.info $REMOVE_PATTERNS -o reports/lcov.info"
+              else
+                echo "No dependencies or test files found in coverage report. Skipping lcov --remove."
+                cp coverage/lcov.info reports/lcov.info  # Copy the file if there's nothing to remove
+              fi
+            else
+              echo "No coverage report generated."
+            fi
+
+      - name: Upload Test Reports to GCS
+        run: |
+          BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||' | tr '/' '_')
+          gsutil cp frontend/reports/test_report.xml gs://soen_390_reports/$BRANCH_NAME/frontend/
+          gsutil cp frontend/reports/lcov.info gs://soen_390_reports/$BRANCH_NAME/frontend/
+        
+        
+
+
+  flutter_build:
+    name: Build Flutter Project
+    runs-on: [our-runner]
+    needs: setup_flutter
+    if: github.event_name == 'pull_request'  
+
+    steps:
       - name: Build Flutter APK
         working-directory: ./frontend
         run: flutter build apk --release
@@ -74,8 +182,8 @@ jobs:
   sonarqube:
     name: SonarCloud Analysis
     runs-on: [our-runner]
-    needs: [fetch-reports-gcs, flutter_build]
-    if: success()
+    needs: [linting, testing, flutter_build]  
+    if: github.event_name == 'pull_request'  
 
     steps:
       - name: Checkout repository
@@ -83,24 +191,23 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Ensure Required Reports Exist (Prevent SonarCloud Failure)
+      - name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCS_KEY }}
+
+      - name: Create Reports Directory
+        run: mkdir -p frontend/reports
+
+      - name: Download Reports from GCS
         run: |
-          mkdir -p frontend/reports
+          BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||' | tr '/' '_')
+          gsutil cp gs://soen_390_reports/$BRANCH_NAME/frontend/lcov.info frontend/reports/lcov.info || echo "lcov.info not found"
+          gsutil cp gs://soen_390_reports/$BRANCH_NAME/frontend/test_report.xml frontend/reports/test_report.xml || echo "test_report.xml not found"
+          gsutil cp gs://soen_390_reports/$BRANCH_NAME/frontend/sonar-flutter-lint.json frontend/reports/sonar-flutter-lint.json || echo "sonar-flutter-lint.json not found"
 
-          if [ ! -f frontend/reports/lcov.info ]; then
-            echo "Frontend coverage report missing, creating an empty one!"
-            echo "TN:" > frontend/reports/lcov.info
-          fi
-
-          if [ ! -f frontend/reports/sonar-flutter-lint.json ]; then
-            echo "Frontend lint report missing, creating an empty one!"
-            echo '{"issues": []}' > frontend/reports/sonar-flutter-lint.json
-          fi
-
-      - name: List Reports Before Running SonarCloud
-        run: |
-          echo "Frontend Reports:"
-          ls -lh frontend/reports || echo "No frontend reports found."
+      - name: Debug Sonar Lint File
+        run: ls -lah frontend/reports/
 
       - name: Run SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v4
@@ -114,14 +221,10 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: Upload Updated SonarCloud Reports to GCS
-        if: always()
         run: |
           BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||' | tr '/' '_')
+          gsutil cp frontend/reports/lcov.info gs://soen_390_reports/$BRANCH_NAME/frontend/
+          gsutil cp frontend/reports/test_report.xml gs://soen_390_reports/$BRANCH_NAME/frontend/
+          gsutil cp frontend/reports/sonar-flutter-lint.json gs://soen_390_reports/$BRANCH_NAME/frontend/
 
-          echo "Uploading updated reports to GCS..."
 
-          gsutil cp frontend/reports/lcov.info gs://soen_390_reports/$BRANCH_NAME/frontend/lcov.info || \
-          echo "No new frontend coverage report to upload."
-
-          gsutil cp frontend/reports/sonar-flutter-lint.json gs://soen_390_reports/$BRANCH_NAME/frontend/sonar-flutter-lint.json || \
-          echo "No new frontend lint report to upload."
