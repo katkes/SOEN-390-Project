@@ -3,3 +3,5 @@ backend/.env
 .env
 backend
 frontend/coverage
+frontend/analysis_report.json
+frontend/lint_report.txt
