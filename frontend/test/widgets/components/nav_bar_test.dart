@@ -9,7 +9,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:soen_390/widgets/nav_bar.dart';
 
 void main() {
-  testWidgets('NavBar displays correctly and responds to taps',
+  group('NavBar Widget Tests', (){
+    testWidgets('NavBar displays correctly and responds to taps',
       (WidgetTester tester) async {
     int tappedIndex = -1;
 
@@ -93,4 +94,6 @@ void main() {
     expect(find.byIcon(Icons.person), findsOneWidget);
     expect(find.byIcon(Icons.person_outline), findsNothing);
   });
+  });
+  
 }
