@@ -1,0 +1,62 @@
+name: Run Tests Inside Docker
+
+on:
+  push:
+    paths:
+      - backend/**
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set Dynamic Report Name
+        run: echo "TIMESTAMP=$(date +%Y%m%d-%H%M%S)" >> $GITHUB_ENV
+
+      - name: Build & Start Test Containers
+        run: |
+          docker compose -f docker-compose.test.yml up --build -d
+          sleep 10  # Wait for services to start
+
+      - name: Get Backend Container Name Dynamically
+        run: |
+          BACKEND_CONTAINER=$(docker ps --format '{{.Names}}' | grep backend)
+          echo "BACKEND_CONTAINER=$BACKEND_CONTAINER" >> $GITHUB_ENV
+
+      - name: Run Tests Inside Backend Container (Always Generate Reports)
+        run: |
+          set -o pipefail
+          REPORT_NAME="pytest-report-${TIMESTAMP}.xml"
+          COVERAGE_NAME="coverage-${TIMESTAMP}.xml"
+          docker exec $BACKEND_CONTAINER /app/venv/bin/poetry run pytest --cov=app --cov-report=xml --junitxml=/app/reports/$REPORT_NAME
+          TEST_EXIT_CODE=$?  # Capture the exit code
+          echo "TEST_EXIT_CODE=$TEST_EXIT_CODE" >> $GITHUB_ENV
+          echo "PYTEST_REPORT=$REPORT_NAME" >> $GITHUB_ENV
+          echo "COVERAGE_REPORT=$COVERAGE_NAME" >> $GITHUB_ENV
+
+      - name: Copy Test Reports to Host (Even If Tests Fail)
+        if: always()
+        run: |
+          mkdir -p reports
+          docker cp $BACKEND_CONTAINER:/app/reports/${{ env.COVERAGE_REPORT }} reports/sonar-coverage-${{ env.TIMESTAMP }}.xml || true
+          docker cp $BACKEND_CONTAINER:/app/reports/${{ env.PYTEST_REPORT }} reports/sonar-pytest-${{ env.TIMESTAMP }}.xml || true
+
+      - name: Stop and Cleanup Test Containers
+        if: always()
+        run: docker compose -f docker-compose.test.yml down
+
+      - name: Upload Test Reports as Artifacts (Even If Tests Fail)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports-${{ env.TIMESTAMP }}
+          path: reports/
+
+      - name: Fail the Job if Tests Failed
+        run: exit $TEST_EXIT_CODE  # Make sure the job fails if tests failed
