@@ -6,8 +6,8 @@ on:
       - main
 
 permissions:
-  actions: read  # Allows reading workflow artifacts
-  contents: read  # Required for repository access
+  actions: read
+  contents: read
 
 jobs:
   fetch-reports-gcs:
@@ -15,17 +15,15 @@ jobs:
     runs-on: [our-runner]
 
     steps:
-      # Authenticate with Google Cloud
       - name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCS_KEY }}
 
-      # Manually Authenticate gcloud CLI
       - name: Manually Authenticate gcloud CLI
         run: |
           gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
-          gcloud auth list  # Debugging step to verify authentication
+          gcloud auth list
 
       - name: Ensure Report Directories Exist
         run: mkdir -p frontend/reports
@@ -42,29 +40,58 @@ jobs:
           gsutil cp gs://soen_390_reports/$BRANCH_NAME/frontend/sonar-flutter-lint.json frontend/reports/sonar-flutter-lint.json || \
           echo "Frontend lint report not found."
 
+  flutter_build:
+    name: Build Flutter Project
+    runs-on: [our-runner]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          architecture: x64
+
+      - name: Run Flutter Doctor
+        working-directory: ./frontend
+        run: flutter doctor
+
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: flutter pub get
+
+      - name: Build Flutter APK
+        working-directory: ./frontend
+        run: flutter build apk --release
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: flutter-apk
+          path: frontend/build/app/outputs/flutter-apk/app-release.apk
+
   sonarqube:
     name: SonarCloud Analysis
     runs-on: [our-runner]
-    needs: fetch-reports-gcs
-    if: success() # Run only if reports were successfully fetched
+    needs: [fetch-reports-gcs, flutter_build]
+    if: success()
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Ensures full Git history for analysis
+          fetch-depth: 0
 
       - name: Ensure Required Reports Exist (Prevent SonarCloud Failure)
         run: |
           mkdir -p frontend/reports
 
-          # Create empty coverage report if missing
           if [ ! -f frontend/reports/lcov.info ]; then
             echo "Frontend coverage report missing, creating an empty one!"
             echo "TN:" > frontend/reports/lcov.info
           fi
 
-          # Create empty lint report if missing
           if [ ! -f frontend/reports/sonar-flutter-lint.json ]; then
             echo "Frontend lint report missing, creating an empty one!"
             echo '{"issues": []}' > frontend/reports/sonar-flutter-lint.json
@@ -86,15 +113,13 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-      # Upload Updated SonarCloud Reports to GCS
       - name: Upload Updated SonarCloud Reports to GCS
-        if: always() # Ensure upload happens even if SonarCloud fails
+        if: always()
         run: |
           BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||' | tr '/' '_')
 
           echo "Uploading updated reports to GCS..."
 
-          # Upload Frontend Reports
           gsutil cp frontend/reports/lcov.info gs://soen_390_reports/$BRANCH_NAME/frontend/lcov.info || \
           echo "No new frontend coverage report to upload."
 
