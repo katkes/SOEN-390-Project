@@ -159,11 +159,25 @@ jobs:
               # Convert relative paths to absolute paths
               sed -i "s|SF:lib/|SF:$(pwd)/lib/|g" coverage/lcov.info
         
-              # Remove coverage from dependencies and test files
-              lcov --remove coverage/lcov.info '*/.pub-cache/*' '*/test/*' -o reports/lcov.info
+              # Check if .pub-cache or test files exist in the report before running lcov --remove
+              PUB_CACHE_EXISTS=$(grep -c "/.pub-cache/" coverage/lcov.info || echo "0")
+              TEST_FILES_EXISTS=$(grep -c "/test/" coverage/lcov.info || echo "0")
+        
+              if [ "$PUB_CACHE_EXISTS" -gt 0 ] || [ "$TEST_FILES_EXISTS" -gt 0 ]; then
+                REMOVE_PATTERNS=""
+                [ "$PUB_CACHE_EXISTS" -gt 0 ] && REMOVE_PATTERNS="${REMOVE_PATTERNS} '*/.pub-cache/*'"
+                [ "$TEST_FILES_EXISTS" -gt 0 ] && REMOVE_PATTERNS="${REMOVE_PATTERNS} '*/test/*'"
+        
+                echo "Removing patterns: $REMOVE_PATTERNS"
+                eval "lcov --remove coverage/lcov.info $REMOVE_PATTERNS -o reports/lcov.info"
+              else
+                echo "No dependencies or test files found in coverage report. Skipping lcov --remove."
+                cp coverage/lcov.info reports/lcov.info  # Just copy the file if there's nothing to remove
+              fi
             else
               echo "No coverage report generated."
             fi
+        
         
 
 
