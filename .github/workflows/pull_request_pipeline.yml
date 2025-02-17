@@ -1,15 +1,27 @@
 name: SonarCloud Analysis & Flutter Build
 
 on:
-  pull_request:
-    branches:
-      - main
+  workflow_run:
+    workflows: ["Flutter Testing and Linting"]  # Match the name of flutter_push.yml
+    types:
+      - completed
 
 permissions:
   actions: read
   contents: read
 
 jobs:
+  check-pr:
+    name: Check if Workflow is Triggered by a Pull Request
+    runs-on: [our-runner]
+    steps:
+      - name: Check if Branch is a PR
+        run: |
+          if [[ "${{ github.event.workflow_run.event }}" != "pull_request" ]]; then
+            echo "Not triggered by a PR. Skipping."
+            exit 1
+          fi
+    # This job will fail and stop execution if not a PR
   fetch-reports-gcs:
     name: Fetch Reports from Google Cloud Storage (GCS)
     runs-on: [our-runner]
