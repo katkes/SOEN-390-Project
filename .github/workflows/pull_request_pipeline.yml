@@ -191,9 +191,23 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCS_KEY }}
+
+      - name: Create Reports Directory
+        run: mkdir -p frontend/reports
+
+      - name: Download Reports from GCS
+        run: |
+          BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||' | tr '/' '_')
+          gsutil cp gs://soen_390_reports/$BRANCH_NAME/frontend/lcov.info frontend/reports/lcov.info || echo "lcov.info not found"
+          gsutil cp gs://soen_390_reports/$BRANCH_NAME/frontend/test_report.xml frontend/reports/test_report.xml || echo "test_report.xml not found"
+          gsutil cp gs://soen_390_reports/$BRANCH_NAME/frontend/sonar-flutter-lint.json frontend/reports/sonar-flutter-lint.json || echo "sonar-flutter-lint.json not found"
+
       - name: Debug Sonar Lint File
         run: ls -lah frontend/reports/
-        
 
       - name: Run SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v4
@@ -212,4 +226,5 @@ jobs:
           gsutil cp frontend/reports/lcov.info gs://soen_390_reports/$BRANCH_NAME/frontend/
           gsutil cp frontend/reports/test_report.xml gs://soen_390_reports/$BRANCH_NAME/frontend/
           gsutil cp frontend/reports/sonar-flutter-lint.json gs://soen_390_reports/$BRANCH_NAME/frontend/
-        
+
+
