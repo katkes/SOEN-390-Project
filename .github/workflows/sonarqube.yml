@@ -1,14 +1,9 @@
 name: SonarCloud Analysis
 
 on:
-  push:
-    branches:
-      - main
-      - release/** # Run SonarCloud for main and release branches
-
   pull_request:
     branches:
-      - main # Run SonarCloud on PRs targeting main
+      - main
 
 permissions:
   actions: read  # Allows reading workflow artifacts
