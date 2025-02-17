@@ -95,19 +95,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          architecture: x64
-
-      - name: Run Flutter Doctor
-        working-directory: ./frontend
-        run: flutter doctor
-
-      - name: Install Dependencies
-        working-directory: ./frontend
-        run: flutter pub get
-
       - name: Ensure Required Reports Exist (Prevent SonarCloud Failure)
         run: |
           mkdir -p frontend/reports
