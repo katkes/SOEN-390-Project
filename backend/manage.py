@@ -5,7 +5,7 @@ import os
 import sys
 from django.core.management import (
     execute_from_command_line,
-)  # ✅ Import moved to the top
+)  # Import moved to the top
 
 
 def main():
