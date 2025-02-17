@@ -27,7 +27,7 @@ jobs:
 
   fetch-reports-gcs:
     name: Fetch Reports from Google Cloud Storage (GCS)
-    runs-on: ubuntu-latest
+    runs-on: [our-runner]
 
     steps:
       # Authenticate with Google Cloud
@@ -59,7 +59,7 @@ jobs:
 
   sonarqube:
     name: SonarCloud Analysis
-    runs-on: ubuntu-latest
+    runs-on: [our-runner]
     needs: fetch-reports-gcs
     if: success() # Run only if reports were successfully fetched
 
