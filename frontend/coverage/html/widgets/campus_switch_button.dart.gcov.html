@@ -1,0 +1,153 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - widgets/campus_switch_button.dart</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../index.html" title="Click to go to top-level">top level</a> - <a href="index.html" title="Click to go to directory widgets">widgets</a> - campus_switch_button.dart</td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">21</td>
+            <td class="headerCovTableEntry">21</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2025-02-16 20:49:59</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">-</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">            Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>              : import 'package:flutter/material.dart';</span>
+<span id="L2"><span class="lineNum">       2</span>              : import 'package:flutter/cupertino.dart';</span>
+<span id="L3"><span class="lineNum">       3</span>              : import 'package:latlong2/latlong.dart';</span>
+<span id="L4"><span class="lineNum">       4</span>              : </span>
+<span id="L5"><span class="lineNum">       5</span>              : class CampusSwitch extends StatefulWidget {</span>
+<span id="L6"><span class="lineNum">       6</span>              :   final Function(String) onSelectionChanged;</span>
+<span id="L7"><span class="lineNum">       7</span>              :   final Function(LatLng) onLocationChanged;</span>
+<span id="L8"><span class="lineNum">       8</span>              :   final String initialSelection;</span>
+<span id="L9"><span class="lineNum">       9</span>              : </span>
+<span id="L10"><span class="lineNum">      10</span> <span class="tlaGNC">           1 :   const CampusSwitch({</span></span>
+<span id="L11"><span class="lineNum">      11</span>              :     super.key,</span>
+<span id="L12"><span class="lineNum">      12</span>              :     required this.onSelectionChanged,</span>
+<span id="L13"><span class="lineNum">      13</span>              :     required this.onLocationChanged,</span>
+<span id="L14"><span class="lineNum">      14</span>              :     this.initialSelection = 'SGW',</span>
+<span id="L15"><span class="lineNum">      15</span>              :   });</span>
+<span id="L16"><span class="lineNum">      16</span>              : </span>
+<span id="L17"><span class="lineNum">      17</span> <span class="tlaGNC">           1 :   @override</span></span>
+<span id="L18"><span class="lineNum">      18</span> <span class="tlaGNC">           1 :   State&lt;CampusSwitch&gt; createState() =&gt; _CampusSwitchState();</span></span>
+<span id="L19"><span class="lineNum">      19</span>              : }</span>
+<span id="L20"><span class="lineNum">      20</span>              : </span>
+<span id="L21"><span class="lineNum">      21</span>              : class _CampusSwitchState extends State&lt;CampusSwitch&gt; {</span>
+<span id="L22"><span class="lineNum">      22</span>              :   late String selectedBuilding;</span>
+<span id="L23"><span class="lineNum">      23</span>              :   final Map&lt;String, LatLng&gt; _campusLocations = {</span>
+<span id="L24"><span class="lineNum">      24</span>              :     'SGW': LatLng(45.497856, -73.579588),</span>
+<span id="L25"><span class="lineNum">      25</span>              :     'Loyola': LatLng(45.4581, -73.6391),</span>
+<span id="L26"><span class="lineNum">      26</span>              :   };</span>
+<span id="L27"><span class="lineNum">      27</span>              : </span>
+<span id="L28"><span class="lineNum">      28</span>              :   final Map&lt;String, Widget&gt; _campusOptions = {</span>
+<span id="L29"><span class="lineNum">      29</span>              :     'SGW': Text('SGW',</span>
+<span id="L30"><span class="lineNum">      30</span>              :         style: TextStyle(</span>
+<span id="L31"><span class="lineNum">      31</span>              :             fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),</span>
+<span id="L32"><span class="lineNum">      32</span>              :     'Loyola': Text('Loyola',</span>
+<span id="L33"><span class="lineNum">      33</span>              :         style: TextStyle(</span>
+<span id="L34"><span class="lineNum">      34</span>              :             fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),</span>
+<span id="L35"><span class="lineNum">      35</span>              :   };</span>
+<span id="L36"><span class="lineNum">      36</span>              : </span>
+<span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">           1 :   @override</span></span>
+<span id="L38"><span class="lineNum">      38</span>              :   void initState() {</span>
+<span id="L39"><span class="lineNum">      39</span> <span class="tlaGNC">           1 :     super.initState();</span></span>
+<span id="L40"><span class="lineNum">      40</span> <span class="tlaGNC">           3 :     selectedBuilding = widget.initialSelection;</span></span>
+<span id="L41"><span class="lineNum">      41</span>              :   }</span>
+<span id="L42"><span class="lineNum">      42</span>              : </span>
+<span id="L43"><span class="lineNum">      43</span> <span class="tlaGNC">           1 :   @override</span></span>
+<span id="L44"><span class="lineNum">      44</span>              :   Widget build(BuildContext context) {</span>
+<span id="L45"><span class="lineNum">      45</span> <span class="tlaGNC">           1 :     return Center(</span></span>
+<span id="L46"><span class="lineNum">      46</span> <span class="tlaGNC">           1 :       child: Container(</span></span>
+<span id="L47"><span class="lineNum">      47</span>              :         width: 420,</span>
+<span id="L48"><span class="lineNum">      48</span>              :         padding: const EdgeInsets.all(4),</span>
+<span id="L49"><span class="lineNum">      49</span> <span class="tlaGNC">           1 :         decoration: BoxDecoration(</span></span>
+<span id="L50"><span class="lineNum">      50</span> <span class="tlaGNC">           1 :           color: Colors.grey.shade300,</span></span>
+<span id="L51"><span class="lineNum">      51</span> <span class="tlaGNC">           1 :           borderRadius: BorderRadius.circular(12),</span></span>
+<span id="L52"><span class="lineNum">      52</span>              :         ),</span>
+<span id="L53"><span class="lineNum">      53</span> <span class="tlaGNC">           1 :         child: CupertinoSegmentedControl&lt;String&gt;(</span></span>
+<span id="L54"><span class="lineNum">      54</span>              :           padding: EdgeInsets.zero,</span>
+<span id="L55"><span class="lineNum">      55</span> <span class="tlaGNC">           1 :           groupValue: selectedBuilding,</span></span>
+<span id="L56"><span class="lineNum">      56</span> <span class="tlaGNC">           1 :           children: _campusOptions,</span></span>
+<span id="L57"><span class="lineNum">      57</span> <span class="tlaGNC">           1 :           onValueChanged: (String newValue) {</span></span>
+<span id="L58"><span class="lineNum">      58</span> <span class="tlaGNC">           2 :             setState(() {</span></span>
+<span id="L59"><span class="lineNum">      59</span> <span class="tlaGNC">           1 :               selectedBuilding = newValue;</span></span>
+<span id="L60"><span class="lineNum">      60</span>              :             });</span>
+<span id="L61"><span class="lineNum">      61</span> <span class="tlaGNC">           3 :             widget.onSelectionChanged(newValue);</span></span>
+<span id="L62"><span class="lineNum">      62</span> <span class="tlaGNC">           5 :             widget.onLocationChanged(_campusLocations[newValue]!);</span></span>
+<span id="L63"><span class="lineNum">      63</span>              :           },</span>
+<span id="L64"><span class="lineNum">      64</span>              :           borderColor: Colors.transparent,</span>
+<span id="L65"><span class="lineNum">      65</span>              :           selectedColor: Colors.white,</span>
+<span id="L66"><span class="lineNum">      66</span>              :           unselectedColor: Colors.transparent,</span>
+<span id="L67"><span class="lineNum">      67</span> <span class="tlaGNC">           1 :           pressedColor: Colors.white.withValues(</span></span>
+<span id="L68"><span class="lineNum">      68</span>              :             red: 255,</span>
+<span id="L69"><span class="lineNum">      69</span>              :             green: 255,</span>
+<span id="L70"><span class="lineNum">      70</span>              :             blue: 255,</span>
+<span id="L71"><span class="lineNum">      71</span>              :             alpha: 0.7,</span>
+<span id="L72"><span class="lineNum">      72</span>              :           ),</span>
+<span id="L73"><span class="lineNum">      73</span>              :         ),</span>
+<span id="L74"><span class="lineNum">      74</span>              :       ),</span>
+<span id="L75"><span class="lineNum">      75</span>              :     );</span>
+<span id="L76"><span class="lineNum">      76</span>              :   }</span>
+<span id="L77"><span class="lineNum">      77</span>              : }</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.3-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>
