@@ -1,4 +1,4 @@
-name: SonarCloud Analysis
+name: SonarCloud Analysis & Flutter Build
 
 on:
   pull_request:
