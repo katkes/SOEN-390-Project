@@ -209,6 +209,10 @@ jobs:
       - name: Debug Sonar Lint File
         run: ls -lah frontend/reports/
 
+      - name: Install Flutter Dependencies
+        working-directory: ./frontend
+        run: flutter pub get
+
       - name: Run SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v4
         with:
