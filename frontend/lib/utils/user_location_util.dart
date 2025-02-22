@@ -1,12 +1,8 @@
-import 'package:flutter_background_geolocation/flutter_background_geolocation.dart' as bg;
-import 'package:flutter/material.dart'; //need to import this all the time because flutter classes like statefulwidget dont exist naturally in flutter. You need to import it. You're coding in dart, not flutter
-
-
-
-
-//This file is to obtain the current location of the user.
+// This file is to obtain the current location of the user.
 // Do not access any location specific services until the .ready(config) method is done running.
+// If you are using this service for the current location. The sole variable of interest to you is the "currentLocation" variable
 
+import 'package:flutter_background_geolocation/flutter_background_geolocation.dart' as bg;
 
 class LocationService {
 
@@ -14,12 +10,12 @@ class LocationService {
   bg.Location? currentLocation;
 
   //instance of the singleton pattern.
-  static final LocationService _instance = LocationService._internal();
+  static final LocationService _instance = LocationService._internal(); //eager initialization.
 
   //this is the private constructor.
   LocationService._internal();
 
-  //factory to give out instance.
+  //factory to give out instance (always the same instance)
   factory LocationService() {
     return _instance;
   }
