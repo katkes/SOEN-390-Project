@@ -15,14 +15,17 @@ import 'outdoor_map_marker_test.mocks.dart';
 
 @GenerateMocks([http.Client])
 void main() {
+  // This group of tests verifies that the MapWidget correctly renders markers for the SGW and Loyola campuses.
+  // It uses the mockito package to mock HTTP requests and ensure that the markers are displayed correctly
+  // without making real network requests.
   group('MapWidget Tests', () {
-    // Updated group name
     late MockClient mockClient;
 
     setUp(() {
       mockClient = MockClient();
     });
 
+    // This test verifies that the MapWidget correctly renders markers for the SGW campus.
     testWidgets('renders markers for SGW campus', (WidgetTester tester) async {
       final LatLng sgwLocation = LatLng(45.497856, -73.579588);
 
@@ -32,7 +35,6 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: MyPage(
-            // Use MyPage, not Scaffold directly
             location: sgwLocation,
             httpClient: mockClient,
           ),
@@ -44,6 +46,7 @@ void main() {
       expect(find.byIcon(Icons.location_pin), findsNWidgets(1));
     });
 
+    // This test verifies that the MapWidget correctly renders markers for the Loyola campus.
     testWidgets('renders markers for Loyola campus',
         (WidgetTester tester) async {
       final LatLng loyolaLocation = LatLng(45.4581, -73.6391);
@@ -54,7 +57,6 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: MyPage(
-            // Use MyPage
             location: loyolaLocation,
             httpClient: mockClient,
           ),
@@ -66,27 +68,33 @@ void main() {
       expect(find.byIcon(Icons.location_pin), findsNWidgets(1));
     });
   });
-}
 
-// MyPage Widget (as provided in the previous response)
-// This widget is used to demonstrate how to use the MapWidget by passing the required httpClient and location parameters.
-class MyPage extends StatelessWidget {
-  final http.Client httpClient;
-  final LatLng location;
+// This group of tests verifies that the MyPage widget correctly renders the MapWidget
+// and checks that the layout is correct.
+  group('MyPage Tests', () {
+    late MockClient mockClient;
 
-  const MyPage({required this.httpClient, required this.location, super.key});
+    setUp(() {
+      mockClient = MockClient();
+    });
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        // Or use a Stack if you need precise positioning
-        child: MapWidget(
-          // Use MapWidget
-          location: location,
-          httpClient: httpClient,
+    testWidgets('renders MyPage with MapWidget and checks layout',
+        (WidgetTester tester) async {
+      final LatLng testLocation = LatLng(0, 0); // Arbitrary location
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MyPage(
+            location: testLocation,
+            httpClient: mockClient,
+          ),
         ),
-      ),
-    );
-  }
+      );
+
+      expect(find.byType(MyPage), findsOneWidget);
+      expect(find.byType(Scaffold), findsOneWidget);
+      expect(find.byType(Center), findsOneWidget);
+      expect(find.byType(MapWidget), findsOneWidget);
+    });
+  });
 }
