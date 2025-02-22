@@ -1,10 +1,9 @@
 import 'package:geolocator/geolocator.dart';
 import 'dart:ui';
 
-//this file is the logic to obtain the user's current location.
-
 //function for current location
 //this is the "state"
+
 Future<Position> determinePosition() async {
   bool serviceEnabled;
   LocationPermission permission;
@@ -42,11 +41,3 @@ Future<Position> determinePosition() async {
   // but i recommend to use Position position since it tells you exactly what the pointer is
 }
 
-// void main() async {
-//   try {
-//     Position position = await _determinePosition();
-//     print("Latitude: ${position.latitude}, Longitude: ${position.longitude}");
-//   } catch (e) {
-//     print("Error: $e");
-//   }
-// }

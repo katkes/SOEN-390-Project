@@ -37,6 +37,8 @@ dependencies:
   flutter_map: ^8.0.0
   latlong2: ^0.9.1
   grouped_list: ^6.0.0
+  flutter_background_geolocation: '^4.12.0' #this will probably not be used
+  geolocator: ^10.1.0
 
 dev_dependencies:
   flutter_test:
@@ -49,6 +51,7 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
   junitreport: ^2.0.2
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
