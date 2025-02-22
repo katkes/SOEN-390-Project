@@ -112,6 +112,8 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
+// KEEP THIS COMMENTED OUT FOR
 //
 // import 'package:flutter/material.dart';
 // import 'package:soen_390/widgets/nav_bar.dart';
