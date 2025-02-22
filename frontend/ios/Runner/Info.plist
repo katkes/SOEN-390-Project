@@ -2,8 +2,17 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>NSLocationWhenInUseUsageDescription</key>
-    <string>This app needs access to location when open.</string>
+        <key>NSMotionUsageDescription</key>
+        <string>Motion usage description</string>
+        <key>NSLocationWhenInUseUsageDescription</key>
+        <string>This app needs access to location when open.</string>
+        <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+        <string>Always/When in use description</string>
+        <key>UIBackgroundModes</key>
+        <array>
+            <string>fetch</string>
+            <string>location</string>
+        </array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
