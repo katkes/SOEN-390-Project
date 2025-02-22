@@ -4,7 +4,16 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d0d732de-4191-4af8-81e9-6d66c2d25976" name="Changes" comment="This contains the functionality to put a red marker over every building in concordia's campus. It also displays campus information when clicked on. Two test included in this functionality and update to pubspec.yaml so that information from geojson's can be used. Also includes the beginning of functionality to highlight each building belongning to concordia files." />
+    <list default="true" id="d0d732de-4191-4af8-81e9-6d66c2d25976" name="Changes" comment="This contains the functionality to put a red marker over every building in concordia's campus. It also displays campus information when clicked on. Two test included in this functionality and update to pubspec.yaml so that information from geojson's can be used. Also includes the beginning of functionality to highlight each building belongning to concordia files.">
+      <change afterPath="$PROJECT_DIR$/frontend/test/widgets/components/building_outlines_test.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/test/widgets/components/outdoor_map_test.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/pubspec.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/pubspec.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/test/campus_switch_button_test.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/test/outdoor_map_test.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/test/search_bar_test.dart" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -46,7 +55,7 @@
     &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;37-render-buildings-on-map-distinct-from-city-buildings&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Rebasing 37-render-buildings-on-map-distinct-from-city-buildings&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;dart.settings&quot;
   }
