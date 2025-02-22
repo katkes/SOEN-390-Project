@@ -1,3 +1,8 @@
 .DS_Store
 backend/.env
 .env
+backend
+frontend/coverage
+frontend/analysis_report.json
+frontend/lint_report.txt
+frontend/test_report.xml
