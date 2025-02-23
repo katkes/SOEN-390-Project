@@ -4,12 +4,10 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d0d732de-4191-4af8-81e9-6d66c2d25976" name="Changes" comment="This contains the functionality to put a red marker over every building in concordia's campus. It also displays campus information when clicked on. Two test included in this functionality and update to pubspec.yaml so that information from geojson's can be used. Also includes the beginning of functionality to highlight each building belongning to concordia files.">
+    <list default="true" id="d0d732de-4191-4af8-81e9-6d66c2d25976" name="Changes" comment="Added mocking for the building details test">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/lib/widgets/app_bottom_bar.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/lib/widgets/app_bottom_bar.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/lib/widgets/building_details.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/lib/widgets/building_details.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/test/widgets/components/building_outlines_test.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/test/widgets/components/building_outlines_test.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/test/widgets/components/outdoor_map_marker_test.mocks.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/test/widgets/components/outdoor_map_marker_test.mocks.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -102,13 +100,22 @@
       <option name="project" value="LOCAL" />
       <updated>1740173656511</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Added mocking for the building details test">
+      <option name="closed" value="true" />
+      <created>1740341617100</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1740341617100</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Comments for description of frontend files" />
     <MESSAGE value="Comments for description of git frontend files" />
     <MESSAGE value="This contains the functionality to put a red marker over every building in concordia's campus. It also displays campus information when clicked on. Two test included in this functionality and update to pubspec.yaml so that information from geojson's can be used. Also includes the beginning of functionality to highlight each building belongning to concordia files." />
-    <option name="LAST_COMMIT_MESSAGE" value="This contains the functionality to put a red marker over every building in concordia's campus. It also displays campus information when clicked on. Two test included in this functionality and update to pubspec.yaml so that information from geojson's can be used. Also includes the beginning of functionality to highlight each building belongning to concordia files." />
+    <MESSAGE value="Added mocking for the building details test" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added mocking for the building details test" />
   </component>
 </project>
