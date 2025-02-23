@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:osrm/osrm.dart';
 import 'dart:math' as math;
 
 import 'package:soen_390/services/route_service.dart';
