@@ -36,8 +36,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
-
   TextEditingController searchController = TextEditingController();
   int _selectedIndex = 0;
   LatLng _currentLocation = LatLng(45.497856, -73.579588);

@@ -1,5 +1,4 @@
 import 'package:geolocator/geolocator.dart';
-import 'dart:ui';
 
 //THIS USES THE GEOLOCATOR FLUTTER PACKAGES. We have moved to flutter_background_geolocation package
 //refer to the user_location_util.dart file in this folder for the location functionalities.
@@ -17,7 +16,6 @@ Future<Position> determinePosition() async {
     return Future.error('Location services are disabled.');
   }
 
-
   //check if the permission is denied.
   permission = await Geolocator.checkPermission();
   //if location is never allowed, then we dont want to show another err message like so;
@@ -30,7 +28,8 @@ Future<Position> determinePosition() async {
   //if the location is denied, ask for it. If it is denied again, try using the last known location. Otherwise, just send an error
   if (permission == LocationPermission.denied) {
     permission = await Geolocator.requestPermission();
-    if (permission == LocationPermission.denied) { //if its denied again
+    if (permission == LocationPermission.denied) {
+      //if its denied again
       //use the latest known position (better than anything ig?)
       Position? position = await Geolocator.getLastKnownPosition();
       if (position != null) {
@@ -46,4 +45,3 @@ Future<Position> determinePosition() async {
   // Position position. Otherwise, use type inference like var position = ...
   // but i recommend to use Position position since it tells you exactly what the pointer is
 }
-

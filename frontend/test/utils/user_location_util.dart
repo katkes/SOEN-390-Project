@@ -3,10 +3,12 @@
 import '../../lib/utils/user_location_util.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:flutter_background_geolocation/flutter_background_geolocation.dart' as bg;
+import 'package:flutter_background_geolocation/flutter_background_geolocation.dart'
+    as bg;
 
 // Create a mock class for BackgroundGeolocation
-class MockBackgroundGeolocation extends Mock implements bg.BackgroundGeolocation {
+class MockBackgroundGeolocation extends Mock
+    implements bg.BackgroundGeolocation {
   Future<bg.Location> getCurrentPosition() async {
     return bg.Location({
       'coords': {
@@ -40,17 +42,15 @@ class MockBackgroundGeolocation extends Mock implements bg.BackgroundGeolocation
       'extras': null,
     });
   }
-
-
 }
 
-
 void main() {
-
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('Singleton Pattern location service Test', () {
-    test('LocationService should always return the same instance cuz its a singleton', () {
+    test(
+        'LocationService should always return the same instance cuz its a singleton',
+        () {
       // Create multiple instances
       var instance1 = LocationService();
       var instance2 = LocationService();
@@ -62,20 +62,19 @@ void main() {
       expect(instance1, same(instance3));
     });
 
-
     test("CurrentLocation should return the current location", () async {
       var mockBackgroundGeolocation = MockBackgroundGeolocation();
       var instance = LocationService();
       await instance.startListeningForLocation();
 
-      var mockLocation = await mockBackgroundGeolocation.getCurrentPosition(); //this is my data. I want to pass this Location object to my class
+      var mockLocation = await mockBackgroundGeolocation
+          .getCurrentPosition(); //this is my data. I want to pass this Location object to my class
 
       instance.takeLocation(mockLocation);
 
       expect(instance.currentLocation, isNotNull);
-      expect(instance.currentLocation?.coords.latitude, 37.7749);
-      expect(instance.currentLocation?.coords.longitude, -122.4194);
-
+      expect(instance.currentLocation.coords.latitude, 37.7749);
+      expect(instance.currentLocation.coords.longitude, -122.4194);
     });
   });
 }

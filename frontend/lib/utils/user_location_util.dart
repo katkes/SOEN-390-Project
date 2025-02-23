@@ -2,10 +2,10 @@
 // Do not access any location specific services until the .ready(config) method is done running.
 // If you are using this service for the current location. The sole variable of interest to you is the "currentLocation" variable
 
-import 'package:flutter_background_geolocation/flutter_background_geolocation.dart' as bg;
+import 'package:flutter_background_geolocation/flutter_background_geolocation.dart'
+    as bg;
 
 class LocationService {
-
   // If you are using this service, this is the sole variable you care about. Just access this.
   late bg.Location currentLocation;
 
@@ -13,7 +13,8 @@ class LocationService {
   LocationService._internal();
 
   // Instance of the singleton pattern.
-  static final LocationService _instance = LocationService._internal(); // Eager initialization.
+  static final LocationService _instance =
+      LocationService._internal(); // Eager initialization.
 
   // Factory to give out instance (always the same instance).
   factory LocationService() {
@@ -23,7 +24,6 @@ class LocationService {
   // This function is to initialize the listening for current location service. It needs to be run first.
   Future<void> startListeningForLocation() async {
     try {
-
       // Listen for location updates asynchronously.
       bg.BackgroundGeolocation.onLocation((bg.Location location) {
         currentLocation = location;
@@ -53,14 +53,12 @@ class LocationService {
       if (!state.enabled) {
         await bg.BackgroundGeolocation.start();
       }
-
     } catch (e) {
       print("Error initializing location service: $e");
     }
   }
 
-  void takeLocation(bg.Location location){
+  void takeLocation(bg.Location location) {
     currentLocation = location;
   }
-
 } //end of class
