@@ -6,7 +6,43 @@ import 'package:mockito/mockito.dart';
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart' as bg;
 
 // Create a mock class for BackgroundGeolocation
-class MockBackgroundGeolocation extends Mock implements bg.BackgroundGeolocation {}
+class MockBackgroundGeolocation extends Mock implements bg.BackgroundGeolocation {
+  Future<bg.Location> getCurrentPosition() async {
+    return bg.Location({
+      'coords': {
+        'latitude': 37.7749,
+        'longitude': -122.4194,
+        'accuracy': 5.0,
+        'altitude': 0.0,
+        'ellipsoidal_altitude': 0.0,
+        'heading': 0.0,
+        'heading_accuracy': 0.0,
+        'speed': 0.0,
+        'speed_accuracy': 0.0,
+        'altitude_accuracy': 0.0,
+      },
+      'battery': {
+        'is_charging': false,
+        'level': 1.0,
+      },
+      'activity': {
+        'type': 'still',
+        'confidence': 100,
+      },
+      'timestamp': DateTime.now().toIso8601String(),
+      'age': 0,
+      'is_moving': false,
+      'uuid': 'uuid',
+      'odometer': 0.0,
+      'sample': false,
+      'event': '',
+      'mock': false,
+      'extras': null,
+    });
+  }
+
+
+}
 
 
 void main() {
@@ -31,6 +67,9 @@ void main() {
       var mockBackgroundGeolocation = MockBackgroundGeolocation();
       var instance = LocationService();
       await instance.startListeningForLocation();
+
+      var mockLocation = await mockBackgroundGeolocation.getCurrentPosition(); //this is my data. I want to pass this Location object to my class
+      bg.BackgroundGeolocation();
 
       expect(instance.currentLocation, isNotNull);
 
