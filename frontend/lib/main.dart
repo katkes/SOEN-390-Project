@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:soen_390/screens/waypoint/waypoint_selection_screens.dart';
 import 'package:soen_390/widgets/nav_bar.dart';
 import 'package:soen_390/widgets/search_bar.dart';
 import 'package:soen_390/styles/theme.dart';
@@ -50,6 +51,13 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void _openWaypointSelection() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => WaypointSelectionScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -99,6 +107,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 bottom: 10,
                 right: 21,
                 child: IndoorTrigger(),
+              ),
+              Positioned(
+                bottom: 80,
+                right: 21,
+                child: ElevatedButton(
+                  onPressed: _openWaypointSelection,
+                  child: Text("Find My Way"),
+                ),
               ),
             ],
           ),
