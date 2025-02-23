@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:http/http.dart' as http;
 
 class CampusMap extends StatefulWidget {
-  const CampusMap({super.key});
+  final http.Client? httpClient;
 
+  const CampusMap({Key? key, this.httpClient}) : super(key: key);
   @override
   State<CampusMap> createState() => _CampusMapState();
 }
