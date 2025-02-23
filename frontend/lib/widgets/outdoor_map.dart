@@ -202,60 +202,64 @@ class _MapWidgetState extends State<MapWidget> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      // Remove Positioned, use SizedBox directly
-      width: 460,
-      height: 570,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(30),
-        child: FlutterMap(
-          mapController: _mapController,
-          options: MapOptions(
-            initialCenter: widget.location,
-            initialZoom: 14.0,
-            minZoom: 11.0,
-            maxZoom: 17.0,
-            interactionOptions: const InteractionOptions(
-              flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
-            ),
+ @override
+Widget build(BuildContext context) {
+  return SizedBox(
+    width: 460,
+    height: 570,
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(30),
+      child: FlutterMap(
+        mapController: _mapController,
+        options: MapOptions(
+          initialCenter: widget.location,
+          initialZoom: 14.0,
+          minZoom: 11.0,
+          maxZoom: 17.0,
+          interactionOptions: const InteractionOptions(
+            flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
           ),
-          children: [
-            TileLayer(
-              urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-              additionalOptions: const {}, // Add this line
-              tileProvider: NetworkTileProvider(
-                  httpClient: widget.httpClient), // Pass httpClient here!
-            ),
-            MarkerLayer(
-              markers: [
-                Marker(
-                  point: LatLng(45.497856, -73.579588),
-                  width: 40.0,
-                  height: 40.0,
-                  child: const Icon(Icons.location_pin,
-                      color: Color(0xFF912338), size: 40.0),
-                ),
-                Marker(
-                  point: LatLng(45.4581, -73.6391),
-                  width: 40.0,
-                  height: 40.0,
-                  child: const Icon(Icons.location_pin,
-                      color: Color(0xFF912338), size: 40.0),
-                ),
-              ],
-            ),
-          ],
         ),
+        children: [
+          TileLayer(
+            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+            additionalOptions: const {}, 
+            tileProvider: NetworkTileProvider(httpClient: widget.httpClient),
+          ),
+           PolygonLayer(
+            polygons: _buildingPolygons, 
+          ),
+          MarkerLayer(
+            markers: [
+              ..._buildingMarkers, // Add your dynamic markers here
+              Marker(
+                point: LatLng(45.497856, -73.579588),
+                width: 40.0,
+                height: 40.0,
+                child: const Icon(Icons.location_pin,
+                    color: Color(0xFF912338), size: 40.0),
+              ),
+              Marker(
+                point: LatLng(45.4581, -73.6391),
+                width: 40.0,
+                height: 40.0,
+                child: const Icon(Icons.location_pin,
+                    color: Color(0xFF912338), size: 40.0),
+              ),
+            ],
+          ),
+         
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
+
 }
 
 // How to use it:
 class MyPage extends StatelessWidget {
-  final http.Client httpClient; // Receive injected client
+  final http.Client httpClient; // Ensure it's passed here
   final LatLng location;
 
   const MyPage({required this.httpClient, required this.location, super.key});
@@ -264,40 +268,11 @@ class MyPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        // Or use a Stack if you need positioning
         child: MapWidget(
           location: location,
-          httpClient: httpClient, // Pass the client down
+          httpClient: httpClient, // Pass the client correctly
         ),
-        // if (_selectedBuildingName != null && _selectedBuildingAddress != null)
-        //   Positioned(
-        //     bottom: 20,
-        //     right: 20,
-        //     child: Container(
-        //       width: 200,
-        //       padding: const EdgeInsets.all(10),
-        //       decoration: BoxDecoration(
-        //         color: Colors.white,
-        //         borderRadius: BorderRadius.circular(10),
-        //         boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 5)],
-        //       ),
-        //       child: Column(
-        //         crossAxisAlignment: CrossAxisAlignment.start,
-        //         children: [
-        //           Text(
-        //             _selectedBuildingName!,
-        //             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        //           ),
-        //           const SizedBox(height: 5),
-        //           Text(
-        //             _selectedBuildingAddress!,
-        //             style: const TextStyle(fontSize: 14),
-        //           ),
-        //         ],
-        //       ),
-        //     ),
-        //   ),
-      ],
+      ),
     );
   }
 }
