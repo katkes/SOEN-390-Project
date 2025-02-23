@@ -7,13 +7,13 @@ import 'package:flutter_background_geolocation/flutter_background_geolocation.da
 class LocationService {
 
   // If you are using this service, this is the sole variable you care about. Just access this.
-  bg.Location? currentLocation;
-
-  // Instance of the singleton pattern.
-  static final LocationService _instance = LocationService._internal(); // Eager initialization.
+  late bg.Location currentLocation;
 
   // This is the private constructor.
   LocationService._internal();
+
+  // Instance of the singleton pattern.
+  static final LocationService _instance = LocationService._internal(); // Eager initialization.
 
   // Factory to give out instance (always the same instance).
   factory LocationService() {
@@ -21,7 +21,7 @@ class LocationService {
   }
 
   // This function is to initialize the listening for current location service. It needs to be run first.
-  Future<void> getUserLocation() async {
+  Future<void> startListeningForLocation() async {
     try {
       // Configure the plugin asynchronously.
       final state = await bg.BackgroundGeolocation.ready(bg.Config(
