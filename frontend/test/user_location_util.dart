@@ -69,9 +69,12 @@ void main() {
       await instance.startListeningForLocation();
 
       var mockLocation = await mockBackgroundGeolocation.getCurrentPosition(); //this is my data. I want to pass this Location object to my class
-      bg.BackgroundGeolocation();
+
+      instance.takeLocation(mockLocation);
 
       expect(instance.currentLocation, isNotNull);
+      expect(instance.currentLocation?.coords.latitude, 37.7749);
+      expect(instance.currentLocation?.coords.longitude, -122.4194);
 
     });
   });

@@ -58,4 +58,11 @@ class LocationService {
       print("Error initializing location service: $e");
     }
   }
-}
+
+  void takeLocation(bg.Location location){
+    currentLocation = location;
+  }
+
+
+
+} //end of class
