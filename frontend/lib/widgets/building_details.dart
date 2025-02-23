@@ -30,7 +30,7 @@ class _CampusMapState extends State<CampusMap> {
   }
 
   Future<void> _loadBuildingBoundaries() async {
-    print("🔄 Loading building boundaries...");
+    print("Loading building boundaries...");
 
     try {
       final String data = await rootBundle
@@ -38,7 +38,7 @@ class _CampusMapState extends State<CampusMap> {
       final Map<String, dynamic> jsonData = jsonDecode(data);
 
       if (jsonData['features'] is! List) {
-        print("⚠️ Unexpected GeoJSON format: Missing 'features' list.");
+        print("Unexpected GeoJSON format: Missing 'features' list.");
         return;
       }
 
@@ -74,7 +74,7 @@ class _CampusMapState extends State<CampusMap> {
 
   @override
   Widget build(BuildContext context) {
-    print("🎨 build() called: UI is building.");
+    print("build() called: UI is building.");
 
     return Scaffold(
       appBar: AppBar(title: const Text('Campus Buildings')),
