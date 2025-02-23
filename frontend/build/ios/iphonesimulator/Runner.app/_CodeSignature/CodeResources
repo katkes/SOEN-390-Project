@@ -46,7 +46,7 @@
 		</data>
 		<key>Frameworks/App.framework/App</key>
 		<data>
-		zCRByKd8g6QpRrSJMtk0Orfocww=
+		x0goRHGTDoSuWaAKHk82nPO+sGU=
 		</data>
 		<key>Frameworks/App.framework/Info.plist</key>
 		<data>
@@ -54,15 +54,15 @@
 		</data>
 		<key>Frameworks/App.framework/_CodeSignature/CodeResources</key>
 		<data>
-		SMwafY1Stert1ZtevgXskr19qh8=
+		hYj5/byDeXtK8fQ8vPV3w4IXwRE=
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/AssetManifest.bin</key>
 		<data>
-		Yv0VNJgedGks3Ss8Cn7PBWxJHdU=
+		f4tuqv4EWqWIHSOZg5CtVqRq40E=
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/AssetManifest.json</key>
 		<data>
-		yXUFpF0qF2JNT/mYaFFkg7gxLsw=
+		oLWAbS42e2jxP4P+/YUU2kn+5UY=
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/FontManifest.json</key>
 		<data>
@@ -70,7 +70,7 @@
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/NOTICES.Z</key>
 		<data>
-		VKQx768CB4GERMcQEt0FbwkJPco=
+		z8TPMJoNCtFo8COjGIDU0Bwivy4=
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/assets/geojson_files/building_boundaries.geojson</key>
 		<data>
@@ -79,6 +79,10 @@
 		<key>Frameworks/App.framework/flutter_assets/assets/geojson_files/building_list.geojson</key>
 		<data>
 		d/SCO0uo3CvsewBh25ZMTQevoKE=
+		</data>
+		<key>Frameworks/App.framework/flutter_assets/assets/images/buildings/hall.png</key>
+		<data>
+		sTZgcZSakWcN4HwgTZwyLPOhT6I=
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/fonts/MaterialIcons-Regular.otf</key>
 		<data>
@@ -90,7 +94,7 @@
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/kernel_blob.bin</key>
 		<data>
-		P8GFuaBy2jGi4bBZFfDqXdD//qY=
+		YUDdOXovw2sC4Pk8CUivf51E1Ps=
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>
 		<data>
@@ -285,7 +289,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			K7H9HKGkLOZZINDwQcRGTMEf7u1/PDM92SMGN48WPFo=
+			1vcRqspYW+mMbFzQpNKINlBdDFRZ5WyuLv/OSsBf4+s=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/Info.plist</key>
@@ -299,21 +303,21 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			VlfCHR6GcI018ZNtPmphHypFRdtrhk6PwxhhzGvbxA4=
+			3teQ4vSiLhWF+ECbnAJKs0bPndx64af+MQFWfb9A1e8=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/AssetManifest.bin</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			fywjzA3RZxo9PKdmBT2JsPIJJlPCheCEVU+hfhZUrOU=
+			xfJtdltdxr60jKyMn9+TtaSjy8Y6iGwq9OXtQWziZY0=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/AssetManifest.json</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			9HcdEmrhJYD8Yxiwo5YInjZPck258YJMFsyv2Iuld+0=
+			t093jM7dNl9lHSAFI0W04H8BeEjF2zqjv15EEzawK7w=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/FontManifest.json</key>
@@ -327,7 +331,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			Tn3zzOqtb1QB1o9JV0fLuzLOJ+oupekmO3/cV2YElag=
+			ar/LsnUYGU8GX5tfG60AUI+0I9uIoXPTnl+Vx8vd1aU=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/assets/geojson_files/building_boundaries.geojson</key>
@@ -342,6 +346,13 @@
 			<key>hash2</key>
 			<data>
 			U7RLGR2bk2opHA0B9hGvGlh7Avtjo8MtoFJmxzxW1Jk=
+			</data>
+		</dict>
+		<key>Frameworks/App.framework/flutter_assets/assets/images/buildings/hall.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			XN0OwK0esM/8wRlUmGI+w/i+molCk4qby8pPg4SksJ8=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/fonts/MaterialIcons-Regular.otf</key>
@@ -362,7 +373,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			tZBpF7CRxVd9eFjnmVh0pjUMhiBH1Fm1jbyNkqB23+w=
+			q9QNT8D2uqBfWCNN4eo9z/K+mwLPyNVOXYrZ5DnZbtQ=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>

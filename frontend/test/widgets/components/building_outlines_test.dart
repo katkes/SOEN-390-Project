@@ -15,7 +15,8 @@ void main() {
       });
     });
 
-    testWidgets('renders CampusMap widget correctly', (WidgetTester tester) async {
+    testWidgets('renders CampusMap widget correctly',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: CampusMap(),
@@ -27,7 +28,8 @@ void main() {
       expect(find.byType(Scaffold), findsOneWidget);
     });
 
-    testWidgets('loads building boundaries from GeoJSON', (WidgetTester tester) async {
+    testWidgets('loads building boundaries from GeoJSON',
+        (WidgetTester tester) async {
       const mockGeoJson = '''
       {
         "features": [
@@ -45,7 +47,7 @@ void main() {
 
       tester.binding.defaultBinaryMessenger.setMockMessageHandler(
         'flutter/assets',
-            (ByteData? message) async {
+        (ByteData? message) async {
           if (const StringCodec().decodeMessage(message) ==
               'assets/geojson_files/building_boundaries.geojson') {
             return const StringCodec().encodeMessage(mockGeoJson);
@@ -65,10 +67,11 @@ void main() {
       expect(find.byType(PolygonLayer), findsOneWidget);
     });
 
-    testWidgets('handles empty or malformed GeoJSON data gracefully', (WidgetTester tester) async {
+    testWidgets('handles empty or malformed GeoJSON data gracefully',
+        (WidgetTester tester) async {
       tester.binding.defaultBinaryMessenger.setMockMessageHandler(
         'flutter/assets',
-            (ByteData? message) async {
+        (ByteData? message) async {
           return const StringCodec().encodeMessage('{}');
         },
       );

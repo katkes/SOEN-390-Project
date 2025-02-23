@@ -9,18 +9,18 @@ class CampusService {
   Future<void> loadGeoJsonData() async {
     try {
       // Load Building Boundaries
-      String buildingBoundariesString =
-      await rootBundle.loadString('assets/geojson/building_boundaries.geojson');
+      String buildingBoundariesString = await rootBundle
+          .loadString('assets/geojson/building_boundaries.geojson');
       buildingBoundaries = jsonDecode(buildingBoundariesString);
 
       // Load Building List
       String buildingListString =
-      await rootBundle.loadString('assets/geojson/building_list.geojson');
+          await rootBundle.loadString('assets/geojson/building_list.geojson');
       buildingList = jsonDecode(buildingListString);
 
       // Load Campus Boundaries
       String campusBoundariesString =
-      await rootBundle.loadString('assets/geojson/campus.geojson');
+          await rootBundle.loadString('assets/geojson/campus.geojson');
       campusBoundaries = jsonDecode(campusBoundariesString);
     } catch (e) {
       print("Error loading GeoJSON files: $e");

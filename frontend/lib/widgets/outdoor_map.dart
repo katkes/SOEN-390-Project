@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'building_information_popup.dart';
+import 'package:popover/popover.dart';
 
 class MapRectangle extends StatefulWidget {
   final LatLng location;
@@ -28,19 +30,19 @@ class _MapRectangleState extends State<MapRectangle> {
     _loadBuildingBoundaries();
   }
 
-@override
-void didUpdateWidget(MapRectangle oldWidget) {
-  super.didUpdateWidget(oldWidget);
-  if (oldWidget.location != widget.location) {
-    _mapController.move(widget.location, 17.0); 
+  @override
+  void didUpdateWidget(MapRectangle oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.location != widget.location) {
+      _mapController.move(widget.location, 17.0);
+    }
   }
-}
 
   Future<void> _loadBuildingLocations() async {
     try {
       print('Loading building markers...');
-      final String data =
-          await rootBundle.loadString('assets/geojson_files/building_list.geojson');
+      final String data = await rootBundle
+          .loadString('assets/geojson_files/building_list.geojson');
       print('Building markers file loaded successfully.');
 
       final Map<String, dynamic> jsonData = jsonDecode(data);
@@ -55,8 +57,10 @@ void didUpdateWidget(MapRectangle oldWidget) {
             double lon = coordinates[0];
             double lat = coordinates[1];
 
-            String buildingName = feature['properties']['Building Long Name'] ?? "Unknown";
-            String address = feature['properties']['Address'] ?? "No address available";
+            String buildingName =
+                feature['properties']['Building Long Name'] ?? "Unknown";
+            String address =
+                feature['properties']['Address'] ?? "No address available";
 
             markers.add(
               Marker(
@@ -64,8 +68,16 @@ void didUpdateWidget(MapRectangle oldWidget) {
                 width: 40.0,
                 height: 40.0,
                 child: GestureDetector(
-                  onTap: () => _onMarkerTapped(lat, lon, buildingName, address),
-                  child: const Icon(Icons.location_pin, color: Color(0xFF912338), size: 40.0),
+                  onTapDown: (TapDownDetails details) {
+                    RenderBox renderBox =
+                        context.findRenderObject() as RenderBox;
+                    Offset tapPosition =
+                        renderBox.globalToLocal(details.globalPosition);
+                    _onMarkerTapped(
+                        lat, lon, buildingName, address, tapPosition);
+                  },
+                  child: const Icon(Icons.location_pin,
+                      color: Color(0xFF912338), size: 40.0),
                 ),
               ),
             );
@@ -84,32 +96,30 @@ void didUpdateWidget(MapRectangle oldWidget) {
   Future<void> _loadBuildingBoundaries() async {
     try {
       print('Loading building boundaries...');
-      final String data =
-          await rootBundle.loadString('assets/geojson_files/building_boundaries.geojson');
+      final String data = await rootBundle
+          .loadString('assets/geojson_files/building_boundaries.geojson');
       print('Building boundaries file loaded successfully.');
 
       final Map<String, dynamic> jsonData = jsonDecode(data);
       List<Polygon> polygons = [];
 
       if (jsonData['features'] is List) {
-        print('🏢 Found ${jsonData['features'].length} buildings with boundaries.');
+        print(
+            'Found ${jsonData['features'].length} buildings with boundaries.');
         for (var feature in jsonData['features']) {
           if (feature['geometry']?['type'] == 'MultiPolygon' &&
               feature['geometry']['coordinates'] is List) {
-            
             // MultiPolygon is a list of polygon rings
             List<dynamic> multiPolygon = feature['geometry']['coordinates'];
-            
+
             for (var polygonRings in multiPolygon) {
-         
               List<dynamic> outerRing = polygonRings[0];
-              
+
               try {
-            
                 List<LatLng> polygonPoints = outerRing
                     .map<LatLng>((coord) => LatLng(
-                          coord[1].toDouble(), 
-                          coord[0].toDouble(), 
+                          coord[1].toDouble(),
+                          coord[0].toDouble(),
                         ))
                     .toList();
 
@@ -124,10 +134,11 @@ void didUpdateWidget(MapRectangle oldWidget) {
                 polygons.add(
                   Polygon(
                     points: polygonPoints,
-                    color: const Color(0x33FF0000), 
+                    color: const Color(0x33FF0000),
                     borderColor: Colors.red,
                     borderStrokeWidth: 2,
-                    label: feature['properties']?['unique_id']?.toString() ?? 'Unknown Building',
+                    label: feature['properties']?['unique_id']?.toString() ??
+                        'Unknown Building',
                   ),
                 );
               } catch (e) {
@@ -142,18 +153,44 @@ void didUpdateWidget(MapRectangle oldWidget) {
       setState(() {
         _buildingPolygons = polygons;
       });
-      print('Building boundaries successfully added to the map: ${polygons.length} polygons');
+      print(
+          'Building boundaries successfully added to the map: ${polygons.length} polygons');
     } catch (e) {
       print('Error loading building boundaries: $e');
       print('Error details: ${e.toString()}');
     }
   }
 
-  void _onMarkerTapped(double lat, double lon, String name, String address) {
+  void _onMarkerTapped(
+      double lat, double lon, String name, String address, Offset tapPosition) {
     setState(() {
       _selectedBuildingName = name;
       _selectedBuildingAddress = address;
       _mapController.move(LatLng(lat, lon), 17.0);
+      print(
+          'Selected Building: $_selectedBuildingName, $_selectedBuildingAddress');
+    });
+    final screenSize = MediaQuery.of(context).size;
+    final shouldShowAbove = tapPosition.dy > screenSize.height / 2;
+    Future.delayed(Duration(milliseconds: 200), () {
+      showPopover(
+        context: context,
+        bodyBuilder: (context) => BuildingInformationPopup(
+          buildingName: name,
+          buildingAddress: address,
+        ),
+        onPop: () => print('Popover closed'),
+        direction:
+            shouldShowAbove ? PopoverDirection.top : PopoverDirection.bottom,
+        width: 220,
+        height: 180,
+        arrowHeight: 15,
+        arrowWidth: 20,
+        backgroundColor: Colors.white,
+        barrierColor: Colors.transparent,
+        radius: 8,
+        arrowDyOffset: tapPosition.dy,
+      );
     });
   }
 
@@ -189,34 +226,34 @@ void didUpdateWidget(MapRectangle oldWidget) {
             ),
           ),
         ),
-        if (_selectedBuildingName != null && _selectedBuildingAddress != null)
-          Positioned(
-            bottom: 20,
-            right: 20,
-            child: Container(
-              width: 200,
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 5)],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _selectedBuildingName!,
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 5),
-                  Text(
-                    _selectedBuildingAddress!,
-                    style: const TextStyle(fontSize: 14),
-                  ),
-                ],
-              ),
-            ),
-          ),
+        // if (_selectedBuildingName != null && _selectedBuildingAddress != null)
+        //   Positioned(
+        //     bottom: 20,
+        //     right: 20,
+        //     child: Container(
+        //       width: 200,
+        //       padding: const EdgeInsets.all(10),
+        //       decoration: BoxDecoration(
+        //         color: Colors.white,
+        //         borderRadius: BorderRadius.circular(10),
+        //         boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 5)],
+        //       ),
+        //       child: Column(
+        //         crossAxisAlignment: CrossAxisAlignment.start,
+        //         children: [
+        //           Text(
+        //             _selectedBuildingName!,
+        //             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        //           ),
+        //           const SizedBox(height: 5),
+        //           Text(
+        //             _selectedBuildingAddress!,
+        //             style: const TextStyle(fontSize: 14),
+        //           ),
+        //         ],
+        //       ),
+        //     ),
+        //   ),
       ],
     );
   }
