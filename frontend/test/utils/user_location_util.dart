@@ -1,6 +1,6 @@
 //This file is for testing the user location service from user_location_util.dart found inside the utils folder
 
-import '../lib/utils/user_location_util.dart';
+import '../../lib/utils/user_location_util.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart' as bg;

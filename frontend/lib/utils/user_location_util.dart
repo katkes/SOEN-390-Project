@@ -63,6 +63,4 @@ class LocationService {
     currentLocation = location;
   }
 
-
-
 } //end of class
