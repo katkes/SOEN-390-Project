@@ -1,4 +1,5 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+
 
     <!-- These are all the permission we will (probably) need for the location services. -->
 
@@ -16,7 +17,8 @@
     <application
         android:label="soen_390"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        tools:replace="android:label">
         <activity
             android:name=".MainActivity"
             android:exported="true"

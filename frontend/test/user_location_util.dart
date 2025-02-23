@@ -30,7 +30,7 @@ void main() {
     test("CurrentLocation should return the current location", () async {
       var mockBackgroundGeolocation = MockBackgroundGeolocation();
       var instance = LocationService();
-      await instance.getUserLocation();
+      await instance.startListeningForLocation();
 
       expect(instance.currentLocation, isNotNull);
 

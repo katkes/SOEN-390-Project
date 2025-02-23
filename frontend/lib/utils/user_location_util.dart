@@ -23,20 +23,6 @@ class LocationService {
   // This function is to initialize the listening for current location service. It needs to be run first.
   Future<void> startListeningForLocation() async {
     try {
-      // Configure the plugin asynchronously.
-      final state = await bg.BackgroundGeolocation.ready(bg.Config(
-        desiredAccuracy: bg.Config.DESIRED_ACCURACY_HIGH,
-        distanceFilter: 10.0,
-        stopOnTerminate: false,
-        startOnBoot: true,
-        debug: true,
-        logLevel: bg.Config.LOG_LEVEL_VERBOSE,
-      ));
-
-      // If the service is not enabled, start it asynchronously.
-      if (!state.enabled) {
-        await bg.BackgroundGeolocation.start();
-      }
 
       // Listen for location updates asynchronously.
       bg.BackgroundGeolocation.onLocation((bg.Location location) {
@@ -52,6 +38,21 @@ class LocationService {
       bg.BackgroundGeolocation.onProviderChange((bg.ProviderChangeEvent event) {
         print('[providerchange] - $event');
       });
+
+      // Configure the plugin asynchronously.
+      final state = await bg.BackgroundGeolocation.ready(bg.Config(
+        desiredAccuracy: bg.Config.DESIRED_ACCURACY_HIGH,
+        distanceFilter: 10.0,
+        stopOnTerminate: false,
+        startOnBoot: true,
+        debug: true,
+        logLevel: bg.Config.LOG_LEVEL_VERBOSE,
+      ));
+
+      // If the service is not enabled, start it asynchronously.
+      if (!state.enabled) {
+        await bg.BackgroundGeolocation.start();
+      }
 
     } catch (e) {
       print("Error initializing location service: $e");
