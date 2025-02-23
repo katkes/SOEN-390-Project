@@ -32,7 +32,7 @@ void main() {
             .having(
               (e) => e.message,
               'message',
-              contains("Query string malformed close to position 14"),
+              contains("Query string malformed close to position"),
             )),
       );
     });

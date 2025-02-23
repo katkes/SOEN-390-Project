@@ -26,18 +26,34 @@ Future<RouteResult?> getRouteFromCoordinates({
     profile: OsrmRequestProfile.foot,
     overview: OsrmOverview.full,
   );
+
   final route = await osrm.route(options);
-  if (route.routes.isNotEmpty) {
-    final distance = route.routes.first.distance?.toDouble() ?? 0.0;
-    final duration = route.routes.first.duration?.toDouble() ?? 0.0;
-    final routePoints =
-        route.routes.first.geometry?.lineString?.coordinates.map((e) {
-              final loc = e.toLocation();
-              return LatLng(loc.lat, loc.lng);
-            }).toList() ??
-            [];
-    return RouteResult(
-        distance: distance, duration: duration, routePoints: routePoints);
+
+  if (route.routes.isEmpty) {
+    print("No routes found!");
+    return null;
   }
-  return null;
+
+  final firstRoute = route.routes.first;
+  final distance = firstRoute.distance?.toDouble() ?? 0.0;
+  final duration = firstRoute.duration?.toDouble() ?? 0.0;
+
+  // Ensure geometry exists before processing
+  final routePoints =
+      route.routes.first.geometry?.lineString?.coordinates.map((e) {
+        final loc = e.toLocation();
+        return LatLng(loc.lat, loc.lng);
+      }).toList() ??
+          [];
+
+  if (routePoints.isEmpty) {
+    print("Empty route points!");
+    return null;
+  }
+
+  return RouteResult(
+    distance: distance,
+    duration: duration,
+    routePoints: routePoints,
+  );
 }
