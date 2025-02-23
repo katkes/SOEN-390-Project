@@ -119,32 +119,6 @@ class _MapRectangleState extends State<MapRectangle> {
                       child: const Icon(Icons.location_pin,
                           color: Colors.green, size: 40.0),
                     ),
-                    if (routePoints.isNotEmpty)
-                      Marker(
-                        rotate: true,
-                        width: 80.0,
-                        height: 30.0,
-                        point: routePoints[
-                            math.max(0, (routePoints.length / 2).floor())],
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Center(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                '${distance.toStringAsFixed(2)} m',
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
                   ],
                 ),
               ],
