@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:osrm/osrm.dart';
+import 'dart:math' as math;
 
 class MapRectangle extends StatefulWidget {
   final LatLng location;
@@ -14,10 +16,24 @@ class MapRectangle extends StatefulWidget {
 class _MapRectangleState extends State<MapRectangle> {
   late MapController _mapController;
 
+  late LatLng from;
+  late LatLng to;
+
+  List<LatLng> routePoints = [];
+  double distance = 0.0;
+  double duration = 0.0;
+  
+  // Used to alternate taps between updating [from] and [to].
+  bool isPairly = false;
+
   @override
   void initState() {
     super.initState();
     _mapController = MapController();
+
+    from = widget.location;
+    to = LatLng(widget.location.latitude + 0.005, widget.location.longitude + 0.005);
+    getRoute();
   }
 
   @override
@@ -25,6 +41,28 @@ class _MapRectangleState extends State<MapRectangle> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.location != widget.location) {
       _mapController.move(widget.location, 17.0);
+    }
+  }
+
+
+  Future<void> getRoute() async {
+    final osrm = Osrm();
+    final options = RouteRequest(
+      coordinates: [
+        (from.longitude, from.latitude),
+        (to.longitude, to.latitude),
+      ],
+      overview: OsrmOverview.full,
+    );
+    final route = await osrm.route(options);
+    if (route.routes.isNotEmpty) {
+      distance = route.routes.first.distance?.toDouble() ?? 0.0;
+      duration = route.routes.first.duration?.toDouble() ?? 0.0;
+      routePoints = route.routes.first.geometry?.lineString?.coordinates.map((e) {
+        final loc = e.toLocation();
+        return LatLng(loc.lat, loc.lng);
+      }).toList() ?? [];
+      setState(() {});
     }
   }
 
@@ -43,6 +81,16 @@ class _MapRectangleState extends State<MapRectangle> {
             child: FlutterMap(
               mapController: _mapController,
               options: MapOptions(
+                onTap: (_, point) {
+                  // Alternate between setting [from] and [to] on tap.
+                  if (isPairly) {
+                    to = point;
+                  } else {
+                    from = point;
+                  }
+                  isPairly = !isPairly;
+                  getRoute();
+                },
                 initialCenter: widget.location,
                 initialZoom: 14.0,
                 minZoom: 11.0,
@@ -55,22 +103,57 @@ class _MapRectangleState extends State<MapRectangle> {
                 TileLayer(
                   urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                 ),
+                PolylineLayer(
+                  polylines: [
+                    Polyline(
+                      points: routePoints,
+                      strokeWidth: 4.0,
+                      color: Colors.red,
+                    ),
+                  ],
+                ),
                 MarkerLayer(
                   markers: [
                     Marker(
-                      point: LatLng(45.497856, -73.579588),
+                      point: from,
                       width: 40.0,
                       height: 40.0,
                       child: const Icon(Icons.location_pin,
-                          color: Color(0xFF912338), size: 40.0),
+                          color: Colors.blue, size: 40.0),
                     ),
                     Marker(
-                      point: LatLng(45.4581, -73.6391),
+                      point: to,
                       width: 40.0,
                       height: 40.0,
                       child: const Icon(Icons.location_pin,
-                          color: Color(0xFF912338), size: 40.0),
+                          color: Colors.green, size: 40.0),
                     ),
+
+                    if (routePoints.isNotEmpty)
+                      Marker(
+                        rotate: true,
+                        width: 80.0,
+                        height: 30.0,
+                        point: routePoints[math.max(0, (routePoints.length / 2).floor())],
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                '${distance.toStringAsFixed(2)} m',
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ],
