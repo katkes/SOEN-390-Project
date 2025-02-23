@@ -67,67 +67,6 @@ class _MapWidgetState extends State<MapWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      bottom: 5,
-      left: 10,
-      right: 10,
-      child: Center(
-        child: SizedBox(
-          width: 460,
-          height: 570,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(30),
-            child: FlutterMap(
-              mapController: _mapController,
-              options: MapOptions(
-                onTap: (_, point) {
-                  // Alternate between setting [from] and [to] on tap.
-                  if (isPairly) {
-                    to = point;
-                  } else {
-                    from = point;
-                  }
-                  isPairly = !isPairly;
-                  _getRoute();
-                },
-                initialCenter: widget.location,
-                initialZoom: 14.0,
-                minZoom: 11.0,
-                maxZoom: 17.0,
-                interactionOptions: const InteractionOptions(
-                  flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
-                ),
-              ),
-              children: [
-                TileLayer(
-                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                ),
-                PolylineLayer(
-                  polylines: [
-                    Polyline(
-                      points: routePoints,
-                      strokeWidth: 4.0,
-                      color: Colors.red,
-                    ),
-                  ],
-                ),
-                MarkerLayer(
-                  markers: [
-                    Marker(
-                      point: from,
-                      width: 40.0,
-                      height: 40.0,
-                      child: const Icon(Icons.location_pin,
-                          color: Colors.blue, size: 40.0),
-                    ),
-                    Marker(
-                      point: to,
-                      width: 40.0,
-                      height: 40.0,
-                      child: const Icon(Icons.location_pin,
-                          color: Colors.green, size: 40.0),
-                    ),
-                  ],
     return SizedBox(
       // Remove Positioned, use SizedBox directly
       width: 460,
@@ -137,6 +76,16 @@ class _MapWidgetState extends State<MapWidget> {
         child: FlutterMap(
           mapController: _mapController,
           options: MapOptions(
+            onTap: (_, point) {
+              // Alternate between setting [from] and [to] on tap.
+              if (isPairly) {
+                to = point;
+              } else {
+                from = point;
+              }
+              isPairly = !isPairly;
+              _getRoute();
+            },
             initialCenter: widget.location,
             initialZoom: 14.0,
             minZoom: 11.0,
@@ -151,6 +100,15 @@ class _MapWidgetState extends State<MapWidget> {
               additionalOptions: const {}, // Add this line
               tileProvider: NetworkTileProvider(
                   httpClient: widget.httpClient), // Pass httpClient here!
+            ),
+            PolylineLayer(
+              polylines: [
+                Polyline(
+                  points: routePoints,
+                  strokeWidth: 4.0,
+                  color: Colors.red,
+                ),
+              ],
             ),
             MarkerLayer(
               markers: [
@@ -167,6 +125,20 @@ class _MapWidgetState extends State<MapWidget> {
                   height: 40.0,
                   child: const Icon(Icons.location_pin,
                       color: Color(0xFF912338), size: 40.0),
+                ),
+                Marker(
+                  point: from,
+                  width: 40.0,
+                  height: 40.0,
+                  child: const Icon(Icons.location_pin,
+                      color: Colors.blue, size: 40.0),
+                ),
+                Marker(
+                  point: to,
+                  width: 40.0,
+                  height: 40.0,
+                  child: const Icon(Icons.location_pin,
+                      color: Colors.green, size: 40.0),
                 ),
               ],
             ),
