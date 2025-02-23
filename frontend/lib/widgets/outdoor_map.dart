@@ -4,6 +4,8 @@ import 'package:latlong2/latlong.dart';
 import 'package:osrm/osrm.dart';
 import 'dart:math' as math;
 
+import 'package:soen_390/services/route_service.dart';
+
 class MapRectangle extends StatefulWidget {
   final LatLng location;
 
@@ -22,7 +24,7 @@ class _MapRectangleState extends State<MapRectangle> {
   List<LatLng> routePoints = [];
   double distance = 0.0;
   double duration = 0.0;
-  
+
   // Used to alternate taps between updating [from] and [to].
   bool isPairly = false;
 
@@ -32,8 +34,9 @@ class _MapRectangleState extends State<MapRectangle> {
     _mapController = MapController();
 
     from = widget.location;
-    to = LatLng(widget.location.latitude + 0.005, widget.location.longitude + 0.005);
-    getRoute();
+    to = LatLng(
+        widget.location.latitude + 0.005, widget.location.longitude + 0.005);
+    _getRoute();
   }
 
   @override
@@ -44,25 +47,14 @@ class _MapRectangleState extends State<MapRectangle> {
     }
   }
 
-
-  Future<void> getRoute() async {
-    final osrm = Osrm();
-    final options = RouteRequest(
-      coordinates: [
-        (from.longitude, from.latitude),
-        (to.longitude, to.latitude),
-      ],
-      overview: OsrmOverview.full,
-    );
-    final route = await osrm.route(options);
-    if (route.routes.isNotEmpty) {
-      distance = route.routes.first.distance?.toDouble() ?? 0.0;
-      duration = route.routes.first.duration?.toDouble() ?? 0.0;
-      routePoints = route.routes.first.geometry?.lineString?.coordinates.map((e) {
-        final loc = e.toLocation();
-        return LatLng(loc.lat, loc.lng);
-      }).toList() ?? [];
-      setState(() {});
+  Future<void> _getRoute() async {
+    final result = await getRouteFromCoordinates(from: from, to: to);
+    if (result != null) {
+      setState(() {
+        distance = result.distance;
+        duration = result.duration;
+        routePoints = result.routePoints;
+      });
     }
   }
 
@@ -89,7 +81,7 @@ class _MapRectangleState extends State<MapRectangle> {
                     from = point;
                   }
                   isPairly = !isPairly;
-                  getRoute();
+                  _getRoute();
                 },
                 initialCenter: widget.location,
                 initialZoom: 14.0,
@@ -128,13 +120,13 @@ class _MapRectangleState extends State<MapRectangle> {
                       child: const Icon(Icons.location_pin,
                           color: Colors.green, size: 40.0),
                     ),
-
                     if (routePoints.isNotEmpty)
                       Marker(
                         rotate: true,
                         width: 80.0,
                         height: 30.0,
-                        point: routePoints[math.max(0, (routePoints.length / 2).floor())],
+                        point: routePoints[
+                            math.max(0, (routePoints.length / 2).floor())],
                         child: Container(
                           decoration: BoxDecoration(
                             color: Colors.white,
