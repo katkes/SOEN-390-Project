@@ -23,6 +23,7 @@ Future<RouteResult?> getRouteFromCoordinates({
       (from.longitude, from.latitude),
       (to.longitude, to.latitude),
     ],
+    profile: OsrmRequestProfile.foot,
     overview: OsrmOverview.full,
   );
   final route = await osrm.route(options);
