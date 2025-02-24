@@ -8,8 +8,9 @@ import 'package:soen_390/widgets/indoor_navigation_button.dart';
 import 'package:latlong2/latlong.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
-
-void main() {
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+void main() async {
+  await dotenv.load();
   runApp(const MyApp());
 }
 

@@ -7,6 +7,7 @@ import 'building_information_popup.dart';
 import 'package:popover/popover.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http; // Import http
+import '../services/building_info_api.dart';
 
 // This widget displays a map with markers at specific locations (SGW and Loyola campuses).
 class MapWidget extends StatefulWidget {
@@ -170,26 +171,33 @@ class _MapWidgetState extends State<MapWidget> {
   }
 
   void _onMarkerTapped(
-      double lat, double lon, String name, String address, Offset tapPosition) {
-    setState(() {
-      _selectedBuildingName = name;
-      _selectedBuildingAddress = address;
-      _mapController.move(LatLng(lat, lon), 17.0);
-      print(
-          'Selected Building: $_selectedBuildingName, $_selectedBuildingAddress');
-    });
-    final screenSize = MediaQuery.of(context).size;
-    final shouldShowAbove = tapPosition.dy > screenSize.height / 2;
+    double lat, double lon, String name, String address, Offset tapPosition) {
+  setState(() {
+    _selectedBuildingName = name;
+    _selectedBuildingAddress = address;
+    _mapController.move(LatLng(lat, lon), 17.0);
+    print('Selected Building: $_selectedBuildingName, $_selectedBuildingAddress');
+  });
+
+  final screenSize = MediaQuery.of(context).size;
+  final shouldShowAbove = tapPosition.dy > screenSize.height / 2;
+
+  // Fetch only the photo URL
+  final buildingPopUps = BuildingPopUps();
+  buildingPopUps.getLocationInfo(lat, lon, name).then((buildingInfo) {
+    String? photoUrl = buildingInfo["photo"];
+    print("Fetched photo URL: $photoUrl");
+
     Future.delayed(Duration(milliseconds: 200), () {
       showPopover(
         context: context,
         bodyBuilder: (context) => BuildingInformationPopup(
           buildingName: name,
           buildingAddress: address,
+          photoUrl: photoUrl, 
         ),
         onPop: () => print('Popover closed'),
-        direction:
-            shouldShowAbove ? PopoverDirection.top : PopoverDirection.bottom,
+        direction: shouldShowAbove ? PopoverDirection.top : PopoverDirection.bottom,
         width: 220,
         height: 180,
         arrowHeight: 15,
@@ -200,7 +208,11 @@ class _MapWidgetState extends State<MapWidget> {
         arrowDyOffset: tapPosition.dy,
       );
     });
-  }
+  }).catchError((error) {
+    print("Error fetching building photo: $error");
+  });
+}
+
 
  @override
 Widget build(BuildContext context) {
