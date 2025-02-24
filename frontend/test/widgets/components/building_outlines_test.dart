@@ -21,13 +21,12 @@ import 'package:mockito/mockito.dart';
 
 import 'building_outlines_test.mocks.dart';
 
-
 @GenerateMocks([http.Client])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   final mockHttpClient = MockClient();
-  testWidgets('loads building boundaries from GeoJSON', (WidgetTester tester) async {
-  
+  testWidgets('loads building boundaries from GeoJSON',
+      (WidgetTester tester) async {
     const mockGeoJson = '''
     {
       "type": "FeatureCollection",
@@ -55,19 +54,18 @@ void main() {
     }
     ''';
 
-   
     tester.binding.defaultBinaryMessenger.setMockMessageHandler(
       'flutter/assets',
       (ByteData? message) async {
         final requestedAsset = const StringCodec().decodeMessage(message);
-        if (requestedAsset == 'assets/geojson_files/building_boundaries.geojson') {
-          return ByteData.sublistView(Uint8List.fromList(mockGeoJson.codeUnits));
+        if (requestedAsset ==
+            'assets/geojson_files/building_boundaries.geojson') {
+          return ByteData.sublistView(
+              Uint8List.fromList(mockGeoJson.codeUnits));
         }
         return null;
       },
     );
-
-    
 
     await tester.pumpWidget(
       MaterialApp(
@@ -80,13 +78,14 @@ void main() {
 
     await tester.pumpAndSettle();
 
-
     expect(find.byType(PolygonLayer), findsOneWidget);
   });
 
   testWidgets('Markers load correctly', (WidgetTester tester) async {
     LatLng initialLocation = LatLng(45.4973, -73.5793);
-    await tester.pumpWidget(MaterialApp(home: MapWidget(location: initialLocation, httpClient: mockHttpClient)));
+    await tester.pumpWidget(MaterialApp(
+        home:
+            MapWidget(location: initialLocation, httpClient: mockHttpClient)));
     await tester.pumpAndSettle();
 
     expect(find.byType(MarkerLayer), findsOneWidget);
@@ -94,7 +93,9 @@ void main() {
 
   testWidgets('Polygons load correctly', (WidgetTester tester) async {
     LatLng initialLocation = LatLng(45.4973, -73.5793);
-    await tester.pumpWidget(MaterialApp(home: MapWidget(location: initialLocation, httpClient: mockHttpClient)));
+    await tester.pumpWidget(MaterialApp(
+        home:
+            MapWidget(location: initialLocation, httpClient: mockHttpClient)));
     await tester.pumpAndSettle();
 
     expect(find.byType(PolygonLayer), findsOneWidget);
@@ -104,13 +105,15 @@ void main() {
     LatLng initialLocation = LatLng(45.4973, -73.5793);
     LatLng newLocation = LatLng(45.505, -73.57);
 
-    await tester.pumpWidget(MaterialApp(home: MapWidget(location: initialLocation, httpClient: mockHttpClient)));
+    await tester.pumpWidget(MaterialApp(
+        home:
+            MapWidget(location: initialLocation, httpClient: mockHttpClient)));
     await tester.pumpAndSettle();
 
-    await tester.pumpWidget(MaterialApp(home: MapWidget(location: newLocation, httpClient: mockHttpClient)));
+    await tester.pumpWidget(MaterialApp(
+        home: MapWidget(location: newLocation, httpClient: mockHttpClient)));
     await tester.pumpAndSettle();
   });
-  
 
   testWidgets('Map respects zoom constraints', (WidgetTester tester) async {
     await tester.pumpWidget(
@@ -123,17 +126,16 @@ void main() {
     );
 
     await tester.pumpAndSettle();
-    
+
     final mapFinder = find.byType(FlutterMap);
     final FlutterMap map = tester.widget(mapFinder);
-    
+
     expect(map.options.minZoom, 11.0);
     expect(map.options.maxZoom, 17.0);
   });
 
-  
-
-  testWidgets('Tile layer is configured correctly', (WidgetTester tester) async {
+  testWidgets('Tile layer is configured correctly',
+      (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: MapWidget(
@@ -144,15 +146,17 @@ void main() {
     );
 
     await tester.pumpAndSettle();
-    
+
     final tileFinder = find.byType(TileLayer);
     expect(tileFinder, findsOneWidget);
-    
+
     final TileLayer tileLayer = tester.widget(tileFinder);
-    expect(tileLayer.urlTemplate, 'https://tile.openstreetmap.org/{z}/{x}/{y}.png');
+    expect(tileLayer.urlTemplate,
+        'https://tile.openstreetmap.org/{z}/{x}/{y}.png');
   });
 
-  testWidgets('Handles invalid GeoJSON gracefully', (WidgetTester tester) async {
+  testWidgets('Handles invalid GeoJSON gracefully',
+      (WidgetTester tester) async {
     tester.binding.defaultBinaryMessenger.setMockMessageHandler(
       'flutter/assets',
       (ByteData? message) async {
@@ -169,7 +173,8 @@ void main() {
               }
             }]
           }
-          '''.codeUnits));
+          '''
+              .codeUnits));
         }
         return null;
       },
@@ -187,42 +192,43 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(FlutterMap), findsOneWidget);
   });
-  testWidgets('renders MapWidget with correct layout', (WidgetTester tester) async {
-      final LatLng testLocation = LatLng(0, 0);
+  testWidgets('renders MapWidget with correct layout',
+      (WidgetTester tester) async {
+    final LatLng testLocation = LatLng(0, 0);
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: MapWidget(
-              location: testLocation,
-              httpClient: mockHttpClient,
-            ),
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: MapWidget(
+            location: testLocation,
+            httpClient: mockHttpClient,
           ),
         ),
-      );
+      ),
+    );
 
-      expect(find.byType(MapWidget), findsOneWidget);
-      expect(find.byType(Scaffold), findsOneWidget);
-    });
+    expect(find.byType(MapWidget), findsOneWidget);
+    expect(find.byType(Scaffold), findsOneWidget);
+  });
   testWidgets('renders markers for SGW campus', (WidgetTester tester) async {
-      final LatLng sgwLocation = LatLng(45.497856, -73.579588);
+    final LatLng sgwLocation = LatLng(45.497856, -73.579588);
 
-      when(mockHttpClient.get(any))
-          .thenAnswer((_) async => http.Response('Mocked response', 200));
+    when(mockHttpClient.get(any))
+        .thenAnswer((_) async => http.Response('Mocked response', 200));
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: MapWidget(
-              location: sgwLocation,
-              httpClient: mockHttpClient,
-            ),
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: MapWidget(
+            location: sgwLocation,
+            httpClient: mockHttpClient,
           ),
         ),
-      );
+      ),
+    );
 
-      await tester.pumpAndSettle();
+    await tester.pumpAndSettle();
 
-      expect(find.byIcon(Icons.location_pin), findsWidgets);
-    });
+    expect(find.byIcon(Icons.location_pin), findsWidgets);
+  });
 }

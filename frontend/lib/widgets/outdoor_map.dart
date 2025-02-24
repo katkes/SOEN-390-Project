@@ -171,102 +171,101 @@ class _MapWidgetState extends State<MapWidget> {
   }
 
   void _onMarkerTapped(
-    double lat, double lon, String name, String address, Offset tapPosition) {
-  setState(() {
-    _selectedBuildingName = name;
-    _selectedBuildingAddress = address;
-    _mapController.move(LatLng(lat, lon), 17.0);
-    print('Selected Building: $_selectedBuildingName, $_selectedBuildingAddress');
-  });
-
-  final screenSize = MediaQuery.of(context).size;
-  final shouldShowAbove = tapPosition.dy > screenSize.height / 2;
-
-  // Fetch only the photo URL
-  final buildingPopUps = BuildingPopUps();
-  buildingPopUps.getLocationInfo(lat, lon, name).then((buildingInfo) {
-    String? photoUrl = buildingInfo["photo"];
-    print("Fetched photo URL: $photoUrl");
-
-    Future.delayed(Duration(milliseconds: 200), () {
-      showPopover(
-        context: context,
-        bodyBuilder: (context) => BuildingInformationPopup(
-          buildingName: name,
-          buildingAddress: address,
-          photoUrl: photoUrl, 
-        ),
-        onPop: () => print('Popover closed'),
-        direction: shouldShowAbove ? PopoverDirection.top : PopoverDirection.bottom,
-        width: 220,
-        height: 180,
-        arrowHeight: 15,
-        arrowWidth: 20,
-        backgroundColor: Colors.white,
-        barrierColor: Colors.transparent,
-        radius: 8,
-        arrowDyOffset: tapPosition.dy,
-      );
+      double lat, double lon, String name, String address, Offset tapPosition) {
+    setState(() {
+      _selectedBuildingName = name;
+      _selectedBuildingAddress = address;
+      _mapController.move(LatLng(lat, lon), 17.0);
+      print(
+          'Selected Building: $_selectedBuildingName, $_selectedBuildingAddress');
     });
-  }).catchError((error) {
-    print("Error fetching building photo: $error");
-  });
-}
 
+    final screenSize = MediaQuery.of(context).size;
+    final shouldShowAbove = tapPosition.dy > screenSize.height / 2;
 
- @override
-Widget build(BuildContext context) {
-  return SizedBox(
-    width: 460,
-    height: 570,
-    child: ClipRRect(
-      borderRadius: BorderRadius.circular(30),
-      child: FlutterMap(
-        mapController: _mapController,
-        options: MapOptions(
-          initialCenter: widget.location,
-          initialZoom: 14.0,
-          minZoom: 11.0,
-          maxZoom: 17.0,
-          interactionOptions: const InteractionOptions(
-            flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
+    // Fetch only the photo URL
+    final buildingPopUps = BuildingPopUps();
+    buildingPopUps.getLocationInfo(lat, lon, name).then((buildingInfo) {
+      String? photoUrl = buildingInfo["photo"];
+      print("Fetched photo URL: $photoUrl");
+
+      Future.delayed(Duration(milliseconds: 200), () {
+        showPopover(
+          context: context,
+          bodyBuilder: (context) => BuildingInformationPopup(
+            buildingName: name,
+            buildingAddress: address,
+            photoUrl: photoUrl,
           ),
+          onPop: () => print('Popover closed'),
+          direction:
+              shouldShowAbove ? PopoverDirection.top : PopoverDirection.bottom,
+          width: 220,
+          height: 180,
+          arrowHeight: 15,
+          arrowWidth: 20,
+          backgroundColor: Colors.white,
+          barrierColor: Colors.transparent,
+          radius: 8,
+          arrowDyOffset: tapPosition.dy,
+        );
+      });
+    }).catchError((error) {
+      print("Error fetching building photo: $error");
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 460,
+      height: 570,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(30),
+        child: FlutterMap(
+          mapController: _mapController,
+          options: MapOptions(
+            initialCenter: widget.location,
+            initialZoom: 14.0,
+            minZoom: 11.0,
+            maxZoom: 17.0,
+            interactionOptions: const InteractionOptions(
+              flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
+            ),
+          ),
+          children: [
+            TileLayer(
+              urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+              additionalOptions: const {},
+              tileProvider: NetworkTileProvider(httpClient: widget.httpClient),
+            ),
+            PolygonLayer(
+              polygons: _buildingPolygons,
+            ),
+            MarkerLayer(
+              markers: [
+                ..._buildingMarkers,
+                Marker(
+                  point: LatLng(45.497856, -73.579588),
+                  width: 40.0,
+                  height: 40.0,
+                  child: const Icon(Icons.location_pin,
+                      color: Color(0xFF912338), size: 40.0),
+                ),
+                Marker(
+                  point: LatLng(45.4581, -73.6391),
+                  width: 40.0,
+                  height: 40.0,
+                  child: const Icon(Icons.location_pin,
+                      color: Color(0xFF912338), size: 40.0),
+                ),
+              ],
+            ),
+          ],
         ),
-        children: [
-          TileLayer(
-            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-            additionalOptions: const {}, 
-            tileProvider: NetworkTileProvider(httpClient: widget.httpClient),
-          ),
-           PolygonLayer(
-            polygons: _buildingPolygons, 
-          ),
-          MarkerLayer(
-            markers: [
-              ..._buildingMarkers, 
-              Marker(
-                point: LatLng(45.497856, -73.579588),
-                width: 40.0,
-                height: 40.0,
-                child: const Icon(Icons.location_pin,
-                    color: Color(0xFF912338), size: 40.0),
-              ),
-              Marker(
-                point: LatLng(45.4581, -73.6391),
-                width: 40.0,
-                height: 40.0,
-                child: const Icon(Icons.location_pin,
-                    color: Color(0xFF912338), size: 40.0),
-              ),
-            ],
-          ),
-         
-        ],
       ),
-    ),
-  );
-}
-
+    );
+  }
 }
 
 // How to use it:
