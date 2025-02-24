@@ -1,6 +1,12 @@
 import 'package:latlong2/latlong.dart';
 import 'package:osrm/osrm.dart';
 
+// This file contains the logic to calculate a route between two points using the OSRM API.
+// Just give it two LatLng points and it will return the distance, duration and the route points.
+
+
+
+// This class is used to store the result of a route calculation.
 class RouteResult {
   final double distance;
   final double duration;
@@ -17,13 +23,13 @@ Future<RouteResult?> getRouteFromCoordinates({
   required LatLng from,
   required LatLng to,
 }) async {
-  final osrm = Osrm();
+  final osrm = Osrm(); // Osrm client to interact with the API
   final options = RouteRequest(
     coordinates: [
       (from.longitude, from.latitude),
       (to.longitude, to.latitude),
     ],
-    profile: OsrmRequestProfile.foot,
+    profile: OsrmRequestProfile.foot, // Walking profile
     overview: OsrmOverview.full,
   );
 
