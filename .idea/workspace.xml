@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d0d732de-4191-4af8-81e9-6d66c2d25976" name="Changes" comment="Added mocking for the building details test">
+    <list default="true" id="d0d732de-4191-4af8-81e9-6d66c2d25976" name="Changes" comment="3 working test for building_outlines_test.dart have been created">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/lib/widgets/building_details.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/lib/widgets/building_details.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/test/widgets/components/building_outlines_test.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/test/widgets/components/building_outlines_test.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/test/widgets/components/outdoor_map_test.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/test/widgets/components/outdoor_map_test.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,7 +51,7 @@
     &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;37-render-buildings-on-map-distinct-from-city-buildings&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Merging 37-render-buildings-on-map-distinct-from-city-buildings&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;dart.settings&quot;
   }
@@ -108,7 +109,31 @@
       <option name="project" value="LOCAL" />
       <updated>1740341617100</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="3 working test for building_outlines_test.dart have been created">
+      <option name="closed" value="true" />
+      <created>1740343903936</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1740343903936</updated>
+    </task>
+    <task id="LOCAL-00006" summary="3 working test for building_outlines_test.dart have been created">
+      <option name="closed" value="true" />
+      <created>1740343924233</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1740343924233</updated>
+    </task>
+    <task id="LOCAL-00007" summary="3 working test for building_outlines_test.dart have been created">
+      <option name="closed" value="true" />
+      <created>1740343994690</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1740343994690</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -116,6 +141,7 @@
     <MESSAGE value="Comments for description of git frontend files" />
     <MESSAGE value="This contains the functionality to put a red marker over every building in concordia's campus. It also displays campus information when clicked on. Two test included in this functionality and update to pubspec.yaml so that information from geojson's can be used. Also includes the beginning of functionality to highlight each building belongning to concordia files." />
     <MESSAGE value="Added mocking for the building details test" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added mocking for the building details test" />
+    <MESSAGE value="3 working test for building_outlines_test.dart have been created" />
+    <option name="LAST_COMMIT_MESSAGE" value="3 working test for building_outlines_test.dart have been created" />
   </component>
 </project>

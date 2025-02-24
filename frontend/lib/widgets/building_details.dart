@@ -3,12 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:http/http.dart' as http;
 
 class CampusMap extends StatefulWidget {
-  final http.Client? httpClient;
+  const CampusMap({super.key});
 
-  const CampusMap({Key? key, this.httpClient}) : super(key: key);
   @override
   State<CampusMap> createState() => _CampusMapState();
 }
@@ -27,33 +25,54 @@ class _CampusMapState extends State<CampusMap> {
 
   @override
   void dispose() {
-    _mapController.dispose(); // Proper cleanup
+    _mapController.dispose();
     super.dispose();
   }
 
   Future<void> _loadBuildingBoundaries() async {
-    print("Loading building boundaries...");
+    print("Loading building boundaries from: assets/geojson_files/building_boundaries.geojson");
 
     try {
-      String data;
-
-      if (widget.httpClient != null) {
-        final response = await widget.httpClient!.get(Uri.parse('YOUR_API_URL'));
-        data = response.body;
-      } else {
-        data = await rootBundle.loadString('assets/geojson_files/building_boundaries.geojson');
-      }
-
+      final String data = await rootBundle
+          .loadString('assets/geojson_files/building_boundaries.geojson');
       final Map<String, dynamic> jsonData = jsonDecode(data);
+
       if (jsonData['features'] is! List) {
         print("Unexpected GeoJSON format: Missing 'features' list.");
         return;
       }
+
+      for (var feature in jsonData['features']) {
+        if (feature['geometry']?['type'] == 'Polygon' &&
+            feature['geometry']['coordinates'] is List) {
+          List<List<dynamic>> rawCoordinates = List<List<dynamic>>.from(feature['geometry']['coordinates']);
+          List<LatLng> polygonPoints = rawCoordinates[0].map((point) {
+            List<dynamic> coords = List<dynamic>.from(point);
+            print("WORKED");
+            return LatLng(coords[1] as double, coords[0] as double);
+          }).toList();
+
+          if (polygonPoints.length < 3) {
+            print("Skipping invalid polygon with less than 3 points.");
+            continue;
+          }
+
+          _buildingPolygons.add(
+            Polygon(
+              points: polygonPoints,
+              borderColor: Colors.blue,
+              borderStrokeWidth: 2.0,
+              color: Colors.blue.withAlpha((0.5 * 255).toInt()),
+            ),
+          );
+        }
+      }
+
+      print("Buildings loaded: ${_buildingPolygons.length} polygons.");
     } catch (e) {
       print("Error loading GeoJSON: $e");
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
