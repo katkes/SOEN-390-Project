@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:soen_390/widgets/nav_bar.dart';
 import 'package:soen_390/widgets/search_bar.dart';
 import 'package:soen_390/styles/theme.dart';
@@ -10,7 +11,11 @@ import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ProviderScope(
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
