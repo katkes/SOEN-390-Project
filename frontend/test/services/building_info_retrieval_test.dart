@@ -1,86 +1,66 @@
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+
+@GenerateMocks([http.Client])
+import 'building_retrieval_test.mocks.dart';
 
 void main() async {
-  setUpAll(() async {
-    await dotenv.load(fileName: ".env");
-  });
-  test("place search test with Google Places API", () async {
-    final String apiKey =
-        dotenv.env['GOOGLE_MAPS_API_KEY'] ?? 'API_KEY_NOT_FOUND';
-    Building building = Building(
-        latitude: 45.497092,
-        longitude: -73.5788,
-        locationName: "Henry F. Hall Building");
-    MyBuildingsAPI api = MyBuildingsAPI();
-    await api.getBuilding(building.latitude, building.longitude, apiKey);
-    // print(buildings.first.name);
-  });
+  group('Testing MyBuildingsAPI', () {
+    final client = MockClient();
 
-  test("place details test with Google Places API", () async {
-    final String apiKey =
-        dotenv.env['GOOGLE_MAPS_API_KEY'] ?? 'API_KEY_NOT_FOUND';
-    final String placeId = "ChIJN1t_tDeuEmsRUsoyG83frY4";
-    MyBuildingsAPI api = MyBuildingsAPI();
-    await api.getBuildingDetails(placeId, apiKey);
-  });
+    test('testing place search request', () async {
+      MyBuildingsAPI service = MyBuildingsAPI();
+      when(client.get(
+              Uri.parse("https://maps.googleapis.com/maps/api/geocode/json")))
+          .thenAnswer((_) async =>
+              http.Response('{"placeId": 1, "name": "test"}', 200));
 
-  test("place photo test with Google Places API", () async {
-    final String apiKey =
-        dotenv.env['GOOGLE_MAPS_API_KEY'] ?? 'API_KEY_NOT_FOUND';
-    final String photoRef =
-        "AVzFdbmlwb9IkyAsgFyKaaQfD5GfGOt3IhEtRtzeDtjTOVGly7_K4PcG14VR2OaA8OWSNlm4CW77b2QivaX6yXDjttXg73ETwfIlwQkZLPNXWGawE-u2ZzIBnUmCtCDmTht2ocxJyjpFrYPy6W_OrDg4PoFL3h8ZpHPqPUzAclT4gPyv0KoMCdMZeo592NBLFgt297QMZmGfjID-mIP0R7FttS2i5sB9w9q-Bi1IHQ-kHp5d-ZpdDlByo1ndWMMMwCw2MnJLvESaDuKkbsCNiC_Hxm6LNyoPtUbdNiGT3y6xRVYovqzFStxvDus7NQt3jBJ6OVHfFwr28jQzKOi_BoblHGB92Ek45GhVAsPUHTDQO4lxsKLdYcD6YHJcRFArVoqdsFPNK_TWqUjw8-FlbKy_8oZW-a1wcYzbq-ooxML1Ek87";
-    MyBuildingsAPI api = MyBuildingsAPI();
-    await api.getBuildingPhoto(photoRef, apiKey);
+      expect(await service.getBuilding(), isA<Map<String, dynamic>>());
+    });
+
+    test('testing place details request', () async {
+      MyBuildingsAPI service = MyBuildingsAPI();
+      when(client.get(Uri.parse(
+              "https://maps.googleapis.com/maps/api/place/details/json")))
+          .thenAnswer((_) async => http.Response(
+              '{"name": "test", "phone": "403-555-1234", "website": "www.test.com", "rating": 4.5, "opening_hours": "9am-5pm", "types": ["restaurant", "cafe"]}',
+              200));
+
+      expect(await service.getBuildingDetails(), isA<Map<String, dynamic>>());
+    });
+
+    test('testing place photo request', () async {
+      MyBuildingsAPI service = MyBuildingsAPI();
+      when(client.get(
+              Uri.parse("https://maps.googleapis.com/maps/api/place/photo")))
+          .thenAnswer(
+              (_) async => http.Response('{"photo": "photoTestUrl"}', 200));
+
+      expect(await service.getBuildingDetails(), isA<Map<String, dynamic>>());
+    });
   });
 }
 
 class MyBuildingsAPI {
-  Future<List<Building>> getBuilding(
-      double latitude, double longitude, String apiKey) async {
-    var response = await http.get(Uri.parse(
-        "https://maps.googleapis.com/maps/api/geocode/json?latlng=$latitude,$longitude&key=$apiKey"));
-    print(response.body);
-    return [];
+  Future<Map<String, dynamic>> getBuilding() async {
+    var response = await http
+        .get(Uri.parse("https://maps.googleapis.com/maps/api/geocode/json"));
+    return jsonDecode(response.body);
   }
 
-  Future<List<Building>> getBuildingDetails(
-      String placeId, String apiKey) async {
-    var response = await http.get(Uri.parse(
-        "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$apiKey&fields=formatted_phone_number,website,rating,opening_hours,types,photos"));
-    print(response.body);
-    return [];
+  Future<Map<String, dynamic>> getBuildingDetails() async {
+    var response = await http.get(
+        Uri.parse("https://maps.googleapis.com/maps/api/place/details/json"));
+    return jsonDecode(response.body);
   }
 
-  Future<List<Building>> getBuildingPhoto(
-      String photoReference, String apiKey) async {
-    var response = await http.get(Uri.parse(
-        "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=$photoReference&key=$apiKey"));
-    print(response.body);
-    return [];
-  }
-}
-
-class Building {
-  final double latitude;
-  final double longitude;
-  final String locationName;
-
-  Building(
-      {required this.latitude,
-      required this.longitude,
-      required this.locationName});
-
-  double get getLatitude {
-    return latitude;
-  }
-
-  double get getLongitude {
-    return longitude;
-  }
-
-  String get getLocationName {
-    return locationName;
+  Future<Map<String, dynamic>> getBuildingPhoto() async {
+    var response = await http
+        .get(Uri.parse("https://maps.googleapis.com/maps/api/place/photo"));
+    return jsonDecode(response.body);
   }
 }
