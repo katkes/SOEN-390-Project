@@ -26,3 +26,10 @@ subprojects {
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
+dependencies {
+    classpath 'com.android.tools.build:gradle:8.1.2' // Use latest AGP version
+}
+
+//defaultConfig {
+//    minSdkVersion 21
+//}
