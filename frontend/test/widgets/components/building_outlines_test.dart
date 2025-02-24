@@ -1,3 +1,14 @@
+//This tests the functionality of the outdoor_map.dart file. The components include:
+// - The map widget
+// - The markers
+// - The polygons
+// - The zoom constraints
+// - The tile layer
+// - The layout of the map widget
+// - The markers for the SGW campus
+// - The markers for the Loyola campus
+// - The map widget with the correct layout
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_map/flutter_map.dart';

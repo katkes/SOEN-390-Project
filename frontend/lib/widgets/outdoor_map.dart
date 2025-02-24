@@ -243,7 +243,7 @@ Widget build(BuildContext context) {
           ),
           MarkerLayer(
             markers: [
-              ..._buildingMarkers, // Add your dynamic markers here
+              ..._buildingMarkers, 
               Marker(
                 point: LatLng(45.497856, -73.579588),
                 width: 40.0,
