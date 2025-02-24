@@ -75,16 +75,6 @@ class _MapWidgetState extends State<MapWidget> {
         child: FlutterMap(
           mapController: _mapController,
           options: MapOptions(
-            onTap: (_, point) {
-              // Alternate between setting [from] and [to] on tap.
-              if (isPairly) {
-                to = point;
-              } else {
-                from = point;
-              }
-              isPairly = !isPairly;
-              _getRoute();
-            },
             initialCenter: widget.location,
             initialZoom: 14.0,
             minZoom: 11.0,

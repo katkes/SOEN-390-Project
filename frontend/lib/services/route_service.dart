@@ -32,12 +32,6 @@ Future<RouteResult?> getRouteFromCoordinates({
   );
 
   final route = await osrm.route(options);
-
-  if (route.routes.isEmpty) {
-    print("No routes found!");
-    return null;
-  }
-
   final firstRoute = route.routes.first;
   final distance = firstRoute.distance?.toDouble() ?? 0.0;
   final duration = firstRoute.duration?.toDouble() ?? 0.0;
@@ -49,11 +43,6 @@ Future<RouteResult?> getRouteFromCoordinates({
             return LatLng(loc.lat, loc.lng);
           }).toList() ??
           [];
-
-  if (routePoints.isEmpty) {
-    print("Empty route points!");
-    return null;
-  }
 
   return RouteResult(
     distance: distance,
