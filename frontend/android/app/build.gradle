@@ -5,11 +5,7 @@ plugins {
     id "dev.flutter.flutter-gradle-plugin"
 }
 
-Project background_geolocation = project(':flutter_background_geolocation')
-apply from: "${background_geolocation.projectDir}/background_geolocation.gradle"
-
 android {
-    compileSdkVersion 34
 
     namespace = "com.example.soen_390"
     compileSdk = flutter.compileSdkVersion
@@ -50,28 +46,5 @@ flutter {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//allprojects {  // <-- IMPORTANT:  allprojects
-//    repositories {
-//        google()
-//        mavenCentral()
-//               // [required] flutter_background_geolocation
-//               maven { url "${project(':flutter_background_geolocation').projectDir}/libs" }
-//               maven { url 'https://developer.huawei.com/repo/' }
-//               // [required] background_fetch
-//               maven { url "${project(':background_fetch').projectDir}/libs" }
-//    }
-//}
++Project background_geolocation = project(':flutter_background_geolocation')
++apply from: "${background_geolocation.projectDir}/background_geolocation.gradle"

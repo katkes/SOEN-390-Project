@@ -7,8 +7,7 @@ import 'package:flutter_background_geolocation/flutter_background_geolocation.da
     as bg;
 
 // Create a mock class for BackgroundGeolocation
-class MockBackgroundGeolocation extends Mock
-    implements bg.BackgroundGeolocation {
+class MockBackgroundGeolocation extends Mock implements bg.BackgroundGeolocation {
   Future<bg.Location> getCurrentPosition() async {
     return bg.Location({
       'coords': {
@@ -67,8 +66,7 @@ void main() {
       var instance = LocationService();
       await instance.startListeningForLocation();
 
-      var mockLocation = await mockBackgroundGeolocation
-          .getCurrentPosition(); //this is my data. I want to pass this Location object to my class
+      var mockLocation = await mockBackgroundGeolocation.getCurrentPosition(); //this is my data. I want to pass this Location object to my class
 
       instance.takeLocation(mockLocation);
 
