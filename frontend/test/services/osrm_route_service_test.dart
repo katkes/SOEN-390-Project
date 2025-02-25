@@ -4,7 +4,6 @@ import 'package:mockito/mockito.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:osrm/osrm.dart'; // Ensure this import includes OsrmRoute, OsrmGeometry, etc.
 import 'package:soen_390/services/osrm_route_service.dart';
-import 'package:soen_390/services/interfaces/route_service_interface.dart';
 
 // Generate a mock class for Osrm
 @GenerateMocks([Osrm])
