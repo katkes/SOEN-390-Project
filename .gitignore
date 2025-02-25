@@ -8,5 +8,3 @@ frontend/lint_report.txt
 frontend/test_report.xml
 /.sonarlint
 /.vscode
-/.vscode
-/.vscode
