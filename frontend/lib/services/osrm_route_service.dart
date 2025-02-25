@@ -14,6 +14,7 @@ class OsrmRouteService implements IRouteService {
   OsrmRouteService(this.osrmClient);
 
   @override
+
   /// Fetches a route between the specified [from] and [to] locations using OSRM.
   ///
   /// Returns a [RouteResult] containing the computed route distance, duration,

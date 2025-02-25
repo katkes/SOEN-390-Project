@@ -10,7 +10,7 @@ import 'package:soen_390/providers/service_providers.dart';
 import 'package:soen_390/services/http_service.dart';
 import 'package:soen_390/services/interfaces/route_service_interface.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:soen_390/widgets/nav_bar.dart';
+
 
 // Generate mocks for the interfaces - using GenerateNiceMocks for better behavior
 @GenerateNiceMocks([
@@ -163,7 +163,7 @@ void main() {
     // Verify MyApp is in the widget tree
     expect(find.byType(MyApp), findsOneWidget);
     expect(find.byType(MaterialApp), findsOneWidget);
-    
+
     // Allow the widget tree to build completely
     await tester.pumpAndSettle();
 

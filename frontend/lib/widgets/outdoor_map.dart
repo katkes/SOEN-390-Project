@@ -79,9 +79,9 @@ class _MapWidgetState extends State<MapWidget> {
   /// Fetches a route from `from` to `to` using the injected `IRouteService`.
   ///
   /// The result updates the state with new distance, duration, and route points.
-Future<void> _fetchRoute() async {
+  Future<void> _fetchRoute() async {
     final routeResult = await widget.routeService.getRoute(from: from, to: to);
-  
+
     if (routeResult == null || routeResult.routePoints.isEmpty) {
       // If no route is found or if the route points list is empty, we can either clear the polyline or handle accordingly
       setState(() {
@@ -98,7 +98,6 @@ Future<void> _fetchRoute() async {
       routePoints = routeResult.routePoints;
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -125,16 +124,16 @@ Future<void> _fetchRoute() async {
               tileProvider: NetworkTileProvider(httpClient: widget.httpClient),
             ),
             // Only render the polyline layer if there are valid route points
-            if (routePoints.isNotEmpty) 
-            PolylineLayer(
-              polylines: [
-                Polyline(
-                  points: routePoints,
-                  strokeWidth: 4.0,
-                  color: Colors.blueAccent,
-                ),
-              ],
-            ),
+            if (routePoints.isNotEmpty)
+              PolylineLayer(
+                polylines: [
+                  Polyline(
+                    points: routePoints,
+                    strokeWidth: 4.0,
+                    color: Colors.blueAccent,
+                  ),
+                ],
+              ),
             MarkerLayer(
               markers: _buildMarkers(),
             ),
@@ -143,7 +142,6 @@ Future<void> _fetchRoute() async {
       ),
     );
   }
-
 
   /// Handles user taps on the map to set the `from` and `to` locations.
   ///
