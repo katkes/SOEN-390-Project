@@ -57,15 +57,15 @@ class _MapWidgetState extends State<MapWidget> {
     }
   }
 
-  Future<void> _getRoute() async {
-    final result = await getRouteFromCoordinates(from: from, to: to);
-    if (result != null) {
-      setState(() {
-        distance = result.distance;
-        duration = result.duration;
-        routePoints = result.routePoints;
-      });
-    }
+Future<void> _getRoute() async {
+    final routeResult = await widget.routeService.getRoute(from: from, to: to);
+    if (routeResult == null) return;
+
+    setState(() {
+      distance = routeResult.distance;
+      duration = routeResult.duration;
+      routePoints = routeResult.routePoints;
+    });
   }
 
   @override
