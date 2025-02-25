@@ -271,7 +271,7 @@ void main() {
 
       // Simulate tap using onTap callback directly
       final mapWidget = tester.widget<FlutterMap>(mapFinder);
-      final mapOptions = mapWidget.options as MapOptions;
+      final mapOptions = mapWidget.options;
 
       // Call onTap directly to avoid timer issues
       mapOptions.onTap?.call(
