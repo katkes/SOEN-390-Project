@@ -14,13 +14,12 @@ class OsrmRouteService implements IRouteService {
   OsrmRouteService(this.osrmClient);
 
   @override
-
   /// Fetches a route between the specified [from] and [to] locations using OSRM.
   ///
   /// Returns a [RouteResult] containing the computed route distance, duration,
   /// and a list of geographical points representing the route.
-  /// Returns `null` if no route is found or if an error occurs.
-  Future<RouteResult?> getRoute({
+  /// If no route is found, a default [RouteResult] is returned.
+  Future<RouteResult> getRoute({
     required LatLng from,
     required LatLng to,
   }) async {
@@ -46,11 +45,8 @@ class OsrmRouteService implements IRouteService {
       final duration = firstRoute.duration?.toDouble() ?? 0.0;
 
       // Convert route geometry into a list of LatLng points
-      final routePoints = firstRoute.geometry?.lineString?.coordinates.map((e) {
-            final loc = e.toLocation();
-            return LatLng(loc.lat, loc.lng);
-          }).toList() ??
-          [];
+      final routePoints =
+          _convertCoordinates(firstRoute.geometry?.lineString?.coordinates);
 
       return RouteResult(
         distance: distance,
@@ -59,7 +55,18 @@ class OsrmRouteService implements IRouteService {
       );
     } catch (e) {
       print("Error fetching route: $e");
-      return null;
+      return RouteResult(distance: 0.0, duration: 0.0, routePoints: []);
     }
+  }
+
+  /// Converts a list of OSRM [Coordinate] objects into a list of [LatLng] points.
+  ///
+  /// This method ensures better readability and reusability when processing route geometry.
+  List<LatLng> _convertCoordinates(List<Coordinate>? coordinates) {
+    return coordinates?.map((e) {
+          final loc = e.toLocation();
+          return LatLng(loc.lat, loc.lng);
+        }).toList() ??
+        [];
   }
 }
