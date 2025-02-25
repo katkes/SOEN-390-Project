@@ -11,7 +11,6 @@ import 'package:soen_390/services/http_service.dart';
 import 'package:soen_390/services/interfaces/route_service_interface.dart';
 import 'package:latlong2/latlong.dart';
 
-
 // Generate mocks for the interfaces - using GenerateNiceMocks for better behavior
 @GenerateNiceMocks([
   MockSpec<IRouteService>(),

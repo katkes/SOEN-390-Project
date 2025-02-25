@@ -151,7 +151,6 @@ void main() {
         .called(1);
   });
 
-
   testWidgets('MapWidget calls _fetchRoute when location is updated',
       (WidgetTester tester) async {
     // First, render with initial location
