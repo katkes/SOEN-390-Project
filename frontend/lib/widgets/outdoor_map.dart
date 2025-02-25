@@ -2,22 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
-import 'package:soen_390/services/route_service.dart';
+import 'package:soen_390/services/interfaces/route_service_interface.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http; // Import http
 
 // This widget displays a map with markers at specific locations (SGW and Loyola campuses).
 class MapWidget extends StatefulWidget {
-  // Rename to MapWidget
   final LatLng location;
-  final http.Client httpClient; // Add httpClient
+  final http.Client httpClient;
+  final IRouteService routeService; // More abstract 
 
-  const MapWidget(
-      {super.key, required this.location, required this.httpClient});
+  const MapWidget({
+    super.key,
+    required this.location,
+    required this.httpClient,
+    required this.routeService, // Accept service as parameter
+  });
 
-  @override
   State<MapWidget> createState() => _MapWidgetState();
 }
+
 
 class _MapWidgetState extends State<MapWidget> {
   // Rename State
@@ -66,7 +70,7 @@ class _MapWidgetState extends State<MapWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return SizedBox( 
       // Remove Positioned, use SizedBox directly
       width: 460,
       height: 570,
