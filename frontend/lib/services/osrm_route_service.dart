@@ -18,12 +18,13 @@ class OsrmRouteService implements IRouteService {
   ///
   /// Returns a [RouteResult] containing the computed route distance, duration,
   /// and a list of geographical points representing the route.
-  /// If no route is found, a default [RouteResult] is returned.
-  Future<RouteResult> getRoute({
+  /// Returns `null` if no route is found or if an error occurs.
+  Future<RouteResult?> getRoute({
     required LatLng from,
     required LatLng to,
   }) async {
     try {
+      // Ensure immutability by using `final`
       final options = RouteRequest(
         coordinates: [
           (from.longitude, from.latitude),
@@ -33,6 +34,7 @@ class OsrmRouteService implements IRouteService {
         overview: OsrmOverview.full,
       );
 
+      // Ensure immutability by using `final`
       final route = await osrmClient.route(options);
 
       // Ensure at least one route is found
@@ -45,8 +47,11 @@ class OsrmRouteService implements IRouteService {
       final duration = firstRoute.duration?.toDouble() ?? 0.0;
 
       // Convert route geometry into a list of LatLng points
-      final routePoints =
-          _convertCoordinates(firstRoute.geometry?.lineString?.coordinates);
+      final routePoints = firstRoute.geometry?.lineString?.coordinates.map((e) {
+            final loc = e.toLocation();
+            return LatLng(loc.lat, loc.lng);
+          }).toList() ??
+          [];
 
       return RouteResult(
         distance: distance,
@@ -55,18 +60,7 @@ class OsrmRouteService implements IRouteService {
       );
     } catch (e) {
       print("Error fetching route: $e");
-      return RouteResult(distance: 0.0, duration: 0.0, routePoints: []);
+      return null;
     }
-  }
-
-  /// Converts a list of OSRM [Coordinate] objects into a list of [LatLng] points.
-  ///
-  /// This method ensures better readability and reusability when processing route geometry.
-  List<LatLng> _convertCoordinates(List<Coordinate>? coordinates) {
-    return coordinates?.map((e) {
-          final loc = e.toLocation();
-          return LatLng(loc.lat, loc.lng);
-        }).toList() ??
-        [];
   }
 }
