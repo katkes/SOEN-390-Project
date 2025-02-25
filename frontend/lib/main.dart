@@ -3,12 +3,23 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:soen_390/widgets/nav_bar.dart';
 import 'package:soen_390/widgets/search_bar.dart';
 import 'package:soen_390/styles/theme.dart';
-import 'package:soen_390/widgets/outdoor_map.dart';
 import 'package:soen_390/widgets/campus_switch_button.dart';
 import 'package:soen_390/widgets/indoor_navigation_button.dart';
+import 'package:soen_390/widgets/outdoor_map.dart';
 import 'package:latlong2/latlong.dart';
-// ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
+import 'package:soen_390/services/interfaces/route_service_interface.dart';
+import 'package:soen_390/services/osrm_route_service.dart';
+import 'package:osrm/osrm.dart';
+
+/// Provides an instance of [Osrm] client.
+final osrmProvider = Provider<Osrm>((ref) => Osrm());
+
+/// Provides an implementation of [IRouteService] using [OsrmRouteService].
+final routeServiceProvider = Provider<IRouteService>((ref) {
+  final osrmClient = ref.watch(osrmProvider);
+  return OsrmRouteService(osrmClient);
+});
 
 void main() {
   runApp(
@@ -18,11 +29,11 @@ void main() {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: appTheme,
@@ -31,16 +42,16 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatefulWidget {
+class MyHomePage extends ConsumerStatefulWidget {
   const MyHomePage({super.key, required this.title});
 
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  ConsumerState<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends ConsumerState<MyHomePage> {
   TextEditingController searchController = TextEditingController();
   int _selectedIndex = 0;
   LatLng _currentLocation = LatLng(45.497856, -73.579588);
@@ -49,12 +60,12 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    _httpClient = http.Client(); // Initialize the client
+    _httpClient = http.Client();
   }
 
   @override
   void dispose() {
-    _httpClient?.close(); // Close the client
+    _httpClient?.close();
     super.dispose();
   }
 
@@ -72,6 +83,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final routeService =
+        ref.watch(routeServiceProvider); // Injecting the service
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -79,10 +93,7 @@ class _MyHomePageState extends State<MyHomePage> {
           onPressed: () {},
         ),
         backgroundColor: Theme.of(context).primaryColor,
-        title: Text(
-          widget.title,
-          style: TextStyle(color: Colors.white),
-        ),
+        title: Text(widget.title, style: TextStyle(color: Colors.white)),
         actions: [
           IconButton(
             icon: Icon(Icons.more_vert, color: Colors.white, size: 30),
@@ -99,13 +110,11 @@ class _MyHomePageState extends State<MyHomePage> {
               return Stack(
                 children: [
                   Positioned(
-                    // Keep the Positioned for sizing
                     bottom: 5,
                     left: 10,
                     right: 10,
                     child: Center(
                       child: SizedBox(
-                        // Keep the SizedBox for fixed size
                         width: 460,
                         height: 570,
                         child: ClipRRect(
@@ -113,13 +122,13 @@ class _MyHomePageState extends State<MyHomePage> {
                           child: MapWidget(
                             location: _currentLocation,
                             httpClient: _httpClient!,
+                            routeService: routeService, // Injecting the service
                           ),
                         ),
                       ),
                     ),
                   ),
                   Positioned(
-                    // Campus Switch
                     top: 10,
                     left: 0,
                     right: 0,
@@ -131,13 +140,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                   Positioned(
-                    // Search Bar
                     bottom: -80,
                     left: 0,
                     child: SearchBarWidget(controller: searchController),
                   ),
                   Positioned(
-                    // Indoor Button
                     bottom: 10,
                     right: 21,
                     child: IndoorTrigger(),
