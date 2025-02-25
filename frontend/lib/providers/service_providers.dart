@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:osrm/osrm.dart';
 import 'package:soen_390/services/osrm_route_service.dart';
 import '../services/interfaces/route_service_interface.dart';
+import 'package:soen_390/services/http_service.dart';
 
 /// Provides an instance of [Osrm] client.
 ///
@@ -19,4 +20,9 @@ final osrmProvider = Provider<Osrm>((ref) {
 final routeServiceProvider = Provider<IRouteService>((ref) {
   final osrmClient = ref.read(osrmProvider);
   return OsrmRouteService(osrmClient);
+});
+
+/// Provides an instance of [HttpService] to manage HTTP requests.
+final httpServiceProvider = Provider<HttpService>((ref) {
+  return HttpService();
 });
