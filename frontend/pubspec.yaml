@@ -37,7 +37,8 @@ dependencies:
   flutter_map: ^8.0.0
   latlong2: ^0.9.1
   grouped_list: ^6.0.0
-  geolocator: ^13.0.2
+#  geolocator: ^13.0.2
+  geolocator: ^10.1.0
   flutter_background_geolocation: ^4.12.0
 
 
