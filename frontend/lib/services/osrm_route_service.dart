@@ -37,7 +37,9 @@ class OsrmRouteService implements IRouteService {
       final route = await osrmClient.route(options);
 
       // Ensure at least one route is found
-      if (route.routes.isEmpty) return null;
+      if (route.routes.isEmpty) {
+        return RouteResult(distance: 0.0, duration: 0.0, routePoints: []);
+      }
 
       final firstRoute = route.routes.first;
       final distance = firstRoute.distance?.toDouble() ?? 0.0;
