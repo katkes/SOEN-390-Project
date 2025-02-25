@@ -144,21 +144,28 @@ Future<void> _getRoute() async {
 
 // How to use it:
 class MyPage extends StatelessWidget {
-  final http.Client httpClient; // Receive injected client
+  final IRouteService routeService; // Accept an abstract service
+  final http.Client httpClient;
   final LatLng location;
 
-  const MyPage({required this.httpClient, required this.location, super.key});
+  const MyPage({
+    required this.httpClient,
+    required this.location,
+    required this.routeService, // Inject any IRouteService implementation
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        // Or use a Stack if you need positioning
         child: MapWidget(
           location: location,
-          httpClient: httpClient, // Pass the client down
+          httpClient: httpClient,
+          routeService: routeService, // Use abstract interface
         ),
       ),
     );
   }
 }
+
