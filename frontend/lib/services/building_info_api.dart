@@ -95,7 +95,7 @@ class BuildingPopUps {
 
   BuildingPopUps({required this.mapsApiClient});
 
-  Future<Map<String, dynamic>> getBuildingInfo(
+  Future<Map<String, dynamic>> fetchBuildingInformation(
       double latitude, double longitude, String locationName) {
     return mapsApiClient.fetchBuildingInformation(
         latitude, longitude, locationName);
