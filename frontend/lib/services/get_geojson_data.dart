@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 class CampusService {
   final AssetBundle assetBundle;
 
-  
   CampusService({AssetBundle? assetBundle})
       : assetBundle = assetBundle ?? rootBundle;
 

@@ -1,16 +1,15 @@
-
 import 'package:flutter/material.dart';
 
 class BuildingInformationPopup extends StatelessWidget {
   final String buildingName;
   final String buildingAddress;
-  final String? photoUrl; 
+  final String? photoUrl;
 
   const BuildingInformationPopup({
     super.key,
     required this.buildingName,
     required this.buildingAddress,
-    this.photoUrl, 
+    this.photoUrl,
   });
 
   String _getAbbreviatedName(String name) {

@@ -9,46 +9,42 @@
 // - The markers for the Loyola campus
 // - The map widget with the correct layout
 
-import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter/services.dart';
-import 'package:latlong2/latlong.dart'; // Import the latlong2 package
-import 'package:soen_390/widgets/outdoor_map.dart';
-import 'package:http/http.dart' as http;
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
-import 'package:soen_390/services/building_info_api.dart';
-import 'package:soen_390/widgets/building_information_popup.dart';
-import 'building_outlines_test.mocks.dart';
+// import 'package:flutter/material.dart';
+// import 'package:flutter_test/flutter_test.dart';
+// import 'package:flutter_map/flutter_map.dart';
+// import 'package:flutter/services.dart';
+// import 'package:latlong2/latlong.dart'; // Import the latlong2 package
+// import 'package:soen_390/widgets/outdoor_map.dart';
+// import 'package:http/http.dart' as http;
+// import 'package:mockito/annotations.dart';
+// import 'package:mockito/mockito.dart';
+// import 'package:soen_390/services/building_info_api.dart';
+// import 'package:soen_390/widgets/building_information_popup.dart';
+// import 'building_outlines_test.mocks.dart';
 
+// testWidgets('Polygons load correctly', (WidgetTester tester) async {
+//   LatLng initialLocation = LatLng(45.4973, -73.5793);
+//   await tester.pumpWidget(MaterialApp(
+//       home:
+//           MapWidget(location: initialLocation, httpClient: mockHttpClient,mapsApiClient: mockMapsApiClient,buildingPopUps:mockBuildingPopUps)));
+//   await tester.pumpAndSettle();
 
- 
-  
+//   expect(find.byType(PolygonLayer), findsOneWidget);
+// });
 
-  // testWidgets('Polygons load correctly', (WidgetTester tester) async {
-  //   LatLng initialLocation = LatLng(45.4973, -73.5793);
-  //   await tester.pumpWidget(MaterialApp(
-  //       home:
-  //           MapWidget(location: initialLocation, httpClient: mockHttpClient,mapsApiClient: mockMapsApiClient,buildingPopUps:mockBuildingPopUps)));
-  //   await tester.pumpAndSettle();
+// testWidgets('Map updates when location changes', (WidgetTester tester) async {
+//   LatLng initialLocation = LatLng(45.4973, -73.5793);
+//   LatLng newLocation = LatLng(45.505, -73.57);
 
-  //   expect(find.byType(PolygonLayer), findsOneWidget);
-  // });
+//   await tester.pumpWidget(MaterialApp(
+//       home:
+//           MapWidget(location: initialLocation, httpClient: mockHttpClient, mapsApiClient: mockMapsApiClient,buildingPopUps:mockBuildingPopUps)));
+//   await tester.pumpAndSettle();
 
-  // testWidgets('Map updates when location changes', (WidgetTester tester) async {
-  //   LatLng initialLocation = LatLng(45.4973, -73.5793);
-  //   LatLng newLocation = LatLng(45.505, -73.57);
-
-  //   await tester.pumpWidget(MaterialApp(
-  //       home:
-  //           MapWidget(location: initialLocation, httpClient: mockHttpClient, mapsApiClient: mockMapsApiClient,buildingPopUps:mockBuildingPopUps)));
-  //   await tester.pumpAndSettle();
-
-  //   await tester.pumpWidget(MaterialApp(
-  //       home: MapWidget(location: newLocation, httpClient: mockHttpClient, mapsApiClient: mockMapsApiClient,buildingPopUps:mockBuildingPopUps)));
-  //   await tester.pumpAndSettle();
-  // });
+//   await tester.pumpWidget(MaterialApp(
+//       home: MapWidget(location: newLocation, httpClient: mockHttpClient, mapsApiClient: mockMapsApiClient,buildingPopUps:mockBuildingPopUps)));
+//   await tester.pumpAndSettle();
+// });
 
 //   testWidgets('Map respects zoom constraints', (WidgetTester tester) async {
 //     await tester.pumpWidget(
@@ -176,7 +172,5 @@ import 'building_outlines_test.mocks.dart';
 
 //     expect(find.byIcon(Icons.location_pin), findsWidgets);
 //   });
-  
-// 
 
-
+//
