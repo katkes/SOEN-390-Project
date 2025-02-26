@@ -5,7 +5,9 @@ import 'package:soen_390/utils/permission_not_enabled_exception.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
-// Helper function to get a mock position
+/// Helper function to create a mock [geo.Position] object.
+///
+/// Returns a [geo.Position] with predefined values for testing purposes.
 geo.Position get mockPosition => geo.Position(
       latitude: 45.5017,
       longitude: -73.5673,
@@ -19,17 +21,22 @@ geo.Position get mockPosition => geo.Position(
       speedAccuracy: 0.0,
     );
 
-// Mock GeolocatorPlatform Implementation
+/// Mock implementation of [geo.GeolocatorPlatform] for testing.
+///
+/// This class overrides methods from [geo.GeolocatorPlatform] to provide
+/// controlled behavior for testing the [LocationService] class.
 class MockGeolocatorPlatform extends Mock
     with MockPlatformInterfaceMixin
     implements geo.GeolocatorPlatform {
   geo.LocationPermission _permission = geo.LocationPermission.whileInUse;
   bool _locationServicesEnabled = true;
 
+  /// Sets the mock location permission for testing.
   void setLocationPermission(geo.LocationPermission permission) {
     _permission = permission;
   }
 
+  /// Sets whether location services are enabled for testing.
   void setLocationServiceEnabled(bool enabled) {
     _locationServicesEnabled = enabled;
   }
@@ -74,6 +81,10 @@ void main() {
   late MockGeolocatorPlatform mockGeolocatorPlatform;
   late LocationService locationService;
 
+  /// Sets up the test environment before each test.
+  ///
+  /// Initializes the [MockGeolocatorPlatform] and injects it into the
+  /// [LocationService] instance. Also ensures that `currentPosition` is initialized.
   setUp(() {
     mockGeolocatorPlatform = MockGeolocatorPlatform();
     locationService = LocationService(

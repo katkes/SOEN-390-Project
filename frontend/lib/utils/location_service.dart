@@ -3,29 +3,46 @@ import 'package:geolocator/geolocator.dart' as geo;
 import 'package:flutter/foundation.dart';
 import 'package:soen_390/utils/permission_not_enabled_exception.dart';
 
+/// Service for managing location-related functionality.
+///
+/// This class provides methods for determining permissions, retrieving the
+/// current location, updating the location, and creating a location stream.
 class LocationService {
   final geo.GeolocatorPlatform geolocator;
 
   // Ensures platform-specific settings are initialized only once
   bool _isLocSettingInitialized = false;
 
-  // This variable contains the current position; always refer to this when using this class
+  /// The current position of the device.
+  ///
+  /// This variable contains the latest known position and is updated
+  /// whenever a new location is retrieved.
   late geo.Position currentPosition;
 
-  // Platform-specific settings (late final ensures it's initialized only once)
+  /// Platform-specific location settings.
+  ///
+  /// These settings are initialized once and used for location updates.
   late final geo.LocationSettings locSetting;
 
-  // Stream for tracking location changes
+  /// Stream subscription for tracking location changes.
   StreamSubscription<geo.Position>? _positionStream;
 
-  // Default state variables
+  /// Indicates whether location services are enabled.
   bool serviceEnabled = false;
+
+  /// The current location permission status.
   geo.LocationPermission permission = geo.LocationPermission.denied;
 
-  // Constructor using dependency injection
+  /// Creates a [LocationService] instance with dependency injection.
+  ///
+  /// The [geolocator] parameter is required and provides the platform-specific
+  /// implementation for location services.
   LocationService({required this.geolocator});
 
-  // Determines if location services & permissions are enabled
+  /// Determines if location services and permissions are enabled.
+  ///
+  /// Returns `true` if location services are enabled and permissions are granted,
+  /// otherwise returns `false`.
   Future<bool> determinePermissions() async {
     serviceEnabled = await geolocator.isLocationServiceEnabled();
     print("Service Enabled: $serviceEnabled");
@@ -54,7 +71,9 @@ class LocationService {
     return serviceEnabled && permission != geo.LocationPermission.denied;
   }
 
-  // Gets current position (low accuracy)
+  /// Retrieves the current location with low accuracy.
+  ///
+  /// Returns a [geo.Position] object representing the current location.
   Future<geo.Position> getCurrentLocation() async {
     return await geolocator.getCurrentPosition(
       locationSettings: geo.LocationSettings(
@@ -63,7 +82,7 @@ class LocationService {
     );
   }
 
-  // Updates `currentPosition` (low accuracy)
+  /// Updates the `currentPosition` with low accuracy.
   Future<void> updateCurrentLocation() async {
     currentPosition = await geolocator.getCurrentPosition(
       locationSettings: geo.LocationSettings(
@@ -72,7 +91,9 @@ class LocationService {
     );
   }
 
-  // Gets current position (high accuracy)
+  /// Retrieves the current location with high accuracy.
+  ///
+  /// Returns a [geo.Position] object representing the current location.
   Future<geo.Position> getCurrentLocationAccurately() async {
     return await geolocator.getCurrentPosition(
       locationSettings: geo.LocationSettings(
@@ -81,7 +102,7 @@ class LocationService {
     );
   }
 
-  // Updates `currentPosition` (high accuracy)
+  /// Updates the `currentPosition` with high accuracy.
   Future<void> updateCurrentLocationAccurately() async {
     currentPosition = await geolocator.getCurrentPosition(
       locationSettings: geo.LocationSettings(
@@ -90,12 +111,16 @@ class LocationService {
     );
   }
 
-  // Manually sets the current position
+  /// Manually sets the current position.
+  ///
+  /// The [p] parameter is the [geo.Position] to set as the current position.
   void takePosition(geo.Position p) {
     currentPosition = p;
   }
 
-  // Initializes platform-specific location settings
+  /// Initializes platform-specific location settings.
+  ///
+  /// This method ensures that location settings are initialized only once.
   void setPlatformSpecificLocationSettings() {
     if (_isLocSettingInitialized) return;
     _isLocSettingInitialized = true;
@@ -119,7 +144,10 @@ class LocationService {
     }
   }
 
-  // Creates a location stream for continuous updates
+  /// Creates a location stream for continuous updates.
+  ///
+  /// This method initializes a stream that updates the `currentPosition`
+  /// whenever the device's location changes.
   void createLocationStream() {
     _positionStream = geolocator
         .getPositionStream(locationSettings: locSetting)
@@ -128,7 +156,9 @@ class LocationService {
     });
   }
 
-  // Starts up location services, ensuring permissions and settings are set
+  /// Starts up location services, ensuring permissions and settings are set.
+  ///
+  /// Throws a [PermissionNotEnabledException] if location services are disabled.
   Future<void> startUp() async {
     bool locationEnabled = await determinePermissions();
     if (locationEnabled) {
@@ -139,7 +169,7 @@ class LocationService {
     }
   }
 
-  // Stops the location stream
+  /// Stops the location stream.
   void stopListening() {
     _positionStream?.cancel();
   }
