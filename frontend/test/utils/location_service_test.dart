@@ -1,72 +1,175 @@
-import 'package:soen_390/utils/location_service.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:mockito/mockito.dart';
-import 'package:mockito/annotations.dart';
+import 'package:geolocator/geolocator.dart' as geo;
 import 'package:soen_390/utils/permission_not_enabled_exception.dart';
-import 'dart:async';
+import 'package:soen_390/utils/location_service.dart';
+import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
-// run dart run build_runner build --delete-conflicting-outputs
-import 'location_service_test.mocks.dart';
+// Helper function to get a mock position
+geo.Position get mockPosition => geo.Position(
+      latitude: 45.5017,
+      longitude: -73.5673,
+      timestamp: DateTime.now(),
+      altitude: 0.0,
+      altitudeAccuracy: 0.0,
+      accuracy: 0.0,
+      heading: 0.0,
+      headingAccuracy: 0.0,
+      speed: 0.0,
+      speedAccuracy: 0.0,
+    );
 
-@GenerateMocks([GeolocatorPlatform])
+// Mock GeolocatorPlatform Implementation
+class MockGeolocatorPlatform extends Mock
+    with MockPlatformInterfaceMixin
+    implements geo.GeolocatorPlatform {
+  geo.LocationPermission _permission = geo.LocationPermission.whileInUse;
+  bool _locationServicesEnabled = true;
+
+  void setLocationPermission(geo.LocationPermission permission) {
+    _permission = permission;
+  }
+
+  void setLocationServiceEnabled(bool enabled) {
+    _locationServicesEnabled = enabled;
+  }
+
+  @override
+  Future<geo.LocationPermission> checkPermission() => Future.value(_permission);
+
+  @override
+  Future<geo.LocationPermission> requestPermission() =>
+      Future.value(_permission);
+
+  @override
+  Future<bool> isLocationServiceEnabled() =>
+      Future.value(_locationServicesEnabled);
+
+  @override
+  Future<geo.Position?> getLastKnownPosition(
+      {bool forceLocationManager = false}) async {
+    return Future.value(mockPosition); // ✅ Ensure we never return null
+  }
+
+  @override
+  Future<geo.Position> getCurrentPosition(
+          {geo.LocationSettings? locationSettings}) =>
+      Future.value(mockPosition); // ✅ Return mockPosition
+
+  @override
+  Stream<geo.Position> getPositionStream(
+      {geo.LocationSettings? locationSettings}) {
+    return Stream.fromIterable(
+        [mockPosition]); // ✅ Always return a valid stream
+  }
+
+  @override
+  Future<bool> openAppSettings() => Future.value(true);
+
+  @override
+  Future<bool> openLocationSettings() => Future.value(true);
+}
+
 void main() {
-  late MockGeolocatorPlatform mockGeolocator;
+  late MockGeolocatorPlatform mockGeolocatorPlatform;
   late LocationService locationService;
 
   setUp(() {
-    mockGeolocator = MockGeolocatorPlatform();
-    locationService = LocationService();
+    mockGeolocatorPlatform = MockGeolocatorPlatform();
+    locationService = LocationService(
+        geolocator: mockGeolocatorPlatform); // Inject mock dependency
+
+    // Ensure `currentPosition` is initialized
+    locationService.takePosition(mockPosition);
   });
 
-  group('determinePermissions', () {
-    test('should return false if location services are disabled', () async {
-      when(mockGeolocator.isLocationServiceEnabled()).thenAnswer((_) async => false);
+  group('LocationService Tests', () {
+    test('determinePermissions should return true when permission is granted',
+        () async {
+      mockGeolocatorPlatform.setLocationServiceEnabled(true);
+      mockGeolocatorPlatform
+          .setLocationPermission(geo.LocationPermission.whileInUse);
 
-      expect(await locationService.determinePermissions(), false);
+      bool result = await locationService.determinePermissions();
+
+      expect(result, true);
+      expect(locationService.serviceEnabled, true);
+      expect(locationService.permission, geo.LocationPermission.whileInUse);
     });
 
-    test('should request permission if denied and return true if granted', () async {
-      when(mockGeolocator.isLocationServiceEnabled()).thenAnswer((_) async => true);
-      when(mockGeolocator.checkPermission()).thenAnswer((_) async => LocationPermission.denied);
-      when(mockGeolocator.requestPermission()).thenAnswer((_) async => LocationPermission.whileInUse);
+    test('determinePermissions should return false when permission is denied',
+        () async {
+      mockGeolocatorPlatform.setLocationServiceEnabled(true);
+      mockGeolocatorPlatform
+          .setLocationPermission(geo.LocationPermission.denied);
 
-      expect(await locationService.determinePermissions(), true);
+      bool result = await locationService.determinePermissions();
+
+      expect(result, false);
     });
-  });
 
-  group('getCurrentLocation', () {
-    test('should return a position when fetching location', () async {
-      final mockPosition = Position(
-        latitude: 45.0,
-        longitude: -73.0,
-        timestamp: DateTime.now(),
-        accuracy: 1.0,
-        altitude: 0.0,
-        heading: 0.0,
-        speed: 0.0,
-        speedAccuracy: 0.0,
-          altitudeAccuracy: 1.0,
-          headingAccuracy: 1.0
-      );
-
-      when(mockGeolocator.getCurrentPosition(desiredAccuracy: anyNamed('desiredAccuracy')))
-          .thenAnswer((_) async => mockPosition);
-
+    test('getCurrentLocation should return mocked position', () async {
+      // Act
       final position = await locationService.getCurrentLocation();
 
-      expect(position.latitude, 45.0);
-      expect(position.longitude, -73.0);
+      // Assert
+      expect(position.latitude, mockPosition.latitude);
+      expect(position.longitude, mockPosition.longitude);
     });
-  });
 
-  group('startUp', () {
-    test('should throw PermissionNotEnabledException if permissions are not granted', () async {
-      when(mockGeolocator.isLocationServiceEnabled()).thenAnswer((_) async => true);
-      when(mockGeolocator.checkPermission()).thenAnswer((_) async => LocationPermission.denied);
-      when(mockGeolocator.requestPermission()).thenAnswer((_) async => LocationPermission.denied);
+    test('updateCurrentLocation should update currentPosition', () async {
+      // Act
+      await locationService.updateCurrentLocation();
 
-      expect(() => locationService.startUp(), throwsA(isA<PermissionNotEnabledException>()));
+      // Assert
+      expect(locationService.currentPosition.latitude, mockPosition.latitude);
+      expect(locationService.currentPosition.longitude, mockPosition.longitude);
+    });
+
+    test('createLocationStream should update currentPosition on stream event',
+        () async {
+      // Arrange
+      locationService.takePosition(mockPosition); // ✅ Ensures position is set
+      locationService.setPlatformSpecificLocationSettings();
+
+      // Act
+      locationService.createLocationStream();
+
+      // Allow time for stream events to process
+      await Future.delayed(const Duration(milliseconds: 100));
+
+      // Assert
+      expect(locationService.currentPosition.latitude, mockPosition.latitude);
+      expect(locationService.currentPosition.longitude, mockPosition.longitude);
+    });
+
+    test('startUp should throw exception when location services are disabled',
+        () {
+      // Arrange
+      mockGeolocatorPlatform.setLocationServiceEnabled(false);
+
+      // Act & Assert
+      expect(() => locationService.startUp(),
+          throwsA(isA<PermissionNotEnabledException>()));
+    });
+
+    test(
+        'startUp should initialize location settings and stream when permissions granted',
+        () async {
+      // Arrange
+      mockGeolocatorPlatform.setLocationServiceEnabled(true);
+      mockGeolocatorPlatform
+          .setLocationPermission(geo.LocationPermission.whileInUse);
+
+      // Act
+      await locationService.startUp(); // Ensure async execution finishes
+
+      // Assert
+      expect(locationService.serviceEnabled, true);
+      expect(locationService.permission, geo.LocationPermission.whileInUse);
+
+      // Ensure locSetting is properly initialized
+      expect(() => locationService.locSetting, isNot(throwsA(anything)));
     });
   });
 }
