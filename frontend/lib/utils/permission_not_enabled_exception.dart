@@ -3,8 +3,7 @@ class PermissionNotEnabledException implements Exception {
 
   //square brakets signifies optional params. If you dont specify a string when catching, this one will be used instead.
   //constructor
-  PermissionNotEnabledException(
-      [this.message = 'Location permission is not enabled']);
+  PermissionNotEnabledException([this.message = 'Location permission is not enabled']);
 
   @override
   String toString() => 'PermissionNotEnabledException: $message';
