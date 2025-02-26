@@ -127,8 +127,8 @@ jobs:
         working-directory: ./frontend
         run: |
             mkdir -p reports
-            flutter test --machine | dart run junitreport:tojunit > reports/test_report.xml || echo "Tests failed, continuing..."
-            flutter test --coverage || echo "Coverage failed, continuing..."
+            flutter test --machine | dart run junitreport:tojunit > reports/test_report.xml
+            flutter test --coverage
 
             if [ -f coverage/lcov.info ]; then
               # Convert relative paths to absolute paths
