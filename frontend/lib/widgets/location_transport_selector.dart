@@ -17,8 +17,8 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      margin: EdgeInsets.all(16),
-      padding: EdgeInsets.all(16),
+      margin: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         color: Colors.white,
@@ -30,26 +30,26 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
             children: [
               Column(
                 children: [
-                  Icon(Icons.radio_button_checked,
+                  const Icon(Icons.radio_button_checked,
                       color: Color(0xFF912338), size: 20),
-                  Container(height: 40, width: 2, color: Color(0xFF912338)),
-                  Icon(Icons.location_pin, color: Color(0xFF912338), size: 20),
+                  Container(height: 40, width: 2, color: const Color(0xFF912338)),
+                  const Icon(Icons.location_pin, color: Color(0xFF912338), size: 20),
                 ],
               ),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Expanded(
                 child: Column(
                   children: [
                     buildLocationField(
                         "Current Location", currentLocation, true),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     buildLocationField("Destination", destination, false),
                   ],
                 ),
               ),
             ],
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -71,7 +71,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
         showLocationSuggestions(isCurrent);
       },
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         decoration: BoxDecoration(
           color: Colors.grey[100],
           borderRadius: BorderRadius.circular(10),
@@ -81,8 +81,8 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(value,
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
-            Icon(Icons.arrow_drop_down, color: Colors.black54),
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
+            const Icon(Icons.arrow_drop_down, color: Colors.black54),
           ],
         ),
       ),
@@ -125,14 +125,14 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
           Icon(icon,
               size: 28,
               color:
-                  selectedMode == label ? Color(0xFF912338) : Colors.black54),
-          SizedBox(height: 5),
+                  selectedMode == label ? const Color(0xFF912338) : Colors.black54),
+          const SizedBox(height: 5),
           Text(
             label,
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w400,
-              color: selectedMode == label ? Color(0xFF912338) : Colors.black54,
+              color: selectedMode == label ? const Color(0xFF912338) : Colors.black54,
             ),
           ),
         ],

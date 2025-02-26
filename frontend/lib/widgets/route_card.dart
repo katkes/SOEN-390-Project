@@ -20,8 +20,8 @@ class RouteCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 382,
-      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      padding: EdgeInsets.all(16),
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         color: Colors.white,
@@ -37,24 +37,24 @@ class RouteCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   title,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
               Text(duration,
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
             ],
           ),
           Text(timeRange,
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-          SizedBox(height: 5),
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 5),
           Text(description,
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400)),
-          SizedBox(height: 10),
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400)),
+          const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Flexible(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,

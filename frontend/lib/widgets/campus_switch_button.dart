@@ -21,15 +21,15 @@ class CampusSwitch extends StatefulWidget {
 class _CampusSwitchState extends State<CampusSwitch> {
   late String selectedBuilding;
   final Map<String, LatLng> _campusLocations = {
-    'SGW': LatLng(45.497856, -73.579588),
-    'Loyola': LatLng(45.4581, -73.6391),
+    'SGW': const LatLng(45.497856, -73.579588),
+    'Loyola': const LatLng(45.4581, -73.6391),
   };
 
   final Map<String, Widget> _campusOptions = {
-    'SGW': Text('SGW',
+    'SGW': const Text('SGW',
         style: TextStyle(
             fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),
-    'Loyola': Text('Loyola',
+    'Loyola': const Text('Loyola',
         style: TextStyle(
             fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),
   };

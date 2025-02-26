@@ -17,8 +17,8 @@ import 'package:soen_390/services/interfaces/route_service_interface.dart'; // I
 /// This function initializes the Riverpod provider scope and starts the app.
 void main() {
   runApp(
-    ProviderScope(
-      child: const MyApp(),
+    const ProviderScope(
+      child: MyApp(),
     ),
   );
 }
@@ -83,7 +83,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
   int _selectedIndex = 0;
 
   /// The user's current location on the map.
-  LatLng _currentLocation = LatLng(45.497856, -73.579588);
+  LatLng _currentLocation = const LatLng(45.497856, -73.579588);
 
   /// Handles navigation bar item selection.
   ///
@@ -106,7 +106,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
   void _openWaypointSelection() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => WaypointSelectionScreen()),
+      MaterialPageRoute(builder: (context) => const WaypointSelectionScreen()),
     );
   }
 
@@ -170,7 +170,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                     left: 0,
                     child: SearchBarWidget(controller: searchController),
                   ),
-                  Positioned(
+                  const Positioned(
                     bottom: 10,
                     right: 21,
                     child: IndoorTrigger(),
@@ -180,7 +180,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                     right: 21,
                     child: ElevatedButton(
                       onPressed: _openWaypointSelection,
-                      child: Text("Find My Way"),
+                      child: const Text("Find My Way"),
                     ),
                   ),
                 ],

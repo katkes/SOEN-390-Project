@@ -13,7 +13,7 @@ void main() {
       (WidgetTester tester) async {
     // Build the WaypointSelectionScreen widget inside a MaterialApp
     await tester.pumpWidget(
-      MaterialApp(
+      const MaterialApp(
         home: WaypointSelectionScreen(),
       ),
     );
@@ -45,7 +45,7 @@ void main() {
   testWidgets('WaypointSelectionScreen interacts with NavBar',
       (WidgetTester tester) async {
     await tester.pumpWidget(
-      MaterialApp(
+      const MaterialApp(
         home: WaypointSelectionScreen(),
       ),
     );

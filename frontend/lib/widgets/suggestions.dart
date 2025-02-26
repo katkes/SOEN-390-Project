@@ -13,7 +13,7 @@ class SuggestionsPopup extends StatelessWidget {
       ),
       child: Container(
         width: 365,
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           color: Colors.white,
@@ -24,7 +24,7 @@ class SuggestionsPopup extends StatelessWidget {
             Align(
               alignment: Alignment.topLeft,
               child: IconButton(
-                icon: Icon(Icons.close, color: Colors.black),
+                icon: const Icon(Icons.close, color: Colors.black),
                 onPressed: () => Navigator.pop(context),
               ),
             ),
@@ -50,10 +50,10 @@ class SuggestionsPopup extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 12),
         child: Row(
           children: [
-            Icon(Icons.place, color: Color(0xFF912338)),
-            SizedBox(width: 10),
+            const Icon(Icons.place, color: Color(0xFF912338)),
+            const SizedBox(width: 10),
             Text(title,
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
           ],
         ),
       ),

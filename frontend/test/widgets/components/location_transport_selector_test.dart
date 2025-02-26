@@ -13,7 +13,7 @@ void main() {
       (WidgetTester tester) async {
     // Build the LocationTransportSelector widget inside a MaterialApp
     await tester.pumpWidget(
-      MaterialApp(
+      const MaterialApp(
         home: Scaffold(
           body: LocationTransportSelector(),
         ),
@@ -36,7 +36,7 @@ void main() {
   testWidgets('LocationTransportSelector interacts with SuggestionsPopup',
       (WidgetTester tester) async {
     await tester.pumpWidget(
-      MaterialApp(
+      const MaterialApp(
         home: Scaffold(
           body: LocationTransportSelector(),
         ),
@@ -77,7 +77,7 @@ void main() {
   testWidgets('LocationTransportSelector updates selected transport mode',
       (WidgetTester tester) async {
     await tester.pumpWidget(
-      MaterialApp(
+      const MaterialApp(
         home: Scaffold(
           body: LocationTransportSelector(),
         ),
@@ -94,7 +94,7 @@ void main() {
     expect(find.text("Bike"), findsOneWidget);
     expect(find.byIcon(Icons.directions_bike), findsOneWidget);
     final bikeIcon = tester.widget<Icon>(find.byIcon(Icons.directions_bike));
-    expect(bikeIcon.color, Color(0xFF912338)); // Selected color
+    expect(bikeIcon.color, const Color(0xFF912338)); // Selected color
 
     // Tap on the "Walk" transport mode
     await tester.tap(find.text("Walk"));
@@ -105,6 +105,6 @@ void main() {
     expect(find.byIcon(Icons.directions_walk), findsOneWidget);
     expect(find.byIcon(Icons.directions_walk), findsOneWidget);
     final walkIcon = tester.widget<Icon>(find.byIcon(Icons.directions_walk));
-    expect(walkIcon.color, Color(0xFF912338)); // Selected color
+    expect(walkIcon.color, const Color(0xFF912338)); // Selected color
   });
 }

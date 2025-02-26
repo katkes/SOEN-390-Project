@@ -30,21 +30,21 @@ class _WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Color(0xff912338),
-        title: Text("Find my Way",
+        backgroundColor: const Color(0xff912338),
+        title: const Text("Find my Way",
             style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
                 color: Colors.white)),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
         actions: const [Icon(Icons.more_vert, color: Colors.white)],
       ),
       body: Column(
         children: [
-          LocationTransportSelector(),
+          const LocationTransportSelector(),
           Expanded(
             child: ListView(
               children: [
