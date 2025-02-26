@@ -10,18 +10,25 @@ import 'package:flutter/foundation.dart';
 import 'package:soen_390/utils/PermissionNotEnabledException.dart';
 
 class LocationService {
+  //this is the variable which will contain the current position. Anytime you use this class services, refer to this variable.
   late Position currentPosition;
+  //constructor
+  LocationService._internal();
+  //Singleton eager initialization
+  static final LocationService _instance = LocationService._internal();
+  //platform specific settings initialized
+  late final LocationSettings locSetting;
+  //stream object which listens to movement events to update location
+  StreamSubscription<Position>? _positionStream;
 
-  LocationService._internal(); //constructor
-  static final LocationService _instance = LocationService._internal(); //Singleton eager initialization
-  late final LocationSettings locSetting; //platform specific settings initialized
-  StreamSubscription<Position>? _positionStream; //stream which listens to movement events to update location
-
-  factory LocationService() { //factory method designed for giving out the same instance.
+  //factory method designed for giving out the same instance.
+  factory LocationService() {
     return _instance;
   }
 
   //validate permissions. If permissions are denied, ask, if still doesn't work, use the last known location.
+  //returning true = permissions are allowed
+  //returning false = permissions are denied. This is regardless of if currentPosition gets set with last known position
   Future<bool> determinePermissions() async {
     bool serviceEnabled;
     LocationPermission permission;
@@ -52,7 +59,7 @@ class LocationService {
     return true;
   }//end of determinePermissions method
 
-  //gets the current position at a given point in time.
+  //returns the current position at a given point in time. low accuracy
   Future<Position> getCurrentLocation() async {
     return await Geolocator.getCurrentPosition(
        //we only want an estimate. Which is why low is used.
@@ -60,21 +67,21 @@ class LocationService {
        forceAndroidLocationManager: true,
      );
   }
-
+  //updates currentPosition at a given point in time. low accuracy
   Future<void> updateCurrentLocation() async {
     currentPosition = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.low,
       forceAndroidLocationManager: true,
     );
   }
-
+  //returns the current position at a given point in time. high accuracy
   Future<Position> getCurrentLocationAccurately() async {
     return await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.best, //The best the device can do
       forceAndroidLocationManager: true,
     );
   }
-
+  //updates currentPosition at a given point in time. high accuracy
   Future<void> updateCurrentLocationAccurately() async {
     currentPosition = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.best, //The best the device can do
@@ -82,10 +89,12 @@ class LocationService {
     );
   }
 
+  //sets the current position to a value
   void takePosition(Position p){
     currentPosition = p;
   }
 
+  //sets platform specific locations depending on the OS of the device. Does not support web.
   void setPlatformSpecificLocationSettings() {
     if (defaultTargetPlatform == TargetPlatform.android) {
       locSetting = AndroidSettings(
@@ -126,6 +135,7 @@ class LocationService {
     });
   }
 
+  //starts up by determining permissions, then setting location settings and finally creating the location stream
   void startUp() async{
     bool locationEnabled = await _instance.determinePermissions();
     if (locationEnabled == true){
@@ -136,8 +146,8 @@ class LocationService {
     }
   }
 
+  //removes the stream.
   void stopListening() {
     _positionStream?.cancel();
   }
-  
 } //end of class
