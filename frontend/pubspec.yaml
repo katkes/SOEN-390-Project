@@ -37,6 +37,8 @@ dependencies:
   flutter_map: ^8.0.0
   latlong2: ^0.9.1
   grouped_list: ^6.0.0
+  flutter_riverpod: ^2.6.1
+  osrm: ^0.0.8
   test_cov_console: ^0.2.2
 
 dev_dependencies:
