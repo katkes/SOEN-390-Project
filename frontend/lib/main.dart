@@ -10,6 +10,7 @@ import 'package:latlong2/latlong.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:soen_390/services/building_info_api.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
@@ -47,11 +48,17 @@ class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
   LatLng _currentLocation = LatLng(45.497856, -73.579588);
   http.Client? _httpClient;
+  late BuildingPopUps _buildingPopUps;
+  late MapsApiClient _mapsApiClient;
+  
+  
 
   @override
   void initState() {
     super.initState();
     _httpClient = http.Client(); // Initialize the client
+    _mapsApiClient = GoogleMapsApiClient(apiKey: dotenv.env['GOOGLE_MAPS_API_KEY']!, client: _httpClient!);
+    _buildingPopUps = BuildingPopUps(mapsApiClient: _mapsApiClient);
   }
 
   @override
@@ -115,6 +122,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           child: MapWidget(
                             location: _currentLocation,
                             httpClient: _httpClient!,
+                            mapsApiClient: _mapsApiClient,
+                            buildingPopUps: _buildingPopUps,
                           ),
                         ),
                       ),

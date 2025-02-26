@@ -11,21 +11,24 @@ import 'package:soen_390/services/route_service.dart';
 import 'package:http/http.dart' as http; // Import http
 import '../services/building_info_api.dart';
 
-// This widget displays a map with markers at specific locations (SGW and Loyola campuses).
+
 class MapWidget extends StatefulWidget {
-  // Rename to MapWidget
+
   final LatLng location;
-  final http.Client httpClient; // Add httpClient
+  final http.Client httpClient;
+  final MapsApiClient mapsApiClient; // Inject MapsApiClient
+  final BuildingPopUps buildingPopUps; // Inject BuildingPopUps
+  
 
   const MapWidget(
-      {super.key, required this.location, required this.httpClient});
+      {super.key, required this.location, required this.httpClient, required this.mapsApiClient, required this.buildingPopUps});
 
   @override
   State<MapWidget> createState() => _MapWidgetState();
 }
 
 class _MapWidgetState extends State<MapWidget> {
-  // Rename State
+
   late MapController _mapController;
   List<Marker> _buildingMarkers = [];
   List<Polygon> _buildingPolygons = [];
@@ -39,7 +42,7 @@ class _MapWidgetState extends State<MapWidget> {
   double distance = 0.0;
   double duration = 0.0;
 
-  // Used to alternate taps between updating [from] and [to].
+
   bool isPairly = false;
 
   @override
@@ -114,6 +117,7 @@ class _MapWidgetState extends State<MapWidget> {
       setState(() {
         _buildingMarkers = markers;
       });
+      print("Loaded ${_buildingPolygons.length} building polygons.");
     } catch (e) {
       print('Error loading building markers: $e');
     }
@@ -200,9 +204,9 @@ class _MapWidgetState extends State<MapWidget> {
     final screenSize = MediaQuery.of(context).size;
     final shouldShowAbove = tapPosition.dy > screenSize.height / 2;
 
-    // Fetch only the photo URL
-    final buildingPopUps = BuildingPopUps();
-    buildingPopUps.getLocationInfo(lat, lon, name).then((buildingInfo) {
+    
+    
+    widget.buildingPopUps.getBuildingInfo(lat, lon, name).then((buildingInfo) {
       String? photoUrl = buildingInfo["photo"];
       print("Fetched photo URL: $photoUrl");
 
@@ -266,7 +270,7 @@ class _MapWidgetState extends State<MapWidget> {
               urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
               additionalOptions: const {}, // Add this line
               tileProvider: NetworkTileProvider(
-                  httpClient: widget.httpClient), // Pass httpClient here!
+                  httpClient: widget.httpClient), 
             ),
             PolylineLayer(
               polylines: [
@@ -319,18 +323,30 @@ class _MapWidgetState extends State<MapWidget> {
 
 // How to use it:
 class MyPage extends StatelessWidget {
-  final http.Client httpClient; // Ensure it's passed here
+  final http.Client httpClient; 
   final LatLng location;
 
   const MyPage({required this.httpClient, required this.location, super.key});
+  
 
   @override
   Widget build(BuildContext context) {
+    final mapsApiClient = GoogleMapsApiClient(
+      apiKey: "GOOGLE_MAPS_API_KEY",
+      client: httpClient,
+    );
+
+    final buildingPopUps = BuildingPopUps(
+      mapsApiClient: mapsApiClient,
+    );
     return Scaffold(
       body: Center(
         child: MapWidget(
           location: location,
-          httpClient: httpClient, // Pass the client correctly
+          httpClient: httpClient,
+          mapsApiClient: mapsApiClient, 
+          buildingPopUps: buildingPopUps, 
+      
         ),
       ),
     );

@@ -18,13 +18,17 @@ import 'package:soen_390/widgets/outdoor_map.dart';
 import 'package:http/http.dart' as http;
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-
+import 'package:soen_390/services/building_info_api.dart';
 import 'building_outlines_test.mocks.dart';
 
-@GenerateMocks([http.Client])
+@GenerateMocks([http.Client, MapsApiClient, BuildingPopUps])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   final mockHttpClient = MockClient();
+  final mockMapsApiClient = MockMapsApiClient();
+  final mockBuildingPopUps = MockBuildingPopUps(); 
+
+  
   testWidgets('loads building boundaries from GeoJSON',
       (WidgetTester tester) async {
     const mockGeoJson = '''
@@ -71,6 +75,8 @@ void main() {
       MaterialApp(
         home: MapWidget(
           location: LatLng(45.496459, -73.586265),
+          mapsApiClient: mockMapsApiClient,
+          buildingPopUps: BuildingPopUps(mapsApiClient: mockMapsApiClient),
           httpClient: mockHttpClient,
         ),
       ),
@@ -85,7 +91,7 @@ void main() {
     LatLng initialLocation = LatLng(45.4973, -73.5793);
     await tester.pumpWidget(MaterialApp(
         home:
-            MapWidget(location: initialLocation, httpClient: mockHttpClient)));
+            MapWidget(location: initialLocation, httpClient: mockHttpClient,mapsApiClient: mockMapsApiClient,buildingPopUps:mockBuildingPopUps,)));
     await tester.pumpAndSettle();
 
     expect(find.byType(MarkerLayer), findsOneWidget);
@@ -95,7 +101,7 @@ void main() {
     LatLng initialLocation = LatLng(45.4973, -73.5793);
     await tester.pumpWidget(MaterialApp(
         home:
-            MapWidget(location: initialLocation, httpClient: mockHttpClient)));
+            MapWidget(location: initialLocation, httpClient: mockHttpClient,mapsApiClient: mockMapsApiClient,buildingPopUps:mockBuildingPopUps)));
     await tester.pumpAndSettle();
 
     expect(find.byType(PolygonLayer), findsOneWidget);
@@ -107,11 +113,11 @@ void main() {
 
     await tester.pumpWidget(MaterialApp(
         home:
-            MapWidget(location: initialLocation, httpClient: mockHttpClient)));
+            MapWidget(location: initialLocation, httpClient: mockHttpClient, mapsApiClient: mockMapsApiClient,buildingPopUps:mockBuildingPopUps)));
     await tester.pumpAndSettle();
 
     await tester.pumpWidget(MaterialApp(
-        home: MapWidget(location: newLocation, httpClient: mockHttpClient)));
+        home: MapWidget(location: newLocation, httpClient: mockHttpClient, mapsApiClient: mockMapsApiClient,buildingPopUps:mockBuildingPopUps)));
     await tester.pumpAndSettle();
   });
 
@@ -120,6 +126,8 @@ void main() {
       MaterialApp(
         home: MapWidget(
           location: LatLng(45.4973, -73.5793),
+          mapsApiClient: mockMapsApiClient,
+          buildingPopUps: mockBuildingPopUps,
           httpClient: mockHttpClient,
         ),
       ),
@@ -140,6 +148,8 @@ void main() {
       MaterialApp(
         home: MapWidget(
           location: LatLng(45.4973, -73.5793),
+          mapsApiClient: mockMapsApiClient,
+          buildingPopUps: mockBuildingPopUps,
           httpClient: mockHttpClient,
         ),
       ),
@@ -184,6 +194,8 @@ void main() {
       MaterialApp(
         home: MapWidget(
           location: LatLng(45.4973, -73.5793),
+          mapsApiClient: mockMapsApiClient,
+          buildingPopUps:mockBuildingPopUps,
           httpClient: mockHttpClient,
         ),
       ),
@@ -201,6 +213,8 @@ void main() {
         home: Scaffold(
           body: MapWidget(
             location: testLocation,
+            mapsApiClient: mockMapsApiClient,
+            buildingPopUps:mockBuildingPopUps,
             httpClient: mockHttpClient,
           ),
         ),
@@ -221,6 +235,8 @@ void main() {
         home: Scaffold(
           body: MapWidget(
             location: sgwLocation,
+            mapsApiClient: mockMapsApiClient,
+            buildingPopUps:mockBuildingPopUps,
             httpClient: mockHttpClient,
           ),
         ),
