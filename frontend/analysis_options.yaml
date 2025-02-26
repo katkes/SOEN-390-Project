@@ -42,3 +42,4 @@ linter:
   rules:
     - use_key_in_widget_constructors  # Enforces adding a key parameter in widget constructors
     - prefer_const_literals_to_create_immutables
+    - prefer_const_declarations

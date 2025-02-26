@@ -9,10 +9,10 @@ void main() {
   testWidgets('RouteCard displays correct information',
       (WidgetTester tester) async {
     // Define the test data
-    final String title = 'Test Route';
-    final String timeRange = '10:00 AM - 11:00 AM';
-    final String duration = '1h';
-    final String description = 'This is a test route description.';
+    const String title = 'Test Route';
+    const String timeRange = '10:00 AM - 11:00 AM';
+    const String duration = '1h';
+    const String description = 'This is a test route description.';
     final List<IconData> icons = [Icons.directions_walk, Icons.directions_bike];
 
     // Build the RouteCard widget inside a MaterialApp and Scaffold
