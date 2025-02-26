@@ -6,19 +6,15 @@
 
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
-// import 'package:geolocator_android/geolocator_android.dart';
-//import 'package:geolocator_web/geolocator_web.dart';
-// import 'package:geolocator_apple/geolocator_apple.dart';
 import 'package:flutter/foundation.dart';
 
 class LocationService {
   late Position currentPosition;
 
-
   LocationService._internal(); //constructor
   static final LocationService _instance = LocationService._internal(); //Singleton eager initialization
-  late final LocationSettings locSetting;
-  StreamSubscription<Position>? _positionStream;
+  late final LocationSettings locSetting; //platform specific settings initialized
+  StreamSubscription<Position>? _positionStream; //stream which listens to movement events to update location
 
   factory LocationService() { //factory method designed for giving out the same instance.
     return _instance;
@@ -52,23 +48,29 @@ class LocationService {
     if (permission == LocationPermission.deniedForever) {
       return Future.error('Location permissions are permanently denied, Unable to request permissions.');
     }
-
-   await _instance.updateCurrentLocation();
-
-
-
-
-
-
   }//end of determinePermissions method
 
   //gets the current position at a given point in time.
-  Future<Position> updateCurrentLocation() async {
-     return await Geolocator.getCurrentPosition(
+  Future<Position> getCurrentLocation() async {
+    return await Geolocator.getCurrentPosition(
        //we only want an estimate. Which is why low is used.
        desiredAccuracy: LocationAccuracy.low, //we dont need best, this is only for campus selection at the beginning
        forceAndroidLocationManager: true,
      );
+  }
+
+  Future<void> updateCurrentLocation() async {
+    currentPosition = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.low, //The best the device can do
+      forceAndroidLocationManager: true,
+    );
+  }
+
+  Future<Position> getCurrentLocationAccurately() async {
+    return await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.best, //The best the device can do
+      forceAndroidLocationManager: true,
+    );
   }
 
   Future<void> updateCurrentLocationAccurately() async {
@@ -114,10 +116,11 @@ class LocationService {
     }
   } //end of function
 
+  //continuously listens to movement events to update the location after a certain amount of distance has been traveled.
   void createLocationStream() {
     _positionStream = Geolocator.getPositionStream(locationSettings: locSetting)
         .listen((Position position) {
-      currentPosition = position; //stream should update the actual currentPosition object
+      currentPosition = position; //stream should always update the actual currentPosition object
     });
   }
 
