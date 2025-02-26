@@ -16,7 +16,8 @@ class MapWidget extends StatefulWidget {
 
   final LatLng location;
   final http.Client httpClient;
-  final MapsApiClient mapsApiClient; // Inject MapsApiClient
+  //final MapsApiClient mapsApiClient; // Inject MapsApiClient
+  final GoogleMapsApiClient mapsApiClient; // Inject GoogleMapsApiClient
   final BuildingPopUps buildingPopUps; // Inject BuildingPopUps
   
 
@@ -25,6 +26,7 @@ class MapWidget extends StatefulWidget {
 
   @override
   State<MapWidget> createState() => _MapWidgetState();
+  
 }
 
 class _MapWidgetState extends State<MapWidget> {
@@ -66,6 +68,7 @@ class _MapWidgetState extends State<MapWidget> {
       _mapController.move(widget.location, 17.0);
     }
   }
+  //MapController get mapController => _mapController; //NEW
 
   Future<void> _loadBuildingLocations() async {
     try {
@@ -117,7 +120,7 @@ class _MapWidgetState extends State<MapWidget> {
       setState(() {
         _buildingMarkers = markers;
       });
-      print("Loaded ${_buildingPolygons.length} building polygons.");
+     
     } catch (e) {
       print('Error loading building markers: $e');
     }
@@ -182,6 +185,7 @@ class _MapWidgetState extends State<MapWidget> {
 
       setState(() {
         _buildingPolygons = polygons;
+        print("Loaded ${_buildingPolygons.length} building polygons.");
       });
       print(
           'Building boundaries successfully added to the map: ${polygons.length} polygons');
@@ -272,14 +276,17 @@ class _MapWidgetState extends State<MapWidget> {
               tileProvider: NetworkTileProvider(
                   httpClient: widget.httpClient), 
             ),
-            PolylineLayer(
-              polylines: [
-                Polyline(
-                  points: routePoints,
-                  strokeWidth: 4.0,
-                  color: Colors.red,
-                ),
-              ],
+            // PolylineLayer(
+            //   polylines: [
+            //     Polyline(
+            //       points: routePoints,
+            //       strokeWidth: 4.0,
+            //       color: Colors.red,
+            //     ),
+            //   ],
+            // ),
+            PolygonLayer(
+              polygons: _buildingPolygons,
             ),
             MarkerLayer(
               markers: [

@@ -49,7 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
   LatLng _currentLocation = LatLng(45.497856, -73.579588);
   http.Client? _httpClient;
   late BuildingPopUps _buildingPopUps;
-  late MapsApiClient _mapsApiClient;
+  late GoogleMapsApiClient _mapsApiClient;
   
   
 

@@ -42,19 +42,26 @@ class _FakeMapsApiClient_2 extends _i1.SmartFake implements _i3.MapsApiClient {
     : super(parent, parentInvocation);
 }
 
+class _FakeClient_3 extends _i1.SmartFake implements _i2.Client {
+  _FakeClient_3(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
 /// A class which mocks [Client].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockClient extends _i1.Mock implements _i2.Client {
-  MockClient() {
-    _i1.throwOnMissingStub(this);
-  }
-
   @override
   _i4.Future<_i2.Response> head(Uri? url, {Map<String, String>? headers}) =>
       (super.noSuchMethod(
             Invocation.method(#head, [url], {#headers: headers}),
             returnValue: _i4.Future<_i2.Response>.value(
+              _FakeResponse_0(
+                this,
+                Invocation.method(#head, [url], {#headers: headers}),
+              ),
+            ),
+            returnValueForMissingStub: _i4.Future<_i2.Response>.value(
               _FakeResponse_0(
                 this,
                 Invocation.method(#head, [url], {#headers: headers}),
@@ -68,6 +75,12 @@ class MockClient extends _i1.Mock implements _i2.Client {
       (super.noSuchMethod(
             Invocation.method(#get, [url], {#headers: headers}),
             returnValue: _i4.Future<_i2.Response>.value(
+              _FakeResponse_0(
+                this,
+                Invocation.method(#get, [url], {#headers: headers}),
+              ),
+            ),
+            returnValueForMissingStub: _i4.Future<_i2.Response>.value(
               _FakeResponse_0(
                 this,
                 Invocation.method(#get, [url], {#headers: headers}),
@@ -90,6 +103,16 @@ class MockClient extends _i1.Mock implements _i2.Client {
               {#headers: headers, #body: body, #encoding: encoding},
             ),
             returnValue: _i4.Future<_i2.Response>.value(
+              _FakeResponse_0(
+                this,
+                Invocation.method(
+                  #post,
+                  [url],
+                  {#headers: headers, #body: body, #encoding: encoding},
+                ),
+              ),
+            ),
+            returnValueForMissingStub: _i4.Future<_i2.Response>.value(
               _FakeResponse_0(
                 this,
                 Invocation.method(
@@ -125,6 +148,16 @@ class MockClient extends _i1.Mock implements _i2.Client {
                 ),
               ),
             ),
+            returnValueForMissingStub: _i4.Future<_i2.Response>.value(
+              _FakeResponse_0(
+                this,
+                Invocation.method(
+                  #put,
+                  [url],
+                  {#headers: headers, #body: body, #encoding: encoding},
+                ),
+              ),
+            ),
           )
           as _i4.Future<_i2.Response>);
 
@@ -142,6 +175,16 @@ class MockClient extends _i1.Mock implements _i2.Client {
               {#headers: headers, #body: body, #encoding: encoding},
             ),
             returnValue: _i4.Future<_i2.Response>.value(
+              _FakeResponse_0(
+                this,
+                Invocation.method(
+                  #patch,
+                  [url],
+                  {#headers: headers, #body: body, #encoding: encoding},
+                ),
+              ),
+            ),
+            returnValueForMissingStub: _i4.Future<_i2.Response>.value(
               _FakeResponse_0(
                 this,
                 Invocation.method(
@@ -177,6 +220,16 @@ class MockClient extends _i1.Mock implements _i2.Client {
                 ),
               ),
             ),
+            returnValueForMissingStub: _i4.Future<_i2.Response>.value(
+              _FakeResponse_0(
+                this,
+                Invocation.method(
+                  #delete,
+                  [url],
+                  {#headers: headers, #body: body, #encoding: encoding},
+                ),
+              ),
+            ),
           )
           as _i4.Future<_i2.Response>);
 
@@ -185,6 +238,12 @@ class MockClient extends _i1.Mock implements _i2.Client {
       (super.noSuchMethod(
             Invocation.method(#read, [url], {#headers: headers}),
             returnValue: _i4.Future<String>.value(
+              _i6.dummyValue<String>(
+                this,
+                Invocation.method(#read, [url], {#headers: headers}),
+              ),
+            ),
+            returnValueForMissingStub: _i4.Future<String>.value(
               _i6.dummyValue<String>(
                 this,
                 Invocation.method(#read, [url], {#headers: headers}),
@@ -201,6 +260,9 @@ class MockClient extends _i1.Mock implements _i2.Client {
       (super.noSuchMethod(
             Invocation.method(#readBytes, [url], {#headers: headers}),
             returnValue: _i4.Future<_i7.Uint8List>.value(_i7.Uint8List(0)),
+            returnValueForMissingStub: _i4.Future<_i7.Uint8List>.value(
+              _i7.Uint8List(0),
+            ),
           )
           as _i4.Future<_i7.Uint8List>);
 
@@ -209,6 +271,12 @@ class MockClient extends _i1.Mock implements _i2.Client {
       (super.noSuchMethod(
             Invocation.method(#send, [request]),
             returnValue: _i4.Future<_i2.StreamedResponse>.value(
+              _FakeStreamedResponse_1(
+                this,
+                Invocation.method(#send, [request]),
+              ),
+            ),
+            returnValueForMissingStub: _i4.Future<_i2.StreamedResponse>.value(
               _FakeStreamedResponse_1(
                 this,
                 Invocation.method(#send, [request]),
@@ -224,46 +292,19 @@ class MockClient extends _i1.Mock implements _i2.Client {
   );
 }
 
-/// A class which mocks [MapsApiClient].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockMapsApiClient extends _i1.Mock implements _i3.MapsApiClient {
-  MockMapsApiClient() {
-    _i1.throwOnMissingStub(this);
-  }
-
-  @override
-  _i4.Future<Map<String, dynamic>> fetchBuildingInformation(
-    double? latitude,
-    double? longitude,
-    String? locationName,
-  ) =>
-      (super.noSuchMethod(
-            Invocation.method(#fetchBuildingInformation, [
-              latitude,
-              longitude,
-              locationName,
-            ]),
-            returnValue: _i4.Future<Map<String, dynamic>>.value(
-              <String, dynamic>{},
-            ),
-          )
-          as _i4.Future<Map<String, dynamic>>);
-}
-
 /// A class which mocks [BuildingPopUps].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockBuildingPopUps extends _i1.Mock implements _i3.BuildingPopUps {
-  MockBuildingPopUps() {
-    _i1.throwOnMissingStub(this);
-  }
-
   @override
   _i3.MapsApiClient get mapsApiClient =>
       (super.noSuchMethod(
             Invocation.getter(#mapsApiClient),
             returnValue: _FakeMapsApiClient_2(
+              this,
+              Invocation.getter(#mapsApiClient),
+            ),
+            returnValueForMissingStub: _FakeMapsApiClient_2(
               this,
               Invocation.getter(#mapsApiClient),
             ),
@@ -283,6 +324,63 @@ class MockBuildingPopUps extends _i1.Mock implements _i3.BuildingPopUps {
               locationName,
             ]),
             returnValue: _i4.Future<Map<String, dynamic>>.value(
+              <String, dynamic>{},
+            ),
+            returnValueForMissingStub: _i4.Future<Map<String, dynamic>>.value(
+              <String, dynamic>{},
+            ),
+          )
+          as _i4.Future<Map<String, dynamic>>);
+}
+
+/// A class which mocks [GoogleMapsApiClient].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockGoogleMapsApiClient extends _i1.Mock
+    implements _i3.GoogleMapsApiClient {
+  @override
+  String get apiKey =>
+      (super.noSuchMethod(
+            Invocation.getter(#apiKey),
+            returnValue: _i6.dummyValue<String>(
+              this,
+              Invocation.getter(#apiKey),
+            ),
+            returnValueForMissingStub: _i6.dummyValue<String>(
+              this,
+              Invocation.getter(#apiKey),
+            ),
+          )
+          as String);
+
+  @override
+  _i2.Client get client =>
+      (super.noSuchMethod(
+            Invocation.getter(#client),
+            returnValue: _FakeClient_3(this, Invocation.getter(#client)),
+            returnValueForMissingStub: _FakeClient_3(
+              this,
+              Invocation.getter(#client),
+            ),
+          )
+          as _i2.Client);
+
+  @override
+  _i4.Future<Map<String, dynamic>> fetchBuildingInformation(
+    double? latitude,
+    double? longitude,
+    String? locationName,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#fetchBuildingInformation, [
+              latitude,
+              longitude,
+              locationName,
+            ]),
+            returnValue: _i4.Future<Map<String, dynamic>>.value(
+              <String, dynamic>{},
+            ),
+            returnValueForMissingStub: _i4.Future<Map<String, dynamic>>.value(
               <String, dynamic>{},
             ),
           )
