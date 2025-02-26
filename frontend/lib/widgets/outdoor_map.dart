@@ -316,6 +316,7 @@ class _MapWidgetState extends State<MapWidget> {
               additionalOptions: const {}, // Add this line
               tileProvider: NetworkTileProvider(httpClient: widget.httpClient),
             ),
+            //Used for testing
             // Only render the polyline layer if there are valid route points
             // if (routePoints.isNotEmpty)
             //   PolylineLayer(
@@ -378,22 +379,23 @@ class _MapWidgetState extends State<MapWidget> {
   /// Builds a list of markers for the map, including:
   /// - The `from` location (blue marker).
   /// - The `to` location (green marker).
-  List<Marker> _buildMarkers() {
-    return [
-      Marker(
-        point: from,
-        width: 40.0,
-        height: 40.0,
-        child: const Icon(Icons.location_pin, color: Colors.blue, size: 40.0),
-      ),
-      Marker(
-        point: to,
-        width: 40.0,
-        height: 40.0,
-        child: const Icon(Icons.location_pin, color: Colors.green, size: 40.0),
-      ),
-    ];
-  }
+  /// Used for testing
+  // List<Marker> _buildMarkers() {
+  //   return [
+  //     Marker(
+  //       point: from,
+  //       width: 40.0,
+  //       height: 40.0,
+  //       child: const Icon(Icons.location_pin, color: Colors.blue, size: 40.0),
+  //     ),
+  //     Marker(
+  //       point: to,
+  //       width: 40.0,
+  //       height: 40.0,
+  //       child: const Icon(Icons.location_pin, color: Colors.green, size: 40.0),
+  //     ),
+  //   ];
+  // }
 }
 
 /// Example usage of `MapWidget` inside a `MyPage` scaffold.
