@@ -7,6 +7,7 @@
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/foundation.dart';
+import 'package:soen_390/utils/PermissionNotEnabledException.dart';
 
 class LocationService {
   late Position currentPosition;
@@ -21,7 +22,7 @@ class LocationService {
   }
 
   //validate permissions. If permissions are denied, ask, if still doesn't work, use the last known location.
-  Future<void> determinePermissions() async {
+  Future<bool> determinePermissions() async {
     bool serviceEnabled;
     LocationPermission permission;
 
@@ -38,7 +39,7 @@ class LocationService {
         Position? position = await Geolocator.getLastKnownPosition();
         if (position != null) {
           currentPosition = position;
-          return;
+          return false;
         } else {
           return Future.error('Location permissions are denied');
         }
@@ -48,6 +49,7 @@ class LocationService {
     if (permission == LocationPermission.deniedForever) {
       return Future.error('Location permissions are permanently denied, Unable to request permissions.');
     }
+    return true;
   }//end of determinePermissions method
 
   //gets the current position at a given point in time.
@@ -61,7 +63,7 @@ class LocationService {
 
   Future<void> updateCurrentLocation() async {
     currentPosition = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.low, //The best the device can do
+      desiredAccuracy: LocationAccuracy.low,
       forceAndroidLocationManager: true,
     );
   }
@@ -124,5 +126,13 @@ class LocationService {
     });
   }
 
-
+  void startUp() async{
+    bool locationEnabled = await _instance.determinePermissions();
+    if (locationEnabled == true){
+      _instance.setPlatformSpecificLocationSettings();
+      _instance.createLocationStream();
+    } else {
+      throw PermissionNotEnabledException();
+    }
+  }
 } //end of class
