@@ -4,6 +4,8 @@ import '../../widgets/route_card.dart';
 import '../../widgets/nav_bar.dart';
 
 class WaypointSelectionScreen extends StatefulWidget {
+  const WaypointSelectionScreen({super.key});
+
   @override
   // ignore: library_private_types_in_public_api
   _WaypointSelectionScreenState createState() =>

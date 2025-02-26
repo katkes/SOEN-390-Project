@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:soen_390/widgets/suggestions.dart';
 
 class LocationTransportSelector extends StatefulWidget {
+  const LocationTransportSelector({super.key});
+
   @override
   LocationTransportSelectorState createState() =>
       LocationTransportSelectorState();
