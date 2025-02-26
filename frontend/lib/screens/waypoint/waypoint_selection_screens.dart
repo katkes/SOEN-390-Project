@@ -40,7 +40,7 @@ class _WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
           icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
-        actions: [Icon(Icons.more_vert, color: Colors.white)],
+        actions: const [Icon(Icons.more_vert, color: Colors.white)],
       ),
       body: Column(
         children: [
@@ -53,21 +53,21 @@ class _WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
                   timeRange: "10:00 - 10:30",
                   duration: "30 min",
                   description: "10:00 from Sherbrooke",
-                  icons: [Icons.accessible, Icons.train],
+                  icons: const [Icons.accessible, Icons.train],
                 ),
                 RouteCard(
                   title: "Exo 11",
                   timeRange: "9:52 - 10:25",
                   duration: "32 min",
                   description: "Walk 5 minutes to Montreal-West",
-                  icons: [Icons.directions_walk, Icons.train],
+                  icons: const [Icons.directions_walk, Icons.train],
                 ),
                 RouteCard(
                   title: "432",
                   timeRange: "10:12 - 10:58",
                   duration: "46 min",
                   description: "Walk 3 minutes",
-                  icons: [Icons.directions_walk, Icons.train],
+                  icons: const [Icons.directions_walk, Icons.train],
                 ),
               ],
             ),
