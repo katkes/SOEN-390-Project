@@ -32,8 +32,10 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
                 children: [
                   const Icon(Icons.radio_button_checked,
                       color: Color(0xFF912338), size: 20),
-                  Container(height: 40, width: 2, color: const Color(0xFF912338)),
-                  const Icon(Icons.location_pin, color: Color(0xFF912338), size: 20),
+                  Container(
+                      height: 40, width: 2, color: const Color(0xFF912338)),
+                  const Icon(Icons.location_pin,
+                      color: Color(0xFF912338), size: 20),
                 ],
               ),
               const SizedBox(width: 10),
@@ -81,7 +83,8 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(value,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
             const Icon(Icons.arrow_drop_down, color: Colors.black54),
           ],
         ),
@@ -124,15 +127,18 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
         children: [
           Icon(icon,
               size: 28,
-              color:
-                  selectedMode == label ? const Color(0xFF912338) : Colors.black54),
+              color: selectedMode == label
+                  ? const Color(0xFF912338)
+                  : Colors.black54),
           const SizedBox(height: 5),
           Text(
             label,
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w400,
-              color: selectedMode == label ? const Color(0xFF912338) : Colors.black54,
+              color: selectedMode == label
+                  ? const Color(0xFF912338)
+                  : Colors.black54,
             ),
           ),
         ],

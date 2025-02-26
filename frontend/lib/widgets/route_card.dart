@@ -8,7 +8,7 @@ class RouteCard extends StatelessWidget {
   final List<IconData> icons;
 
   RouteCard({
-    super.key, 
+    super.key,
     required this.title,
     required this.timeRange,
     required this.duration,
@@ -37,19 +37,23 @@ class RouteCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   title,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
               Text(duration,
-                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.bold)),
             ],
           ),
           Text(timeRange,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+              style:
+                  const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
           const SizedBox(height: 5),
           Text(description,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400)),
+              style:
+                  const TextStyle(fontSize: 14, fontWeight: FontWeight.w400)),
           const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

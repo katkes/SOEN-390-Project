@@ -53,7 +53,8 @@ class SuggestionsPopup extends StatelessWidget {
             const Icon(Icons.place, color: Color(0xFF912338)),
             const SizedBox(width: 10),
             Text(title,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
           ],
         ),
       ),
