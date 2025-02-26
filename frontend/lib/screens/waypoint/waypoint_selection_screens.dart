@@ -47,27 +47,27 @@ class _WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
           const LocationTransportSelector(),
           Expanded(
             child: ListView(
-              children: [
+              children: const [
                 RouteCard(
                   title: "Concordia Shuttle",
                   timeRange: "10:00 - 10:30",
                   duration: "30 min",
                   description: "10:00 from Sherbrooke",
-                  icons: const [Icons.accessible, Icons.train],
+                  icons: [Icons.accessible, Icons.train],
                 ),
                 RouteCard(
                   title: "Exo 11",
                   timeRange: "9:52 - 10:25",
                   duration: "32 min",
                   description: "Walk 5 minutes to Montreal-West",
-                  icons: const [Icons.directions_walk, Icons.train],
+                  icons: [Icons.directions_walk, Icons.train],
                 ),
                 RouteCard(
                   title: "432",
                   timeRange: "10:12 - 10:58",
                   duration: "46 min",
                   description: "Walk 3 minutes",
-                  icons: const [Icons.directions_walk, Icons.train],
+                  icons: [Icons.directions_walk, Icons.train],
                 ),
               ],
             ),
