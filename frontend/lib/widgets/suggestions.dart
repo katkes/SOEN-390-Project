@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class SuggestionsPopup extends StatelessWidget {
   final Function(String) onSelect;
 
-  SuggestionsPopup({super.key, required this.onSelect});
+  const SuggestionsPopup({super.key, required this.onSelect});
 
   @override
   Widget build(BuildContext context) {

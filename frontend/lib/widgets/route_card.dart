@@ -7,7 +7,7 @@ class RouteCard extends StatelessWidget {
   final String description;
   final List<IconData> icons;
 
-  RouteCard({
+  const RouteCard({
     super.key,
     required this.title,
     required this.timeRange,
