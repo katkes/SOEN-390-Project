@@ -236,7 +236,7 @@ class _MapWidgetState extends State<MapWidget> {
     final screenSize = MediaQuery.of(context).size;
     final shouldShowAbove = tapPosition.dy > screenSize.height / 2;
 
-    widget.buildingPopUps.getBuildingInfo(lat, lon, name).then((buildingInfo) {
+    widget.buildingPopUps.fetchBuildingInformation(lat, lon, name).then((buildingInfo) {
       String? photoUrl = buildingInfo["photo"];
       print("Fetched photo URL: $photoUrl");
 
