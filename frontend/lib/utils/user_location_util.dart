@@ -21,9 +21,6 @@ class LocationService {
     return _instance;
   }
 
-
-
-
   // This function is to initialize the listening for current location service. It needs to be run first.
   Future<void> startListeningForLocation() async {
     try {
