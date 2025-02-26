@@ -135,4 +135,9 @@ class LocationService {
       throw PermissionNotEnabledException();
     }
   }
+
+  void stopListening() {
+    _positionStream?.cancel();
+  }
+  
 } //end of class
