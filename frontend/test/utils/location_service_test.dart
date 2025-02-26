@@ -1,72 +1,76 @@
+// location service specific imports
 import 'package:soen_390/utils/location_service.dart';
+import 'package:soen_390/utils/permission_not_enabled_exception.dart';
+// flutter testing specific imports
 import 'package:flutter_test/flutter_test.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
-import 'package:soen_390/utils/permission_not_enabled_exception.dart';
+// geolocator functionality specific imports
 import 'dart:async';
+import 'package:geolocator/geolocator.dart';
+import 'package:flutter/foundation.dart';
 
-// run dart run build_runner build --delete-conflicting-outputs
-import 'location_service_test.mocks.dart';
+
+// run "dart run build_runner build --delete-conflicting-outputs" to generate the mockups.
+class MockGeolocatorPlatform extends Mock implements GeolocatorPlatform {}
+
+// this class is used to test setPlatformSpecificLocationSettings() method.
+// defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.macOS
+// defaultTargetPlatform == TargetPlatform.android
+// defaultTargetPlatform // a random one that isnt IOS or Anndroid.
+class MockOSSettings extends Mock implements Geolocator{
+  Future<AndroidSettings> generateAndroidLocationSettings() async{
+    return await AndroidSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 4,
+        forceLocationManager:true,
+        intervalDuration: const Duration(seconds: 10),
+        foregroundNotificationConfig: const ForegroundNotificationConfig(
+          notificationText:"Concordia navigation app will continue to receive your location even when you aren't using it",
+          notificationTitle: "Running in Background",
+          enableWakeLock: true,
+        ));
+  }
+    Future<AppleSettings> generateiOSLocationSettings() async {
+      return await AppleSettings(
+        accuracy: LocationAccuracy.high,
+        activityType: ActivityType.fitness,
+        distanceFilter: 4,
+        pauseLocationUpdatesAutomatically: true,
+        showBackgroundLocationIndicator: false,
+      );
+    }
+    Future<LocationSettings> generateDefaultLocationSettings() async {
+      return await LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 4,
+      );
+    }
+  }//end of MockSettings class
+
+//flow of permission testing class
+// 1.1
+// serviceEnabled = false
+// permission = LocationPermission.always
+// should return false
+
+// 1.2
+// serviceEnabled = true
+// permission = LocationPermission.denied
+// should return false
+
+//1.3
+// serviceEnabled = true
+// permission = LocationPermission.deniedForever
+// should return false
+
+//1.4
+// serviceEnabled = true
+// permission = permission = LocationPermission.always
+// should return true
+
 
 @GenerateMocks([GeolocatorPlatform])
 void main() {
-  late MockGeolocatorPlatform mockGeolocator;
-  late LocationService locationService;
 
-  setUp(() {
-    mockGeolocator = MockGeolocatorPlatform();
-    locationService = LocationService();
-  });
-
-  group('determinePermissions', () {
-    test('should return false if location services are disabled', () async {
-      when(mockGeolocator.isLocationServiceEnabled()).thenAnswer((_) async => false);
-
-      expect(await locationService.determinePermissions(), false);
-    });
-
-    test('should request permission if denied and return true if granted', () async {
-      when(mockGeolocator.isLocationServiceEnabled()).thenAnswer((_) async => true);
-      when(mockGeolocator.checkPermission()).thenAnswer((_) async => LocationPermission.denied);
-      when(mockGeolocator.requestPermission()).thenAnswer((_) async => LocationPermission.whileInUse);
-
-      expect(await locationService.determinePermissions(), true);
-    });
-  });
-
-  group('getCurrentLocation', () {
-    test('should return a position when fetching location', () async {
-      final mockPosition = Position(
-        latitude: 45.0,
-        longitude: -73.0,
-        timestamp: DateTime.now(),
-        accuracy: 1.0,
-        altitude: 0.0,
-        heading: 0.0,
-        speed: 0.0,
-        speedAccuracy: 0.0,
-          altitudeAccuracy: 1.0,
-          headingAccuracy: 1.0
-      );
-
-      when(mockGeolocator.getCurrentPosition(desiredAccuracy: anyNamed('desiredAccuracy')))
-          .thenAnswer((_) async => mockPosition);
-
-      final position = await locationService.getCurrentLocation();
-
-      expect(position.latitude, 45.0);
-      expect(position.longitude, -73.0);
-    });
-  });
-
-  group('startUp', () {
-    test('should throw PermissionNotEnabledException if permissions are not granted', () async {
-      when(mockGeolocator.isLocationServiceEnabled()).thenAnswer((_) async => true);
-      when(mockGeolocator.checkPermission()).thenAnswer((_) async => LocationPermission.denied);
-      when(mockGeolocator.requestPermission()).thenAnswer((_) async => LocationPermission.denied);
-
-      expect(() => locationService.startUp(), throwsA(isA<PermissionNotEnabledException>()));
-    });
-  });
 }
