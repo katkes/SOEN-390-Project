@@ -15,6 +15,7 @@ import 'package:flutter/foundation.dart';
 class MockGeolocatorPlatform extends Mock implements GeolocatorPlatform {}
 
 // this class is used to test setPlatformSpecificLocationSettings() method.
+// these are the variables that you should consider changing for testing that the lcoation settings object you receive is appropriate
 // defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.macOS
 // defaultTargetPlatform == TargetPlatform.android
 // defaultTargetPlatform // a random one that isnt IOS or Anndroid.
@@ -48,7 +49,9 @@ class MockOSSettings extends Mock implements Geolocator{
     }
   }//end of MockSettings class
 
-//flow of permission testing class
+
+
+// flow of determining permissions testing class to fully test determinePermissions()
 // 1.1
 // serviceEnabled = false
 // permission = LocationPermission.always
@@ -70,7 +73,13 @@ class MockOSSettings extends Mock implements Geolocator{
 // should return true
 
 
-@GenerateMocks([GeolocatorPlatform])
-void main() {
 
-}
+// testing the stream object
+// createLocationStream() --> the stream should not be null.
+// stopListening() --> stream variable should now be null
+
+
+
+
+@GenerateMocks([GeolocatorPlatform])
+void main() {}
