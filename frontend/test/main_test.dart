@@ -5,6 +5,7 @@ import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:http/http.dart' as http;
 import 'dart:typed_data';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:soen_390/main.dart';
 import 'package:soen_390/providers/service_providers.dart';
 import 'package:soen_390/services/http_service.dart';
@@ -58,6 +59,13 @@ void main() {
   late MockGoogleMapsApiClient mockMapsApiClient;
   late MockBuildingPopUps mockBuildingPopUps;
 
+  setUpAll(() async {
+    // Mock dotenv to avoid loading the actual .env file in tests
+    dotenv.testLoad(fileInput: '''
+      GOOGLE_MAPS_API_KEY=mocked_api_key
+    ''');
+  });
+
   setUp(() {
     mockRouteService = MockIRouteService();
     mockHttpService = MockHttpService();
@@ -81,7 +89,6 @@ void main() {
     });
 
     // Mock the client property on the HttpService
-    // This is the key fix for the first error
     when(mockHttpService.client).thenReturn(mockHttpClient);
 
     // Add transparent PNG mock response for map tiles
@@ -161,7 +168,6 @@ void main() {
 
   testWidgets('Main initializes with mocked dependencies',
       (WidgetTester tester) async {
-    // Wrap MyApp with our test wrapper that injects the mocks
     await tester.pumpWidget(
       TestWrapper(
         mockRouteService: mockRouteService,
@@ -172,14 +178,11 @@ void main() {
       ),
     );
 
-    // Verify MyApp is in the widget tree
     expect(find.byType(MyApp), findsOneWidget);
     expect(find.byType(MaterialApp), findsOneWidget);
 
-    // Allow the widget tree to build completely
     await tester.pumpAndSettle();
 
-    // Find MyHomePage and verify it's using our mocked dependencies
     final MyHomePage homePage =
         tester.widget<MyHomePage>(find.byType(MyHomePage));
     expect(homePage.routeService, equals(mockRouteService));
@@ -200,7 +203,6 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    // Test that UI elements are properly rendered
     expect(find.text('Campus Map'), findsOneWidget);
     expect(find.byType(IconButton), findsWidgets);
   });
@@ -219,22 +221,18 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    // Find the NavigationBar
     final navigationBar = find.byType(NavigationBar);
     expect(navigationBar, findsOneWidget);
 
-    // Find and tap the Profile navigation destination
     final profileDestination = find.byWidgetPredicate(
       (widget) => widget is NavigationDestination && widget.label == 'Profile',
       description: 'Profile navigation destination',
     );
     expect(profileDestination, findsOneWidget);
 
-    // Tap the profile destination
     await tester.tap(profileDestination);
     await tester.pumpAndSettle();
 
-    // Verify navigation happened
     expect(find.text('Profile Page'), findsOneWidget);
   });
 
@@ -246,7 +244,6 @@ void main() {
       ],
     );
 
-    // Verify the providers return our mocked instances
     final routeService = container.read(routeServiceProvider);
     final httpService = container.read(httpServiceProvider);
 
@@ -255,7 +252,6 @@ void main() {
   });
 
   test('RouteService getRoute mock works', () async {
-    // Test that our mock behaves as expected
     final result = await mockRouteService.getRoute(
       from: LatLng(45.0, -73.0),
       to: LatLng(46.0, -74.0),
@@ -266,7 +262,6 @@ void main() {
     expect(result.duration, equals(600.0));
     expect(result.routePoints.length, equals(2));
 
-    // Verify the mock was called with any parameters
     verify(mockRouteService.getRoute(
       from: anyNamed('from'),
       to: anyNamed('to'),
