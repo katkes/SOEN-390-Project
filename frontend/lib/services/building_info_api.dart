@@ -11,18 +11,22 @@
 library;
 
 import 'dart:convert';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
-class BuildingPopUps {
-  final String apiKey =
-      dotenv.env['GOOGLE_MAPS_API_KEY'] ?? 'API_KEY_NOT_FOUND';
+abstract class MapsApiClient {
+  Future<Map<String, dynamic>> fetchBuildingInformation(
+      double latitude, double longitude, String locationName);
+}
 
-  Future<Map<String, dynamic>> getLocationInfo(
+class GoogleMapsApiClient implements MapsApiClient {
+  final String apiKey;
+  final http.Client client; // Inject the http client
+
+  GoogleMapsApiClient({required this.apiKey, required this.client});
+
+  @override
+  Future<Map<String, dynamic>> fetchBuildingInformation(
       double latitude, double longitude, String locationName) async {
-    if (apiKey == 'API_KEY_NOT_FOUND') {
-      throw Exception('API key not found');
-    }
     const String placeSearchUrl =
         "https://maps.googleapis.com/maps/api/geocode/json";
 
@@ -32,9 +36,14 @@ class BuildingPopUps {
     const String placePhotoUrl =
         "https://maps.googleapis.com/maps/api/place/photo";
 
-    final searchResponse = await http.get(
+    final searchResponse = await client.get(
       Uri.parse("$placeSearchUrl?latlng=$latitude,$longitude&key=$apiKey"),
     );
+
+    if (searchResponse.statusCode != 200) {
+      throw Exception(
+          'Failed to fetch location data: ${searchResponse.statusCode}');
+    }
 
     final searchData = jsonDecode(searchResponse.body);
 
@@ -44,10 +53,15 @@ class BuildingPopUps {
 
     String placeId = searchData["results"][0]["place_id"];
 
-    final detailsResponse = await http.get(
+    final detailsResponse = await client.get(
       Uri.parse(
           "$placeDetailsUrl?place_id=$placeId&key=$apiKey&fields=formatted_phone_number,website,rating,opening_hours,types,photos"),
     );
+
+    if (detailsResponse.statusCode != 200) {
+      throw Exception(
+          'Failed to fetch details data: ${detailsResponse.statusCode}');
+    }
 
     final detailsData = jsonDecode(detailsResponse.body);
     final result = detailsData["result"] ?? {};
@@ -73,5 +87,17 @@ class BuildingPopUps {
     print(locationInfo);
 
     return locationInfo;
+  }
+}
+
+class BuildingPopUps {
+  final MapsApiClient mapsApiClient;
+
+  BuildingPopUps({required this.mapsApiClient});
+
+  Future<Map<String, dynamic>> fetchBuildingInformation(
+      double latitude, double longitude, String locationName) {
+    return mapsApiClient.fetchBuildingInformation(
+        latitude, longitude, locationName);
   }
 }
