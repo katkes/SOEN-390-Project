@@ -22,7 +22,6 @@ void main() async {
     const ProviderScope(
       child: MyApp(),
     ),
-    
   );
 }
 
@@ -182,7 +181,6 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                     left: 0,
                     child: SearchBarWidget(controller: searchController),
                   ),
-                
                   const Positioned(
                     bottom: 10,
                     right: 21,
