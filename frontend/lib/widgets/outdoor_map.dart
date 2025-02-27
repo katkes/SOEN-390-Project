@@ -245,6 +245,7 @@ Future<void> _loadBuildingBoundaries() async {
       print("Fetched photo URL: $photoUrl");
 
       Future.delayed(Duration(milliseconds: 200), () {
+        if (!mounted) return; // Ensure the widget is still mounted
         showPopover(
           context: context,
           bodyBuilder: (context) => BuildingInformationPopup(
@@ -265,6 +266,7 @@ Future<void> _loadBuildingBoundaries() async {
           arrowDyOffset: tapPosition.dy,
         );
       });
+
     }).catchError((error) {
       print("Error fetching building photo: $error");
     });
