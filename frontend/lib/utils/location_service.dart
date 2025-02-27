@@ -79,7 +79,7 @@ class LocationService {
   /// Returns a [geo.Position] object representing the current location.
   Future<geo.Position> getCurrentLocation() async {
     return await geolocator.getCurrentPosition(
-      locationSettings: geo.LocationSettings(
+      locationSettings: const geo.LocationSettings(
         accuracy: geo.LocationAccuracy.low,
       ),
     );
@@ -88,7 +88,7 @@ class LocationService {
   /// Updates the `currentPosition` with low accuracy.
   Future<void> updateCurrentLocation() async {
     currentPosition = await geolocator.getCurrentPosition(
-      locationSettings: geo.LocationSettings(
+      locationSettings: const geo.LocationSettings(
         accuracy: geo.LocationAccuracy.low,
       ),
     );
@@ -99,7 +99,7 @@ class LocationService {
   /// Returns a [geo.Position] object representing the current location.
   Future<geo.Position> getCurrentLocationAccurately() async {
     return await geolocator.getCurrentPosition(
-      locationSettings: geo.LocationSettings(
+      locationSettings: const geo.LocationSettings(
         accuracy: geo.LocationAccuracy.best,
       ),
     );
@@ -108,7 +108,7 @@ class LocationService {
   /// Updates the `currentPosition` with high accuracy.
   Future<void> updateCurrentLocationAccurately() async {
     currentPosition = await geolocator.getCurrentPosition(
-      locationSettings: geo.LocationSettings(
+      locationSettings: const geo.LocationSettings(
         accuracy: geo.LocationAccuracy.best,
       ),
     );
@@ -129,18 +129,18 @@ class LocationService {
     _isLocSettingInitialized = true;
 
     if (defaultTargetPlatform == TargetPlatform.android) {
-      locSetting = geo.LocationSettings(
+      locSetting = const geo.LocationSettings(
         accuracy: geo.LocationAccuracy.high,
         distanceFilter: 4,
       );
     } else if (defaultTargetPlatform == TargetPlatform.iOS ||
         defaultTargetPlatform == TargetPlatform.macOS) {
-      locSetting = geo.LocationSettings(
+      locSetting = const geo.LocationSettings(
         accuracy: geo.LocationAccuracy.high,
         distanceFilter: 4,
       );
     } else {
-      locSetting = geo.LocationSettings(
+      locSetting = const geo.LocationSettings(
         accuracy: geo.LocationAccuracy.high,
         distanceFilter: 4,
       );

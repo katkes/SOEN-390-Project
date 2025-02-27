@@ -25,12 +25,12 @@ class _IndoorTrigger extends State<IndoorTrigger> {
             ),
             spreadRadius: 2,
             blurRadius: 5,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
-      padding: EdgeInsets.all(10),
-      child: Icon(
+      padding: const EdgeInsets.all(10),
+      child: const Icon(
         Icons.location_on,
         size: 30,
         color: Colors.white,

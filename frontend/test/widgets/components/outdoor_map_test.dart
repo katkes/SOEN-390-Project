@@ -21,14 +21,17 @@ void main() {
   setUp(() {
     mockRouteService = MockIRouteService();
     mockHttpClient = MockClient();
-    testLocation = LatLng(45.5017, -73.5673);
+    testLocation = const LatLng(45.5017, -73.5673);
 
     // Mocking route service response
     when(mockRouteService.getRoute(from: anyNamed('from'), to: anyNamed('to')))
         .thenAnswer((_) async => RouteResult(
               distance: 5000.0,
               duration: 600.0,
-              routePoints: [LatLng(45.5017, -73.5673), LatLng(45.508, -73.56)],
+              routePoints: [
+                const LatLng(45.5017, -73.5673),
+                const LatLng(45.508, -73.56)
+              ],
             ));
 
     // Better approach: Return a complete 1x1 transparent PNG
@@ -177,7 +180,7 @@ void main() {
     clearInteractions(mockRouteService);
 
     // Update with new location
-    final newLocation = LatLng(45.505, -73.565);
+    final newLocation = const LatLng(45.505, -73.565);
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -278,7 +281,7 @@ void main() {
           tester.getCenter(mapFinder),
           tester.getCenter(mapFinder),
         ),
-        LatLng(45.5020, -73.5675),
+        const LatLng(45.5020, -73.5675),
       );
 
       // Pump the widget to process the tap
