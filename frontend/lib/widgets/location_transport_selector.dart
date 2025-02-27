@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:soen_390/widgets/suggestions.dart';
+import 'suggestions.dart';
 
 class LocationTransportSelector extends StatefulWidget {
-  const LocationTransportSelector({super.key});
+  final Function(List<String>, String) onConfirmRoute;
+
+  const LocationTransportSelector({super.key, required this.onConfirmRoute});
 
   @override
   LocationTransportSelectorState createState() =>
@@ -10,9 +12,9 @@ class LocationTransportSelector extends StatefulWidget {
 }
 
 class LocationTransportSelectorState extends State<LocationTransportSelector> {
-  String currentLocation = "Current Location";
-  String destination = "Hall Building";
+  List<String> itinerary = [];
   String selectedMode = "Train or Bus";
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -26,51 +28,112 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
       ),
       child: Column(
         children: [
-          Row(
-            children: [
-              Column(
-                children: [
-                  const Icon(Icons.radio_button_checked,
-                      color: Color(0xFF912338), size: 20),
-                  Container(
-                      height: 40, width: 2, color: const Color(0xFF912338)),
-                  const Icon(Icons.location_pin,
-                      color: Color(0xFF912338), size: 20),
-                ],
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  children: [
-                    buildLocationField(
-                        "Current Location", currentLocation, true),
-                    const SizedBox(height: 10),
-                    buildLocationField("Destination", destination, false),
-                  ],
-                ),
-              ),
-            ],
-          ),
+          _buildLocationInput(),
+          const SizedBox(height: 10),
+          _buildReorderableItinerary(),
           const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _buildTransportMode("Car", Icons.directions_car),
-              _buildTransportMode("Bike", Icons.directions_bike),
-              _buildTransportMode("Train or Bus", Icons.train,
-                  isSelected: true),
-              _buildTransportMode("Walk", Icons.directions_walk),
-            ],
+          _buildTransportModeSelection(),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: _confirmRoute,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xff912338),
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
+            child: const Text("Confirm Route"),
           ),
         ],
       ),
     );
   }
 
-  Widget buildLocationField(String placeholder, String value, bool isCurrent) {
+  Widget _buildLocationInput() {
+    return Column(
+      children: [
+        _buildLocationField("Start Location", true),
+        const SizedBox(height: 10),
+        _buildLocationField("Destination", false),
+        const SizedBox(height: 10),
+        ElevatedButton(
+          onPressed: () {
+            if (itinerary.length < 2) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                    content: Text(
+                        "Select both start and destination before adding!")),
+              );
+            } else {
+              setState(() {
+                itinerary.add("New Stop ${itinerary.length + 1}");
+              });
+            }
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.white,
+            foregroundColor: const Color(0xff912338),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+              side: const BorderSide(color: Color(0xff912338)),
+            ),
+          ),
+          child: const Text("Add Stop to Itinerary"),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildReorderableItinerary() {
+    return ReorderableListView(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      onReorder: (oldIndex, newIndex) {
+        setState(() {
+          if (newIndex > oldIndex) newIndex -= 1;
+          final item = itinerary.removeAt(oldIndex);
+          itinerary.insert(newIndex, item);
+        });
+      },
+      children: [
+        for (int index = 0; index < itinerary.length; index++)
+          ListTile(
+            key: ValueKey(itinerary[index]),
+            title: Text(itinerary[index]),
+            leading: const Icon(Icons.drag_handle),
+            trailing: IconButton(
+              icon: const Icon(Icons.delete, color: Colors.red),
+              onPressed: () => _removeStop(index),
+            ),
+          ),
+      ],
+    );
+  }
+
+  void _confirmRoute() {
+    if (itinerary.length < 2) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text("You must have at least a start and destination.")),
+      );
+      return;
+    }
+
+    List<String> selectedWaypoints = List.from(itinerary);
+    print("Waypoints sent to routing system: $selectedWaypoints");
+
+    widget.onConfirmRoute(selectedWaypoints, selectedMode);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Route successfully confirmed!")),
+    );
+  }
+
+  Widget _buildLocationField(String placeholder, bool isStart) {
     return GestureDetector(
       onTap: () {
-        showLocationSuggestions(isCurrent);
+        _showLocationSuggestions(isStart);
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
@@ -82,7 +145,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(value,
+            Text(placeholder,
                 style:
                     const TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
             const Icon(Icons.arrow_drop_down, color: Colors.black54),
@@ -92,7 +155,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
     );
   }
 
-  void showLocationSuggestions(bool isCurrent) {
+  void _showLocationSuggestions(bool isStart) {
     showDialog(
       context: context,
       builder: (context) {
@@ -101,10 +164,10 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (mounted) {
                 setState(() {
-                  if (isCurrent) {
-                    currentLocation = selectedLocation;
-                  } else {
-                    destination = selectedLocation;
+                  if (isStart && itinerary.isEmpty) {
+                    itinerary.add(selectedLocation);
+                  } else if (!isStart && itinerary.length < 2) {
+                    itinerary.add(selectedLocation);
                   }
                 });
               }
@@ -112,6 +175,24 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
           },
         );
       },
+    );
+  }
+
+  void _removeStop(int index) {
+    setState(() {
+      itinerary.removeAt(index);
+    });
+  }
+
+  Widget _buildTransportModeSelection() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        _buildTransportMode("Car", Icons.directions_car),
+        _buildTransportMode("Bike", Icons.directions_bike),
+        _buildTransportMode("Train or Bus", Icons.train, isSelected: true),
+        _buildTransportMode("Walk", Icons.directions_walk),
+      ],
     );
   }
 
@@ -134,12 +215,11 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
           Text(
             label,
             style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-              color: selectedMode == label
-                  ? const Color(0xFF912338)
-                  : Colors.black54,
-            ),
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+                color: selectedMode == label
+                    ? const Color(0xFF912338)
+                    : Colors.black54),
           ),
         ],
       ),
