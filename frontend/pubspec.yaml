@@ -58,8 +58,6 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
   build_runner: ^2.1.7
-  #build_runner: ^2.4.6
-  http: ^1.3.0
   junitreport: ^2.0.2
   http_mock_adapter: 0.6.1
 
