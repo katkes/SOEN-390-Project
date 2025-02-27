@@ -68,9 +68,13 @@ class _MapWidgetState extends State<MapWidget> {
 
   bool isPairly = false;
 
+  ///
   late MapService _mapService;
+
+  ///
   late MarkerTapHandler _markerTapHandler;
 
+  ///Initializing the widget with _mapController, _mapService, _markerTapHandler, and loads initial functions
   @override
   void initState() {
     super.initState();
@@ -97,6 +101,7 @@ class _MapWidgetState extends State<MapWidget> {
     _fetchRoute();
   }
 
+  /// Updates the widget when the location changes
   @override
   void didUpdateWidget(MapWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -107,6 +112,7 @@ class _MapWidgetState extends State<MapWidget> {
     }
   }
 
+  /// Loads the building locations from the map service
   Future<void> _loadBuildingLocations() async {
     try {
       final markers = await _mapService
@@ -122,6 +128,7 @@ class _MapWidgetState extends State<MapWidget> {
     }
   }
 
+  /// Loads the building boundaries from the map service
   Future<void> _loadBuildingBoundaries() async {
     try {
       final polygons = await _mapService.loadBuildingPolygons();
@@ -156,6 +163,7 @@ class _MapWidgetState extends State<MapWidget> {
     });
   }
 
+  /// Builds the map widget with the FlutterMap and its children
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -178,43 +186,15 @@ class _MapWidgetState extends State<MapWidget> {
           children: [
             TileLayer(
               urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-              additionalOptions: const {}, // Add this line
+              additionalOptions: const {},
               tileProvider: NetworkTileProvider(httpClient: widget.httpClient),
             ),
-            //Used for testing
-            // Only render the polyline layer if there are valid route points
-            // if (routePoints.isNotEmpty)
-            //   PolylineLayer(
-            //     polylines: [
-            //       Polyline(
-            //         points: routePoints,
-            //         strokeWidth: 4.0,
-            //         color: Colors.blueAccent,
-            //       ),
-            //     ],
-            //   ),
-
-            // MarkerLayer(markers: _buildMarkers()),
             PolygonLayer(
               polygons: _buildingPolygons,
             ),
             MarkerLayer(
               markers: [
-                ..._buildingMarkers, // Include existing _buildingMarkers
-                const Marker(
-                  point: LatLng(45.497856, -73.579588),
-                  width: 40.0,
-                  height: 40.0,
-                  child: Icon(Icons.location_pin,
-                      color: Color(0xFF912338), size: 40.0),
-                ),
-                const Marker(
-                  point: LatLng(45.4581, -73.6391),
-                  width: 40.0,
-                  height: 40.0,
-                  child: Icon(Icons.location_pin,
-                      color: Color(0xFF912338), size: 40.0),
-                ),
+                ..._buildingMarkers,
               ],
             ),
           ],
@@ -240,27 +220,6 @@ class _MapWidgetState extends State<MapWidget> {
       _fetchRoute();
     });
   }
-
-  /// Builds a list of markers for the map, including:
-  /// - The `from` location (blue marker).
-  /// - The `to` location (green marker).
-  /// Used for testing
-  // List<Marker> _buildMarkers() {
-  //   return [
-  //     Marker(
-  //       point: from,
-  //       width: 40.0,
-  //       height: 40.0,
-  //       child: const Icon(Icons.location_pin, color: Colors.blue, size: 40.0),
-  //     ),
-  //     Marker(
-  //       point: to,
-  //       width: 40.0,
-  //       height: 40.0,
-  //       child: const Icon(Icons.location_pin, color: Colors.green, size: 40.0),
-  //     ),
-  //   ];
-  // }
 }
 
 /// Example usage of `MapWidget` inside a `MyPage` scaffold.

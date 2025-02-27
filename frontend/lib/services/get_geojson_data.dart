@@ -1,6 +1,19 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
 
+/// Service for loading and managing campus GeoJSON data.
+///
+/// This service handles the loading and caching of GeoJSON files containing:
+/// * Building boundaries
+/// * Building list
+/// * Campus boundaries
+///
+/// Example usage:
+/// ```dart
+/// final campusService = CampusService();
+/// await campusService.loadGeoJsonData();
+/// final buildings = campusService.getBuildingList();
+/// ```
 class CampusService {
   final AssetBundle assetBundle;
 

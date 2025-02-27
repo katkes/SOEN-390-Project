@@ -8,6 +8,9 @@ import 'package:soen_390/utils/marker_tap_handler.dart';
 import 'package:soen_390/services/building_info_api.dart';
 import 'marker_tap_handler_test.mocks.dart';
 
+/// Tests for MarkerTapHandler functionality.
+/// Verifies marker tap behavior and building information retrieval.
+///
 @GenerateNiceMocks([MockSpec<MapController>(), MockSpec<BuildingPopUps>()])
 void main() {
   late MockMapController mockMapController;
@@ -30,6 +33,8 @@ void main() {
         .thenAnswer((_) async => {'photo': 'test_photo.jpg'});
   });
 
+  /// Test to verify that a popover is shown after tapping on a marker.
+  /// This test simulates a marker tap, and checks if the popover widget appears as expected.
   testWidgets('popover is shown after marker tap', (WidgetTester tester) async {
     const double lat = 45.4973;
     const double lon = -73.5793;
@@ -44,14 +49,17 @@ void main() {
     markerTapHandler.onMarkerTapped(lat, lon, name, address, tapPosition,
         tester.element(find.byType(Container)));
 
-    await tester.pumpAndSettle(); // Ensure all animations and timers finish
+    await tester.pumpAndSettle();
 
-    // Add an explicit pump to simulate time passage if needed
     await tester.pump(const Duration(milliseconds: 400));
 
     expect(find.byType(Container),
         findsOneWidget); // Adjust based on expected behavior
   });
+
+  /// Test to verify that the correct parameters are passed to the
+  /// `fetchBuildingInformation` method when a marker is tapped.
+  /// This test checks if the method is called once with the correct latitude, longitude, and building name.
   testWidgets('getLocationInfo is called with correct parameters',
       (WidgetTester tester) async {
     const double lat = 45.4973;
@@ -67,12 +75,9 @@ void main() {
     markerTapHandler.onMarkerTapped(lat, lon, name, address, tapPosition,
         tester.element(find.byType(Container)));
 
-    // Use FakeAsync to control async operations and timers
-    await tester.pumpAndSettle(); // Ensure async tasks settle
+    await tester.pumpAndSettle();
 
-    // Use FakeAsync to simulate the passage of time if necessary
-    await tester.pump(
-        const Duration(milliseconds: 500)); // Adjust duration to the timeout
+    await tester.pump(const Duration(milliseconds: 500));
 
     verify(mockBuildingPopUps.fetchBuildingInformation(lat, lon, name))
         .called(1);

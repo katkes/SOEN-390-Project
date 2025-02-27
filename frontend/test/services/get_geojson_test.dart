@@ -6,11 +6,23 @@ import 'package:soen_390/services/get_geojson_data.dart';
 
 import 'get_geojson_test.mocks.dart';
 
+/// Tests for [CampusService] GeoJSON data loading functionality.
+///
+/// Test coverage includes:
+/// * Successful data loading and parsing
+/// * Error handling for failed loads
+/// * Null safety verification
+/// * Asset bundle interaction verification
+///
 @GenerateMocks([AssetBundle])
 void main() {
   group('CampusService Tests', () {
     late MockAssetBundle mockAssetBundle;
     late CampusService campusService;
+
+    /// Setup before each test:
+    /// - Creates mock asset bundle
+    /// - Initializes CampusService with mock
 
     setUp(() {
       mockAssetBundle = MockAssetBundle();
@@ -18,6 +30,10 @@ void main() {
       campusService = CampusService(assetBundle: mockAssetBundle);
     });
 
+    /// Tests successful GeoJSON loading and parsing:
+    /// - Mocks asset bundle responses
+    /// - Loads all three GeoJSON files
+    /// - Verifies data is parsed and stored
     test('should load and parse GeoJSON data successfully', () async {
       const mockGeoJson = '{"type": "FeatureCollection", "features": []}';
 
@@ -35,6 +51,11 @@ void main() {
       expect(campusService.getBuildingList(), isNotNull);
       expect(campusService.getCampusBoundaries(), isNotNull);
     });
+
+    /// Tests error handling when asset loading fails:
+    /// - Simulates PlatformException with 404 error
+    /// - Verifies all getters return null
+    /// - Ensures service remains in valid state after error
 
     test('should return null when loadString fails', () async {
       // Mock throwing exceptions

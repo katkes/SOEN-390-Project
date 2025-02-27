@@ -7,6 +7,8 @@ import 'package:soen_390/widgets/building_information_popup.dart';
 
 void main() {
   group('BuildingInformationPopup Tests', () {
+    ///Test to verify that the BuildingInformationPopup widget renders the correct
+    /// building name, address, and essential UI elements like the ElevatedButton and arrow icon.
     testWidgets('renders building information popup correctly',
         (WidgetTester tester) async {
       await tester.pumpWidget(
@@ -23,6 +25,8 @@ void main() {
       expect(find.byType(ElevatedButton), findsOneWidget);
       expect(find.byIcon(Icons.arrow_forward), findsOneWidget);
     });
+
+    /// Test to verify that if a photo URL is provided, the image is displayed correctly.
     testWidgets('displays photo if URL is provided',
         (WidgetTester tester) async {
       await tester.pumpWidget(
@@ -38,6 +42,8 @@ void main() {
       expect(find.byType(Image), findsOneWidget);
       expect(find.byType(Image).evaluate().single.widget is Image, true);
     });
+
+    /// Test to ensure that the building name and address are displayed correctly.
     testWidgets('displays building name and address correctly',
         (WidgetTester tester) async {
       const buildingName = 'EV Building';
@@ -56,6 +62,8 @@ void main() {
 
       expect(find.text(buildingAddress), findsOneWidget);
     });
+
+    // Test to verify that when no photo URL is provided, a default image is displayed.
     testWidgets('displays default image when no photo URL is provided',
         (WidgetTester tester) async {
       await tester.pumpWidget(
@@ -72,6 +80,7 @@ void main() {
           'assets/images/buildings/hall.png');
     });
 
+    /// Test to check if long building names are abbreviated correctly for better UI display.
     testWidgets('abbreviates long building names correctly',
         (WidgetTester tester) async {
       // Arrange

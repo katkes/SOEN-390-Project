@@ -4,6 +4,21 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter/material.dart';
 
+/// Service for handling map-related operations and data processing.
+///
+/// This service is responsible for:
+/// * Loading and parsing GeoJSON building data
+/// * Creating map markers for buildings
+/// * Handling building polygon creation
+/// * Managing map styling constants
+///
+/// Example usage:
+/// ```dart
+/// final mapService = MapService();
+/// final markers = await mapService.loadBuildingMarkers((lat, lon, name, address, pos) {
+///   print('Marker tapped: $name');
+/// });
+/// ```
 class MapService {
   static const Color markerColor = Color(0xFF912338);
   static const Color polygonFillColor = Color(0x33FF0000);

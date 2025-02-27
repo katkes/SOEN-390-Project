@@ -1,4 +1,4 @@
-//This file This test ensures that the loadBuildingMarkers method in MapService correctly loads and processes GeoJSON data to generate a list of building markers. The test begins by defining a mock GeoJSON string that represents a single building with its coordinates, name, and address. To simulate loading this data from Flutter’s asset system, a mock message handler is set up using TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMessageHandler(),
+//This test ensures that the loadBuildingMarkers method in MapService correctly loads and processes GeoJSON data to generate a list of building markers. The test begins by defining a mock GeoJSON string that represents a single building with its coordinates, name, and address. To simulate loading this data from Flutter’s asset system, a mock message handler is set up using TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMessageHandler(),
 //which intercepts asset load requests and returns the mock GeoJSON data.
 //Once the asset loading is mocked, the test calls loadBuildingMarkers(),
 //passing in a placeholder callback function to process each marker.
@@ -14,6 +14,11 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('MapService', () {
+    /// Tests marker loading functionality:
+    /// - Loads GeoJSON data
+    /// - Creates markers with correct coordinates
+    /// - Sets up tap handlers
+    /// - Verifies marker properties
     testWidgets('loadBuildingMarkers returns a list of markers',
         (WidgetTester tester) async {
       final MapService mapService = MapService();

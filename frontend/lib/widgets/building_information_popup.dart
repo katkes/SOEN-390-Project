@@ -1,5 +1,24 @@
 import 'package:flutter/material.dart';
 
+/// A widget that displays building information in a popup format.
+///
+/// This widget creates a popup display containing building information including:
+/// * Building name (automatically abbreviated if too long)
+/// * Building address
+/// * Building photo (optional)
+///
+/// The popup uses the app's primary color scheme and provides a consistent
+/// layout for building information across the application.
+///
+/// Example usage:
+/// ```dart
+/// BuildingInformationPopup(
+///   buildingName: 'Henry F. Hall Building',
+///   buildingAddress: '1455 De Maisonneuve Blvd. W.',
+///   photoUrl: 'https://example.com/hall-building.jpg',
+/// )
+/// ```
+
 class BuildingInformationPopup extends StatelessWidget {
   final String buildingName;
   final String buildingAddress;

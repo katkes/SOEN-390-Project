@@ -10,8 +10,6 @@ import 'package:http/http.dart' as http;
 import 'package:soen_390/widgets/outdoor_map.dart';
 import 'dart:typed_data';
 
-// Generate mock classes
-
 @GenerateNiceMocks([
   MockSpec<IRouteService>(),
   MockSpec<http.Client>(),
@@ -20,6 +18,7 @@ import 'dart:typed_data';
 ])
 import 'outdoor_map_test.mocks.dart';
 
+/// Unit tests for the [OutdoorMap] widget, testing route fetching and map rendering behavior.
 void main() {
   late MockIRouteService mockRouteService;
   late MockClient mockHttpClient;
@@ -31,8 +30,7 @@ void main() {
     mockRouteService = MockIRouteService();
     mockHttpClient = MockClient();
     testLocation = const LatLng(45.5017, -73.5673);
-    mockMapsApiClient =
-        MockGoogleMapsApiClient(); // Initialize mockMapsApiClient
+    mockMapsApiClient = MockGoogleMapsApiClient();
     mockBuildingPopUps = MockBuildingPopUps();
 
     // Mocking route service response
@@ -46,7 +44,6 @@ void main() {
               ],
             ));
 
-    // Better approach: Return a complete 1x1 transparent PNG
     final transparentPixelPng = Uint8List.fromList([
       0x89,
       0x50,
@@ -129,6 +126,7 @@ void main() {
         .thenAnswer((_) async => transparentPixelPng);
   });
 
+  /// Test that the [MapWidget] initializes correctly with the provided location.
   testWidgets('MapWidget initializes with provided location',
       (WidgetTester tester) async {
     await tester.pumpWidget(
@@ -149,6 +147,7 @@ void main() {
     expect(find.byType(FlutterMap), findsOneWidget);
   });
 
+  /// Test that the [MapWidget] fetches a route when initialized.
   testWidgets('MapWidget fetches a route on init', (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
@@ -170,6 +169,7 @@ void main() {
         .called(1);
   });
 
+// Test that the [MapWidget] calls _fetchRoute when the location is updated.
   testWidgets('MapWidget calls _fetchRoute when location is updated',
       (WidgetTester tester) async {
     // First, render with initial location
@@ -222,6 +222,7 @@ void main() {
         .called(1);
   });
 
+  /// Test that the [MapWidget] handles null route result gracefully without crashing.
   testWidgets('MapWidget handles null route result gracefully',
       (WidgetTester tester) async {
     // Modify the mock to return null for route
