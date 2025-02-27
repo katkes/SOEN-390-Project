@@ -55,19 +55,19 @@ class MockGeolocatorPlatform extends Mock
   @override
   Future<geo.Position?> getLastKnownPosition(
       {bool forceLocationManager = false}) async {
-    return Future.value(mockPosition); // ✅ Ensure we never return null
+    return Future.value(mockPosition);
   }
 
   @override
   Future<geo.Position> getCurrentPosition(
           {geo.LocationSettings? locationSettings}) =>
-      Future.value(mockPosition); // ✅ Return mockPosition
+      Future.value(mockPosition);
 
   @override
   Stream<geo.Position> getPositionStream(
       {geo.LocationSettings? locationSettings}) {
     return Stream.fromIterable(
-        [mockPosition]); // ✅ Always return a valid stream
+        [mockPosition]);
   }
 
   @override
@@ -140,7 +140,7 @@ void main() {
     test('createLocationStream should update currentPosition on stream event',
         () async {
       // Arrange
-      locationService.takePosition(mockPosition); // ✅ Ensures position is set
+      locationService.takePosition(mockPosition);
       locationService.setPlatformSpecificLocationSettings();
 
       // Act

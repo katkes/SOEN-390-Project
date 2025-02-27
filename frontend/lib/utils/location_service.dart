@@ -28,6 +28,9 @@ class LocationService {
   StreamSubscription<geo.Position>? _positionStream;
 
   /// Indicates whether location services are enabled.
+  /// serviceEnabled and permission are set to false/denied because the initial assumption should be so
+  /// Accessing location without having the permission will cause errors.
+  /// This value gets updated once the application is opened.
   bool serviceEnabled = false;
 
   /// The current location permission status.

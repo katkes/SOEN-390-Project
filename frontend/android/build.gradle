@@ -2,18 +2,8 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-//        // [required] flutter_background_geolocation
-//        maven { url "${project(':flutter_background_geolocation').projectDir}/libs" }
-//        maven { url 'https://developer.huawei.com/repo/' }
-//        // [required] background_fetch
-//        maven { url "${project(':background_fetch').projectDir}/libs" }
     }
 }
-
-//ext {
-//    appCompatVersion    = "1.4.2"           // or higher / as desired
-//    playServicesLocationVersion = "21.3.0"  // or higher / as desired
-//}
 
 rootProject.buildDir = "../build"
 subprojects {
@@ -26,7 +16,3 @@ subprojects {
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
-//
-//dependencies {
-//    classpath 'com.android.tools.build:gradle:8.1.2' // Use latest AGP version
-//}
