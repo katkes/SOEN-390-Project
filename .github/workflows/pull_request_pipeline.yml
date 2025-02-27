@@ -239,6 +239,10 @@ jobs:
     needs: [setup_flutter, linting, testing, flutter_build, sonarqube]
 
     steps:
+      - name: Flutter cleaning the build
+        working-directory: ./frontend
+        run: flutter clean
+        
       - name: Free Up Space - Remove Gradle Cache
         run: |
           echo "Cleaning up Gradle caches..."
@@ -251,27 +255,3 @@ jobs:
           echo "Cleaning up Actions runner workspace..."
           rm -rf ~/actions-runner/_work/*
           echo "Actions runner workspace cleaned."
-
-      - name: Free Up Space - Remove Temporary Files
-        run: |
-          echo "Cleaning up temporary files..."
-          rm -rf /tmp/*
-          echo "Temporary files removed."
-
-      - name: Free Up Space - Remove Flutter Build Cache
-        run: |
-          echo "Cleaning up Flutter build cache..."
-          rm -rf frontend/build
-          rm -rf frontend/.dart_tool
-          rm -rf frontend/.flutter-plugins
-          echo "Flutter build cache cleaned."
-
-      - name: Free Up Space - Remove Node Modules (If Exists)
-        run: |
-          if [ -d "frontend/node_modules" ]; then
-            echo "Cleaning up node_modules..."
-            rm -rf frontend/node_modules
-            echo "node_modules cleaned."
-          else
-            echo "node_modules not found, skipping cleanup."
-          fi
