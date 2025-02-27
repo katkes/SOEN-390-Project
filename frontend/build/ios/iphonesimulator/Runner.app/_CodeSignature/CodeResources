@@ -46,7 +46,7 @@
 		</data>
 		<key>Frameworks/App.framework/App</key>
 		<data>
-		4AIW+4d+2zRus0ymwkHLUiKNesA=
+		JYNQsmR04VTUgJy7KxNUJJzJdAY=
 		</data>
 		<key>Frameworks/App.framework/Info.plist</key>
 		<data>
@@ -54,7 +54,7 @@
 		</data>
 		<key>Frameworks/App.framework/_CodeSignature/CodeResources</key>
 		<data>
-		Q23A1Ij6x9kIcuEL4GB8mItlhNg=
+		7J6RZFl1QdEMXXdEY135KofJsOo=
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/.env</key>
 		<data>
@@ -74,7 +74,7 @@
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/NOTICES.Z</key>
 		<data>
-		pFsGsF0pIHKhpJRdLOR6KywDE44=
+		e1Zmu+u685ZmHnDd0pOywcML6kM=
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/assets/geojson_files/building_boundaries.geojson</key>
 		<data>
@@ -98,7 +98,7 @@
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/kernel_blob.bin</key>
 		<data>
-		lAZkUkyolvLk6YdHvyoLrLnyp3Q=
+		PD3bP3ltNRIVfZfK4u3Xpv2VuB0=
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>
 		<data>
@@ -208,9 +208,29 @@
 		<data>
 		ipm8hg7aB3LzsfShJfpNR0QQ4hw=
 		</data>
+		<key>Frameworks/geolocator_apple.framework/Info.plist</key>
+		<data>
+		vp0FIIP5+2booUiSYX8512KehVg=
+		</data>
+		<key>Frameworks/geolocator_apple.framework/_CodeSignature/CodeResources</key>
+		<data>
+		g64coUk+q0xbEHIX0Gncmdn++/c=
+		</data>
+		<key>Frameworks/geolocator_apple.framework/geolocator_apple</key>
+		<data>
+		jnQ6sVout5xGuhWZ00sWqnI77BA=
+		</data>
+		<key>Frameworks/geolocator_apple.framework/geolocator_apple_privacy.bundle/Info.plist</key>
+		<data>
+		KP8wVcE2NPnkNJeF4DCI41xtwXw=
+		</data>
+		<key>Frameworks/geolocator_apple.framework/geolocator_apple_privacy.bundle/PrivacyInfo.xcprivacy</key>
+		<data>
+		KFiVi4mWKmBFkTjfe3H4jsOvLNM=
+		</data>
 		<key>Info.plist</key>
 		<data>
-		XKwRRa1Tzgy1WTwZez9NohTjbw8=
+		1eaLGsbBm+LBbMhemc616xo5AdI=
 		</data>
 		<key>PkgInfo</key>
 		<data>
@@ -293,7 +313,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			xyyeTWTqg1+nsD0IvyErQ8w1P/pFtoumkIpbeVAyOhU=
+			paBSyl78yyITPJm4WPBLseRakBp/MDsV+xjZeayVfMA=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/Info.plist</key>
@@ -307,7 +327,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			eh0o5CPRqmzZvkaZGQ+drBDQpUzeH7W3zP+Nt8BE5lo=
+			BSzgokRFheiBLLQhljxkoFZxxCU7X7V+28QhCU8A3CM=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/.env</key>
@@ -342,7 +362,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			WiuNv0runn6qAdf34YQ47nsc57uMqAtL1apNmfDCvCI=
+			5i86cKVx76+JcP0b3tO/V4KDqMWVF5AsdjgGuyNeZjY=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/assets/geojson_files/building_boundaries.geojson</key>
@@ -384,7 +404,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			+zvwPeH3EbrCQNGJP/GtX5fZ48DIg0BPrub0dBGNdt4=
+			CU5k1NftYHXP2l8xEDNiHtGx0fF27hdFGRSQeBUueaE=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>
@@ -574,6 +594,41 @@
 			<key>hash2</key>
 			<data>
 			wSU3Ai74GJkae/7UGnbY1q6WL/vA5lEax2Kl0IRef3w=
+			</data>
+		</dict>
+		<key>Frameworks/geolocator_apple.framework/Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			gZcOlKo2ejTUyDl7t0q0I/GwWl9/QAXwGHlcB1I27EQ=
+			</data>
+		</dict>
+		<key>Frameworks/geolocator_apple.framework/_CodeSignature/CodeResources</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			upP5ApNRbRUTmXWMQ6A37Itc5FFgYnoQfRILZji6BE0=
+			</data>
+		</dict>
+		<key>Frameworks/geolocator_apple.framework/geolocator_apple</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			oI8DnDs2DbP8YcWj8JcCD8RwBaRN02VVu4tAglsoYfc=
+			</data>
+		</dict>
+		<key>Frameworks/geolocator_apple.framework/geolocator_apple_privacy.bundle/Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			xCVXpZl5Hd4urPVGmBaHrOyoViDka/8qJnV7dzbcAwU=
+			</data>
+		</dict>
+		<key>Frameworks/geolocator_apple.framework/geolocator_apple_privacy.bundle/PrivacyInfo.xcprivacy</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			p+c+xOFN/pYr5bFknUH/y01YGEb8+JJchzbtJ60mdTI=
 			</data>
 		</dict>
 	</dict>
