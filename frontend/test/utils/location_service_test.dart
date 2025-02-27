@@ -4,6 +4,8 @@ import 'package:geolocator/geolocator.dart' as geo;
 import 'package:soen_390/utils/permission_not_enabled_exception.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
+import 'package:flutter/foundation.dart'
+    show debugDefaultTargetPlatformOverride, TargetPlatform;
 
 /// Helper function to create a mock [geo.Position] object.
 ///
@@ -183,4 +185,105 @@ void main() {
       expect(() => locationService.locSetting, isNot(throwsA(anything)));
     });
   });
+  test('getCurrentLocationAccurately should return mocked position', () async {
+    final position = await locationService.getCurrentLocationAccurately();
+
+    expect(position.latitude, mockPosition.latitude);
+    expect(position.longitude, mockPosition.longitude);
+  });
+
+  test('updateCurrentLocationAccurately should update currentPosition',
+      () async {
+    await locationService.updateCurrentLocationAccurately();
+
+    expect(locationService.currentPosition.latitude, mockPosition.latitude);
+    expect(locationService.currentPosition.longitude, mockPosition.longitude);
+  });
+
+  test('stopListening should cancel position stream subscription', () {
+    locationService.setPlatformSpecificLocationSettings();
+    locationService.createLocationStream();
+
+    locationService.stopListening();
+
+    // No direct way to check if stream is cancelled, but we can verify no errors occur
+    expect(() => locationService.stopListening(), returnsNormally);
+  });
+
+  test('determinePermissions handles deniedForever permission', () async {
+    mockGeolocatorPlatform.setLocationServiceEnabled(true);
+    mockGeolocatorPlatform
+        .setLocationPermission(geo.LocationPermission.deniedForever);
+
+    bool result = await locationService.determinePermissions();
+
+    expect(result, false);
+    expect(locationService.permission, geo.LocationPermission.deniedForever);
+  });
+
+  test('takePosition correctly updates currentPosition', () {
+    final newPosition = geo.Position(
+        latitude: 40.7128,
+        longitude: -74.0060,
+        timestamp: DateTime.now(),
+        accuracy: 0.0,
+        altitude: 0.0,
+        heading: 0.0,
+        speed: 0.0,
+        speedAccuracy: 0.0,
+        altitudeAccuracy: 0.0,
+        headingAccuracy: 0.0);
+
+    locationService.takePosition(newPosition);
+
+    expect(locationService.currentPosition.latitude, 40.7128);
+    expect(locationService.currentPosition.longitude, -74.0060);
+  });
+
+  test('setPlatformSpecificLocationSettings should initialize only once', () {
+    locationService.setPlatformSpecificLocationSettings();
+    final initialSettings = locationService.locSetting;
+
+    // Call again to verify it doesn't change
+    locationService.setPlatformSpecificLocationSettings();
+
+    expect(locationService.locSetting, equals(initialSettings));
+  });
+
+  test('setPlatformSpecificLocationSettings initializes iOS settings correctly',
+      () {
+    // Arrange
+    debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+    locationService = LocationService(geolocator: mockGeolocatorPlatform);
+
+    // Act
+    locationService.setPlatformSpecificLocationSettings();
+
+    // Assert
+    expect(locationService.locSetting.accuracy, geo.LocationAccuracy.high);
+    expect(locationService.locSetting.distanceFilter, 4);
+
+    // Cleanup
+    debugDefaultTargetPlatformOverride = null;
+  });
+
+  test(
+      'setPlatformSpecificLocationSettings initializes other platform settings correctly',
+      () {
+    // Arrange
+    debugDefaultTargetPlatformOverride = TargetPlatform.linux;
+    locationService = LocationService(geolocator: mockGeolocatorPlatform);
+
+    // Act
+    locationService.setPlatformSpecificLocationSettings();
+
+    // Assert
+    expect(locationService.locSetting.accuracy, geo.LocationAccuracy.high);
+    expect(locationService.locSetting.distanceFilter, 4);
+
+    // Cleanup
+    debugDefaultTargetPlatformOverride = null;
+  });
+
+
 }
