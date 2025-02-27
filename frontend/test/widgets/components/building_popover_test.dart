@@ -10,7 +10,7 @@ void main() {
     testWidgets('renders building information popup correctly',
         (WidgetTester tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: BuildingInformationPopup(
             buildingName: 'EV Building',
             buildingAddress: '1515 St. Catherine St. W',
@@ -26,7 +26,7 @@ void main() {
     testWidgets('displays photo if URL is provided',
         (WidgetTester tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: BuildingInformationPopup(
             buildingName: 'EV Building',
             buildingAddress: '1515 St. Catherine St. W',
@@ -44,7 +44,7 @@ void main() {
       const buildingAddress = '1515 St. Catherine St. W';
 
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: BuildingInformationPopup(
             buildingName: buildingName,
             buildingAddress: buildingAddress,
@@ -59,7 +59,7 @@ void main() {
     testWidgets('displays default image when no photo URL is provided',
         (WidgetTester tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: BuildingInformationPopup(
             buildingName: 'EV Building',
             buildingAddress: '1515 St. Catherine St. W',
@@ -82,7 +82,7 @@ void main() {
 
       // Act
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: BuildingInformationPopup(
             buildingName: longBuildingName,
             buildingAddress: buildingAddress,

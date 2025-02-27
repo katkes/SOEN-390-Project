@@ -201,18 +201,18 @@ class _MapWidgetState extends State<MapWidget> {
             MarkerLayer(
               markers: [
                 ..._buildingMarkers, // Include existing _buildingMarkers
-                Marker(
+                const Marker(
                   point: LatLng(45.497856, -73.579588),
                   width: 40.0,
                   height: 40.0,
-                  child: const Icon(Icons.location_pin,
+                  child: Icon(Icons.location_pin,
                       color: Color(0xFF912338), size: 40.0),
                 ),
-                Marker(
+                const Marker(
                   point: LatLng(45.4581, -73.6391),
                   width: 40.0,
                   height: 40.0,
-                  child: const Icon(Icons.location_pin,
+                  child: Icon(Icons.location_pin,
                       color: Color(0xFF912338), size: 40.0),
                 ),
               ],

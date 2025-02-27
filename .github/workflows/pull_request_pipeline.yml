@@ -29,6 +29,7 @@ jobs:
       - name: Ensure Folder Exists in GCS
         run: |
           BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||' | tr '/' '_')
+          mkdir -p frontend/reports  # Ensure the directory exists
           gsutil -q stat gs://soen_390_reports/$BRANCH_NAME/frontend/.keep || \
           (echo "Placeholder file" > frontend/reports/.keep && gsutil cp frontend/reports/.keep gs://soen_390_reports/$BRANCH_NAME/frontend/.keep)
 

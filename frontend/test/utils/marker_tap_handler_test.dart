@@ -35,7 +35,7 @@ void main() {
     const double lon = -73.5793;
     const String name = 'Test Building';
     const String address = 'Test Address';
-    final Offset tapPosition = Offset(100, 100);
+    const Offset tapPosition = Offset(100, 100);
 
     await tester.pumpWidget(MaterialApp(
       home: Scaffold(body: Container()),
@@ -47,7 +47,7 @@ void main() {
     await tester.pumpAndSettle(); // Ensure all animations and timers finish
 
     // Add an explicit pump to simulate time passage if needed
-    await tester.pump(Duration(milliseconds: 400));
+    await tester.pump(const Duration(milliseconds: 400));
 
     expect(find.byType(Container),
         findsOneWidget); // Adjust based on expected behavior
@@ -58,7 +58,7 @@ void main() {
     const double lon = -73.5793;
     const String name = 'Test Building';
     const String address = 'Test Address';
-    final Offset tapPosition = Offset(100, 100);
+    final Offset tapPosition = const Offset(100, 100);
 
     await tester.pumpWidget(MaterialApp(
       home: Scaffold(body: Container()),
@@ -71,8 +71,8 @@ void main() {
     await tester.pumpAndSettle(); // Ensure async tasks settle
 
     // Use FakeAsync to simulate the passage of time if necessary
-    await tester
-        .pump(Duration(milliseconds: 500)); // Adjust duration to the timeout
+    await tester.pump(
+        const Duration(milliseconds: 500)); // Adjust duration to the timeout
 
     verify(mockBuildingPopUps.fetchBuildingInformation(lat, lon, name))
         .called(1);

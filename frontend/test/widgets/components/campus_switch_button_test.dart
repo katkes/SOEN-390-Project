@@ -47,13 +47,13 @@ void main() {
       await tester.tap(find.text('Loyola'));
       await tester.pumpAndSettle();
       expect(selectedCampus, 'Loyola');
-      expect(selectedLocation, LatLng(45.4581, -73.6391));
+      expect(selectedLocation, const LatLng(45.4581, -73.6391));
 
       await tester.tap(find.text('SGW'));
       await tester.pumpAndSettle();
 
       expect(selectedCampus, 'SGW');
-      expect(selectedLocation, LatLng(45.497856, -73.579588));
+      expect(selectedLocation, const LatLng(45.497856, -73.579588));
     });
   });
 }
