@@ -27,7 +27,7 @@ import 'package:mockito/mockito.dart' as _i1;
 
 class _FakePosition_0 extends _i1.SmartFake implements _i2.Position {
   _FakePosition_0(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 /// A class which mocks [GeolocatorPlatform].
@@ -40,123 +40,106 @@ class MockGeolocatorPlatform extends _i1.Mock
   }
 
   @override
-  _i4.Future<_i5.LocationPermission> checkPermission() =>
-      (super.noSuchMethod(
-            Invocation.method(#checkPermission, []),
-            returnValue: _i4.Future<_i5.LocationPermission>.value(
-              _i5.LocationPermission.denied,
-            ),
-          )
-          as _i4.Future<_i5.LocationPermission>);
+  _i4.Future<_i5.LocationPermission> checkPermission() => (super.noSuchMethod(
+        Invocation.method(#checkPermission, []),
+        returnValue: _i4.Future<_i5.LocationPermission>.value(
+          _i5.LocationPermission.denied,
+        ),
+      ) as _i4.Future<_i5.LocationPermission>);
 
   @override
-  _i4.Future<_i5.LocationPermission> requestPermission() =>
-      (super.noSuchMethod(
-            Invocation.method(#requestPermission, []),
-            returnValue: _i4.Future<_i5.LocationPermission>.value(
-              _i5.LocationPermission.denied,
-            ),
-          )
-          as _i4.Future<_i5.LocationPermission>);
+  _i4.Future<_i5.LocationPermission> requestPermission() => (super.noSuchMethod(
+        Invocation.method(#requestPermission, []),
+        returnValue: _i4.Future<_i5.LocationPermission>.value(
+          _i5.LocationPermission.denied,
+        ),
+      ) as _i4.Future<_i5.LocationPermission>);
 
   @override
-  _i4.Future<bool> isLocationServiceEnabled() =>
-      (super.noSuchMethod(
-            Invocation.method(#isLocationServiceEnabled, []),
-            returnValue: _i4.Future<bool>.value(false),
-          )
-          as _i4.Future<bool>);
+  _i4.Future<bool> isLocationServiceEnabled() => (super.noSuchMethod(
+        Invocation.method(#isLocationServiceEnabled, []),
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
 
   @override
   _i4.Future<_i2.Position?> getLastKnownPosition({
     bool? forceLocationManager = false,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(#getLastKnownPosition, [], {
-              #forceLocationManager: forceLocationManager,
-            }),
-            returnValue: _i4.Future<_i2.Position?>.value(),
-          )
-          as _i4.Future<_i2.Position?>);
+        Invocation.method(#getLastKnownPosition, [], {
+          #forceLocationManager: forceLocationManager,
+        }),
+        returnValue: _i4.Future<_i2.Position?>.value(),
+      ) as _i4.Future<_i2.Position?>);
 
   @override
   _i4.Future<_i2.Position> getCurrentPosition({
     _i2.LocationSettings? locationSettings,
   }) =>
       (super.noSuchMethod(
+        Invocation.method(#getCurrentPosition, [], {
+          #locationSettings: locationSettings,
+        }),
+        returnValue: _i4.Future<_i2.Position>.value(
+          _FakePosition_0(
+            this,
             Invocation.method(#getCurrentPosition, [], {
               #locationSettings: locationSettings,
             }),
-            returnValue: _i4.Future<_i2.Position>.value(
-              _FakePosition_0(
-                this,
-                Invocation.method(#getCurrentPosition, [], {
-                  #locationSettings: locationSettings,
-                }),
-              ),
-            ),
-          )
-          as _i4.Future<_i2.Position>);
+          ),
+        ),
+      ) as _i4.Future<_i2.Position>);
 
   @override
-  _i4.Stream<_i5.ServiceStatus> getServiceStatusStream() =>
-      (super.noSuchMethod(
-            Invocation.method(#getServiceStatusStream, []),
-            returnValue: _i4.Stream<_i5.ServiceStatus>.empty(),
-          )
-          as _i4.Stream<_i5.ServiceStatus>);
+  _i4.Stream<_i5.ServiceStatus> getServiceStatusStream() => (super.noSuchMethod(
+        Invocation.method(#getServiceStatusStream, []),
+        returnValue: _i4.Stream<_i5.ServiceStatus>.empty(),
+      ) as _i4.Stream<_i5.ServiceStatus>);
 
   @override
   _i4.Stream<_i2.Position> getPositionStream({
     _i2.LocationSettings? locationSettings,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(#getPositionStream, [], {
-              #locationSettings: locationSettings,
-            }),
-            returnValue: _i4.Stream<_i2.Position>.empty(),
-          )
-          as _i4.Stream<_i2.Position>);
+        Invocation.method(#getPositionStream, [], {
+          #locationSettings: locationSettings,
+        }),
+        returnValue: _i4.Stream<_i2.Position>.empty(),
+      ) as _i4.Stream<_i2.Position>);
 
   @override
   _i4.Future<_i5.LocationAccuracyStatus> requestTemporaryFullAccuracy({
     required String? purposeKey,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(#requestTemporaryFullAccuracy, [], {
-              #purposeKey: purposeKey,
-            }),
-            returnValue: _i4.Future<_i5.LocationAccuracyStatus>.value(
-              _i5.LocationAccuracyStatus.reduced,
-            ),
-          )
-          as _i4.Future<_i5.LocationAccuracyStatus>);
+        Invocation.method(#requestTemporaryFullAccuracy, [], {
+          #purposeKey: purposeKey,
+        }),
+        returnValue: _i4.Future<_i5.LocationAccuracyStatus>.value(
+          _i5.LocationAccuracyStatus.reduced,
+        ),
+      ) as _i4.Future<_i5.LocationAccuracyStatus>);
 
   @override
   _i4.Future<_i5.LocationAccuracyStatus> getLocationAccuracy() =>
       (super.noSuchMethod(
-            Invocation.method(#getLocationAccuracy, []),
-            returnValue: _i4.Future<_i5.LocationAccuracyStatus>.value(
-              _i5.LocationAccuracyStatus.reduced,
-            ),
-          )
-          as _i4.Future<_i5.LocationAccuracyStatus>);
+        Invocation.method(#getLocationAccuracy, []),
+        returnValue: _i4.Future<_i5.LocationAccuracyStatus>.value(
+          _i5.LocationAccuracyStatus.reduced,
+        ),
+      ) as _i4.Future<_i5.LocationAccuracyStatus>);
 
   @override
-  _i4.Future<bool> openAppSettings() =>
-      (super.noSuchMethod(
-            Invocation.method(#openAppSettings, []),
-            returnValue: _i4.Future<bool>.value(false),
-          )
-          as _i4.Future<bool>);
+  _i4.Future<bool> openAppSettings() => (super.noSuchMethod(
+        Invocation.method(#openAppSettings, []),
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
 
   @override
-  _i4.Future<bool> openLocationSettings() =>
-      (super.noSuchMethod(
-            Invocation.method(#openLocationSettings, []),
-            returnValue: _i4.Future<bool>.value(false),
-          )
-          as _i4.Future<bool>);
+  _i4.Future<bool> openLocationSettings() => (super.noSuchMethod(
+        Invocation.method(#openLocationSettings, []),
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
 
   @override
   double distanceBetween(
@@ -166,15 +149,14 @@ class MockGeolocatorPlatform extends _i1.Mock
     double? endLongitude,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#distanceBetween, [
-              startLatitude,
-              startLongitude,
-              endLatitude,
-              endLongitude,
-            ]),
-            returnValue: 0.0,
-          )
-          as double);
+        Invocation.method(#distanceBetween, [
+          startLatitude,
+          startLongitude,
+          endLatitude,
+          endLongitude,
+        ]),
+        returnValue: 0.0,
+      ) as double);
 
   @override
   double bearingBetween(
@@ -184,13 +166,12 @@ class MockGeolocatorPlatform extends _i1.Mock
     double? endLongitude,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#bearingBetween, [
-              startLatitude,
-              startLongitude,
-              endLatitude,
-              endLongitude,
-            ]),
-            returnValue: 0.0,
-          )
-          as double);
+        Invocation.method(#bearingBetween, [
+          startLatitude,
+          startLongitude,
+          endLatitude,
+          endLongitude,
+        ]),
+        returnValue: 0.0,
+      ) as double);
 }
