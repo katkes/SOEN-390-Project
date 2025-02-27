@@ -82,7 +82,7 @@ flutter:
     - assets/geojson_files/building_list.geojson
     - assets/geojson_files/building_boundaries.geojson
     - assets/images/buildings/hall.png
-    #- .env
+    - .env
 
 
   # To add assets to your application, add an assets section, like this:
