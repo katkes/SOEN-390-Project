@@ -232,3 +232,56 @@ jobs:
           gsutil cp frontend/reports/sonar-flutter-lint.json gs://soen_390_reports/$BRANCH_NAME/frontend/
 
 
+  cleanup:
+    name: Cleanup Runner Disk Space
+    runs-on: [our-runner]
+    if: always()  # Ensures this runs even if previous jobs fail
+    needs: [setup_flutter, linting, testing, flutter_build, sonarqube]
+
+    steps:
+      - name: Free Up Space - Remove Gradle Cache
+        run: |
+          echo "Cleaning up Gradle caches..."
+          rm -rf ~/.gradle/caches
+          rm -rf ~/.gradle/wrapper
+          echo "Gradle cache cleaned."
+
+      - name: Free Up Space - Remove Actions Runner Work Directory
+        run: |
+          echo "Cleaning up Actions runner workspace..."
+          rm -rf ~/actions-runner/_work/*
+          echo "Actions runner workspace cleaned."
+
+      - name: Free Up Space - Remove Old Android SDK Components
+        run: |
+          echo "Removing unused Android SDK components..."
+          rm -rf ~/Android/Sdk/.android
+          rm -rf ~/Android/Sdk/ndk/*
+          echo "Android SDK cleanup completed."
+
+      - name: Free Up Space - Remove Old System Logs
+        run: |
+          echo "Cleaning up system logs..."
+          journalctl --vacuum-time=7d
+          journalctl --vacuum-size=500M
+          echo "System logs cleaned."
+
+      - name: Free Up Space - Remove Temporary Files
+        run: |
+          echo "Cleaning up /tmp..."
+          rm -rf /tmp/*
+          echo "Temporary files removed."
+
+      - name: Free Up Space - Remove Unused Packages
+        run: |
+          echo "Removing unused packages..."
+          sudo apt autoremove -y
+          sudo apt clean
+          echo "Unused packages removed."
+          cleanup:
+            name: Cleanup Runner Disk Space
+            runs-on: [our-runner]
+            if: always()  # Ensures this runs even if previous jobs fail
+            needs: [setup_flutter, linting, testing, flutter_build, sonarqube]
+        
+        
