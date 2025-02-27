@@ -20,8 +20,8 @@ void main() {
 
   test('getRoute should return a valid route', () async {
     // Arrange
-    final from = LatLng(45.5017, -73.5673);
-    final to = LatLng(45.5087, -73.554);
+    final from = const LatLng(45.5017, -73.5673);
+    final to = const LatLng(45.5087, -73.554);
 
     final mockOsrmResponse = RouteResponse(
       code: OsrmResponseCode.ok,
@@ -62,8 +62,8 @@ void main() {
   test('getRoute should return default route when no routes are found',
       () async {
     // Arrange
-    final from = LatLng(45.5017, -73.5673);
-    final to = LatLng(45.5087, -73.554);
+    final from = const LatLng(45.5017, -73.5673);
+    final to = const LatLng(45.5087, -73.554);
 
     final emptyRouteResponse = RouteResponse(
       code: OsrmResponseCode.ok,
@@ -85,8 +85,8 @@ void main() {
 
   test('getRoute should return null when an exception occurs', () async {
     // Arrange
-    final from = LatLng(45.5017, -73.5673);
-    final to = LatLng(45.5087, -73.554);
+    final from = const LatLng(45.5017, -73.5673);
+    final to = const LatLng(45.5087, -73.554);
 
     when(mockOsrm.route(any)).thenThrow(Exception('OSRM Error'));
 

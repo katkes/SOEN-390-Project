@@ -63,8 +63,8 @@ void main() {
         distance: 1000.0,
         duration: 600.0,
         routePoints: [
-          LatLng(45.497856, -73.579588),
-          LatLng(45.498000, -73.580000),
+          const LatLng(45.497856, -73.579588),
+          const LatLng(45.498000, -73.580000),
         ],
       );
     });
@@ -240,8 +240,8 @@ void main() {
   test('RouteService getRoute mock works', () async {
     // Test that our mock behaves as expected
     final result = await mockRouteService.getRoute(
-      from: LatLng(45.0, -73.0),
-      to: LatLng(46.0, -74.0),
+      from: const LatLng(45.0, -73.0),
+      to: const LatLng(46.0, -74.0),
     );
 
     expect(result, isNotNull);
