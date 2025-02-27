@@ -252,36 +252,26 @@ jobs:
           rm -rf ~/actions-runner/_work/*
           echo "Actions runner workspace cleaned."
 
-      - name: Free Up Space - Remove Old Android SDK Components
-        run: |
-          echo "Removing unused Android SDK components..."
-          rm -rf ~/Android/Sdk/.android
-          rm -rf ~/Android/Sdk/ndk/*
-          echo "Android SDK cleanup completed."
-
-      - name: Free Up Space - Remove Old System Logs
-        run: |
-          echo "Cleaning up system logs..."
-          journalctl --vacuum-time=7d
-          journalctl --vacuum-size=500M
-          echo "System logs cleaned."
-
       - name: Free Up Space - Remove Temporary Files
         run: |
-          echo "Cleaning up /tmp..."
+          echo "Cleaning up temporary files..."
           rm -rf /tmp/*
           echo "Temporary files removed."
 
-      - name: Free Up Space - Remove Unused Packages
+      - name: Free Up Space - Remove Flutter Build Cache
         run: |
-          echo "Removing unused packages..."
-          sudo apt autoremove -y
-          sudo apt clean
-          echo "Unused packages removed."
-          cleanup:
-            name: Cleanup Runner Disk Space
-            runs-on: [our-runner]
-            if: always()  # Ensures this runs even if previous jobs fail
-            needs: [setup_flutter, linting, testing, flutter_build, sonarqube]
-        
-        
+          echo "Cleaning up Flutter build cache..."
+          rm -rf frontend/build
+          rm -rf frontend/.dart_tool
+          rm -rf frontend/.flutter-plugins
+          echo "Flutter build cache cleaned."
+
+      - name: Free Up Space - Remove Node Modules (If Exists)
+        run: |
+          if [ -d "frontend/node_modules" ]; then
+            echo "Cleaning up node_modules..."
+            rm -rf frontend/node_modules
+            echo "node_modules cleaned."
+          else
+            echo "node_modules not found, skipping cleanup."
+          fi
