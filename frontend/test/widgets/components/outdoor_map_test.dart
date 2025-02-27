@@ -28,7 +28,10 @@ void main() {
         .thenAnswer((_) async => RouteResult(
               distance: 5000.0,
               duration: 600.0,
-              routePoints: [const LatLng(45.5017, -73.5673), const LatLng(45.508, -73.56)],
+              routePoints: [
+                const LatLng(45.5017, -73.5673),
+                const LatLng(45.508, -73.56)
+              ],
             ));
 
     // Better approach: Return a complete 1x1 transparent PNG
