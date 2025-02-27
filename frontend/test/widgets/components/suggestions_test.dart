@@ -7,7 +7,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:soen_390/widgets/suggestions.dart';
 
 void main() {
-  testWidgets('SuggestionsPopup displays suggestions', (WidgetTester tester) async {
+  testWidgets('SuggestionsPopup displays suggestions',
+      (WidgetTester tester) async {
     // Define a mock onSelect function
     void mockOnSelect(String suggestion) {}
 
@@ -32,7 +33,8 @@ void main() {
     expect(find.text("Bar"), findsOneWidget);
   });
 
-  testWidgets('SuggestionsPopup filters suggestions based on user input', (WidgetTester tester) async {
+  testWidgets('SuggestionsPopup filters suggestions based on user input',
+      (WidgetTester tester) async {
     // Define a mock onSelect function
     void mockOnSelect(String suggestion) {}
 
@@ -61,7 +63,8 @@ void main() {
     expect(find.text("Bar"), findsNothing);
   });
 
-  testWidgets('SuggestionsPopup interacts with suggestion items', (WidgetTester tester) async {
+  testWidgets('SuggestionsPopup interacts with suggestion items',
+      (WidgetTester tester) async {
     // Define a mock onSelect function
     String selectedSuggestion = '';
     void mockOnSelect(String suggestion) {
@@ -91,7 +94,8 @@ void main() {
     expect(find.byType(SuggestionsPopup), findsNothing);
   });
 
-  testWidgets('SuggestionsPopup interacts with the "Use this Address" button', (WidgetTester tester) async {
+  testWidgets('SuggestionsPopup interacts with the "Use this Address" button',
+      (WidgetTester tester) async {
     // Define a mock onSelect function
     String selectedSuggestion = '';
     void mockOnSelect(String suggestion) {

@@ -8,7 +8,8 @@ import 'package:soen_390/widgets/location_transport_selector.dart';
 import 'package:soen_390/widgets/suggestions.dart';
 
 void main() {
-  testWidgets('Displays location fields and transport modes', (WidgetTester tester) async {
+  testWidgets('Displays location fields and transport modes',
+      (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -30,7 +31,8 @@ void main() {
     expect(find.byIcon(Icons.directions_walk), findsOneWidget);
   });
 
-  testWidgets('Opens SuggestionsPopup when tapping location fields', (WidgetTester tester) async {
+  testWidgets('Opens SuggestionsPopup when tapping location fields',
+      (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -92,7 +94,8 @@ void main() {
     expect(walkIcon.color, const Color(0xFF912338)); // Selected color
   });
 
-  testWidgets('Confirms route with valid itinerary', (WidgetTester tester) async {
+  testWidgets('Confirms route with valid itinerary',
+      (WidgetTester tester) async {
     List<String> confirmedWaypoints = [];
     String confirmedTransportMode = '';
 
@@ -128,7 +131,8 @@ void main() {
     expect(confirmedTransportMode, "Train or Bus");
   });
 
-  testWidgets('Shows error when confirming route with incomplete itinerary', (WidgetTester tester) async {
+  testWidgets('Shows error when confirming route with incomplete itinerary',
+      (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -144,7 +148,8 @@ void main() {
     await tester.tap(find.text("Confirm Route"));
     await tester.pumpAndSettle();
 
-    expect(find.text("You must have at least a start and destination."), findsOneWidget);
+    expect(find.text("You must have at least a start and destination."),
+        findsOneWidget);
   });
 
   testWidgets('Adds stop to itinerary', (WidgetTester tester) async {
@@ -237,6 +242,5 @@ void main() {
 
     await tester.tap(find.byIcon(Icons.delete).first);
     await tester.pumpAndSettle();
-
   });
 }

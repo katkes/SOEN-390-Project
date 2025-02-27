@@ -10,7 +10,8 @@ import 'package:soen_390/widgets/route_card.dart';
 
 void main() {
   // Test to verify that RouteCards are displayed after adding a route
-  testWidgets('Displays RouteCards after adding a route', (WidgetTester tester) async {
+  testWidgets('Displays RouteCards after adding a route',
+      (WidgetTester tester) async {
     // Build the WaypointSelectionScreen widget inside a MaterialApp
     await tester.pumpWidget(
       const MaterialApp(
@@ -46,7 +47,8 @@ void main() {
   });
 
   // Test to verify that the WaypointSelectionScreen interacts with the NavBar
-  testWidgets('WaypointSelectionScreen interacts with NavBar', (WidgetTester tester) async {
+  testWidgets('WaypointSelectionScreen interacts with NavBar',
+      (WidgetTester tester) async {
     // Build the WaypointSelectionScreen widget inside a MaterialApp
     await tester.pumpWidget(
       const MaterialApp(
