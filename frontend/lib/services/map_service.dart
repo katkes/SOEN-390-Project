@@ -13,9 +13,10 @@ class MapService {
 
   Future<List<Marker>> loadBuildingMarkers(Function onMarkerTapped) async {
     try {
-      final String data = await rootBundle.loadString('assets/geojson_files/building_list.geojson');
+      final String data = await rootBundle
+          .loadString('assets/geojson_files/building_list.geojson');
       final Map<String, dynamic> jsonData = jsonDecode(data);
-      
+
       return _parseMarkers(jsonData, onMarkerTapped);
     } catch (e) {
       debugPrint('Error loading building markers: $e');
@@ -23,7 +24,8 @@ class MapService {
     }
   }
 
-  List<Marker> _parseMarkers(Map<String, dynamic> jsonData, Function onMarkerTapped) {
+  List<Marker> _parseMarkers(
+      Map<String, dynamic> jsonData, Function onMarkerTapped) {
     List<Marker> markers = [];
 
     if (jsonData['features'] is List) {
@@ -44,9 +46,11 @@ class MapService {
               height: markerSize,
               child: GestureDetector(
                 onTapDown: (TapDownDetails details) {
-                  onMarkerTapped(lat, lon, name, address, details.globalPosition);
+                  onMarkerTapped(
+                      lat, lon, name, address, details.globalPosition);
                 },
-                child: const Icon(Icons.location_pin, color: markerColor, size: markerSize),
+                child: const Icon(Icons.location_pin,
+                    color: markerColor, size: markerSize),
               ),
             ),
           );
@@ -58,7 +62,8 @@ class MapService {
 
   Future<List<Polygon>> loadBuildingPolygons() async {
     try {
-      final String data = await rootBundle.loadString('assets/geojson_files/building_boundaries.geojson');
+      final String data = await rootBundle
+          .loadString('assets/geojson_files/building_boundaries.geojson');
       final Map<String, dynamic> jsonData = jsonDecode(data);
 
       return _parsePolygons(jsonData);
@@ -74,14 +79,16 @@ class MapService {
     if (jsonData['features'] is List) {
       for (var feature in jsonData['features']) {
         var geometry = feature['geometry'];
-        
-        if (geometry?['type'] == 'MultiPolygon' && geometry['coordinates'] is List) {
+
+        if (geometry?['type'] == 'MultiPolygon' &&
+            geometry['coordinates'] is List) {
           for (var polygonRings in geometry['coordinates']) {
             List<LatLng> polygonPoints = polygonRings[0]
                 .map<LatLng>((coord) => LatLng(coord[1], coord[0]))
                 .toList();
 
-            if (polygonPoints.isNotEmpty && polygonPoints.first != polygonPoints.last) {
+            if (polygonPoints.isNotEmpty &&
+                polygonPoints.first != polygonPoints.last) {
               polygonPoints.add(polygonPoints.first);
             }
 

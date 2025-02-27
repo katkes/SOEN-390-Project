@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -76,28 +75,26 @@ class _MapWidgetState extends State<MapWidget> {
   void initState() {
     super.initState();
     _mapController = MapController();
-    _mapService = MapService(); 
-     _markerTapHandler = MarkerTapHandler(
-    onBuildingInfoUpdated: (name, address) {
-      setState(() {
-        _selectedBuildingName = name;
-        _selectedBuildingAddress = address;
-         print('Building selected: Name = $_selectedBuildingName, Address = $_selectedBuildingAddress');
-      });
-    },
-    
-    mapController: _mapController,
-    buildingPopUps: widget.buildingPopUps,
-  );
+    _mapService = MapService();
+    _markerTapHandler = MarkerTapHandler(
+      onBuildingInfoUpdated: (name, address) {
+        setState(() {
+          _selectedBuildingName = name;
+          _selectedBuildingAddress = address;
+          print(
+              'Building selected: Name = $_selectedBuildingName, Address = $_selectedBuildingAddress');
+        });
+      },
+      mapController: _mapController,
+      buildingPopUps: widget.buildingPopUps,
+    );
     _loadBuildingLocations();
     _loadBuildingBoundaries();
-   
 
     from = widget.location;
     to = LatLng(
         widget.location.latitude + 0.005, widget.location.longitude + 0.005);
     _fetchRoute();
- 
   }
 
   @override
@@ -109,21 +106,24 @@ class _MapWidgetState extends State<MapWidget> {
       _fetchRoute();
     }
   }
- Future<void> _loadBuildingLocations() async {
-  try {
-    final markers = await _mapService.loadBuildingMarkers((lat, lon, name, address, tapPosition) {
 
-      _markerTapHandler.onMarkerTapped(lat, lon, name, address, tapPosition, context);
-    });
-    setState(() {
-      _buildingMarkers = markers;
-    });
-  } catch (e) {
-    print('Error loading building markers: $e');
+  Future<void> _loadBuildingLocations() async {
+    try {
+      final markers = await _mapService
+          .loadBuildingMarkers((lat, lon, name, address, tapPosition) {
+        _markerTapHandler.onMarkerTapped(
+            lat, lon, name, address, tapPosition, context);
+      });
+      setState(() {
+        _buildingMarkers = markers;
+      });
+    } catch (e) {
+      print('Error loading building markers: $e');
+    }
   }
-}
-Future<void> _loadBuildingBoundaries() async {
-      try {
+
+  Future<void> _loadBuildingBoundaries() async {
+    try {
       final polygons = await _mapService.loadBuildingPolygons();
       setState(() {
         _buildingPolygons = polygons;
@@ -132,6 +132,7 @@ Future<void> _loadBuildingBoundaries() async {
       print('Error loading building boundaries: $e');
     }
   }
+
   /// Fetches a route from `from` to `to` using the injected `IRouteService`.
   ///
   /// The result updates the state with new distance, duration, and route points.
