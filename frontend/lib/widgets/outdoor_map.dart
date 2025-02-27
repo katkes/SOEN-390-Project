@@ -1,23 +1,17 @@
-import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:soen_390/services/interfaces/route_service_interface.dart';
 import 'package:http/http.dart' as http;
+import 'package:soen_390/services/map_service.dart';
+import 'package:soen_390/utils/marker_tap_handler.dart';
+import '../services/building_info_api.dart';
 
 /// A widget that displays an interactive map with routing functionality.
 ///
 /// The map allows users to visualize locations, interact with markers,
 /// and calculate routes between two selected points using the injected `IRouteService`.
-import 'building_information_popup.dart';
-import 'package:popover/popover.dart';
-
-//import 'package:soen_390/services/route_service.dart';
-// ignore: depend_on_referenced_packages
-
-import '../services/building_info_api.dart';
-
 class MapWidget extends StatefulWidget {
   /// The initial location where the map is centered.
 
@@ -75,17 +69,35 @@ class _MapWidgetState extends State<MapWidget> {
 
   bool isPairly = false;
 
+  late MapService _mapService;
+  late MarkerTapHandler _markerTapHandler;
+
   @override
   void initState() {
     super.initState();
     _mapController = MapController();
+    _mapService = MapService(); 
+     _markerTapHandler = MarkerTapHandler(
+    onBuildingInfoUpdated: (name, address) {
+      setState(() {
+        _selectedBuildingName = name;
+        _selectedBuildingAddress = address;
+         print('Building selected: Name = $_selectedBuildingName, Address = $_selectedBuildingAddress');
+      });
+    },
+    
+    mapController: _mapController,
+    buildingPopUps: widget.buildingPopUps,
+  );
     _loadBuildingLocations();
     _loadBuildingBoundaries();
+   
 
     from = widget.location;
     to = LatLng(
         widget.location.latitude + 0.005, widget.location.longitude + 0.005);
     _fetchRoute();
+ 
   }
 
   @override
@@ -97,181 +109,29 @@ class _MapWidgetState extends State<MapWidget> {
       _fetchRoute();
     }
   }
-  //MapController get mapController => _mapController; //NEW
+ Future<void> _loadBuildingLocations() async {
+  try {
+    final markers = await _mapService.loadBuildingMarkers((lat, lon, name, address, tapPosition) {
 
-  Future<void> _loadBuildingLocations() async {
-    try {
-      print('Loading building markers...');
-      final String data = await rootBundle
-          .loadString('assets/geojson_files/building_list.geojson');
-      print('Building markers file loaded successfully.');
-
-      final Map<String, dynamic> jsonData = jsonDecode(data);
-      List<Marker> markers = [];
-
-      if (jsonData['features'] is List) {
-        print('Found ${jsonData['features'].length} buildings in the file.');
-        for (var feature in jsonData['features']) {
-          if (feature['geometry']?['type'] == 'Point' &&
-              feature['geometry']['coordinates'] is List) {
-            List<dynamic> coordinates = feature['geometry']['coordinates'];
-            double lon = coordinates[0];
-            double lat = coordinates[1];
-
-            String buildingName =
-                feature['properties']['Building Long Name'] ?? "Unknown";
-            String address =
-                feature['properties']['Address'] ?? "No address available";
-
-            markers.add(
-              Marker(
-                point: LatLng(lat, lon),
-                width: 40.0,
-                height: 40.0,
-                child: GestureDetector(
-                  onTapDown: (TapDownDetails details) {
-                    RenderBox renderBox =
-                        context.findRenderObject() as RenderBox;
-                    Offset tapPosition =
-                        renderBox.globalToLocal(details.globalPosition);
-                    _onMarkerTapped(
-                        lat, lon, buildingName, address, tapPosition);
-                  },
-                  child: const Icon(Icons.location_pin,
-                      color: Color(0xFF912338), size: 40.0),
-                ),
-              ),
-            );
-          }
-        }
-      }
-
-      setState(() {
-        _buildingMarkers = markers;
-      });
-    } catch (e) {
-      print('Error loading building markers: $e');
-    }
+      _markerTapHandler.onMarkerTapped(lat, lon, name, address, tapPosition, context);
+    });
+    setState(() {
+      _buildingMarkers = markers;
+    });
+  } catch (e) {
+    print('Error loading building markers: $e');
   }
-
+}
 Future<void> _loadBuildingBoundaries() async {
-    try {
-      print('Loading building boundaries...');
-      final String data = await rootBundle
-          .loadString('assets/geojson_files/building_boundaries.geojson');
-      print('Building boundaries file loaded successfully.');
-
-      final Map<String, dynamic> jsonData = jsonDecode(data);
-      List<Polygon> polygons = _extractPolygons(jsonData);
-
+      try {
+      final polygons = await _mapService.loadBuildingPolygons();
       setState(() {
         _buildingPolygons = polygons;
-        print("Loaded ${_buildingPolygons.length} building polygons.");
       });
-      print(
-          'Building boundaries successfully added to the map: ${polygons.length} polygons');
     } catch (e) {
       print('Error loading building boundaries: $e');
     }
   }
-
-  List<Polygon> _extractPolygons(Map<String, dynamic> jsonData) {
-    List<Polygon> polygons = [];
-    if (jsonData['features'] is List) {
-      print('Found ${jsonData['features'].length} buildings with boundaries.');
-      for (var feature in jsonData['features']) {
-        _processFeature(feature, polygons);
-      }
-    }
-    return polygons;
-  }
-
-  void _processFeature(Map<String, dynamic> feature, List<Polygon> polygons) {
-    var geometry = feature['geometry'];
-    if (geometry?['type'] == 'MultiPolygon' &&
-        geometry['coordinates'] is List) {
-      for (var polygonRings in geometry['coordinates']) {
-        _addPolygon(polygonRings, feature, polygons);
-      }
-    }
-  }
-
-  void _addPolygon(List<dynamic> polygonRings, Map<String, dynamic> feature,
-      List<Polygon> polygons) {
-    List<dynamic> outerRing = polygonRings[0];
-    try {
-      List<LatLng> polygonPoints = outerRing
-          .map<LatLng>(
-              (coord) => LatLng(coord[1].toDouble(), coord[0].toDouble()))
-          .toList();
-      
-      if (polygonPoints.isNotEmpty &&
-          polygonPoints.first != polygonPoints.last) {
-        polygonPoints.add(polygonPoints.first);
-      }
-      
-      polygons.add(
-        Polygon(
-          points: polygonPoints,
-          color: const Color(0x33FF0000),
-          borderColor: Colors.red,
-          borderStrokeWidth: 2,
-          label: feature['properties']?['unique_id']?.toString() ??
-              'Unknown Building',
-        ),
-      );
-    } catch (e) {
-      print('Error creating polygon points: $e');
-    }
-  }
-
-  void _onMarkerTapped(
-      double lat, double lon, String name, String address, Offset tapPosition) {
-    setState(() {
-      _selectedBuildingName = name;
-      _selectedBuildingAddress = address;
-      _mapController.move(LatLng(lat, lon), 17.0);
-      print(
-          'Selected Building: $_selectedBuildingName, $_selectedBuildingAddress');
-    });
-
-    final screenSize = MediaQuery.of(context).size;
-    final shouldShowAbove = tapPosition.dy > screenSize.height / 2;
-
-    widget.buildingPopUps
-        .fetchBuildingInformation(lat, lon, name)
-        .then((buildingInfo) {
-      String? photoUrl = buildingInfo["photo"];
-      print("Fetched photo URL: $photoUrl");
-
-      Future.delayed(const Duration(milliseconds: 200), () {
-        if (!mounted) return; // Ensure the widget is still mounted
-        showPopover(
-          context: context,
-          bodyBuilder: (context) => BuildingInformationPopup(
-            buildingName: name,
-            buildingAddress: address,
-            photoUrl: photoUrl,
-          ),
-          onPop: () => print('Popover closed'),
-          direction:
-              shouldShowAbove ? PopoverDirection.top : PopoverDirection.bottom,
-          width: 220,
-          height: 180,
-          arrowHeight: 15,
-          arrowWidth: 20,
-          backgroundColor: Colors.white,
-          barrierColor: Colors.transparent,
-          radius: 8,
-          arrowDyOffset: tapPosition.dy,
-        );
-      });
-
-    }).catchError((error) {
-      print("Error fetching building photo: $error");
-    });
-  }
-
   /// Fetches a route from `from` to `to` using the injected `IRouteService`.
   ///
   /// The result updates the state with new distance, duration, and route points.
