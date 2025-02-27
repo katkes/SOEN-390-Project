@@ -240,10 +240,6 @@ jobs:
     needs: [setup_flutter, linting, testing, flutter_build, sonarqube]
 
     steps:
-      - name: Flutter cleaning the build
-        working-directory: ./frontend
-        run: flutter clean
-        
       - name: Free Up Space - Remove Gradle Cache
         run: |
           echo "Cleaning up Gradle caches..."
