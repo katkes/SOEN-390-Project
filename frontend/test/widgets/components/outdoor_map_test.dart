@@ -199,6 +199,7 @@ void main() {
 
     // Update with new location
     final newLocation = const LatLng(45.505, -73.565);
+
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
