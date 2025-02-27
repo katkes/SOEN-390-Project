@@ -244,7 +244,7 @@ Future<void> _loadBuildingBoundaries() async {
       String? photoUrl = buildingInfo["photo"];
       print("Fetched photo URL: $photoUrl");
 
-      Future.delayed(Duration(milliseconds: 200), () {
+      Future.delayed(const Duration(milliseconds: 200), () {
         if (!mounted) return; // Ensure the widget is still mounted
         showPopover(
           context: context,
