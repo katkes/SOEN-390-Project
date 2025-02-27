@@ -68,8 +68,7 @@ class MockGeolocatorPlatform extends Mock
   @override
   Stream<geo.Position> getPositionStream(
       {geo.LocationSettings? locationSettings}) {
-    return Stream.fromIterable(
-        [mockPosition]);
+    return Stream.fromIterable([mockPosition]);
   }
 
   @override
@@ -284,6 +283,4 @@ void main() {
     // Cleanup
     debugDefaultTargetPlatformOverride = null;
   });
-
-
 }
