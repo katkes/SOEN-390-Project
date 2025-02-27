@@ -310,7 +310,7 @@ packages:
     source: hosted
     version: "2.3.9"
   geolocator_platform_interface:
-    dependency: "direct dev"
+    dependency: transitive
     description:
       name: geolocator_platform_interface
       sha256: "386ce3d9cce47838355000070b1d0b13efb5bc430f8ecda7e9238c8409ace012"

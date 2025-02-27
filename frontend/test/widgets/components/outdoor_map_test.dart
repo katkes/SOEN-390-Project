@@ -44,6 +44,10 @@ void main() {
                 const LatLng(45.5017, -73.5673),
                 const LatLng(45.508, -73.56)
               ],
+              routePoints: [
+                const LatLng(45.5017, -73.5673),
+                const LatLng(45.508, -73.56)
+              ],
             ));
 
     // Better approach: Return a complete 1x1 transparent PNG
@@ -198,6 +202,7 @@ void main() {
     clearInteractions(mockRouteService);
 
     // Update with new location
+    final newLocation = const LatLng(45.505, -73.565);
     final newLocation = const LatLng(45.505, -73.565);
     await tester.pumpWidget(
       MaterialApp(
