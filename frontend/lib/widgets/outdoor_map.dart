@@ -154,7 +154,7 @@ class _MapWidgetState extends State<MapWidget> {
     }
   }
 
-  Future<void> _loadBuildingBoundaries() async {
+Future<void> _loadBuildingBoundaries() async {
     try {
       print('Loading building boundaries...');
       final String data = await rootBundle
@@ -162,54 +162,7 @@ class _MapWidgetState extends State<MapWidget> {
       print('Building boundaries file loaded successfully.');
 
       final Map<String, dynamic> jsonData = jsonDecode(data);
-      List<Polygon> polygons = [];
-
-      if (jsonData['features'] is List) {
-        print(
-            'Found ${jsonData['features'].length} buildings with boundaries.');
-        for (var feature in jsonData['features']) {
-          if (feature['geometry']?['type'] == 'MultiPolygon' &&
-              feature['geometry']['coordinates'] is List) {
-            // MultiPolygon is a list of polygon rings
-            List<dynamic> multiPolygon = feature['geometry']['coordinates'];
-
-            for (var polygonRings in multiPolygon) {
-              List<dynamic> outerRing = polygonRings[0];
-
-              try {
-                List<LatLng> polygonPoints = outerRing
-                    .map<LatLng>((coord) => LatLng(
-                          coord[1].toDouble(),
-                          coord[0].toDouble(),
-                        ))
-                    .toList();
-
-                if (polygonPoints.first != polygonPoints.last) {
-                  polygonPoints.add(polygonPoints.first);
-                }
-
-                print('Creating polygon with ${polygonPoints.length} points');
-                print('First point: ${polygonPoints.first}');
-                print('Last point: ${polygonPoints.last}');
-
-                polygons.add(
-                  Polygon(
-                    points: polygonPoints,
-                    color: const Color(0x33FF0000),
-                    borderColor: Colors.red,
-                    borderStrokeWidth: 2,
-                    label: feature['properties']?['unique_id']?.toString() ??
-                        'Unknown Building',
-                  ),
-                );
-              } catch (e) {
-                print('Error creating polygon points: $e');
-                continue;
-              }
-            }
-          }
-        }
-      }
+      List<Polygon> polygons = _extractPolygons(jsonData);
 
       setState(() {
         _buildingPolygons = polygons;
@@ -219,7 +172,56 @@ class _MapWidgetState extends State<MapWidget> {
           'Building boundaries successfully added to the map: ${polygons.length} polygons');
     } catch (e) {
       print('Error loading building boundaries: $e');
-      print('Error details: ${e.toString()}');
+    }
+  }
+
+  List<Polygon> _extractPolygons(Map<String, dynamic> jsonData) {
+    List<Polygon> polygons = [];
+    if (jsonData['features'] is List) {
+      print('Found ${jsonData['features'].length} buildings with boundaries.');
+      for (var feature in jsonData['features']) {
+        _processFeature(feature, polygons);
+      }
+    }
+    return polygons;
+  }
+
+  void _processFeature(Map<String, dynamic> feature, List<Polygon> polygons) {
+    var geometry = feature['geometry'];
+    if (geometry?['type'] == 'MultiPolygon' &&
+        geometry['coordinates'] is List) {
+      for (var polygonRings in geometry['coordinates']) {
+        _addPolygon(polygonRings, feature, polygons);
+      }
+    }
+  }
+
+  void _addPolygon(List<dynamic> polygonRings, Map<String, dynamic> feature,
+      List<Polygon> polygons) {
+    List<dynamic> outerRing = polygonRings[0];
+    try {
+      List<LatLng> polygonPoints = outerRing
+          .map<LatLng>(
+              (coord) => LatLng(coord[1].toDouble(), coord[0].toDouble()))
+          .toList();
+      
+      if (polygonPoints.isNotEmpty &&
+          polygonPoints.first != polygonPoints.last) {
+        polygonPoints.add(polygonPoints.first);
+      }
+      
+      polygons.add(
+        Polygon(
+          points: polygonPoints,
+          color: const Color(0x33FF0000),
+          borderColor: Colors.red,
+          borderStrokeWidth: 2,
+          label: feature['properties']?['unique_id']?.toString() ??
+              'Unknown Building',
+        ),
+      );
+    } catch (e) {
+      print('Error creating polygon points: $e');
     }
   }
 
