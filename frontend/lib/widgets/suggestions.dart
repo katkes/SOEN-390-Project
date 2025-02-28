@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class SuggestionsPopup extends StatefulWidget {
   final Function(String) onSelect;
 
-  const SuggestionsPopup({super.key, required this.onSelect});
+  SuggestionsPopup({super.key, required this.onSelect});
 
   @override
   SuggestionsPopupState createState() => SuggestionsPopupState();
