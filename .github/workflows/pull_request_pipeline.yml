@@ -236,7 +236,7 @@ jobs:
   cleanup:
     name: Cleanup Runner Disk Space
     runs-on: [our-runner]
-    if: always()  # Ensures this runs even if previous jobs fail
+    if: github.event_name == 'pull_request'  
     needs: [setup_flutter, linting, testing, flutter_build, sonarqube]
 
     steps:
