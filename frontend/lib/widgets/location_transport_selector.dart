@@ -93,8 +93,6 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
               ),
               child: const Text("Add Stop to Itinerary"),
             ),
-
-            // ✅ "Leave Now" Dropdown Moved Here
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
