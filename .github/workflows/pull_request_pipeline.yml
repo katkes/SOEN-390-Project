@@ -7,9 +7,10 @@ on:
     paths:
       - frontend/**
       - .github/**
-  pull_request:
-    branches:
-      - main
+  # Removed due to duplication of pipelines, re-add if needed
+  # pull_request:
+  #   branches:
+  #     - main
 
 permissions:
   actions: read
