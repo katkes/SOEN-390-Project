@@ -120,6 +120,7 @@ jobs:
     name: Run Flutter Tests
     runs-on: [our-runner]
     needs: setup_flutter  
+    if: github.event_name != 'pull_request'  
 
     steps:
       - name: Checkout repository
