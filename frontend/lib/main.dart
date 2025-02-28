@@ -10,11 +10,14 @@ import 'package:latlong2/latlong.dart';
 import 'package:soen_390/providers/service_providers.dart'; // Import providers
 import 'package:soen_390/services/http_service.dart'; // Import HttpService
 import 'package:soen_390/services/interfaces/route_service_interface.dart'; // Import IRouteService
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:soen_390/services/building_info_api.dart';
 
 /// The entry point of the application.
 ///
 /// This function initializes the Riverpod provider scope and starts the app.
-void main() {
+void main() async {
+  await dotenv.load(fileName: ".env");
   runApp(
     const ProviderScope(
       child: MyApp(),
@@ -83,10 +86,24 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
 
   /// The user's current location on the map.
   LatLng _currentLocation = const LatLng(45.497856, -73.579588);
+  // http.Client? _httpClient;
+  late BuildingPopUps _buildingPopUps;
+  late GoogleMapsApiClient _mapsApiClient;
 
-  /// Handles navigation bar item selection.
-  ///
-  /// Updates the `_selectedIndex` state when a navigation item is tapped.
+  @override
+  void initState() {
+    super.initState();
+    _mapsApiClient = GoogleMapsApiClient(
+        apiKey: dotenv.env['GOOGLE_MAPS_API_KEY']!,
+        client: widget.httpService.client);
+    _buildingPopUps = BuildingPopUps(mapsApiClient: _mapsApiClient);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -139,8 +156,10 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                           borderRadius: BorderRadius.circular(30),
                           child: MapWidget(
                             location: _currentLocation,
-                            httpClient: widget.httpService.client,
                             routeService: widget.routeService,
+                            httpClient: widget.httpService.client,
+                            mapsApiClient: _mapsApiClient,
+                            buildingPopUps: _buildingPopUps,
                           ),
                         ),
                       ),
