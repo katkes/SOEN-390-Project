@@ -1,28 +1,37 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:osrm/osrm.dart';
-import 'package:soen_390/services/osrm_route_service.dart';
-import '../services/interfaces/route_service_interface.dart';
+import 'package:geolocator/geolocator.dart'; // ✅ Import Geolocator
 import 'package:soen_390/services/http_service.dart';
+import 'package:soen_390/services/google_route_service.dart';
+import '../services/interfaces/route_service_interface.dart';
+import 'package:soen_390/utils/location_service.dart';
 
-/// Provides an instance of [Osrm] client.
-///
-/// This client is responsible for handling requests to the OSRM API,
-/// which is used for route calculations.
-final osrmProvider = Provider<Osrm>((ref) {
-  return Osrm();
+/// Provides an instance of [GeolocatorPlatform].
+final geolocatorProvider = Provider<GeolocatorPlatform>((ref) {
+  return GeolocatorPlatform.instance; // ✅ Provide an instance of Geolocator
 });
 
-/// Provides an implementation of [IRouteService] using [OsrmRouteService].
-///
-/// This service is responsible for fetching routes using the OSRM client.
-/// It allows dependency injection via Riverpod for better state management
-/// and testability.
-final routeServiceProvider = Provider<IRouteService>((ref) {
-  final osrmClient = ref.read(osrmProvider);
-  return OsrmRouteService(osrmClient);
+/// Provides an instance of [LocationService].
+final locationServiceProvider = Provider<LocationService>((ref) {
+  final geolocator =
+      ref.read(geolocatorProvider); // ✅ Read the geolocator instance
+  return LocationService(
+      geolocator: geolocator); // ✅ Pass geolocator to LocationService
 });
 
 /// Provides an instance of [HttpService] to manage HTTP requests.
 final httpServiceProvider = Provider<HttpService>((ref) {
   return HttpService();
+});
+
+/// Provides an implementation of [IRouteService] using [GoogleRouteService].
+///
+/// This service is responsible for fetching routes via Google Maps API.
+final routeServiceProvider = Provider<IRouteService>((ref) {
+  final locationService = ref.read(locationServiceProvider);
+  final httpService = ref.read(httpServiceProvider);
+
+  return GoogleRouteService(
+    locationService: locationService, // ✅ Required argument provided
+    httpService: httpService, // ✅ Required argument provided
+  );
 });

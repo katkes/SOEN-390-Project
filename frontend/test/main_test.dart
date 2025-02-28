@@ -74,7 +74,7 @@ void main() {
     mockBuildingPopUps = MockBuildingPopUps();
 
     // Set up mock behavior for getRoute method
-    when(mockRouteService.getRoute(
+when(mockRouteService.getRoute(
       from: anyNamed('from'),
       to: anyNamed('to'),
     )).thenAnswer((_) async {
@@ -85,8 +85,20 @@ void main() {
           const LatLng(45.497856, -73.579588),
           const LatLng(45.498000, -73.580000),
         ],
+        steps: [
+          // ✅ Add this
+          StepResult(
+            distance: 500.0,
+            duration: 300.0,
+            instruction: "Turn left onto Main St.",
+            maneuver: "turn-left",
+            startLocation: const LatLng(45.497856, -73.579588),
+            endLocation: const LatLng(45.498000, -73.580000),
+          ),
+        ],
       );
     });
+
 
     // Mock the client property on the HttpService
     when(mockHttpService.client).thenReturn(mockHttpClient);

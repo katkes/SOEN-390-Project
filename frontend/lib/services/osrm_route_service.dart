@@ -1,4 +1,4 @@
-import 'package:latlong2/latlong.dart';
+/* import 'package:latlong2/latlong.dart';
 import 'package:osrm/osrm.dart';
 import 'interfaces/route_service_interface.dart';
 
@@ -65,3 +65,4 @@ class OsrmRouteService implements IRouteService {
     }
   }
 }
+ */
