@@ -18,6 +18,7 @@ permissions:
 jobs:
   setup_gcs:
     name: Setup GCS Folder
+    timeout-minutes: 60
     runs-on: [our-runner]
 
     steps:
