@@ -8,13 +8,13 @@ final ThemeData appTheme = ThemeData(
     onPrimary: Colors.white,
     secondary: Color(0xFF912338),
     onSecondary: Colors.white,
-    surface: Colors.white, // Use surface instead of background
-    onSurface: Colors.black, // Text/icon color on surface
+    surface: Colors.white,
+    onSurface: Colors.black,
     error: Colors.red,
     onError: Colors.white,
     outline: Colors.grey,
-    scrim: Colors.black, // Optional: Used for overlays like dialogs
+    scrim: Colors.black,
   ),
-  scaffoldBackgroundColor: Colors.white, // Explicitly set background for pages
+  scaffoldBackgroundColor: Colors.white,
   useMaterial3: true,
 );

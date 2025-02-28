@@ -233,3 +233,22 @@ jobs:
           gsutil cp frontend/reports/sonar-flutter-lint.json gs://soen_390_reports/$BRANCH_NAME/frontend/
 
 
+  cleanup:
+    name: Cleanup Runner Disk Space
+    runs-on: [our-runner]
+    if: always()  # Ensures this runs even if previous jobs fail
+    needs: [setup_flutter, linting, testing, flutter_build, sonarqube]
+
+    steps:
+      - name: Free Up Space - Remove Gradle Cache
+        run: |
+          echo "Cleaning up Gradle caches..."
+          rm -rf ~/.gradle/caches
+          rm -rf ~/.gradle/wrapper
+          echo "Gradle cache cleaned."
+
+      - name: Free Up Space - Remove Actions Runner Work Directory
+        run: |
+          echo "Cleaning up Actions runner workspace..."
+          rm -rf ~/actions-runner/_work/*
+          echo "Actions runner workspace cleaned."
