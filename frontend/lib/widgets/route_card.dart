@@ -1,3 +1,8 @@
+// RouteCard is a reusable widget that displays route details in a structured card format.
+// It includes the route title, time range, duration, description, and relevant transport icons.
+// This widget is used in WaypointSelectionScreen to show confirmed routes dynamically.
+// The card is styled with rounded corners, padding, and a shadow for a clean UI appearance.
+
 import 'package:flutter/material.dart';
 
 class RouteCard extends StatelessWidget {

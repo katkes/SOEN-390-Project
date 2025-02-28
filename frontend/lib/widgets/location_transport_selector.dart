@@ -1,3 +1,9 @@
+// LocationTransportSelector is responsible for handling user input related to
+// selecting start and destination locations, adding stops, choosing transport modes,
+// and setting departure options (Leave Now, Depart At, Arrive By).
+// Users can reorder their itinerary using drag-and-drop functionality and confirm their route.
+// The confirmed waypoints and transport mode are sent to the routing system for processing.
+
 import 'package:flutter/material.dart';
 import 'suggestions.dart';
 
@@ -14,6 +20,7 @@ class LocationTransportSelector extends StatefulWidget {
 class LocationTransportSelectorState extends State<LocationTransportSelector> {
   List<String> itinerary = [];
   String selectedMode = "Train or Bus";
+  String selectedTimeOption = "Leave Now"; // Default time selection
 
   @override
   Widget build(BuildContext context) {
@@ -57,29 +64,64 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
         const SizedBox(height: 10),
         _buildLocationField("Destination", false),
         const SizedBox(height: 10),
-        ElevatedButton(
-          onPressed: () {
-            if (itinerary.length < 2) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                    content: Text(
-                        "Select both start and destination before adding!")),
-              );
-            } else {
-              setState(() {
-                itinerary.add("New Stop ${itinerary.length + 1}");
-              });
-            }
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.white,
-            foregroundColor: const Color(0xff912338),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-              side: const BorderSide(color: Color(0xff912338)),
+
+        // ✅ Add Stop & "Leave Now" Dropdown in Row
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                if (itinerary.length < 2) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text(
+                            "Select both start and destination before adding!")),
+                  );
+                } else {
+                  setState(() {
+                    itinerary.add("New Stop ${itinerary.length + 1}");
+                  });
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: const Color(0xff912338),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  side: const BorderSide(color: Color(0xff912338)),
+                ),
+              ),
+              child: const Text("Add Stop to Itinerary"),
             ),
-          ),
-          child: const Text("Add Stop to Itinerary"),
+
+            // ✅ "Leave Now" Dropdown Moved Here
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.black26),
+                color: Colors.white,
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: selectedTimeOption, // Default value
+                  icon: const Icon(Icons.arrow_drop_down),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      selectedTimeOption = newValue!;
+                    });
+                  },
+                  items: <String>["Leave Now", "Depart At", "Arrive By"]
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );

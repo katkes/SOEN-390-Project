@@ -1,3 +1,8 @@
+// WaypointSelectionScreen handles user input for creating an itinerary.
+// Users can select a start and destination, add stops, choose a transport mode,
+// and confirm their route. Confirmed routes are displayed dynamically using RouteCards.
+// The screen also integrates with the bottom navigation bar for seamless app navigation.
+
 import 'package:flutter/material.dart';
 import '../../widgets/location_transport_selector.dart';
 import '../../widgets/nav_bar.dart';
