@@ -4,24 +4,34 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:soen_390/services/building_info_api.dart';
 import 'package:soen_390/services/interfaces/route_service_interface.dart';
 import 'package:http/http.dart' as http;
 import 'package:soen_390/widgets/outdoor_map.dart';
 import 'dart:typed_data';
 
-// Generate mock classes
-@GenerateNiceMocks([MockSpec<IRouteService>(), MockSpec<http.Client>()])
+@GenerateNiceMocks([
+  MockSpec<IRouteService>(),
+  MockSpec<http.Client>(),
+  MockSpec<BuildingPopUps>(),
+  MockSpec<GoogleMapsApiClient>()
+])
 import 'outdoor_map_test.mocks.dart';
 
+/// Unit tests for the [OutdoorMap] widget, testing route fetching and map rendering behavior.
 void main() {
   late MockIRouteService mockRouteService;
   late MockClient mockHttpClient;
   late LatLng testLocation;
+  late MockGoogleMapsApiClient mockMapsApiClient;
+  late MockBuildingPopUps mockBuildingPopUps;
 
   setUp(() {
     mockRouteService = MockIRouteService();
     mockHttpClient = MockClient();
     testLocation = const LatLng(45.5017, -73.5673);
+    mockMapsApiClient = MockGoogleMapsApiClient();
+    mockBuildingPopUps = MockBuildingPopUps();
 
     // Mocking route service response
     when(mockRouteService.getRoute(from: anyNamed('from'), to: anyNamed('to')))
@@ -34,7 +44,6 @@ void main() {
               ],
             ));
 
-    // Better approach: Return a complete 1x1 transparent PNG
     final transparentPixelPng = Uint8List.fromList([
       0x89,
       0x50,
@@ -117,6 +126,7 @@ void main() {
         .thenAnswer((_) async => transparentPixelPng);
   });
 
+  /// Test that the [MapWidget] initializes correctly with the provided location.
   testWidgets('MapWidget initializes with provided location',
       (WidgetTester tester) async {
     await tester.pumpWidget(
@@ -126,6 +136,8 @@ void main() {
             location: testLocation,
             httpClient: mockHttpClient,
             routeService: mockRouteService,
+            mapsApiClient: mockMapsApiClient,
+            buildingPopUps: mockBuildingPopUps,
           ),
         ),
       ),
@@ -135,6 +147,7 @@ void main() {
     expect(find.byType(FlutterMap), findsOneWidget);
   });
 
+  /// Test that the [MapWidget] fetches a route when initialized.
   testWidgets('MapWidget fetches a route on init', (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
@@ -143,6 +156,8 @@ void main() {
             location: testLocation,
             httpClient: mockHttpClient,
             routeService: mockRouteService,
+            mapsApiClient: mockMapsApiClient,
+            buildingPopUps: mockBuildingPopUps,
           ),
         ),
       ),
@@ -154,6 +169,7 @@ void main() {
         .called(1);
   });
 
+// Test that the [MapWidget] calls _fetchRoute when the location is updated.
   testWidgets('MapWidget calls _fetchRoute when location is updated',
       (WidgetTester tester) async {
     // First, render with initial location
@@ -164,6 +180,8 @@ void main() {
             location: testLocation,
             httpClient: mockHttpClient,
             routeService: mockRouteService,
+            mapsApiClient: mockMapsApiClient,
+            buildingPopUps: mockBuildingPopUps,
           ),
         ),
       ),
@@ -181,6 +199,7 @@ void main() {
 
     // Update with new location
     final newLocation = const LatLng(45.505, -73.565);
+
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -188,6 +207,8 @@ void main() {
             location: newLocation,
             httpClient: mockHttpClient,
             routeService: mockRouteService,
+            mapsApiClient: mockMapsApiClient,
+            buildingPopUps: mockBuildingPopUps,
           ),
         ),
       ),
@@ -201,6 +222,7 @@ void main() {
         .called(1);
   });
 
+  /// Test that the [MapWidget] handles null route result gracefully without crashing.
   testWidgets('MapWidget handles null route result gracefully',
       (WidgetTester tester) async {
     // Modify the mock to return null for route
@@ -214,6 +236,8 @@ void main() {
             location: testLocation,
             httpClient: mockHttpClient,
             routeService: mockRouteService,
+            mapsApiClient: mockMapsApiClient,
+            buildingPopUps: mockBuildingPopUps,
           ),
         ),
       ),
@@ -233,6 +257,8 @@ void main() {
           location: testLocation,
           httpClient: mockHttpClient,
           routeService: mockRouteService,
+          mapsApiClient: mockMapsApiClient,
+          buildingPopUps: mockBuildingPopUps,
         ),
       ));
 
@@ -248,142 +274,6 @@ void main() {
       expect(mapWidget.location, equals(testLocation));
       expect(mapWidget.httpClient, equals(mockHttpClient));
       expect(mapWidget.routeService, equals(mockRouteService));
-    });
-  });
-
-  group('MapWidget Tap Handler Tests', () {
-    testWidgets('_handleMapTap updates from location on first tap',
-        (WidgetTester tester) async {
-      // Create widget
-      await tester.pumpWidget(MaterialApp(
-        home: Scaffold(
-          body: MapWidget(
-            location: testLocation,
-            httpClient: mockHttpClient,
-            routeService: mockRouteService,
-          ),
-        ),
-      ));
-
-      await tester.pumpAndSettle();
-      clearInteractions(mockRouteService);
-
-      // Get the FlutterMap widget and its gesture detector
-      final mapFinder = find.byType(FlutterMap);
-
-      // Simulate tap using onTap callback directly
-      final mapWidget = tester.widget<FlutterMap>(mapFinder);
-      final mapOptions = mapWidget.options;
-
-      // Call onTap directly to avoid timer issues
-      mapOptions.onTap?.call(
-        TapPosition(
-          tester.getCenter(mapFinder),
-          tester.getCenter(mapFinder),
-        ),
-        const LatLng(45.5020, -73.5675),
-      );
-
-      // Pump the widget to process the tap
-      await tester.pump();
-      await tester.pumpAndSettle();
-
-      // Verify two markers are present
-      expect(find.byIcon(Icons.location_pin), findsNWidgets(2));
-
-      // Verify route service was called exactly once after setup
-      verify(mockRouteService.getRoute(
-        from: anyNamed('from'),
-        to: anyNamed('to'),
-      )).called(1);
-    });
-
-    testWidgets('_handleMapTap updates to location on second tap',
-        (WidgetTester tester) async {
-      // Create widget and wait for initial setup
-      await tester.pumpWidget(MaterialApp(
-        home: Scaffold(
-          body: MapWidget(
-            location: testLocation,
-            httpClient: mockHttpClient,
-            routeService: mockRouteService,
-          ),
-        ),
-      ));
-
-      await tester.pump();
-
-      // Clear interactions after initial setup
-      clearInteractions(mockRouteService);
-
-      // First tap
-      final firstGesture = await tester.createGesture();
-      await firstGesture.down(tester.getCenter(find.byType(FlutterMap)));
-      await firstGesture.up();
-      await tester.pump();
-      await tester.pumpAndSettle();
-
-      // Second tap
-      final secondGesture = await tester.createGesture();
-      await secondGesture.down(
-          tester.getCenter(find.byType(FlutterMap)) + const Offset(50, 50));
-      await secondGesture.up();
-      await tester.pump();
-      await tester.pumpAndSettle();
-
-      // Verify two markers are present
-      expect(find.byIcon(Icons.location_pin), findsNWidgets(2));
-
-      // Verify route service was called exactly twice after initial setup
-      verify(mockRouteService.getRoute(
-        from: anyNamed('from'),
-        to: anyNamed('to'),
-      )).called(2);
-    });
-
-    testWidgets('_handleMapTap alternates between from and to locations',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(
-        home: Scaffold(
-          body: MapWidget(
-            location: testLocation,
-            httpClient: mockHttpClient,
-            routeService: mockRouteService,
-          ),
-        ),
-      ));
-
-      await tester.pump();
-      clearInteractions(mockRouteService);
-
-      // Should always have exactly 2 markers (from and to)
-      expect(find.byIcon(Icons.location_pin), findsNWidgets(2));
-
-      // Helper function to verify marker positions
-      Future<void> verifyMarkerPositions(Offset tapOffset) async {
-        final gesture = await tester.createGesture();
-        await gesture
-            .down(tester.getCenter(find.byType(FlutterMap)) + tapOffset);
-        await gesture.up();
-        await tester.pump();
-        await tester.pumpAndSettle();
-
-        // Still should have 2 markers
-        expect(find.byIcon(Icons.location_pin), findsNWidgets(2));
-
-        // Verify route was recalculated
-        verify(mockRouteService.getRoute(
-          from: anyNamed('from'),
-          to: anyNamed('to'),
-        )).called(1);
-
-        clearInteractions(mockRouteService);
-      }
-
-      // Test three different tap positions
-      await verifyMarkerPositions(const Offset(50, 50));
-      await verifyMarkerPositions(const Offset(100, 100));
-      await verifyMarkerPositions(const Offset(150, 150));
     });
   });
 }

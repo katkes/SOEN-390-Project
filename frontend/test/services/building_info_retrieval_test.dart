@@ -32,7 +32,7 @@ void main() {
   group('GoogleMapsApiClient Tests', () {
     late MockClient client;
     late GoogleMapsApiClient mapsApiClient;
-    final String apiKey = 'FAKE_API_KEY'; // Mocked API key
+    const String apiKey = 'FAKE_API_KEY'; // Mocked API key
     late BuildingPopUps retriever;
 
     setUp(() {
