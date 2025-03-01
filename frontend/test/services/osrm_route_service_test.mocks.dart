@@ -28,23 +28,23 @@ import 'package:osrm/src/shared/core.dart' as _i2;
 
 class _FakeOsrmSource_0 extends _i1.SmartFake implements _i2.OsrmSource {
   _FakeOsrmSource_0(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 class _FakeNearestResponse_1 extends _i1.SmartFake
     implements _i3.NearestResponse {
   _FakeNearestResponse_1(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 class _FakeRouteResponse_2 extends _i1.SmartFake implements _i4.RouteResponse {
   _FakeRouteResponse_2(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 class _FakeMatchResponse_3 extends _i1.SmartFake implements _i5.MatchResponse {
   _FakeMatchResponse_3(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 /// A class which mocks [Osrm].
@@ -56,43 +56,38 @@ class MockOsrm extends _i1.Mock implements _i6.Osrm {
   }
 
   @override
-  _i2.OsrmSource get source =>
-      (super.noSuchMethod(
-            Invocation.getter(#source),
-            returnValue: _FakeOsrmSource_0(this, Invocation.getter(#source)),
-          )
-          as _i2.OsrmSource);
+  _i2.OsrmSource get source => (super.noSuchMethod(
+        Invocation.getter(#source),
+        returnValue: _FakeOsrmSource_0(this, Invocation.getter(#source)),
+      ) as _i2.OsrmSource);
 
   @override
   _i7.Future<_i3.NearestResponse> nearest(_i3.NearestOptions? options) =>
       (super.noSuchMethod(
+        Invocation.method(#nearest, [options]),
+        returnValue: _i7.Future<_i3.NearestResponse>.value(
+          _FakeNearestResponse_1(
+            this,
             Invocation.method(#nearest, [options]),
-            returnValue: _i7.Future<_i3.NearestResponse>.value(
-              _FakeNearestResponse_1(
-                this,
-                Invocation.method(#nearest, [options]),
-              ),
-            ),
-          )
-          as _i7.Future<_i3.NearestResponse>);
+          ),
+        ),
+      ) as _i7.Future<_i3.NearestResponse>);
 
   @override
   _i7.Future<_i4.RouteResponse> route(_i4.RouteRequest? options) =>
       (super.noSuchMethod(
-            Invocation.method(#route, [options]),
-            returnValue: _i7.Future<_i4.RouteResponse>.value(
-              _FakeRouteResponse_2(this, Invocation.method(#route, [options])),
-            ),
-          )
-          as _i7.Future<_i4.RouteResponse>);
+        Invocation.method(#route, [options]),
+        returnValue: _i7.Future<_i4.RouteResponse>.value(
+          _FakeRouteResponse_2(this, Invocation.method(#route, [options])),
+        ),
+      ) as _i7.Future<_i4.RouteResponse>);
 
   @override
   _i7.Future<_i5.MatchResponse> match(_i5.MatchOptions? options) =>
       (super.noSuchMethod(
-            Invocation.method(#match, [options]),
-            returnValue: _i7.Future<_i5.MatchResponse>.value(
-              _FakeMatchResponse_3(this, Invocation.method(#match, [options])),
-            ),
-          )
-          as _i7.Future<_i5.MatchResponse>);
+        Invocation.method(#match, [options]),
+        returnValue: _i7.Future<_i5.MatchResponse>.value(
+          _FakeMatchResponse_3(this, Invocation.method(#match, [options])),
+        ),
+      ) as _i7.Future<_i5.MatchResponse>);
 }

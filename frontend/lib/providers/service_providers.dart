@@ -7,15 +7,13 @@ import 'package:soen_390/utils/location_service.dart';
 
 /// Provides an instance of [GeolocatorPlatform].
 final geolocatorProvider = Provider<GeolocatorPlatform>((ref) {
-  return GeolocatorPlatform.instance; // ✅ Provide an instance of Geolocator
+  return GeolocatorPlatform.instance;
 });
 
 /// Provides an instance of [LocationService].
 final locationServiceProvider = Provider<LocationService>((ref) {
-  final geolocator =
-      ref.read(geolocatorProvider); // ✅ Read the geolocator instance
-  return LocationService(
-      geolocator: geolocator); // ✅ Pass geolocator to LocationService
+  final geolocator = ref.read(geolocatorProvider);
+  return LocationService(geolocator: geolocator); //
 });
 
 /// Provides an instance of [HttpService] to manage HTTP requests.
@@ -31,7 +29,7 @@ final routeServiceProvider = Provider<IRouteService>((ref) {
   final httpService = ref.read(httpServiceProvider);
 
   return GoogleRouteService(
-    locationService: locationService, // ✅ Required argument provided
-    httpService: httpService, // ✅ Required argument provided
+    locationService: locationService,
+    httpService: httpService,
   );
 });

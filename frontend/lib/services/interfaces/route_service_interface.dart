@@ -15,7 +15,6 @@ abstract class IRouteService {
   });
 }
 
-
 class StepResult {
   final double distance;
   final double duration;
@@ -47,4 +46,3 @@ class RouteResult {
     required this.steps, // ✅ Add this
   });
 }
-
