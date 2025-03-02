@@ -44,6 +44,22 @@ class CampusService {
       print("Error loading GeoJSON files: $e");
     }
   }
+  //Function to search for buildings
+  List<String> searchBuildings(String query) {
+    if (buildingList == null) return [];
+    final buildings = List<String>.from(buildingList!.keys);
+    return buildings.where((building) => building.toLowerCase().contains(query.toLowerCase())).toList();
+  }
+  //Function to get building names
+  List<String> getBuildingNames() {
+    List<String> buildingNames = [];
+    if (buildingList != null) {
+      buildingList!['features']?.forEach((building) {
+        buildingNames.add(building['properties']['name']);
+      });
+    }
+    return buildingNames;
+  }
 
   Map<String, dynamic>? getBuildingBoundaries() {
     return buildingBoundaries;
@@ -56,4 +72,5 @@ class CampusService {
   Map<String, dynamic>? getCampusBoundaries() {
     return campusBoundaries;
   }
+  
 }
