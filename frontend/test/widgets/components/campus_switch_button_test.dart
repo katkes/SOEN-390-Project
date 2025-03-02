@@ -7,14 +7,15 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:geolocator/geolocator.dart' as geolocator;
-import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:soen_390/widgets/campus_switch_button.dart';
+import 'package:geolocator_platform_interface/geolocator_platform_interface.dart';
 
-@GenerateMocks([geolocator.GeolocatorPlatform])
 class MockGeolocatorPlatform extends Mock
-    implements geolocator.GeolocatorPlatform {}
+    with MockPlatformInterfaceMixin
+    implements GeolocatorPlatform {}
 
 void main() {
   late MockGeolocatorPlatform mockGeolocator;
@@ -23,7 +24,7 @@ void main() {
     // Create a new mock before each test
     mockGeolocator = MockGeolocatorPlatform();
     // Override the default instance:
-    geolocator.GeolocatorPlatform.instance = mockGeolocator;
+    GeolocatorPlatform.instance = mockGeolocator;
   });
 
   group('CampusSwitch Widget Tests', () {
@@ -107,7 +108,7 @@ void main() {
         await tester.pumpAndSettle();
 
         final state =
-            tester.state(find.byType(CampusSwitch)) as _CampusSwitchState;
+            tester.state(find.byType(CampusSwitch)) as CampusSwitchState;
         expect(state.selectedBuilding, 'SGW');
       });
 
@@ -133,7 +134,7 @@ void main() {
         await tester.pumpAndSettle();
 
         final state =
-            tester.state(find.byType(CampusSwitch)) as _CampusSwitchState;
+            tester.state(find.byType(CampusSwitch)) as CampusSwitchState;
         expect(state.selectedBuilding, 'SGW');
       });
 
@@ -159,7 +160,7 @@ void main() {
         await tester.pumpAndSettle();
 
         final state =
-            tester.state(find.byType(CampusSwitch)) as _CampusSwitchState;
+            tester.state(find.byType(CampusSwitch)) as CampusSwitchState;
         expect(state.selectedBuilding, 'SGW');
       });
 
@@ -200,7 +201,7 @@ void main() {
         await tester.pumpAndSettle();
 
         final state =
-            tester.state(find.byType(CampusSwitch)) as _CampusSwitchState;
+            tester.state(find.byType(CampusSwitch)) as CampusSwitchState;
         expect(state.selectedBuilding, 'SGW');
       });
 
@@ -226,7 +227,7 @@ void main() {
         await tester.pumpAndSettle();
 
         final state =
-            tester.state(find.byType(CampusSwitch)) as _CampusSwitchState;
+            tester.state(find.byType(CampusSwitch)) as CampusSwitchState;
         expect(state.selectedBuilding, 'SGW');
       });
 
@@ -255,7 +256,7 @@ void main() {
         await tester.pumpAndSettle();
 
         final state =
-            tester.state(find.byType(CampusSwitch)) as _CampusSwitchState;
+            tester.state(find.byType(CampusSwitch)) as CampusSwitchState;
         expect(state.selectedBuilding, 'SGW');
       });
     });

@@ -17,10 +17,10 @@ class CampusSwitch extends StatefulWidget {
   });
 
   @override
-  State<CampusSwitch> createState() => _CampusSwitchState();
+  State<CampusSwitch> createState() => CampusSwitchState();
 }
 
-class _CampusSwitchState extends State<CampusSwitch> {
+class CampusSwitchState extends State<CampusSwitch> {
   late String selectedBuilding;
   final Map<String, LatLng> _campusLocations = {
     'SGW': const LatLng(45.497856, -73.579588),
