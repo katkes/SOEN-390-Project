@@ -1,28 +1,102 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
+import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'package:soen_390/services/http_service.dart';
 import 'package:soen_390/services/google_route_service.dart';
 import 'package:soen_390/services/interfaces/route_service_interface.dart';
+import 'package:geolocator/geolocator.dart' as geo;
 
 // Generate mock classes
 @GenerateMocks([HttpService, LocationService, http.Client])
 import 'google_route_service_test.mocks.dart';
+geo.Position get mockPosition => geo.Position(
+      latitude: 45.5017,
+      longitude: -73.5673,
+      timestamp: DateTime.now(),
+      altitude: 0.0,
+      altitudeAccuracy: 0.0,
+      accuracy: 0.0,
+      heading: 0.0,
+      headingAccuracy: 0.0,
+      speed: 0.0,
+      speedAccuracy: 0.0,
+    );
 
+/// Mock implementation of [geo.GeolocatorPlatform] for testing.
+///
+/// This class overrides methods from [geo.GeolocatorPlatform] to provide
+/// controlled behavior for testing the [LocationService] class.
+class MockGeolocatorPlatform extends Mock
+    with MockPlatformInterfaceMixin
+    implements geo.GeolocatorPlatform {
+  geo.LocationPermission _permission = geo.LocationPermission.whileInUse;
+  bool _locationServicesEnabled = true;
+
+  /// Sets the mock location permission for testing.
+  void setLocationPermission(geo.LocationPermission permission) {
+    _permission = permission;
+  }
+
+  /// Sets whether location services are enabled for testing.
+  void setLocationServiceEnabled(bool enabled) {
+    _locationServicesEnabled = enabled;
+  }
+
+  @override
+  Future<geo.LocationPermission> checkPermission() => Future.value(_permission);
+
+  @override
+  Future<geo.LocationPermission> requestPermission() =>
+      Future.value(_permission);
+
+  @override
+  Future<bool> isLocationServiceEnabled() =>
+      Future.value(_locationServicesEnabled);
+
+  @override
+  Future<geo.Position?> getLastKnownPosition(
+      {bool forceLocationManager = false}) async {
+    return Future.value(mockPosition);
+  }
+
+  @override
+  Future<geo.Position> getCurrentPosition(
+          {geo.LocationSettings? locationSettings}) =>
+      Future.value(mockPosition);
+
+  @override
+  Stream<geo.Position> getPositionStream(
+      {geo.LocationSettings? locationSettings}) {
+    return Stream.fromIterable([mockPosition]);
+  }
+
+  @override
+  Future<bool> openAppSettings() => Future.value(true);
+
+  @override
+  Future<bool> openLocationSettings() => Future.value(true);
+}
 void main() {
   late GoogleRouteService routeService;
   late MockHttpService mockHttpService;
   late MockLocationService mockLocationService;
   late MockClient mockHttpClient;
+  late MockGeolocatorPlatform mockGeolocator;
 
   setUp(() {
     mockHttpService = MockHttpService();
     mockLocationService = MockLocationService();
     mockHttpClient = MockClient();
+    mockGeolocator = MockGeolocatorPlatform();
+
+    // ✅ Ensure `mockLocationService.geolocator` returns `mockGeolocator`
+    when(mockLocationService.geolocator).thenReturn(mockGeolocator);
 
     // Mock API response data
     final mockResponseData = {
@@ -91,6 +165,7 @@ void main() {
       return http.Response(jsonEncode({'routes': []}), 200);
     });
   });
+
 
   group('GoogleRouteService Tests', () {
     test('Should throw exception when API key is missing', () {
@@ -196,4 +271,79 @@ void main() {
       expect(selected, isNull);
     });
   });
+
+
+  test('Should start live navigation with selected route', () async {
+    // Setup test data
+    final routes = [
+      RouteResult(distance: 1000, duration: 600, routePoints: [], steps: [])
+    ];
+    routeService.selectRoute(routes, 0);
+
+    // Mock location stream
+    mockGeolocator.setLocationPermission(geo.LocationPermission.whileInUse);
+    mockGeolocator.setLocationServiceEnabled(true);
+
+    // Create a stream controller to emit positions
+    final positionController = StreamController<geo.Position>();
+    when(mockLocationService.geolocator
+            .getPositionStream(locationSettings: anyNamed('locationSettings')))
+        .thenAnswer((_) => positionController.stream);
+
+    bool onUpdateCalled = false;
+    await routeService.startLiveNavigation(
+        to: const LatLng(45.5038, -73.554),
+        mode: 'driving',
+        onUpdate: (route) {
+          onUpdateCalled = true;
+          expect(route, isNotNull);
+        });
+
+    // Emit a position to trigger navigation update
+    mockGeolocator.getCurrentPosition().then((position) {
+      positionController.add(position);
+    });
+
+    // Wait for stream events to process
+    await Future.delayed(const Duration(milliseconds: 100));
+
+    expect(onUpdateCalled, isTrue);
+    verify(mockLocationService.createLocationStream()).called(1);
+
+    // Clean up
+    await positionController.close();
+  });
+  test('Should not start navigation if location services are disabled',
+      () async {
+    // ✅ Ensure `mockLocationService.geolocator` returns `mockGeolocator`
+    when(mockLocationService.geolocator).thenReturn(mockGeolocator);
+
+    // ✅ Stub `isLocationServiceEnabled()` BEFORE calling `startLiveNavigation()`
+    when(mockGeolocator.isLocationServiceEnabled())
+        .thenAnswer((_) async => false);
+
+    bool onUpdateCalled = false;
+
+    await routeService.startLiveNavigation(
+      to: const LatLng(45.5038, -73.554),
+      mode: 'driving',
+      onUpdate: (route) {
+        onUpdateCalled = true;
+      },
+    );
+
+    // ✅ Ensure the method was actually called
+    verify(mockGeolocator.isLocationServiceEnabled()).called(1);
+
+    // ✅ Ensure `onUpdate` was NOT triggered
+    expect(onUpdateCalled, isFalse);
+
+    // ✅ Ensure location stream was NEVER created
+    verifyNever(mockLocationService.createLocationStream());
+  });
+
+
+
+
 }
+

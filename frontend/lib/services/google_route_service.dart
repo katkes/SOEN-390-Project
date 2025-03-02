@@ -201,7 +201,7 @@ class GoogleRouteService implements IRouteService {
   ///
   /// This function continuously checks the user's position. If they go off-route,
   /// it recalculates the best path.
-  Future<void> startLiveNavigation({
+Future<void> startLiveNavigation({
     required LatLng to,
     required String mode,
     required Function(RouteResult) onUpdate,
@@ -211,8 +211,16 @@ class GoogleRouteService implements IRouteService {
       return;
     }
 
-    RouteResult route = _selectedRoute!;
+    // ✅ Check if location services are enabled BEFORE starting navigation
+    final isLocationEnabled =
+        await locationService.geolocator.isLocationServiceEnabled();
+    if (!isLocationEnabled) {
+      print(
+          "❌ ERROR: Location services are disabled. Cannot start navigation.");
+      return;
+    }
 
+    RouteResult route = _selectedRoute!;
     locationService.createLocationStream();
 
     locationService.geolocator
@@ -238,6 +246,7 @@ class GoogleRouteService implements IRouteService {
       }
     });
   }
+
 
   List<StepResult> _extractSteps(List<dynamic> stepsData) {
     List<StepResult> steps = [];
