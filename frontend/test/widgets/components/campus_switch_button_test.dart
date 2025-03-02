@@ -8,9 +8,9 @@ import 'package:latlong2/latlong.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:soen_390/widgets/campus_switch_button.dart';
 import 'package:geolocator_platform_interface/geolocator_platform_interface.dart';
-import 'package:soen_390/utils/location_service.dart'; // import the LocationService
+import 'package:soen_390/utils/location_service.dart';
 
-// Create a proper mock class for GeolocatorPlatform.
+// Mock class for the GeolocatorPlatform interface.
 class MockGeolocatorPlatform extends Mock
     with MockPlatformInterfaceMixin
     implements GeolocatorPlatform {

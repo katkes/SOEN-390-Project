@@ -66,9 +66,11 @@ class CampusSwitchState extends State<CampusSwitch> {
       geolocator.Position currentPos =
           await locationService.getCurrentLocation();
 
-      final campusCode =
-          location_service.LocationService.getClosestCampus(currentPos);
-      final newBuilding = (campusCode == "LOY") ? "Loyola" : "SGW";
+      final newBuilding =
+          (location_service.LocationService.getClosestCampus(currentPos) ==
+                  "LOY")
+              ? "Loyola"
+              : "SGW";
 
       if (mounted) {
         setState(() => selectedBuilding = newBuilding);
