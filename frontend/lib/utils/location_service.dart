@@ -176,4 +176,32 @@ class LocationService {
   void stopListening() {
     _positionStream?.cancel();
   }
+
+  // Returns the closest campus to the current location
+  String getClosestCampus() {
+    var campusCoordinates = {
+      "SGW": [45.4973, -73.5784],
+      "LOY": [45.4586, -73.6401]
+    };
+
+    double distanceToSGW = geo.Geolocator.distanceBetween(
+      currentPosition.latitude,
+      currentPosition.longitude,
+      campusCoordinates["SGW"]![0],
+      campusCoordinates["SGW"]![1],
+    );
+
+    double distanceToLOY = geo.Geolocator.distanceBetween(
+      currentPosition.latitude,
+      currentPosition.longitude,
+      campusCoordinates["LOY"]![0],
+      campusCoordinates["LOY"]![1],
+    );
+
+    if (distanceToSGW < distanceToLOY) {
+      return "SGW";
+    } else {
+      return "LOY";
+    }
+  }
 }
