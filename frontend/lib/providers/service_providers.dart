@@ -1,9 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:geolocator/geolocator.dart'; // ✅ Import Geolocator
+import 'package:geolocator/geolocator.dart'; 
 import 'package:soen_390/services/http_service.dart';
 import 'package:soen_390/services/google_route_service.dart';
 import '../services/interfaces/route_service_interface.dart';
 import 'package:soen_390/utils/location_service.dart';
+import 'package:soen_390/services/building_to_coordinates.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+
+
 
 /// Provides an instance of [GeolocatorPlatform].
 final geolocatorProvider = Provider<GeolocatorPlatform>((ref) {
@@ -33,3 +38,16 @@ final routeServiceProvider = Provider<IRouteService>((ref) {
     httpService: httpService,
   );
 });
+
+final buildingToCoordinatesProvider = Provider<GeocodingService>((ref) {
+
+  final apiKey = dotenv.env['GOOGLE_PLACES_API_KEY'];
+  final httpService = ref.read(httpServiceProvider);
+
+  return GeocodingService(
+    httpService: httpService,
+    apiKey: apiKey, // Pass the API key if available
+  );
+
+});
+

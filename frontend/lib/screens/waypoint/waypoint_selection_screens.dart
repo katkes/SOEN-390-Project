@@ -17,8 +17,12 @@ import 'package:latlong2/latlong.dart';
 import 'package:soen_390/services/interfaces/route_service_interface.dart';
 
 class WaypointSelectionScreen extends StatefulWidget {
-  const WaypointSelectionScreen({super.key});
+  final IRouteService routeService; 
+  final GeocodingService geocodingService;
+  final LocationService locationService;
 
+  WaypointSelectionScreen({super.key, required this.routeService, required this.geocodingService, required this.locationService});
+  
 
   @override
   WaypointSelectionScreenState createState() => WaypointSelectionScreenState();
@@ -40,9 +44,8 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
   @override
   void initState() {
     super.initState();
-
-    final locationService =
-        LocationService(geolocator: GeolocatorPlatform.instance);
+    
+    locationService = LocationService(geolocator: GeolocatorPlatform.instance);
     final httpService = HttpService();
 
     final String apiKey = dotenv.env['GOOGLE_MAPS_API_KEY'] ?? '';
