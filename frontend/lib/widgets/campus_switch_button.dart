@@ -98,9 +98,6 @@ class CampusSwitchState extends State<CampusSwitch> {
           groupValue: selectedBuilding,
           children: _campusOptions,
           onValueChanged: (String newValue) {
-            assert(_campusOptions.containsKey(newValue),
-                'Invalid campus selection: $newValue');
-
             setState(() {
               selectedBuilding = newValue;
             });

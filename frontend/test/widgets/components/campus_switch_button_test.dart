@@ -342,6 +342,40 @@ void main() {
             tester.state(find.byType(CampusSwitch)) as CampusSwitchState;
         expect(state.selectedBuilding, 'SGW');
       });
+
+      testWidgets('exits early when determinePermissions() returns false',
+          (WidgetTester tester) async {
+        // Mock that locationService.determinePermissions() is false
+        // (meaning either permission was denied or services are off).
+        final mockGeolocator = MockGeolocatorPlatform();
+
+        // Return false from isLocationServiceEnabled, or handle it in the
+        // locationService itself so that determinePermissions() => false.
+        when(mockGeolocator.isLocationServiceEnabled())
+            .thenAnswer((_) async => false);
+
+        GeolocatorPlatform.instance = mockGeolocator;
+
+        String? updatedCampus;
+        await tester.pumpWidget(
+          MaterialApp(
+            home: CampusSwitch(
+              onSelectionChanged: (campus) => updatedCampus = campus,
+              onLocationChanged: (_) {},
+              initialSelection: 'SGW',
+            ),
+          ),
+        );
+
+        await tester.pumpAndSettle();
+
+        final state =
+            tester.state(find.byType(CampusSwitch)) as CampusSwitchState;
+        // The widget should not update campus because it returned early.
+        expect(state.selectedBuilding, 'SGW');
+        expect(updatedCampus, isNull,
+            reason: 'Callback never fires when permission is false');
+      });
     });
   });
 }
