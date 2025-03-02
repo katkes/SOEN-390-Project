@@ -30,35 +30,35 @@ import 'package:soen_390/utils/location_service.dart' as _i5;
 
 class _FakeClient_0 extends _i1.SmartFake implements _i2.Client {
   _FakeClient_0(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 class _FakeGeolocatorPlatform_1 extends _i1.SmartFake
     implements _i3.GeolocatorPlatform {
   _FakeGeolocatorPlatform_1(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 class _FakePosition_2 extends _i1.SmartFake implements _i3.Position {
   _FakePosition_2(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 class _FakeLocationSettings_3 extends _i1.SmartFake
     implements _i3.LocationSettings {
   _FakeLocationSettings_3(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 class _FakeResponse_4 extends _i1.SmartFake implements _i2.Response {
   _FakeResponse_4(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 class _FakeStreamedResponse_5 extends _i1.SmartFake
     implements _i2.StreamedResponse {
   _FakeStreamedResponse_5(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 /// A class which mocks [HttpService].
@@ -70,18 +70,16 @@ class MockHttpService extends _i1.Mock implements _i4.HttpService {
   }
 
   @override
-  _i2.Client get client =>
-      (super.noSuchMethod(
-            Invocation.getter(#client),
-            returnValue: _FakeClient_0(this, Invocation.getter(#client)),
-          )
-          as _i2.Client);
+  _i2.Client get client => (super.noSuchMethod(
+        Invocation.getter(#client),
+        returnValue: _FakeClient_0(this, Invocation.getter(#client)),
+      ) as _i2.Client);
 
   @override
   void dispose() => super.noSuchMethod(
-    Invocation.method(#dispose, []),
-    returnValueForMissingStub: null,
-  );
+        Invocation.method(#dispose, []),
+        returnValueForMissingStub: null,
+      );
 }
 
 /// A class which mocks [LocationService].
@@ -93,159 +91,138 @@ class MockLocationService extends _i1.Mock implements _i5.LocationService {
   }
 
   @override
-  _i3.GeolocatorPlatform get geolocator =>
-      (super.noSuchMethod(
-            Invocation.getter(#geolocator),
-            returnValue: _FakeGeolocatorPlatform_1(
-              this,
-              Invocation.getter(#geolocator),
-            ),
-          )
-          as _i3.GeolocatorPlatform);
+  _i3.GeolocatorPlatform get geolocator => (super.noSuchMethod(
+        Invocation.getter(#geolocator),
+        returnValue: _FakeGeolocatorPlatform_1(
+          this,
+          Invocation.getter(#geolocator),
+        ),
+      ) as _i3.GeolocatorPlatform);
 
   @override
-  _i3.Position get currentPosition =>
-      (super.noSuchMethod(
-            Invocation.getter(#currentPosition),
-            returnValue: _FakePosition_2(
-              this,
-              Invocation.getter(#currentPosition),
-            ),
-          )
-          as _i3.Position);
+  _i3.Position get currentPosition => (super.noSuchMethod(
+        Invocation.getter(#currentPosition),
+        returnValue: _FakePosition_2(
+          this,
+          Invocation.getter(#currentPosition),
+        ),
+      ) as _i3.Position);
 
   @override
   set currentPosition(_i3.Position? _currentPosition) => super.noSuchMethod(
-    Invocation.setter(#currentPosition, _currentPosition),
-    returnValueForMissingStub: null,
-  );
+        Invocation.setter(#currentPosition, _currentPosition),
+        returnValueForMissingStub: null,
+      );
 
   @override
-  _i3.LocationSettings get locSetting =>
-      (super.noSuchMethod(
-            Invocation.getter(#locSetting),
-            returnValue: _FakeLocationSettings_3(
-              this,
-              Invocation.getter(#locSetting),
-            ),
-          )
-          as _i3.LocationSettings);
+  _i3.LocationSettings get locSetting => (super.noSuchMethod(
+        Invocation.getter(#locSetting),
+        returnValue: _FakeLocationSettings_3(
+          this,
+          Invocation.getter(#locSetting),
+        ),
+      ) as _i3.LocationSettings);
 
   @override
   set locSetting(_i3.LocationSettings? _locSetting) => super.noSuchMethod(
-    Invocation.setter(#locSetting, _locSetting),
-    returnValueForMissingStub: null,
-  );
+        Invocation.setter(#locSetting, _locSetting),
+        returnValueForMissingStub: null,
+      );
 
   @override
-  bool get serviceEnabled =>
-      (super.noSuchMethod(
-            Invocation.getter(#serviceEnabled),
-            returnValue: false,
-          )
-          as bool);
+  bool get serviceEnabled => (super.noSuchMethod(
+        Invocation.getter(#serviceEnabled),
+        returnValue: false,
+      ) as bool);
 
   @override
   set serviceEnabled(bool? _serviceEnabled) => super.noSuchMethod(
-    Invocation.setter(#serviceEnabled, _serviceEnabled),
-    returnValueForMissingStub: null,
-  );
+        Invocation.setter(#serviceEnabled, _serviceEnabled),
+        returnValueForMissingStub: null,
+      );
 
   @override
-  _i3.LocationPermission get permission =>
-      (super.noSuchMethod(
-            Invocation.getter(#permission),
-            returnValue: _i3.LocationPermission.denied,
-          )
-          as _i3.LocationPermission);
+  _i3.LocationPermission get permission => (super.noSuchMethod(
+        Invocation.getter(#permission),
+        returnValue: _i3.LocationPermission.denied,
+      ) as _i3.LocationPermission);
 
   @override
   set permission(_i3.LocationPermission? _permission) => super.noSuchMethod(
-    Invocation.setter(#permission, _permission),
-    returnValueForMissingStub: null,
-  );
+        Invocation.setter(#permission, _permission),
+        returnValueForMissingStub: null,
+      );
 
   @override
-  _i6.Future<bool> determinePermissions() =>
-      (super.noSuchMethod(
-            Invocation.method(#determinePermissions, []),
-            returnValue: _i6.Future<bool>.value(false),
-          )
-          as _i6.Future<bool>);
+  _i6.Future<bool> determinePermissions() => (super.noSuchMethod(
+        Invocation.method(#determinePermissions, []),
+        returnValue: _i6.Future<bool>.value(false),
+      ) as _i6.Future<bool>);
 
   @override
-  _i6.Future<_i3.Position> getCurrentLocation() =>
-      (super.noSuchMethod(
-            Invocation.method(#getCurrentLocation, []),
-            returnValue: _i6.Future<_i3.Position>.value(
-              _FakePosition_2(this, Invocation.method(#getCurrentLocation, [])),
-            ),
-          )
-          as _i6.Future<_i3.Position>);
+  _i6.Future<_i3.Position> getCurrentLocation() => (super.noSuchMethod(
+        Invocation.method(#getCurrentLocation, []),
+        returnValue: _i6.Future<_i3.Position>.value(
+          _FakePosition_2(this, Invocation.method(#getCurrentLocation, [])),
+        ),
+      ) as _i6.Future<_i3.Position>);
 
   @override
-  _i6.Future<void> updateCurrentLocation() =>
-      (super.noSuchMethod(
-            Invocation.method(#updateCurrentLocation, []),
-            returnValue: _i6.Future<void>.value(),
-            returnValueForMissingStub: _i6.Future<void>.value(),
-          )
-          as _i6.Future<void>);
+  _i6.Future<void> updateCurrentLocation() => (super.noSuchMethod(
+        Invocation.method(#updateCurrentLocation, []),
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
 
   @override
   _i6.Future<_i3.Position> getCurrentLocationAccurately() =>
       (super.noSuchMethod(
+        Invocation.method(#getCurrentLocationAccurately, []),
+        returnValue: _i6.Future<_i3.Position>.value(
+          _FakePosition_2(
+            this,
             Invocation.method(#getCurrentLocationAccurately, []),
-            returnValue: _i6.Future<_i3.Position>.value(
-              _FakePosition_2(
-                this,
-                Invocation.method(#getCurrentLocationAccurately, []),
-              ),
-            ),
-          )
-          as _i6.Future<_i3.Position>);
+          ),
+        ),
+      ) as _i6.Future<_i3.Position>);
 
   @override
-  _i6.Future<void> updateCurrentLocationAccurately() =>
-      (super.noSuchMethod(
-            Invocation.method(#updateCurrentLocationAccurately, []),
-            returnValue: _i6.Future<void>.value(),
-            returnValueForMissingStub: _i6.Future<void>.value(),
-          )
-          as _i6.Future<void>);
+  _i6.Future<void> updateCurrentLocationAccurately() => (super.noSuchMethod(
+        Invocation.method(#updateCurrentLocationAccurately, []),
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
 
   @override
   void takePosition(_i3.Position? p) => super.noSuchMethod(
-    Invocation.method(#takePosition, [p]),
-    returnValueForMissingStub: null,
-  );
+        Invocation.method(#takePosition, [p]),
+        returnValueForMissingStub: null,
+      );
 
   @override
   void setPlatformSpecificLocationSettings() => super.noSuchMethod(
-    Invocation.method(#setPlatformSpecificLocationSettings, []),
-    returnValueForMissingStub: null,
-  );
+        Invocation.method(#setPlatformSpecificLocationSettings, []),
+        returnValueForMissingStub: null,
+      );
 
   @override
   void createLocationStream() => super.noSuchMethod(
-    Invocation.method(#createLocationStream, []),
-    returnValueForMissingStub: null,
-  );
+        Invocation.method(#createLocationStream, []),
+        returnValueForMissingStub: null,
+      );
 
   @override
-  _i6.Future<void> startUp() =>
-      (super.noSuchMethod(
-            Invocation.method(#startUp, []),
-            returnValue: _i6.Future<void>.value(),
-            returnValueForMissingStub: _i6.Future<void>.value(),
-          )
-          as _i6.Future<void>);
+  _i6.Future<void> startUp() => (super.noSuchMethod(
+        Invocation.method(#startUp, []),
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
 
   @override
   void stopListening() => super.noSuchMethod(
-    Invocation.method(#stopListening, []),
-    returnValueForMissingStub: null,
-  );
+        Invocation.method(#stopListening, []),
+        returnValueForMissingStub: null,
+      );
 }
 
 /// A class which mocks [Client].
@@ -259,28 +236,26 @@ class MockClient extends _i1.Mock implements _i2.Client {
   @override
   _i6.Future<_i2.Response> head(Uri? url, {Map<String, String>? headers}) =>
       (super.noSuchMethod(
+        Invocation.method(#head, [url], {#headers: headers}),
+        returnValue: _i6.Future<_i2.Response>.value(
+          _FakeResponse_4(
+            this,
             Invocation.method(#head, [url], {#headers: headers}),
-            returnValue: _i6.Future<_i2.Response>.value(
-              _FakeResponse_4(
-                this,
-                Invocation.method(#head, [url], {#headers: headers}),
-              ),
-            ),
-          )
-          as _i6.Future<_i2.Response>);
+          ),
+        ),
+      ) as _i6.Future<_i2.Response>);
 
   @override
   _i6.Future<_i2.Response> get(Uri? url, {Map<String, String>? headers}) =>
       (super.noSuchMethod(
+        Invocation.method(#get, [url], {#headers: headers}),
+        returnValue: _i6.Future<_i2.Response>.value(
+          _FakeResponse_4(
+            this,
             Invocation.method(#get, [url], {#headers: headers}),
-            returnValue: _i6.Future<_i2.Response>.value(
-              _FakeResponse_4(
-                this,
-                Invocation.method(#get, [url], {#headers: headers}),
-              ),
-            ),
-          )
-          as _i6.Future<_i2.Response>);
+          ),
+        ),
+      ) as _i6.Future<_i2.Response>);
 
   @override
   _i6.Future<_i2.Response> post(
@@ -290,23 +265,22 @@ class MockClient extends _i1.Mock implements _i2.Client {
     _i7.Encoding? encoding,
   }) =>
       (super.noSuchMethod(
+        Invocation.method(
+          #post,
+          [url],
+          {#headers: headers, #body: body, #encoding: encoding},
+        ),
+        returnValue: _i6.Future<_i2.Response>.value(
+          _FakeResponse_4(
+            this,
             Invocation.method(
               #post,
               [url],
               {#headers: headers, #body: body, #encoding: encoding},
             ),
-            returnValue: _i6.Future<_i2.Response>.value(
-              _FakeResponse_4(
-                this,
-                Invocation.method(
-                  #post,
-                  [url],
-                  {#headers: headers, #body: body, #encoding: encoding},
-                ),
-              ),
-            ),
-          )
-          as _i6.Future<_i2.Response>);
+          ),
+        ),
+      ) as _i6.Future<_i2.Response>);
 
   @override
   _i6.Future<_i2.Response> put(
@@ -316,23 +290,22 @@ class MockClient extends _i1.Mock implements _i2.Client {
     _i7.Encoding? encoding,
   }) =>
       (super.noSuchMethod(
+        Invocation.method(
+          #put,
+          [url],
+          {#headers: headers, #body: body, #encoding: encoding},
+        ),
+        returnValue: _i6.Future<_i2.Response>.value(
+          _FakeResponse_4(
+            this,
             Invocation.method(
               #put,
               [url],
               {#headers: headers, #body: body, #encoding: encoding},
             ),
-            returnValue: _i6.Future<_i2.Response>.value(
-              _FakeResponse_4(
-                this,
-                Invocation.method(
-                  #put,
-                  [url],
-                  {#headers: headers, #body: body, #encoding: encoding},
-                ),
-              ),
-            ),
-          )
-          as _i6.Future<_i2.Response>);
+          ),
+        ),
+      ) as _i6.Future<_i2.Response>);
 
   @override
   _i6.Future<_i2.Response> patch(
@@ -342,23 +315,22 @@ class MockClient extends _i1.Mock implements _i2.Client {
     _i7.Encoding? encoding,
   }) =>
       (super.noSuchMethod(
+        Invocation.method(
+          #patch,
+          [url],
+          {#headers: headers, #body: body, #encoding: encoding},
+        ),
+        returnValue: _i6.Future<_i2.Response>.value(
+          _FakeResponse_4(
+            this,
             Invocation.method(
               #patch,
               [url],
               {#headers: headers, #body: body, #encoding: encoding},
             ),
-            returnValue: _i6.Future<_i2.Response>.value(
-              _FakeResponse_4(
-                this,
-                Invocation.method(
-                  #patch,
-                  [url],
-                  {#headers: headers, #body: body, #encoding: encoding},
-                ),
-              ),
-            ),
-          )
-          as _i6.Future<_i2.Response>);
+          ),
+        ),
+      ) as _i6.Future<_i2.Response>);
 
   @override
   _i6.Future<_i2.Response> delete(
@@ -368,36 +340,34 @@ class MockClient extends _i1.Mock implements _i2.Client {
     _i7.Encoding? encoding,
   }) =>
       (super.noSuchMethod(
+        Invocation.method(
+          #delete,
+          [url],
+          {#headers: headers, #body: body, #encoding: encoding},
+        ),
+        returnValue: _i6.Future<_i2.Response>.value(
+          _FakeResponse_4(
+            this,
             Invocation.method(
               #delete,
               [url],
               {#headers: headers, #body: body, #encoding: encoding},
             ),
-            returnValue: _i6.Future<_i2.Response>.value(
-              _FakeResponse_4(
-                this,
-                Invocation.method(
-                  #delete,
-                  [url],
-                  {#headers: headers, #body: body, #encoding: encoding},
-                ),
-              ),
-            ),
-          )
-          as _i6.Future<_i2.Response>);
+          ),
+        ),
+      ) as _i6.Future<_i2.Response>);
 
   @override
   _i6.Future<String> read(Uri? url, {Map<String, String>? headers}) =>
       (super.noSuchMethod(
+        Invocation.method(#read, [url], {#headers: headers}),
+        returnValue: _i6.Future<String>.value(
+          _i8.dummyValue<String>(
+            this,
             Invocation.method(#read, [url], {#headers: headers}),
-            returnValue: _i6.Future<String>.value(
-              _i8.dummyValue<String>(
-                this,
-                Invocation.method(#read, [url], {#headers: headers}),
-              ),
-            ),
-          )
-          as _i6.Future<String>);
+          ),
+        ),
+      ) as _i6.Future<String>);
 
   @override
   _i6.Future<_i9.Uint8List> readBytes(
@@ -405,29 +375,27 @@ class MockClient extends _i1.Mock implements _i2.Client {
     Map<String, String>? headers,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(#readBytes, [url], {#headers: headers}),
-            returnValue: _i6.Future<_i9.Uint8List>.value(_i9.Uint8List(0)),
-          )
-          as _i6.Future<_i9.Uint8List>);
+        Invocation.method(#readBytes, [url], {#headers: headers}),
+        returnValue: _i6.Future<_i9.Uint8List>.value(_i9.Uint8List(0)),
+      ) as _i6.Future<_i9.Uint8List>);
 
   @override
   _i6.Future<_i2.StreamedResponse> send(_i2.BaseRequest? request) =>
       (super.noSuchMethod(
+        Invocation.method(#send, [request]),
+        returnValue: _i6.Future<_i2.StreamedResponse>.value(
+          _FakeStreamedResponse_5(
+            this,
             Invocation.method(#send, [request]),
-            returnValue: _i6.Future<_i2.StreamedResponse>.value(
-              _FakeStreamedResponse_5(
-                this,
-                Invocation.method(#send, [request]),
-              ),
-            ),
-          )
-          as _i6.Future<_i2.StreamedResponse>);
+          ),
+        ),
+      ) as _i6.Future<_i2.StreamedResponse>);
 
   @override
   void close() => super.noSuchMethod(
-    Invocation.method(#close, []),
-    returnValueForMissingStub: null,
-  );
+        Invocation.method(#close, []),
+        returnValueForMissingStub: null,
+      );
 }
 
 /// A class which mocks [GeolocatorPlatform].
@@ -440,123 +408,106 @@ class MockGeolocatorPlatform extends _i1.Mock
   }
 
   @override
-  _i6.Future<_i3.LocationPermission> checkPermission() =>
-      (super.noSuchMethod(
-            Invocation.method(#checkPermission, []),
-            returnValue: _i6.Future<_i3.LocationPermission>.value(
-              _i3.LocationPermission.denied,
-            ),
-          )
-          as _i6.Future<_i3.LocationPermission>);
+  _i6.Future<_i3.LocationPermission> checkPermission() => (super.noSuchMethod(
+        Invocation.method(#checkPermission, []),
+        returnValue: _i6.Future<_i3.LocationPermission>.value(
+          _i3.LocationPermission.denied,
+        ),
+      ) as _i6.Future<_i3.LocationPermission>);
 
   @override
-  _i6.Future<_i3.LocationPermission> requestPermission() =>
-      (super.noSuchMethod(
-            Invocation.method(#requestPermission, []),
-            returnValue: _i6.Future<_i3.LocationPermission>.value(
-              _i3.LocationPermission.denied,
-            ),
-          )
-          as _i6.Future<_i3.LocationPermission>);
+  _i6.Future<_i3.LocationPermission> requestPermission() => (super.noSuchMethod(
+        Invocation.method(#requestPermission, []),
+        returnValue: _i6.Future<_i3.LocationPermission>.value(
+          _i3.LocationPermission.denied,
+        ),
+      ) as _i6.Future<_i3.LocationPermission>);
 
   @override
-  _i6.Future<bool> isLocationServiceEnabled() =>
-      (super.noSuchMethod(
-            Invocation.method(#isLocationServiceEnabled, []),
-            returnValue: _i6.Future<bool>.value(false),
-          )
-          as _i6.Future<bool>);
+  _i6.Future<bool> isLocationServiceEnabled() => (super.noSuchMethod(
+        Invocation.method(#isLocationServiceEnabled, []),
+        returnValue: _i6.Future<bool>.value(false),
+      ) as _i6.Future<bool>);
 
   @override
   _i6.Future<_i3.Position?> getLastKnownPosition({
     bool? forceLocationManager = false,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(#getLastKnownPosition, [], {
-              #forceLocationManager: forceLocationManager,
-            }),
-            returnValue: _i6.Future<_i3.Position?>.value(),
-          )
-          as _i6.Future<_i3.Position?>);
+        Invocation.method(#getLastKnownPosition, [], {
+          #forceLocationManager: forceLocationManager,
+        }),
+        returnValue: _i6.Future<_i3.Position?>.value(),
+      ) as _i6.Future<_i3.Position?>);
 
   @override
   _i6.Future<_i3.Position> getCurrentPosition({
     _i3.LocationSettings? locationSettings,
   }) =>
       (super.noSuchMethod(
+        Invocation.method(#getCurrentPosition, [], {
+          #locationSettings: locationSettings,
+        }),
+        returnValue: _i6.Future<_i3.Position>.value(
+          _FakePosition_2(
+            this,
             Invocation.method(#getCurrentPosition, [], {
               #locationSettings: locationSettings,
             }),
-            returnValue: _i6.Future<_i3.Position>.value(
-              _FakePosition_2(
-                this,
-                Invocation.method(#getCurrentPosition, [], {
-                  #locationSettings: locationSettings,
-                }),
-              ),
-            ),
-          )
-          as _i6.Future<_i3.Position>);
+          ),
+        ),
+      ) as _i6.Future<_i3.Position>);
 
   @override
-  _i6.Stream<_i3.ServiceStatus> getServiceStatusStream() =>
-      (super.noSuchMethod(
-            Invocation.method(#getServiceStatusStream, []),
-            returnValue: _i6.Stream<_i3.ServiceStatus>.empty(),
-          )
-          as _i6.Stream<_i3.ServiceStatus>);
+  _i6.Stream<_i3.ServiceStatus> getServiceStatusStream() => (super.noSuchMethod(
+        Invocation.method(#getServiceStatusStream, []),
+        returnValue: _i6.Stream<_i3.ServiceStatus>.empty(),
+      ) as _i6.Stream<_i3.ServiceStatus>);
 
   @override
   _i6.Stream<_i3.Position> getPositionStream({
     _i3.LocationSettings? locationSettings,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(#getPositionStream, [], {
-              #locationSettings: locationSettings,
-            }),
-            returnValue: _i6.Stream<_i3.Position>.empty(),
-          )
-          as _i6.Stream<_i3.Position>);
+        Invocation.method(#getPositionStream, [], {
+          #locationSettings: locationSettings,
+        }),
+        returnValue: _i6.Stream<_i3.Position>.empty(),
+      ) as _i6.Stream<_i3.Position>);
 
   @override
   _i6.Future<_i3.LocationAccuracyStatus> requestTemporaryFullAccuracy({
     required String? purposeKey,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(#requestTemporaryFullAccuracy, [], {
-              #purposeKey: purposeKey,
-            }),
-            returnValue: _i6.Future<_i3.LocationAccuracyStatus>.value(
-              _i3.LocationAccuracyStatus.reduced,
-            ),
-          )
-          as _i6.Future<_i3.LocationAccuracyStatus>);
+        Invocation.method(#requestTemporaryFullAccuracy, [], {
+          #purposeKey: purposeKey,
+        }),
+        returnValue: _i6.Future<_i3.LocationAccuracyStatus>.value(
+          _i3.LocationAccuracyStatus.reduced,
+        ),
+      ) as _i6.Future<_i3.LocationAccuracyStatus>);
 
   @override
   _i6.Future<_i3.LocationAccuracyStatus> getLocationAccuracy() =>
       (super.noSuchMethod(
-            Invocation.method(#getLocationAccuracy, []),
-            returnValue: _i6.Future<_i3.LocationAccuracyStatus>.value(
-              _i3.LocationAccuracyStatus.reduced,
-            ),
-          )
-          as _i6.Future<_i3.LocationAccuracyStatus>);
+        Invocation.method(#getLocationAccuracy, []),
+        returnValue: _i6.Future<_i3.LocationAccuracyStatus>.value(
+          _i3.LocationAccuracyStatus.reduced,
+        ),
+      ) as _i6.Future<_i3.LocationAccuracyStatus>);
 
   @override
-  _i6.Future<bool> openAppSettings() =>
-      (super.noSuchMethod(
-            Invocation.method(#openAppSettings, []),
-            returnValue: _i6.Future<bool>.value(false),
-          )
-          as _i6.Future<bool>);
+  _i6.Future<bool> openAppSettings() => (super.noSuchMethod(
+        Invocation.method(#openAppSettings, []),
+        returnValue: _i6.Future<bool>.value(false),
+      ) as _i6.Future<bool>);
 
   @override
-  _i6.Future<bool> openLocationSettings() =>
-      (super.noSuchMethod(
-            Invocation.method(#openLocationSettings, []),
-            returnValue: _i6.Future<bool>.value(false),
-          )
-          as _i6.Future<bool>);
+  _i6.Future<bool> openLocationSettings() => (super.noSuchMethod(
+        Invocation.method(#openLocationSettings, []),
+        returnValue: _i6.Future<bool>.value(false),
+      ) as _i6.Future<bool>);
 
   @override
   double distanceBetween(
@@ -566,15 +517,14 @@ class MockGeolocatorPlatform extends _i1.Mock
     double? endLongitude,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#distanceBetween, [
-              startLatitude,
-              startLongitude,
-              endLatitude,
-              endLongitude,
-            ]),
-            returnValue: 0.0,
-          )
-          as double);
+        Invocation.method(#distanceBetween, [
+          startLatitude,
+          startLongitude,
+          endLatitude,
+          endLongitude,
+        ]),
+        returnValue: 0.0,
+      ) as double);
 
   @override
   double bearingBetween(
@@ -584,13 +534,12 @@ class MockGeolocatorPlatform extends _i1.Mock
     double? endLongitude,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#bearingBetween, [
-              startLatitude,
-              startLongitude,
-              endLatitude,
-              endLongitude,
-            ]),
-            returnValue: 0.0,
-          )
-          as double);
+        Invocation.method(#bearingBetween, [
+          startLatitude,
+          startLongitude,
+          endLatitude,
+          endLongitude,
+        ]),
+        returnValue: 0.0,
+      ) as double);
 }

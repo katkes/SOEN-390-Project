@@ -74,7 +74,7 @@ void main() {
     mockBuildingPopUps = MockBuildingPopUps();
 
     // Set up mock behavior for getRoute method
-when(mockRouteService.getRoute(
+    when(mockRouteService.getRoute(
       from: anyNamed('from'),
       to: anyNamed('to'),
     )).thenAnswer((_) async {
@@ -98,7 +98,6 @@ when(mockRouteService.getRoute(
         ],
       );
     });
-
 
     // Mock the client property on the HttpService
     when(mockHttpService.client).thenReturn(mockHttpClient);

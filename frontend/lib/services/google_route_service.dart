@@ -38,7 +38,7 @@ class GoogleRouteService implements IRouteService {
   }) : apiKey = apiKey ?? dotenv.env['GOOGLE_MAPS_API_KEY'] ?? "" {
     if (this.apiKey.isEmpty) {
       throw Exception(
-          "❌ ERROR: Missing Google Maps API Key! Provide one or check your .env file.");
+          "ERROR: Missing Google Maps API Key! Provide one or check your .env file.");
     }
   }
 
@@ -139,12 +139,12 @@ class GoogleRouteService implements IRouteService {
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       if (!data.containsKey('routes') || data['routes'].isEmpty) {
-        print("❌ No routes found. Full API Response: ${jsonEncode(data)}");
+        print(" No routes found. Full API Response: ${jsonEncode(data)}");
         return null;
       }
       if (data['status'] != 'OK') {
         print(
-            "❌ API Error: ${data['status']} - Full Response: ${jsonEncode(data)}");
+            "API Error: ${data['status']} - Full Response: ${jsonEncode(data)}");
         return null;
       }
 
@@ -155,7 +155,7 @@ class GoogleRouteService implements IRouteService {
           final duration = leg['duration']['value'].toDouble();
           final polylinePoints = route.containsKey('overview_polyline')
               ? _decodePolyline(route['overview_polyline']['points'])
-              : <LatLng>[]; // ✅ Avoids crash when missing
+              : <LatLng>[]; 
 
           // 🔹 Extract step-by-step navigation
           List<StepResult> steps = _extractSteps(leg['steps']);
@@ -164,7 +164,7 @@ class GoogleRouteService implements IRouteService {
             distance: distance,
             duration: duration,
             routePoints: polylinePoints,
-            steps: steps, // ✅ Add extracted steps here
+            steps: steps, 
           ));
         }
       }
@@ -181,15 +181,15 @@ class GoogleRouteService implements IRouteService {
   /// Returns the selected `RouteResult`, or `null` if the index is invalid.
   RouteResult? selectRoute(List<RouteResult> routes, int index) {
     if (routes.isEmpty) {
-      print("❌ ERROR: No routes available.");
+      print("ERROR: No routes available.");
       return null;
     }
     if (index < 0 || index >= routes.length) {
-      print("❌ ERROR: Invalid route index selected.");
+      print("ERROR: Invalid route index selected.");
       return null;
     }
     _selectedRoute = routes[index];
-    print("✅ Route ${index + 1} selected.");
+    print("Route ${index + 1} selected.");
     return _selectedRoute;
   }
 
@@ -207,7 +207,7 @@ Future<void> startLiveNavigation({
     required Function(RouteResult) onUpdate,
   }) async {
     if (_selectedRoute == null) {
-      print("❌ ERROR: No route selected! Call `selectRoute()` first.");
+      print("ERROR: No route selected! Call `selectRoute()` first.");
       return;
     }
 
@@ -259,7 +259,7 @@ Future<void> startLiveNavigation({
             "No instruction available", // ✅ Default if missing
         maneuver: step.containsKey('maneuver')
             ? step['maneuver']
-            : "unknown", // ✅ Avoid errors
+            : "unknown", 
         startLocation: LatLng(
             step['start_location']['lat'], step['start_location']['lng']),
         endLocation:
@@ -272,7 +272,7 @@ Future<void> startLiveNavigation({
   /// Decodes a Google Maps polyline string into a list of `LatLng` points.
   List<LatLng> _decodePolyline(String encoded) {
     List<LatLng> points = [];
-    if (encoded.isEmpty) return points; // ✅ Handle empty polyline edge case
+    if (encoded.isEmpty) return points;
 
     int index = 0, len = encoded.length;
     int lat = 0, lng = 0;

@@ -34,7 +34,7 @@ void main() {
     mockBuildingPopUps = MockBuildingPopUps();
 
     // Mocking route service response
-when(mockRouteService.getRoute(
+    when(mockRouteService.getRoute(
       from: anyNamed('from'),
       to: anyNamed('to'),
     )).thenAnswer((_) async {
@@ -58,7 +58,6 @@ when(mockRouteService.getRoute(
         ],
       );
     });
-
 
     final transparentPixelPng = Uint8List.fromList([
       0x89,
