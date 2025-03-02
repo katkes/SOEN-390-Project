@@ -7,14 +7,17 @@ import 'package:geolocator/geolocator.dart' as geolocator;
 class CampusSwitch extends StatefulWidget {
   final Function(String) onSelectionChanged;
   final Function(LatLng) onLocationChanged;
-  final String? initialSelection;
+  final String initialSelection;
 
   const CampusSwitch({
     super.key,
     required this.onSelectionChanged,
     required this.onLocationChanged,
-    this.initialSelection,
-  });
+    this.initialSelection = 'SGW',
+  }) : assert(
+          initialSelection == 'SGW' || initialSelection == 'Loyola',
+          'initialSelection must be either "SGW" or "Loyola"',
+        );
 
   @override
   State<CampusSwitch> createState() => CampusSwitchState();
@@ -39,8 +42,7 @@ class CampusSwitchState extends State<CampusSwitch> {
   @override
   void initState() {
     super.initState();
-    selectedBuilding = widget.initialSelection ??
-        'SGW'; // Default is SGW if selectedBuilding is null
+    selectedBuilding = widget.initialSelection;
     _initClosestCampus();
   }
 
@@ -98,6 +100,9 @@ class CampusSwitchState extends State<CampusSwitch> {
           groupValue: selectedBuilding,
           children: _campusOptions,
           onValueChanged: (String newValue) {
+            assert(_campusOptions.containsKey(newValue),
+                'Invalid campus selection: $newValue');
+
             setState(() {
               selectedBuilding = newValue;
             });
