@@ -21,38 +21,44 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   List<String> itinerary = [];
   String selectedMode = "Train or Bus";
   String selectedTimeOption = "Leave Now"; // Default time selection
+  bool isShuttleChecked = false;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: Colors.white,
-        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
-      ),
-      child: Column(
-        children: [
-          _buildLocationInput(),
-          const SizedBox(height: 10),
-          _buildReorderableItinerary(),
-          const SizedBox(height: 20),
-          _buildTransportModeSelection(),
-          const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: _confirmRoute,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xff912338),
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Container(
+        width: double.infinity,
+        margin: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          color: Colors.white,
+          boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
+        ),
+        child: Column(
+          children: [
+            _buildLocationInput(),
+            const SizedBox(height: 10),
+            _buildReorderableItinerary(),
+            const SizedBox(height: 20),
+            _buildTransportModeSelection(),
+            const SizedBox(height: 10),
+            _buildShuttleCheckbox(),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _confirmRoute,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xff912338),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
               ),
+              child: const Text("Confirm Route"),
             ),
-            child: const Text("Confirm Route"),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -121,6 +127,26 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
             ),
           ],
         ),
+      ],
+    );
+  }
+
+  Widget _buildShuttleCheckbox() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Checkbox(
+          value: isShuttleChecked,
+          onChanged: (bool? newValue) {
+            setState(() {
+              isShuttleChecked = newValue ?? false;
+              if (isShuttleChecked) {
+                print("Shuttle service selected. Returning fake response.");
+              }
+            });
+          },
+        ),
+        const Text("Shuttle", style: TextStyle(fontSize: 16)),
       ],
     );
   }

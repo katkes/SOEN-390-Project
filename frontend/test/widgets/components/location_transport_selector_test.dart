@@ -175,6 +175,9 @@ void main() {
     await tester.tap(find.text("Coffee"));
     await tester.pumpAndSettle();
 
+    await tester.tap(find.byType(Checkbox));  // Tap the checkbox
+    await tester.pumpAndSettle();
+
     await tester.tap(find.text("Add Stop to Itinerary"));
     await tester.pumpAndSettle();
 
@@ -243,4 +246,28 @@ void main() {
     await tester.tap(find.byIcon(Icons.delete).first);
     await tester.pumpAndSettle();
   });
+
+  testWidgets('Checks the Shuttle checkbox', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: LocationTransportSelector(
+            onConfirmRoute: (List<String> waypoints, String transportMode) {},
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    final checkboxFinder = find.byType(Checkbox);
+    expect(checkboxFinder, findsOneWidget);
+
+    await tester.tap(checkboxFinder);
+    await tester.pumpAndSettle();
+
+    final checkbox = tester.widget<Checkbox>(checkboxFinder);
+    expect(checkbox.value, true);
+  });
+
 }
