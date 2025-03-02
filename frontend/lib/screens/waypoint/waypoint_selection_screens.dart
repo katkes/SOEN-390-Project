@@ -19,6 +19,7 @@ import 'package:soen_390/services/interfaces/route_service_interface.dart';
 class WaypointSelectionScreen extends StatefulWidget {
   const WaypointSelectionScreen({super.key});
 
+
   @override
   WaypointSelectionScreenState createState() => WaypointSelectionScreenState();
 }
