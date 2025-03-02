@@ -1,7 +1,3 @@
-/// This file contains tests to verify the behavior of the `CampusSwitch` widget.
-/// The tests ensure that the initial selection is displayed correctly and that
-/// switching between campuses updates the selection and triggers the appropriate
-/// callbacks.
 library;
 
 import 'package:flutter/material.dart';
@@ -12,53 +8,95 @@ import 'package:latlong2/latlong.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:soen_390/widgets/campus_switch_button.dart';
 import 'package:geolocator_platform_interface/geolocator_platform_interface.dart';
+import 'package:soen_390/utils/location_service.dart'; // import the LocationService
 
+// Create a proper mock class for GeolocatorPlatform.
 class MockGeolocatorPlatform extends Mock
     with MockPlatformInterfaceMixin
     implements GeolocatorPlatform {
-  @override
-  Future<geolocator.LocationPermission> checkPermission() => super.noSuchMethod(
-        Invocation.method(#checkPermission, []),
-        returnValue: Future.value(geolocator.LocationPermission.denied),
-      ) as Future<geolocator.LocationPermission>;
+  final geolocator.Position _mockPosition = geolocator.Position(
+    latitude: 45.4979,
+    longitude: -73.5796,
+    timestamp: DateTime.now(),
+    accuracy: 1.0,
+    altitude: 0.0,
+    heading: 0.0,
+    speed: 0.0,
+    speedAccuracy: 0.0,
+    floor: null,
+    altitudeAccuracy: 0.0,
+    headingAccuracy: 0.0,
+  );
 
   @override
-  Future<geolocator.LocationPermission> requestPermission() =>
-      super.noSuchMethod(
-        Invocation.method(#requestPermission, []),
-        returnValue: Future.value(geolocator.LocationPermission.whileInUse),
-      ) as Future<geolocator.LocationPermission>;
+  Future<geolocator.LocationPermission> checkPermission() {
+    return super.noSuchMethod(Invocation.method(#checkPermission, []),
+        returnValue: Future.value(geolocator.LocationPermission.denied));
+  }
 
   @override
-  Future<bool> isLocationServiceEnabled() => super.noSuchMethod(
-        Invocation.method(#isLocationServiceEnabled, []),
-        returnValue: Future.value(true),
-      ) as Future<bool>;
+  Future<geolocator.LocationPermission> requestPermission() {
+    return super.noSuchMethod(Invocation.method(#requestPermission, []),
+        returnValue: Future.value(geolocator.LocationPermission.whileInUse));
+  }
+
+  @override
+  Future<bool> isLocationServiceEnabled() {
+    return super.noSuchMethod(Invocation.method(#isLocationServiceEnabled, []),
+        returnValue: Future.value(true));
+  }
 
   @override
   Future<geolocator.Position> getCurrentPosition({
     LocationSettings? locationSettings,
-  }) =>
-      super.noSuchMethod(
+  }) {
+    return super.noSuchMethod(
         Invocation.method(
             #getCurrentPosition, [], {#locationSettings: locationSettings}),
-        returnValue: Future.value(geolocator.Position(
-          latitude: 45.4979,
-          longitude: -73.5796,
-          timestamp: DateTime.now(),
-          accuracy: 1.0,
-          altitude: 0.0,
-          heading: 0.0,
-          speed: 0.0,
-          speedAccuracy: 0.0,
-          floor: null,
-          altitudeAccuracy: 0.0,
-          headingAccuracy: 0.0,
-        )),
-      ) as Future<geolocator.Position>;
+        returnValue: Future.value(_mockPosition));
+  }
+
+  @override
+  Future<geolocator.Position?> getLastKnownPosition({
+    bool forceLocationManager = false,
+  }) {
+    return super.noSuchMethod(
+        Invocation.method(#getLastKnownPosition, [],
+            {#forceLocationManager: forceLocationManager}),
+        returnValue: Future.value(_mockPosition));
+  }
+
+  @override
+  Stream<geolocator.Position> getPositionStream({
+    LocationSettings? locationSettings,
+  }) {
+    return super.noSuchMethod(
+        Invocation.method(
+            #getPositionStream, [], {#locationSettings: locationSettings}),
+        returnValue: Stream.value(_mockPosition));
+  }
+
+  @override
+  double distanceBetween(double startLatitude, double startLongitude,
+      double endLatitude, double endLongitude) {
+    return super.noSuchMethod(
+        Invocation.method(#distanceBetween,
+            [startLatitude, startLongitude, endLatitude, endLongitude]),
+        returnValue: 10000.0);
+  }
+}
+
+// Reset the LocationService singleton between tests.
+void resetLocationServiceSingleton() {
+  LocationService.resetInstance();
 }
 
 void main() {
+  setUp(() {
+    // Reset the singleton before each test.
+    resetLocationServiceSingleton();
+  });
+
   group('CampusSwitch Widget Tests', () {
     testWidgets('displays initial selection correctly',
         (WidgetTester tester) async {
@@ -107,28 +145,15 @@ void main() {
           (WidgetTester tester) async {
         final mockGeolocator = MockGeolocatorPlatform();
 
-        when(mockGeolocator.checkPermission())
-            .thenAnswer((_) async => geolocator.LocationPermission.denied);
-        when(mockGeolocator.requestPermission())
-            .thenAnswer((_) async => geolocator.LocationPermission.whileInUse);
+        // Override specific behaviors for this test.
+        when(mockGeolocator.checkPermission()).thenAnswer(
+            (_) => Future.value(geolocator.LocationPermission.denied));
+        when(mockGeolocator.requestPermission()).thenAnswer(
+            (_) => Future.value(geolocator.LocationPermission.whileInUse));
         when(mockGeolocator.isLocationServiceEnabled())
-            .thenAnswer((_) async => true);
-        when(mockGeolocator.getCurrentPosition(
-                locationSettings: anyNamed('locationSettings')))
-            .thenAnswer((_) async => geolocator.Position(
-                  latitude: 45.4979,
-                  longitude: -73.5796,
-                  timestamp: DateTime.now(),
-                  accuracy: 1.0,
-                  altitude: 0.0,
-                  heading: 0.0,
-                  speed: 0.0,
-                  speedAccuracy: 0.0,
-                  floor: null,
-                  altitudeAccuracy: 0.0,
-                  headingAccuracy: 0.0,
-                ));
+            .thenAnswer((_) => Future.value(true));
 
+        // Install the mock.
         GeolocatorPlatform.instance = mockGeolocator;
 
         await tester.pumpWidget(
@@ -145,6 +170,8 @@ void main() {
 
         final state =
             tester.state(find.byType(CampusSwitch)) as CampusSwitchState;
+        // In this test, the new campus remains 'SGW' because the computed closest campus
+        // from the mocked position is SGW.
         expect(state.selectedBuilding, 'SGW');
       });
 

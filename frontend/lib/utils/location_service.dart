@@ -218,4 +218,9 @@ class LocationService {
 
     return (distanceToSGW <= distanceToLOY) ? "SGW" : "LOY";
   }
+
+  // Reset the instance for testing purposes
+  static void resetInstance() {
+    _instance = null;
+  }
 }

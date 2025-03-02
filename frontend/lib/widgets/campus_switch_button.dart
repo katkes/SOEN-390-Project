@@ -48,27 +48,23 @@ class CampusSwitchState extends State<CampusSwitch> {
 
   // Initializes the closest campus based on the user's current location.
   Future<void> _initClosestCampus() async {
+    // Get the singleton instance.
+    final locationService = location_service.LocationService.instance;
+
     try {
-      // Check existing permission:
-      var permission = await geolocator.Geolocator.checkPermission();
+      // Await startUp() so that exceptions are caught.
+      await locationService.startUp();
 
-      // If permission is not granted, request it:
-      if (permission == geolocator.LocationPermission.denied) {
-        permission = await geolocator.Geolocator.requestPermission();
+      // Determine if location services are enabled.
+      bool locationEnabled = await locationService.determinePermissions();
+      if (!locationEnabled) {
+        print('Location services are disabled.');
+        return;
       }
 
-      // If permission is still denied or permanently denied, handle it.
-      if (permission == geolocator.LocationPermission.denied ||
-          permission == geolocator.LocationPermission.deniedForever) {
-        print("User denied permissions to access the device's location.");
-        return; // Do not proceed if permission is denied.
-      }
-
-      // User has granted permission — retrieve location:
+      // Retrieve the current location.
       geolocator.Position currentPos =
-          await geolocator.Geolocator.getCurrentPosition(
-        desiredAccuracy: geolocator.LocationAccuracy.low,
-      );
+          await locationService.getCurrentLocation();
 
       final campusCode =
           location_service.LocationService.getClosestCampus(currentPos);
@@ -80,7 +76,7 @@ class CampusSwitchState extends State<CampusSwitch> {
         widget.onLocationChanged(_campusLocations[selectedBuilding]!);
       }
     } catch (e) {
-      // For error handling (ex. location services disabled):
+      // For error handling (ex. location services disabled).
       print('Error initializing closest campus: $e');
     }
   }
