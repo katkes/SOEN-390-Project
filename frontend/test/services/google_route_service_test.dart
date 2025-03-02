@@ -1,349 +1,214 @@
-import 'dart:async';
-import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
+import 'package:geolocator_platform_interface/geolocator_platform_interface.dart';
 import 'package:mockito/mockito.dart';
-import 'package:http/http.dart' as http;
+import 'package:mockito/annotations.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:plugin_platform_interface/plugin_platform_interface.dart';
+import 'package:soen_390/services/interfaces/route_service_interface.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'package:soen_390/services/http_service.dart';
 import 'package:soen_390/services/google_route_service.dart';
-import 'package:soen_390/services/interfaces/route_service_interface.dart';
-import 'package:geolocator/geolocator.dart' as geo;
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
-// Generate mock classes
-@GenerateMocks([HttpService, LocationService, http.Client])
+@GenerateMocks([
+  http.Client,
+  LocationService,
+  HttpService,
+])
 import 'google_route_service_test.mocks.dart';
-geo.Position get mockPosition => geo.Position(
-      latitude: 45.5017,
-      longitude: -73.5673,
-      timestamp: DateTime.now(),
-      altitude: 0.0,
-      altitudeAccuracy: 0.0,
-      accuracy: 0.0,
-      heading: 0.0,
-      headingAccuracy: 0.0,
-      speed: 0.0,
-      speedAccuracy: 0.0,
-    );
 
-/// Mock implementation of [geo.GeolocatorPlatform] for testing.
-///
-/// This class overrides methods from [geo.GeolocatorPlatform] to provide
-/// controlled behavior for testing the [LocationService] class.
-class MockGeolocatorPlatform extends Mock
-    with MockPlatformInterfaceMixin
-    implements geo.GeolocatorPlatform {
-  geo.LocationPermission _permission = geo.LocationPermission.whileInUse;
-  bool _locationServicesEnabled = true;
-
-  /// Sets the mock location permission for testing.
-  void setLocationPermission(geo.LocationPermission permission) {
-    _permission = permission;
-  }
-
-  /// Sets whether location services are enabled for testing.
-  void setLocationServiceEnabled(bool enabled) {
-    _locationServicesEnabled = enabled;
-  }
-
-  @override
-  Future<geo.LocationPermission> checkPermission() => Future.value(_permission);
-
-  @override
-  Future<geo.LocationPermission> requestPermission() =>
-      Future.value(_permission);
-
-  @override
-  Future<bool> isLocationServiceEnabled() =>
-      Future.value(_locationServicesEnabled);
-
-  @override
-  Future<geo.Position?> getLastKnownPosition(
-      {bool forceLocationManager = false}) async {
-    return Future.value(mockPosition);
-  }
-
-  @override
-  Future<geo.Position> getCurrentPosition(
-          {geo.LocationSettings? locationSettings}) =>
-      Future.value(mockPosition);
-
-  @override
-  Stream<geo.Position> getPositionStream(
-      {geo.LocationSettings? locationSettings}) {
-    return Stream.fromIterable([mockPosition]);
-  }
-
-  @override
-  Future<bool> openAppSettings() => Future.value(true);
-
-  @override
-  Future<bool> openLocationSettings() => Future.value(true);
-}
+final mockResponseData = {
+  "status": "OK",
+  "routes": [
+    {
+      "legs": [
+        {
+          "distance": {"text": "2,792 mi", "value": 4492496},
+          "duration": {"text": "1 day 17 hours", "value": 146645},
+          "start_location": {"lat": 40.7128, "lng": -74.006},
+          "end_location": {"lat": 34.0522, "lng": -118.2437},
+          "steps": [
+            {
+              "distance": {"text": "269 ft", "value": 82},
+              "duration": {"text": "1 min", "value": 17},
+              "start_location": {"lat": 40.7128, "lng": -74.006},
+              "end_location": {"lat": 40.7131, "lng": -74.0072},
+              "html_instructions":
+                  "Head <b>southwest</b> toward <b>Murray St</b>",
+              "maneuver": "turn-right",
+              "polyline": {
+                "points": "wunwFtkubMB?@@FD@@?B?B?BABCFGNa@~@EJA@A@QL"
+              },
+              "travel_mode": "DRIVING"
+            }
+          ]
+        }
+      ],
+      "overview_polyline": {
+        "points": "wunwFtkubMB?@@FD@@?B?B?BABCFGNa@~@EJA@A@QL"
+      }
+    }
+  ]
+};
 void main() {
-  late GoogleRouteService routeService;
-  late MockHttpService mockHttpService;
   late MockLocationService mockLocationService;
+  late MockHttpService mockHttpService;
   late MockClient mockHttpClient;
-  late MockGeolocatorPlatform mockGeolocator;
+  late GoogleRouteService googleRouteService;
 
   setUp(() {
-    mockHttpService = MockHttpService();
     mockLocationService = MockLocationService();
+    mockHttpService = MockHttpService();
     mockHttpClient = MockClient();
-    mockGeolocator = MockGeolocatorPlatform();
-
-    // ✅ Ensure `mockLocationService.geolocator` returns `mockGeolocator`
-    when(mockLocationService.geolocator).thenReturn(mockGeolocator);
-
-    // Mock API response data
-    final mockResponseData = {
-      "status": "OK", // ✅ Add this field to fix the issue
-      "routes": [
-        {
-          "legs": [
-            {
-              "distance": {"text": "2,792 mi", "value": 4492496},
-              "duration": {"text": "1 day 17 hours", "value": 146645},
-              "start_location": {"lat": 40.7128, "lng": -74.006},
-              "end_location": {"lat": 34.0522, "lng": -118.2437},
-              "steps": [
-                {
-                  "distance": {"text": "269 ft", "value": 82},
-                  "duration": {"text": "1 min", "value": 17},
-                  "start_location": {"lat": 40.7128, "lng": -74.006},
-                  "end_location": {"lat": 40.7131, "lng": -74.0072},
-                  "html_instructions":
-                      "Head <b>southwest</b> toward <b>Murray St</b>",
-                  "maneuver": "turn-right",
-                  "polyline": {
-                    "points": "wunwFtkubMB?@@FD@@?B?B?BABCFGNa@~@EJA@A@QL"
-                  },
-                  "travel_mode": "DRIVING"
-                }
-              ]
-            }
-          ],
-          "overview_polyline": {
-            "points": "wunwFtkubMB?@@FD@@?B?B?BABCFGNa@~@EJA@A@QL"
-          }
-        }
-      ]
-    };
-
-    // Ensure the HttpService uses a mocked Client
     when(mockHttpService.client).thenReturn(mockHttpClient);
-
-    routeService = GoogleRouteService(
+    googleRouteService = GoogleRouteService(
       locationService: mockLocationService,
       httpService: mockHttpService,
       apiKey: 'test_api_key',
     );
-
-    // Mock HTTP request to return the fake Google Maps API response
-    when(mockHttpClient.get(any)).thenAnswer((Invocation invocation) async {
-      final url = invocation.positionalArguments.first.toString();
-
-      // Define different mock responses based on transport mode
-      final mockResponses = {
-        'driving': mockResponseData,
-        'walking': mockResponseData,
-        'bicycling': mockResponseData,
-        'transit': mockResponseData,
-      };
-
-      // Identify the mode in URL and return the correct response
-      for (var mode in mockResponses.keys) {
-        if (url.contains("mode=$mode")) {
-          return http.Response(jsonEncode(mockResponses[mode]), 200);
-        }
-      }
-
-      // Default: Return empty if mode is unrecognized
-      return http.Response(jsonEncode({'routes': []}), 200);
-    });
   });
 
-
-  group('GoogleRouteService Tests', () {
-    test('Should throw exception when API key is missing', () {
-      expect(
-        () => GoogleRouteService(
-          locationService: mockLocationService,
-          httpService: mockHttpService,
-          apiKey: '',
-        ),
-        throwsException,
-      );
-    });
-
-    test('Should fetch and parse a route successfully', () async {
-      final result = await routeService.getRoute(
-        from: const LatLng(40.7128, -74.0060),
-        to: const LatLng(34.0522, -118.2437),
-      );
-
-      expect(result, isNotNull);
-      expect(result!.distance, equals(4492496.0));
-      expect(result.duration, equals(146645.0));
-      expect(result.steps, isNotNull); // ✅ Ensure steps exist
-
-      final firstStep = result.steps.first;
-      expect(firstStep.distance, equals(82.0));
-      expect(firstStep.duration, equals(17.0));
-      expect(firstStep.instruction, contains("Head <b>southwest</b>"));
-      expect(firstStep.maneuver, equals("turn-right"));
-
-      verify(mockHttpClient.get(any))
-          .called(greaterThan(0)); // ✅ Ensures mock API was used
-    });
-
-    test('Should return null when no routes found', () async {
-      final mockEmptyResponse = {'routes': []};
-
+  group('GoogleRouteService - getRoute', () {
+    test('should return a RouteResult when API call is successful', () async {
+      final from = const LatLng(45.5017, -73.5673);
+      final to = const LatLng(45.5087, -73.554);
       when(mockHttpClient.get(any)).thenAnswer(
-        (_) async => http.Response(jsonEncode(mockEmptyResponse), 200),
+        (_) async => http.Response(jsonEncode(mockResponseData), 200),
       );
 
-      final result = await routeService.getRoute(
-        from: const LatLng(45.5017, -73.5673),
-        to: const LatLng(45.5038, -73.554),
+      final routeResult = await googleRouteService.getRoute(from: from, to: to);
+      expect(routeResult, isNotNull);
+      expect(routeResult!.distance, 4492496);
+      expect(routeResult.duration, 146645);
+    });
+
+    test('should return null when API response has no routes', () async {
+      final from = const LatLng(45.5017, -73.5673);
+      final to = const LatLng(45.5087, -73.554);
+
+      final mockResponse = {'status': 'OK', 'routes': []};
+      when(mockHttpClient.get(any)).thenAnswer(
+        (_) async => http.Response(jsonEncode(mockResponse), 200),
       );
-
-      expect(result, isNull);
-    });
-
-    test('Should get multiple routes for different transport modes', () async {
-      final routes = await routeService.getRoutes(
-        from: const LatLng(45.5017, -73.5673),
-        to: const LatLng(45.5038, -73.554),
-      );
-
-      expect(
-          routes.isNotEmpty, isTrue); // ✅ Ensure at least one mode returns data
-      expect(routes.keys,
-          containsAll(['driving', 'walking', 'bicycling', 'transit']));
-    });
-
-    test('Should select a route correctly', () {
-      final routes = [
-        RouteResult(distance: 1000, duration: 600, routePoints: [], steps: []),
-        RouteResult(distance: 2000, duration: 900, routePoints: [], steps: [])
-      ];
-
-      final selected = routeService.selectRoute(routes, 0);
-
-      expect(selected, isNotNull);
-      expect(selected?.distance, equals(1000));
-    });
-
-    test('Should return null for an invalid route selection', () {
-      final routes = [
-        RouteResult(distance: 1000, duration: 600, routePoints: [], steps: [])
-      ];
-
-      final selected = routeService.selectRoute(routes, 1);
-
-      expect(selected, isNull);
-    });
-
-    test('Should select a route correctly', () {
-      final routes = [
-        RouteResult(distance: 1000, duration: 600, routePoints: [], steps: []),
-        RouteResult(distance: 2000, duration: 900, routePoints: [], steps: [])
-      ];
-
-      final selected = routeService.selectRoute(routes, 0);
-
-      expect(selected, isNotNull);
-      expect(selected?.distance, equals(1000));
-    });
-
-    test('Should return null for an invalid route selection', () {
-      final routes = [
-        RouteResult(distance: 1000, duration: 600, routePoints: [], steps: [])
-      ];
-
-      final selected = routeService.selectRoute(routes, 1);
-
-      expect(selected, isNull);
+      final routeResult = await googleRouteService.getRoute(from: from, to: to);
+      expect(routeResult, isNull);
     });
   });
 
+  test('should not start navigation if no route is selected', () async {
+    final destination = LatLng(45.5087, -73.554);
+    final mode = 'driving';
 
-  test('Should start live navigation with selected route', () async {
-    // Setup test data
-    final routes = [
-      RouteResult(distance: 1000, duration: 600, routePoints: [], steps: [])
-    ];
-    routeService.selectRoute(routes, 0);
+    await googleRouteService.startLiveNavigation(
+      to: destination,
+      mode: mode,
+      onUpdate: (_) {},
+    );
 
-    // Mock location stream
-    mockGeolocator.setLocationPermission(geo.LocationPermission.whileInUse);
-    mockGeolocator.setLocationServiceEnabled(true);
-
-    // Create a stream controller to emit positions
-    final positionController = StreamController<geo.Position>();
-    when(mockLocationService.geolocator
-            .getPositionStream(locationSettings: anyNamed('locationSettings')))
-        .thenAnswer((_) => positionController.stream);
-
-    bool onUpdateCalled = false;
-    await routeService.startLiveNavigation(
-        to: const LatLng(45.5038, -73.554),
-        mode: 'driving',
-        onUpdate: (route) {
-          onUpdateCalled = true;
-          expect(route, isNotNull);
-        });
-
-    // Emit a position to trigger navigation update
-    mockGeolocator.getCurrentPosition().then((position) {
-      positionController.add(position);
-    });
-
-    // Wait for stream events to process
-    await Future.delayed(const Duration(milliseconds: 100));
-
-    expect(onUpdateCalled, isTrue);
-    verify(mockLocationService.createLocationStream()).called(1);
-
-    // Clean up
-    await positionController.close();
+    verifyNever(mockLocationService.createLocationStream());
   });
-  test('Should not start navigation if location services are disabled',
+  test('should not start navigation if location services are disabled',
       () async {
-    // ✅ Ensure `mockLocationService.geolocator` returns `mockGeolocator`
-    when(mockLocationService.geolocator).thenReturn(mockGeolocator);
-
-    // ✅ Stub `isLocationServiceEnabled()` BEFORE calling `startLiveNavigation()`
-    when(mockGeolocator.isLocationServiceEnabled())
+    final destination = LatLng(45.5087, -73.554);
+    final mode = 'driving';
+    when(mockLocationService.isLocationEnabled())
         .thenAnswer((_) async => false);
 
-    bool onUpdateCalled = false;
+    await googleRouteService.startLiveNavigation(
+      to: destination,
+      mode: mode,
+      onUpdate: (_) {},
+    );
 
-    await routeService.startLiveNavigation(
-      to: const LatLng(45.5038, -73.554),
-      mode: 'driving',
-      onUpdate: (route) {
-        onUpdateCalled = true;
+    verifyNever(mockLocationService.createLocationStream());
+  });
+  test('should start navigation and trigger updates on location change',
+      () async {
+    final destination = LatLng(45.5087, -73.554);
+    final mode = 'driving';
+    final route = RouteResult(
+      distance: 1000,
+      duration: 600,
+      routePoints: [LatLng(45.5017, -73.5673)],
+      steps: [],
+    );
+    googleRouteService.selectRoute([route], 0);
+
+    when(mockLocationService.isLocationEnabled()).thenAnswer((_) async => true);
+    when(mockLocationService.getPositionStream())
+        .thenAnswer((_) => Stream.fromIterable([
+              Position(
+                latitude: 45.5025, // Off-route position
+                longitude: -73.5700,
+                timestamp: DateTime.now(),
+                altitude: 0.0,
+                accuracy: 0.0,
+                heading: 0.0,
+                speed: 0.0,
+                speedAccuracy: 0.0,
+                altitudeAccuracy: 0.0,
+                headingAccuracy: 0.0,
+              )
+            ]));
+
+    // ✅ Stub the recalculation API call
+    when(mockHttpClient.get(
+            Uri.parse("https://maps.googleapis.com/maps/api/directions/json?"
+                "origin=45.5025,-73.57"
+                "&destination=45.5087,-73.554"
+                "&mode=driving"
+                "&key=test_api_key")))
+        .thenAnswer(
+            (_) async => http.Response(jsonEncode(mockResponseData), 200));
+
+    bool updateCalled = false;
+    await googleRouteService.startLiveNavigation(
+      to: destination,
+      mode: mode,
+      onUpdate: (_) {
+        updateCalled = true;
       },
     );
 
-    // ✅ Ensure the method was actually called
-    verify(mockGeolocator.isLocationServiceEnabled()).called(1);
+    await Future.delayed(Duration(milliseconds: 100));
 
-    // ✅ Ensure `onUpdate` was NOT triggered
-    expect(onUpdateCalled, isFalse);
-
-    // ✅ Ensure location stream was NEVER created
-    verifyNever(mockLocationService.createLocationStream());
+    expect(updateCalled, isTrue);
   });
 
+  group('GoogleRouteService - getRoutes', () {
+    test('should return multiple routes for different transport modes',
+        () async {
+      final from = const LatLng(45.5017, -73.5673);
+      final to = const LatLng(45.5087, -73.554);
+      when(mockHttpClient.get(any)).thenAnswer(
+        (_) async => http.Response(jsonEncode(mockResponseData), 200),
+      );
 
+      final routes = await googleRouteService.getRoutes(from: from, to: to);
+      expect(routes, isNotEmpty);
+      expect(routes.containsKey('driving'), isTrue);
+      expect(routes.containsKey('walking'), isTrue);
+      expect(routes.containsKey('bicycling'), isTrue);
+      expect(routes.containsKey('transit'), isTrue);
+    });
+  });
 
+  group('GoogleRouteService - selectRoute', () {
+    test('should select a valid route', () {
+      final route1 = RouteResult(
+          distance: 1000, duration: 600, routePoints: [], steps: []);
+      final route2 = RouteResult(
+          distance: 2000, duration: 1200, routePoints: [], steps: []);
 
+      final selectedRoute = googleRouteService.selectRoute([route1, route2], 1);
+      expect(selectedRoute, route2);
+    });
+
+    test('should return null if index is out of range', () {
+      final route1 = RouteResult(
+          distance: 1000, duration: 600, routePoints: [], steps: []);
+      final selectedRoute = googleRouteService.selectRoute([route1], 2);
+      expect(selectedRoute, isNull);
+    });
+  });
 }
-

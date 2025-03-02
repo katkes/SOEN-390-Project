@@ -37,12 +37,12 @@ class RouteResult {
   final double distance;
   final double duration;
   final List<LatLng> routePoints;
-  final List<StepResult> steps; 
+  final List<StepResult> steps;
 
   RouteResult({
     required this.distance,
     required this.duration,
     required this.routePoints,
-    required this.steps, 
+    required this.steps,
   });
 }

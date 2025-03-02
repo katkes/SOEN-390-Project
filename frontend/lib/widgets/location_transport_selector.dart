@@ -8,9 +8,10 @@ import 'suggestions.dart';
 
 class LocationTransportSelector extends StatefulWidget {
   final Function(List<String>, String) onConfirmRoute;
-  final Function(String)? onTransportModeChange; 
+  final Function(String)? onTransportModeChange;
 
-  const LocationTransportSelector({super.key, required this.onConfirmRoute, this.onTransportModeChange});
+  const LocationTransportSelector(
+      {super.key, required this.onConfirmRoute, this.onTransportModeChange});
 
   @override
   LocationTransportSelectorState createState() =>
@@ -21,9 +22,10 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   List<String> itinerary = [];
   String selectedMode = "Train or Bus";
   String selectedTimeOption = "Leave Now"; // Default time selection
-  String selectedLocation = '';//variable to store selected location address
+  String selectedLocation = ''; //variable to store selected location address
   String startLocation = ''; // variable to store start location address
-  String destinationLocation = ''; // variable to store destination location address
+  String destinationLocation =
+      ''; // variable to store destination location address
 
   @override
   Widget build(BuildContext context) {
@@ -172,12 +174,13 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
 
   Widget _buildLocationField(String placeholder, bool isStart) {
     String locationText = isStart ? startLocation : destinationLocation;
-   locationText = locationText.isEmpty 
-      ? placeholder 
-      : locationText.replaceAll(RegExp(r'[^\w\s]'), '') // Remove punctuation
-                     .split(' ') // Split by spaces
-                     .take(2) // Get only the first two words
-                     .join(' '); // Join them back to a string
+    locationText = locationText.isEmpty
+        ? placeholder
+        : locationText
+            .replaceAll(RegExp(r'[^\w\s]'), '') // Remove punctuation
+            .split(' ') // Split by spaces
+            .take(2) // Get only the first two words
+            .join(' '); // Join them back to a string
 
     return GestureDetector(
       onTap: () {
@@ -192,32 +195,27 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        
           children: [
             Text(locationText,
                 style:
                     const TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
-                     if (isStart || isStart == false) 
-            if (locationText != placeholder)
-            IconButton(
-              icon: const Icon(Icons.delete, size: 20, color: Colors.red),
-              onPressed: () {
-                setState(() {
-                  if (isStart) {
-                    startLocation = '';
+            if (isStart || isStart == false)
+              if (locationText != placeholder)
+                IconButton(
+                  icon: const Icon(Icons.delete, size: 20, color: Colors.red),
+                  onPressed: () {
+                    setState(() {
+                      if (isStart) {
+                        startLocation = '';
                         _removeStop(0);
-                  } else {
-                    destinationLocation = '';
+                      } else {
+                        destinationLocation = '';
                         _removeStop(1);
-                  }
-                });
-            
-              },
-              
-            ),
-            
+                      }
+                    });
+                  },
+                ),
             const Icon(Icons.arrow_drop_down, color: Colors.black54),
-            
           ],
         ),
       ),
@@ -233,7 +231,6 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (mounted) {
                 setState(() {
-                  
                   if (isStart && itinerary.isEmpty) {
                     startLocation = selectedLocation;
                     itinerary.add(selectedLocation);
@@ -254,11 +251,11 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
     setState(() {
       itinerary.removeAt(index);
     });
-    if (widget.onTransportModeChange != null && 
-      (index == 0 || itinerary.length < 2)) {
-    // Let the parent know to clear cached routes
-    widget.onTransportModeChange!("clear_cache");
-  }
+    if (widget.onTransportModeChange != null &&
+        (index == 0 || itinerary.length < 2)) {
+      // Let the parent know to clear cached routes
+      widget.onTransportModeChange!("clear_cache");
+    }
   }
 
   Widget _buildTransportModeSelection() {
@@ -279,16 +276,15 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
       onTap: () {
         setState(() {
           selectedMode = label;
-          
         });
-        
+
         if (widget.onTransportModeChange != null) {
-        widget.onTransportModeChange!(label);
-      } 
-      // Otherwise use the confirm route handler if we have waypoints
-      else if (itinerary.length >= 2) {
-        widget.onConfirmRoute(List.from(itinerary), selectedMode);
-      }
+          widget.onTransportModeChange!(label);
+        }
+        // Otherwise use the confirm route handler if we have waypoints
+        else if (itinerary.length >= 2) {
+          widget.onConfirmRoute(List.from(itinerary), selectedMode);
+        }
       },
       child: Column(
         children: [

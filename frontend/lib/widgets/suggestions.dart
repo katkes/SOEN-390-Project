@@ -28,10 +28,7 @@ class SuggestionsPopupState extends State<SuggestionsPopup> {
   void initState() {
     super.initState();
     filteredSuggestions = suggestions;
-
-  
   }
-  
 
   void _filterSuggestions(String input) {
     setState(() {
@@ -57,27 +54,27 @@ class SuggestionsPopupState extends State<SuggestionsPopup> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-             GooglePlacesAutoCompleteTextFormField(
+            GooglePlacesAutoCompleteTextFormField(
               textEditingController: _searchController,
               googleAPIKey: dotenv.env['GOOGLE_PLACES_API_KEY'] ?? "",
-              debounceTime: 400, 
-              countries: ["ca"], 
-              fetchCoordinates: true, 
+              debounceTime: 400,
+              countries: ["ca"],
+              fetchCoordinates: true,
               onPlaceDetailsWithCoordinatesReceived: (prediction) {
                 print("Coordinates: (${prediction.lat}, ${prediction.lng})");
                 widget.onSelect(prediction.description ?? "");
               },
               onSuggestionClicked: (prediction) {
                 _searchController.text = prediction.description ?? "";
-                _searchController.selection = TextSelection.fromPosition(TextPosition(offset: prediction.description?.length ?? 0));
+                _searchController.selection = TextSelection.fromPosition(
+                    TextPosition(offset: prediction.description?.length ?? 0));
                 Navigator.pop(context);
               },
               onChanged: (input) {
-           
                 _filterSuggestions(input);
               },
               decoration: InputDecoration(
-                hintText: "Type address...", 
+                hintText: "Type address...",
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),

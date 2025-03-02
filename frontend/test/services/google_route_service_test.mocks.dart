@@ -3,16 +3,16 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i6;
-import 'dart:convert' as _i7;
-import 'dart:typed_data' as _i9;
+import 'dart:async' as _i4;
+import 'dart:convert' as _i5;
+import 'dart:typed_data' as _i7;
 
 import 'package:geolocator/geolocator.dart' as _i3;
 import 'package:http/http.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i8;
-import 'package:soen_390/services/http_service.dart' as _i4;
-import 'package:soen_390/utils/location_service.dart' as _i5;
+import 'package:mockito/src/dummies.dart' as _i6;
+import 'package:soen_390/services/http_service.dart' as _i9;
+import 'package:soen_390/utils/location_service.dart' as _i8;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -28,56 +28,208 @@ import 'package:soen_390/utils/location_service.dart' as _i5;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeClient_0 extends _i1.SmartFake implements _i2.Client {
-  _FakeClient_0(Object parent, Invocation parentInvocation)
+class _FakeResponse_0 extends _i1.SmartFake implements _i2.Response {
+  _FakeResponse_0(Object parent, Invocation parentInvocation)
       : super(parent, parentInvocation);
 }
 
-class _FakeGeolocatorPlatform_1 extends _i1.SmartFake
-    implements _i3.GeolocatorPlatform {
-  _FakeGeolocatorPlatform_1(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
-}
-
-class _FakePosition_2 extends _i1.SmartFake implements _i3.Position {
-  _FakePosition_2(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
-}
-
-class _FakeLocationSettings_3 extends _i1.SmartFake
-    implements _i3.LocationSettings {
-  _FakeLocationSettings_3(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
-}
-
-class _FakeResponse_4 extends _i1.SmartFake implements _i2.Response {
-  _FakeResponse_4(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
-}
-
-class _FakeStreamedResponse_5 extends _i1.SmartFake
+class _FakeStreamedResponse_1 extends _i1.SmartFake
     implements _i2.StreamedResponse {
-  _FakeStreamedResponse_5(Object parent, Invocation parentInvocation)
+  _FakeStreamedResponse_1(Object parent, Invocation parentInvocation)
       : super(parent, parentInvocation);
 }
 
-/// A class which mocks [HttpService].
+class _FakeGeolocatorPlatform_2 extends _i1.SmartFake
+    implements _i3.GeolocatorPlatform {
+  _FakeGeolocatorPlatform_2(Object parent, Invocation parentInvocation)
+      : super(parent, parentInvocation);
+}
+
+class _FakePosition_3 extends _i1.SmartFake implements _i3.Position {
+  _FakePosition_3(Object parent, Invocation parentInvocation)
+      : super(parent, parentInvocation);
+}
+
+class _FakeLocationSettings_4 extends _i1.SmartFake
+    implements _i3.LocationSettings {
+  _FakeLocationSettings_4(Object parent, Invocation parentInvocation)
+      : super(parent, parentInvocation);
+}
+
+class _FakeClient_5 extends _i1.SmartFake implements _i2.Client {
+  _FakeClient_5(Object parent, Invocation parentInvocation)
+      : super(parent, parentInvocation);
+}
+
+/// A class which mocks [Client].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockHttpService extends _i1.Mock implements _i4.HttpService {
-  MockHttpService() {
+class MockClient extends _i1.Mock implements _i2.Client {
+  MockClient() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i2.Client get client => (super.noSuchMethod(
-        Invocation.getter(#client),
-        returnValue: _FakeClient_0(this, Invocation.getter(#client)),
-      ) as _i2.Client);
+  _i4.Future<_i2.Response> head(Uri? url, {Map<String, String>? headers}) =>
+      (super.noSuchMethod(
+        Invocation.method(#head, [url], {#headers: headers}),
+        returnValue: _i4.Future<_i2.Response>.value(
+          _FakeResponse_0(
+            this,
+            Invocation.method(#head, [url], {#headers: headers}),
+          ),
+        ),
+      ) as _i4.Future<_i2.Response>);
 
   @override
-  void dispose() => super.noSuchMethod(
-        Invocation.method(#dispose, []),
+  _i4.Future<_i2.Response> get(Uri? url, {Map<String, String>? headers}) =>
+      (super.noSuchMethod(
+        Invocation.method(#get, [url], {#headers: headers}),
+        returnValue: _i4.Future<_i2.Response>.value(
+          _FakeResponse_0(
+            this,
+            Invocation.method(#get, [url], {#headers: headers}),
+          ),
+        ),
+      ) as _i4.Future<_i2.Response>);
+
+  @override
+  _i4.Future<_i2.Response> post(
+    Uri? url, {
+    Map<String, String>? headers,
+    Object? body,
+    _i5.Encoding? encoding,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #post,
+          [url],
+          {#headers: headers, #body: body, #encoding: encoding},
+        ),
+        returnValue: _i4.Future<_i2.Response>.value(
+          _FakeResponse_0(
+            this,
+            Invocation.method(
+              #post,
+              [url],
+              {#headers: headers, #body: body, #encoding: encoding},
+            ),
+          ),
+        ),
+      ) as _i4.Future<_i2.Response>);
+
+  @override
+  _i4.Future<_i2.Response> put(
+    Uri? url, {
+    Map<String, String>? headers,
+    Object? body,
+    _i5.Encoding? encoding,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #put,
+          [url],
+          {#headers: headers, #body: body, #encoding: encoding},
+        ),
+        returnValue: _i4.Future<_i2.Response>.value(
+          _FakeResponse_0(
+            this,
+            Invocation.method(
+              #put,
+              [url],
+              {#headers: headers, #body: body, #encoding: encoding},
+            ),
+          ),
+        ),
+      ) as _i4.Future<_i2.Response>);
+
+  @override
+  _i4.Future<_i2.Response> patch(
+    Uri? url, {
+    Map<String, String>? headers,
+    Object? body,
+    _i5.Encoding? encoding,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #patch,
+          [url],
+          {#headers: headers, #body: body, #encoding: encoding},
+        ),
+        returnValue: _i4.Future<_i2.Response>.value(
+          _FakeResponse_0(
+            this,
+            Invocation.method(
+              #patch,
+              [url],
+              {#headers: headers, #body: body, #encoding: encoding},
+            ),
+          ),
+        ),
+      ) as _i4.Future<_i2.Response>);
+
+  @override
+  _i4.Future<_i2.Response> delete(
+    Uri? url, {
+    Map<String, String>? headers,
+    Object? body,
+    _i5.Encoding? encoding,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #delete,
+          [url],
+          {#headers: headers, #body: body, #encoding: encoding},
+        ),
+        returnValue: _i4.Future<_i2.Response>.value(
+          _FakeResponse_0(
+            this,
+            Invocation.method(
+              #delete,
+              [url],
+              {#headers: headers, #body: body, #encoding: encoding},
+            ),
+          ),
+        ),
+      ) as _i4.Future<_i2.Response>);
+
+  @override
+  _i4.Future<String> read(Uri? url, {Map<String, String>? headers}) =>
+      (super.noSuchMethod(
+        Invocation.method(#read, [url], {#headers: headers}),
+        returnValue: _i4.Future<String>.value(
+          _i6.dummyValue<String>(
+            this,
+            Invocation.method(#read, [url], {#headers: headers}),
+          ),
+        ),
+      ) as _i4.Future<String>);
+
+  @override
+  _i4.Future<_i7.Uint8List> readBytes(
+    Uri? url, {
+    Map<String, String>? headers,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(#readBytes, [url], {#headers: headers}),
+        returnValue: _i4.Future<_i7.Uint8List>.value(_i7.Uint8List(0)),
+      ) as _i4.Future<_i7.Uint8List>);
+
+  @override
+  _i4.Future<_i2.StreamedResponse> send(_i2.BaseRequest? request) =>
+      (super.noSuchMethod(
+        Invocation.method(#send, [request]),
+        returnValue: _i4.Future<_i2.StreamedResponse>.value(
+          _FakeStreamedResponse_1(
+            this,
+            Invocation.method(#send, [request]),
+          ),
+        ),
+      ) as _i4.Future<_i2.StreamedResponse>);
+
+  @override
+  void close() => super.noSuchMethod(
+        Invocation.method(#close, []),
         returnValueForMissingStub: null,
       );
 }
@@ -85,7 +237,7 @@ class MockHttpService extends _i1.Mock implements _i4.HttpService {
 /// A class which mocks [LocationService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockLocationService extends _i1.Mock implements _i5.LocationService {
+class MockLocationService extends _i1.Mock implements _i8.LocationService {
   MockLocationService() {
     _i1.throwOnMissingStub(this);
   }
@@ -93,7 +245,7 @@ class MockLocationService extends _i1.Mock implements _i5.LocationService {
   @override
   _i3.GeolocatorPlatform get geolocator => (super.noSuchMethod(
         Invocation.getter(#geolocator),
-        returnValue: _FakeGeolocatorPlatform_1(
+        returnValue: _FakeGeolocatorPlatform_2(
           this,
           Invocation.getter(#geolocator),
         ),
@@ -102,7 +254,7 @@ class MockLocationService extends _i1.Mock implements _i5.LocationService {
   @override
   _i3.Position get currentPosition => (super.noSuchMethod(
         Invocation.getter(#currentPosition),
-        returnValue: _FakePosition_2(
+        returnValue: _FakePosition_3(
           this,
           Invocation.getter(#currentPosition),
         ),
@@ -117,7 +269,7 @@ class MockLocationService extends _i1.Mock implements _i5.LocationService {
   @override
   _i3.LocationSettings get locSetting => (super.noSuchMethod(
         Invocation.getter(#locSetting),
-        returnValue: _FakeLocationSettings_3(
+        returnValue: _FakeLocationSettings_4(
           this,
           Invocation.getter(#locSetting),
         ),
@@ -154,44 +306,50 @@ class MockLocationService extends _i1.Mock implements _i5.LocationService {
       );
 
   @override
-  _i6.Future<bool> determinePermissions() => (super.noSuchMethod(
+  _i4.Future<bool> isLocationEnabled() => (super.noSuchMethod(
+        Invocation.method(#isLocationEnabled, []),
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
+
+  @override
+  _i4.Future<bool> determinePermissions() => (super.noSuchMethod(
         Invocation.method(#determinePermissions, []),
-        returnValue: _i6.Future<bool>.value(false),
-      ) as _i6.Future<bool>);
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
 
   @override
-  _i6.Future<_i3.Position> getCurrentLocation() => (super.noSuchMethod(
+  _i4.Future<_i3.Position> getCurrentLocation() => (super.noSuchMethod(
         Invocation.method(#getCurrentLocation, []),
-        returnValue: _i6.Future<_i3.Position>.value(
-          _FakePosition_2(this, Invocation.method(#getCurrentLocation, [])),
+        returnValue: _i4.Future<_i3.Position>.value(
+          _FakePosition_3(this, Invocation.method(#getCurrentLocation, [])),
         ),
-      ) as _i6.Future<_i3.Position>);
+      ) as _i4.Future<_i3.Position>);
 
   @override
-  _i6.Future<void> updateCurrentLocation() => (super.noSuchMethod(
+  _i4.Future<void> updateCurrentLocation() => (super.noSuchMethod(
         Invocation.method(#updateCurrentLocation, []),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i6.Future<_i3.Position> getCurrentLocationAccurately() =>
+  _i4.Future<_i3.Position> getCurrentLocationAccurately() =>
       (super.noSuchMethod(
         Invocation.method(#getCurrentLocationAccurately, []),
-        returnValue: _i6.Future<_i3.Position>.value(
-          _FakePosition_2(
+        returnValue: _i4.Future<_i3.Position>.value(
+          _FakePosition_3(
             this,
             Invocation.method(#getCurrentLocationAccurately, []),
           ),
         ),
-      ) as _i6.Future<_i3.Position>);
+      ) as _i4.Future<_i3.Position>);
 
   @override
-  _i6.Future<void> updateCurrentLocationAccurately() => (super.noSuchMethod(
+  _i4.Future<void> updateCurrentLocationAccurately() => (super.noSuchMethod(
         Invocation.method(#updateCurrentLocationAccurately, []),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
   void takePosition(_i3.Position? p) => super.noSuchMethod(
@@ -212,334 +370,42 @@ class MockLocationService extends _i1.Mock implements _i5.LocationService {
       );
 
   @override
-  _i6.Future<void> startUp() => (super.noSuchMethod(
+  _i4.Future<void> startUp() => (super.noSuchMethod(
         Invocation.method(#startUp, []),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
   void stopListening() => super.noSuchMethod(
         Invocation.method(#stopListening, []),
         returnValueForMissingStub: null,
       );
+
+  @override
+  _i4.Stream<_i3.Position> getPositionStream() => (super.noSuchMethod(
+        Invocation.method(#getPositionStream, []),
+        returnValue: _i4.Stream<_i3.Position>.empty(),
+      ) as _i4.Stream<_i3.Position>);
 }
 
-/// A class which mocks [Client].
+/// A class which mocks [HttpService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockClient extends _i1.Mock implements _i2.Client {
-  MockClient() {
+class MockHttpService extends _i1.Mock implements _i9.HttpService {
+  MockHttpService() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i6.Future<_i2.Response> head(Uri? url, {Map<String, String>? headers}) =>
-      (super.noSuchMethod(
-        Invocation.method(#head, [url], {#headers: headers}),
-        returnValue: _i6.Future<_i2.Response>.value(
-          _FakeResponse_4(
-            this,
-            Invocation.method(#head, [url], {#headers: headers}),
-          ),
-        ),
-      ) as _i6.Future<_i2.Response>);
+  _i2.Client get client => (super.noSuchMethod(
+        Invocation.getter(#client),
+        returnValue: _FakeClient_5(this, Invocation.getter(#client)),
+      ) as _i2.Client);
 
   @override
-  _i6.Future<_i2.Response> get(Uri? url, {Map<String, String>? headers}) =>
-      (super.noSuchMethod(
-        Invocation.method(#get, [url], {#headers: headers}),
-        returnValue: _i6.Future<_i2.Response>.value(
-          _FakeResponse_4(
-            this,
-            Invocation.method(#get, [url], {#headers: headers}),
-          ),
-        ),
-      ) as _i6.Future<_i2.Response>);
-
-  @override
-  _i6.Future<_i2.Response> post(
-    Uri? url, {
-    Map<String, String>? headers,
-    Object? body,
-    _i7.Encoding? encoding,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #post,
-          [url],
-          {#headers: headers, #body: body, #encoding: encoding},
-        ),
-        returnValue: _i6.Future<_i2.Response>.value(
-          _FakeResponse_4(
-            this,
-            Invocation.method(
-              #post,
-              [url],
-              {#headers: headers, #body: body, #encoding: encoding},
-            ),
-          ),
-        ),
-      ) as _i6.Future<_i2.Response>);
-
-  @override
-  _i6.Future<_i2.Response> put(
-    Uri? url, {
-    Map<String, String>? headers,
-    Object? body,
-    _i7.Encoding? encoding,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #put,
-          [url],
-          {#headers: headers, #body: body, #encoding: encoding},
-        ),
-        returnValue: _i6.Future<_i2.Response>.value(
-          _FakeResponse_4(
-            this,
-            Invocation.method(
-              #put,
-              [url],
-              {#headers: headers, #body: body, #encoding: encoding},
-            ),
-          ),
-        ),
-      ) as _i6.Future<_i2.Response>);
-
-  @override
-  _i6.Future<_i2.Response> patch(
-    Uri? url, {
-    Map<String, String>? headers,
-    Object? body,
-    _i7.Encoding? encoding,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #patch,
-          [url],
-          {#headers: headers, #body: body, #encoding: encoding},
-        ),
-        returnValue: _i6.Future<_i2.Response>.value(
-          _FakeResponse_4(
-            this,
-            Invocation.method(
-              #patch,
-              [url],
-              {#headers: headers, #body: body, #encoding: encoding},
-            ),
-          ),
-        ),
-      ) as _i6.Future<_i2.Response>);
-
-  @override
-  _i6.Future<_i2.Response> delete(
-    Uri? url, {
-    Map<String, String>? headers,
-    Object? body,
-    _i7.Encoding? encoding,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #delete,
-          [url],
-          {#headers: headers, #body: body, #encoding: encoding},
-        ),
-        returnValue: _i6.Future<_i2.Response>.value(
-          _FakeResponse_4(
-            this,
-            Invocation.method(
-              #delete,
-              [url],
-              {#headers: headers, #body: body, #encoding: encoding},
-            ),
-          ),
-        ),
-      ) as _i6.Future<_i2.Response>);
-
-  @override
-  _i6.Future<String> read(Uri? url, {Map<String, String>? headers}) =>
-      (super.noSuchMethod(
-        Invocation.method(#read, [url], {#headers: headers}),
-        returnValue: _i6.Future<String>.value(
-          _i8.dummyValue<String>(
-            this,
-            Invocation.method(#read, [url], {#headers: headers}),
-          ),
-        ),
-      ) as _i6.Future<String>);
-
-  @override
-  _i6.Future<_i9.Uint8List> readBytes(
-    Uri? url, {
-    Map<String, String>? headers,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(#readBytes, [url], {#headers: headers}),
-        returnValue: _i6.Future<_i9.Uint8List>.value(_i9.Uint8List(0)),
-      ) as _i6.Future<_i9.Uint8List>);
-
-  @override
-  _i6.Future<_i2.StreamedResponse> send(_i2.BaseRequest? request) =>
-      (super.noSuchMethod(
-        Invocation.method(#send, [request]),
-        returnValue: _i6.Future<_i2.StreamedResponse>.value(
-          _FakeStreamedResponse_5(
-            this,
-            Invocation.method(#send, [request]),
-          ),
-        ),
-      ) as _i6.Future<_i2.StreamedResponse>);
-
-  @override
-  void close() => super.noSuchMethod(
-        Invocation.method(#close, []),
+  void dispose() => super.noSuchMethod(
+        Invocation.method(#dispose, []),
         returnValueForMissingStub: null,
       );
-}
-
-/// A class which mocks [GeolocatorPlatform].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockGeolocatorPlatform extends _i1.Mock
-    implements _i3.GeolocatorPlatform {
-  MockGeolocatorPlatform() {
-    _i1.throwOnMissingStub(this);
-  }
-
-  @override
-  _i6.Future<_i3.LocationPermission> checkPermission() => (super.noSuchMethod(
-        Invocation.method(#checkPermission, []),
-        returnValue: _i6.Future<_i3.LocationPermission>.value(
-          _i3.LocationPermission.denied,
-        ),
-      ) as _i6.Future<_i3.LocationPermission>);
-
-  @override
-  _i6.Future<_i3.LocationPermission> requestPermission() => (super.noSuchMethod(
-        Invocation.method(#requestPermission, []),
-        returnValue: _i6.Future<_i3.LocationPermission>.value(
-          _i3.LocationPermission.denied,
-        ),
-      ) as _i6.Future<_i3.LocationPermission>);
-
-  @override
-  _i6.Future<bool> isLocationServiceEnabled() => (super.noSuchMethod(
-        Invocation.method(#isLocationServiceEnabled, []),
-        returnValue: _i6.Future<bool>.value(false),
-      ) as _i6.Future<bool>);
-
-  @override
-  _i6.Future<_i3.Position?> getLastKnownPosition({
-    bool? forceLocationManager = false,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(#getLastKnownPosition, [], {
-          #forceLocationManager: forceLocationManager,
-        }),
-        returnValue: _i6.Future<_i3.Position?>.value(),
-      ) as _i6.Future<_i3.Position?>);
-
-  @override
-  _i6.Future<_i3.Position> getCurrentPosition({
-    _i3.LocationSettings? locationSettings,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(#getCurrentPosition, [], {
-          #locationSettings: locationSettings,
-        }),
-        returnValue: _i6.Future<_i3.Position>.value(
-          _FakePosition_2(
-            this,
-            Invocation.method(#getCurrentPosition, [], {
-              #locationSettings: locationSettings,
-            }),
-          ),
-        ),
-      ) as _i6.Future<_i3.Position>);
-
-  @override
-  _i6.Stream<_i3.ServiceStatus> getServiceStatusStream() => (super.noSuchMethod(
-        Invocation.method(#getServiceStatusStream, []),
-        returnValue: _i6.Stream<_i3.ServiceStatus>.empty(),
-      ) as _i6.Stream<_i3.ServiceStatus>);
-
-  @override
-  _i6.Stream<_i3.Position> getPositionStream({
-    _i3.LocationSettings? locationSettings,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(#getPositionStream, [], {
-          #locationSettings: locationSettings,
-        }),
-        returnValue: _i6.Stream<_i3.Position>.empty(),
-      ) as _i6.Stream<_i3.Position>);
-
-  @override
-  _i6.Future<_i3.LocationAccuracyStatus> requestTemporaryFullAccuracy({
-    required String? purposeKey,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(#requestTemporaryFullAccuracy, [], {
-          #purposeKey: purposeKey,
-        }),
-        returnValue: _i6.Future<_i3.LocationAccuracyStatus>.value(
-          _i3.LocationAccuracyStatus.reduced,
-        ),
-      ) as _i6.Future<_i3.LocationAccuracyStatus>);
-
-  @override
-  _i6.Future<_i3.LocationAccuracyStatus> getLocationAccuracy() =>
-      (super.noSuchMethod(
-        Invocation.method(#getLocationAccuracy, []),
-        returnValue: _i6.Future<_i3.LocationAccuracyStatus>.value(
-          _i3.LocationAccuracyStatus.reduced,
-        ),
-      ) as _i6.Future<_i3.LocationAccuracyStatus>);
-
-  @override
-  _i6.Future<bool> openAppSettings() => (super.noSuchMethod(
-        Invocation.method(#openAppSettings, []),
-        returnValue: _i6.Future<bool>.value(false),
-      ) as _i6.Future<bool>);
-
-  @override
-  _i6.Future<bool> openLocationSettings() => (super.noSuchMethod(
-        Invocation.method(#openLocationSettings, []),
-        returnValue: _i6.Future<bool>.value(false),
-      ) as _i6.Future<bool>);
-
-  @override
-  double distanceBetween(
-    double? startLatitude,
-    double? startLongitude,
-    double? endLatitude,
-    double? endLongitude,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(#distanceBetween, [
-          startLatitude,
-          startLongitude,
-          endLatitude,
-          endLongitude,
-        ]),
-        returnValue: 0.0,
-      ) as double);
-
-  @override
-  double bearingBetween(
-    double? startLatitude,
-    double? startLongitude,
-    double? endLatitude,
-    double? endLongitude,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(#bearingBetween, [
-          startLatitude,
-          startLongitude,
-          endLatitude,
-          endLongitude,
-        ]),
-        returnValue: 0.0,
-      ) as double);
 }

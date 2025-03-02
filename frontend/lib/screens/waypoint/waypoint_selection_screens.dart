@@ -30,20 +30,18 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
   String? selectedMode;
   List<Map<String, dynamic>> confirmedRoutes = [];
   List<RouteResult> fetchedRoutes = [];
-  
-  
 
-  // Injected services for route and geocoding functionality 
+  // Injected services for route and geocoding functionality
   late GoogleRouteService routeService;
   late GeocodingService geocodingService;
   late LocationService locationService;
 
-  
   @override
   void initState() {
     super.initState();
-    
-    final locationService = LocationService(geolocator: GeolocatorPlatform.instance);
+
+    final locationService =
+        LocationService(geolocator: GeolocatorPlatform.instance);
     final httpService = HttpService();
 
     final String apiKey = dotenv.env['GOOGLE_MAPS_API_KEY'] ?? '';
@@ -55,89 +53,94 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
     routeService = GoogleRouteService(
       locationService: locationService,
       httpService: httpService,
-      apiKey:apiKey,
+      apiKey: apiKey,
     );
 
     geocodingService = GeocodingService(
       httpService: httpService,
       apiKey: apiKey,
     );
-    
-  }
-  
-
-  void _handleRouteConfirmation(List<String> waypoints, String transportMode) async {
-  if (waypoints.length < 2) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("You must have at least a start and destination.")),
-    );
-    return;
   }
 
-  setState(() {
-    isLoading = true;
-    errorMessage = null;
-    selectedMode = transportMode;
-  });
-
-  try {
-    // Convert location names to coordinates using geocoding service
-    final LatLng? startPoint = await geocodingService.getCoordinates(waypoints.first);
-    final LatLng? endPoint = await geocodingService.getCoordinates(waypoints.last);
-
-    if (startPoint == null || endPoint == null) {
-      throw Exception("Could not find coordinates for one or more locations");
+  void _handleRouteConfirmation(
+      List<String> waypoints, String transportMode) async {
+    if (waypoints.length < 2) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text("You must have at least a start and destination.")),
+      );
+      return;
     }
 
-    // Map our UI transport mode to Google API transport mode
-    final String googleTransportMode = _mapTransportModeToApiMode(transportMode);
+    setState(() {
+      isLoading = true;
+      errorMessage = null;
+      selectedMode = transportMode;
+    });
 
-    // Fetch routes for the selected transport mode
-    final routes = await routeService.getRoutes(
-      from: startPoint,
-      to: endPoint,
-    );
+    try {
+      // Convert location names to coordinates using geocoding service
+      final LatLng? startPoint =
+          await geocodingService.getCoordinates(waypoints.first);
+      final LatLng? endPoint =
+          await geocodingService.getCoordinates(waypoints.last);
 
-    if (routes.isEmpty || !routes.containsKey(googleTransportMode) || routes[googleTransportMode]!.isEmpty) {
-      throw Exception("No routes found for the selected transport mode");
+      if (startPoint == null || endPoint == null) {
+        throw Exception("Could not find coordinates for one or more locations");
+      }
+
+      // Map our UI transport mode to Google API transport mode
+      final String googleTransportMode =
+          _mapTransportModeToApiMode(transportMode);
+
+      // Fetch routes for the selected transport mode
+      final routes = await routeService.getRoutes(
+        from: startPoint,
+        to: endPoint,
+      );
+
+      if (routes.isEmpty ||
+          !routes.containsKey(googleTransportMode) ||
+          routes[googleTransportMode]!.isEmpty) {
+        throw Exception("No routes found for the selected transport mode");
+      }
+
+      // Get the top 4 routes for the selected transport mode
+      final selectedRoutes = routes[googleTransportMode]!;
+      final topRoutes = selectedRoutes.take(4).toList(); // Get the top 4 routes
+
+      // Add the routes to the confirmed routes list
+      setState(() {
+        confirmedRoutes = topRoutes.map((route) {
+          return {
+            "title":
+                "${_shortenAddress(waypoints.first)} to ${_shortenAddress(waypoints.last)}",
+            "timeRange": _formatTimeRange(route.duration),
+            "duration": _formatDuration(route.duration),
+            "description": waypoints
+                .map((waypoint) => _shortenAddress(waypoint))
+                .join(" → "),
+            "icons": _getIconsForTransport(transportMode),
+            "routeData": route, // Store the actual route data for future use
+          };
+        }).toList();
+        isLoading = false;
+      });
+
+      print("Final confirmed route: $waypoints, Mode: $transportMode");
+      print(
+          "Route details: ${topRoutes.first.distance} meters, ${topRoutes.first.duration} seconds");
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+        errorMessage = "Error finding route: ${e.toString()}";
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(errorMessage!)),
+      );
     }
-
-
-    // Get the top 4 routes for the selected transport mode
-    final selectedRoutes = routes[googleTransportMode]!;
-    final topRoutes = selectedRoutes.take(4).toList(); // Get the top 4 routes
-
-    // Add the routes to the confirmed routes list
-    setState(() {
-      confirmedRoutes = topRoutes.map((route) {
-        return {
-          "title": "${_shortenAddress(waypoints.first)} to ${_shortenAddress(waypoints.last)}",
-          "timeRange": _formatTimeRange(route.duration),
-          "duration": _formatDuration(route.duration),
-          "description": waypoints.map((waypoint) => _shortenAddress(waypoint)).join(" → "),
-          "icons": _getIconsForTransport(transportMode),
-          "routeData": route, // Store the actual route data for future use
-        };
-      }).toList();
-      isLoading = false;
-    });
-
-    print("Final confirmed route: $waypoints, Mode: $transportMode");
-    print("Route details: ${topRoutes.first.distance} meters, ${topRoutes.first.duration} seconds");
-
-  } catch (e) {
-    setState(() {
-      isLoading = false;
-      errorMessage = "Error finding route: ${e.toString()}";
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(errorMessage!)),
-    );
   }
-}
-
-
 
   String _shortenAddress(String address) {
     //Remove any components like province or country.
@@ -191,23 +194,20 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
       return "$hours h $remainingMinutes min";
     }
   }
-  
+
   // Helper method to format time range based on current time and duration
   String _formatTimeRange(double seconds) {
     final now = DateTime.now();
     final arrival = now.add(Duration(seconds: seconds.round()));
-    
+
     String formatTime(DateTime time) {
       final hour = time.hour > 12 ? time.hour - 12 : time.hour;
       final period = time.hour >= 12 ? "PM" : "AM";
       return "${hour == 0 ? 12 : hour}:${time.minute.toString().padLeft(2, '0')} $period";
     }
-    
+
     return "${formatTime(now)} - ${formatTime(arrival)}";
   }
-
-  
-
 
   @override
   Widget build(BuildContext context) {
@@ -243,8 +243,8 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
                   icons: route["icons"],
                   routeData: route["routeData"],
                   onCardTapped: () {
-                  // When card is tapped, navigate back to the main screen (WaypointSelectionScreen)
-                   Navigator.pop(context);
+                    // When card is tapped, navigate back to the main screen (WaypointSelectionScreen)
+                    Navigator.pop(context);
                   },
                 );
               },

@@ -155,7 +155,7 @@ class GoogleRouteService implements IRouteService {
           final duration = leg['duration']['value'].toDouble();
           final polylinePoints = route.containsKey('overview_polyline')
               ? _decodePolyline(route['overview_polyline']['points'])
-              : <LatLng>[]; 
+              : <LatLng>[];
 
           // 🔹 Extract step-by-step navigation
           List<StepResult> steps = _extractSteps(leg['steps']);
@@ -164,7 +164,7 @@ class GoogleRouteService implements IRouteService {
             distance: distance,
             duration: duration,
             routePoints: polylinePoints,
-            steps: steps, 
+            steps: steps,
           ));
         }
       }
@@ -201,7 +201,7 @@ class GoogleRouteService implements IRouteService {
   ///
   /// This function continuously checks the user's position. If they go off-route,
   /// it recalculates the best path.
-Future<void> startLiveNavigation({
+  Future<void> startLiveNavigation({
     required LatLng to,
     required String mode,
     required Function(RouteResult) onUpdate,
@@ -212,8 +212,8 @@ Future<void> startLiveNavigation({
     }
 
     // ✅ Check if location services are enabled BEFORE starting navigation
-    final isLocationEnabled =
-        await locationService.geolocator.isLocationServiceEnabled();
+    final isLocationEnabled = await locationService.isLocationEnabled();
+
     if (!isLocationEnabled) {
       print(
           "❌ ERROR: Location services are disabled. Cannot start navigation.");
@@ -223,9 +223,7 @@ Future<void> startLiveNavigation({
     RouteResult route = _selectedRoute!;
     locationService.createLocationStream();
 
-    locationService.geolocator
-        .getPositionStream(locationSettings: locationService.locSetting)
-        .listen((Position position) async {
+    locationService.getPositionStream().listen((Position position) async {
       LatLng newUserLocation = LatLng(position.latitude, position.longitude);
 
       if (!_isUserOnRoute(newUserLocation, route.routePoints)) {
@@ -247,7 +245,6 @@ Future<void> startLiveNavigation({
     });
   }
 
-
   List<StepResult> _extractSteps(List<dynamic> stepsData) {
     List<StepResult> steps = [];
 
@@ -257,9 +254,7 @@ Future<void> startLiveNavigation({
         duration: step['duration']['value'].toDouble(),
         instruction: step['html_instructions'] ??
             "No instruction available", // ✅ Default if missing
-        maneuver: step.containsKey('maneuver')
-            ? step['maneuver']
-            : "unknown", 
+        maneuver: step.containsKey('maneuver') ? step['maneuver'] : "unknown",
         startLocation: LatLng(
             step['start_location']['lat'], step['start_location']['lng']),
         endLocation:
