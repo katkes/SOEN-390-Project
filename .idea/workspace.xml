@@ -4,18 +4,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d0d732de-4191-4af8-81e9-6d66c2d25976" name="Changes" comment="3 working test for building_outlines_test.dart have been created">
-      <change beforePath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/.dart_tool/version" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/.dart_tool/version" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/lib/widgets/location_transport_selector.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/lib/widgets/location_transport_selector.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/macos/Flutter/GeneratedPluginRegistrant.swift" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/macos/Flutter/GeneratedPluginRegistrant.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/pubspec.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/test/widgets/components/location_transport_selector_test.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/test/widgets/components/location_transport_selector_test.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/windows/flutter/generated_plugin_registrant.cc" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/windows/flutter/generated_plugin_registrant.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/windows/flutter/generated_plugins.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/windows/flutter/generated_plugins.cmake" afterDir="false" />
-    </list>
+    <list default="true" id="d0d732de-4191-4af8-81e9-6d66c2d25976" name="Changes" comment="Added button to select shuttle as a possibility for transportation. This allow includes UI implementation and test associated with it." />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -139,7 +128,15 @@
       <option name="project" value="LOCAL" />
       <updated>1740343994690</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Added button to select shuttle as a possibility for transportation. This allow includes UI implementation and test associated with it.">
+      <option name="closed" value="true" />
+      <created>1740884096986</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1740884096986</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -148,6 +145,7 @@
     <MESSAGE value="This contains the functionality to put a red marker over every building in concordia's campus. It also displays campus information when clicked on. Two test included in this functionality and update to pubspec.yaml so that information from geojson's can be used. Also includes the beginning of functionality to highlight each building belongning to concordia files." />
     <MESSAGE value="Added mocking for the building details test" />
     <MESSAGE value="3 working test for building_outlines_test.dart have been created" />
-    <option name="LAST_COMMIT_MESSAGE" value="3 working test for building_outlines_test.dart have been created" />
+    <MESSAGE value="Added button to select shuttle as a possibility for transportation. This allow includes UI implementation and test associated with it." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added button to select shuttle as a possibility for transportation. This allow includes UI implementation and test associated with it." />
   </component>
 </project>
