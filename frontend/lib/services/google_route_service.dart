@@ -155,7 +155,7 @@ class GoogleRouteService implements IRouteService {
           final duration = leg['duration']['value'].toDouble();
           final polylinePoints = route.containsKey('overview_polyline')
               ? _decodePolyline(route['overview_polyline']['points'])
-              : <LatLng>[]; // ✅ Avoids crash when missing
+              : <LatLng>[]; 
 
           // 🔹 Extract step-by-step navigation
           List<StepResult> steps = _extractSteps(leg['steps']);
@@ -164,7 +164,7 @@ class GoogleRouteService implements IRouteService {
             distance: distance,
             duration: duration,
             routePoints: polylinePoints,
-            steps: steps, // ✅ Add extracted steps here
+            steps: steps, 
           ));
         }
       }
@@ -250,7 +250,7 @@ class GoogleRouteService implements IRouteService {
             "No instruction available", // ✅ Default if missing
         maneuver: step.containsKey('maneuver')
             ? step['maneuver']
-            : "unknown", // ✅ Avoid errors
+            : "unknown", 
         startLocation: LatLng(
             step['start_location']['lat'], step['start_location']['lng']),
         endLocation:

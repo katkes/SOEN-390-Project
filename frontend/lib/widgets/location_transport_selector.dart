@@ -1,7 +1,6 @@
 // LocationTransportSelector is responsible for handling user input related to
 // selecting start and destination locations, adding stops, choosing transport modes,
 // and setting departure options (Leave Now, Depart At, Arrive By).
-// Users can reorder their itinerary using drag-and-drop functionality and confirm their route.
 // The confirmed waypoints and transport mode are sent to the routing system for processing.
 
 import 'package:flutter/material.dart';
@@ -9,8 +8,9 @@ import 'suggestions.dart';
 
 class LocationTransportSelector extends StatefulWidget {
   final Function(List<String>, String) onConfirmRoute;
+  final Function(String)? onTransportModeChange; 
 
-  const LocationTransportSelector({super.key, required this.onConfirmRoute});
+  const LocationTransportSelector({super.key, required this.onConfirmRoute, this.onTransportModeChange});
 
   @override
   LocationTransportSelectorState createState() =>
@@ -21,6 +21,9 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   List<String> itinerary = [];
   String selectedMode = "Train or Bus";
   String selectedTimeOption = "Leave Now"; // Default time selection
+  String selectedLocation = '';//variable to store selected location address
+  String startLocation = ''; // variable to store start location address
+  String destinationLocation = ''; // variable to store destination location address
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +40,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
         children: [
           _buildLocationInput(),
           const SizedBox(height: 10),
-          _buildReorderableItinerary(),
+          //_buildReorderableItinerary(), temporarily removed
           const SizedBox(height: 20),
           _buildTransportModeSelection(),
           const SizedBox(height: 20),
@@ -65,7 +68,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
         _buildLocationField("Destination", false),
         const SizedBox(height: 10),
 
-        // ✅ Add Stop & "Leave Now" Dropdown in Row
+        // Add Stop & "Leave Now" Dropdown in Row
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -99,7 +102,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
                 border: Border.all(color: Colors.black26),
                 color: Colors.white,
               ),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
                   value: selectedTimeOption, // Default value
@@ -125,31 +128,32 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
     );
   }
 
-  Widget _buildReorderableItinerary() {
-    return ReorderableListView(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      onReorder: (oldIndex, newIndex) {
-        setState(() {
-          if (newIndex > oldIndex) newIndex -= 1;
-          final item = itinerary.removeAt(oldIndex);
-          itinerary.insert(newIndex, item);
-        });
-      },
-      children: [
-        for (int index = 0; index < itinerary.length; index++)
-          ListTile(
-            key: ValueKey(itinerary[index]),
-            title: Text(itinerary[index]),
-            leading: const Icon(Icons.drag_handle),
-            trailing: IconButton(
-              icon: const Icon(Icons.delete, color: Colors.red),
-              onPressed: () => _removeStop(index),
-            ),
-          ),
-      ],
-    );
-  }
+//Temporary removable until multiple iternary is implemented
+  // Widget _buildReorderableItinerary() {
+  //   return ReorderableListView(
+  //     shrinkWrap: true,
+  //     physics: const NeverScrollableScrollPhysics(),
+  //     onReorder: (oldIndex, newIndex) {
+  //       setState(() {
+  //         if (newIndex > oldIndex) newIndex -= 1;
+  //         final item = itinerary.removeAt(oldIndex);
+  //         itinerary.insert(newIndex, item);
+  //       });
+  //     },
+  //     children: [
+  //       for (int index = 0; index < itinerary.length; index++)
+  //         ListTile(
+  //           key: ValueKey(itinerary[index]),
+  //           title: Text(itinerary[index]),
+  //           leading: const Icon(Icons.drag_handle),
+  //           trailing: IconButton(
+  //             icon: const Icon(Icons.delete, color: Colors.red),
+  //             onPressed: () => _removeStop(index),
+  //           ),
+  //         ),
+  //     ],
+  //   );
+  // }
 
   void _confirmRoute() {
     if (itinerary.length < 2) {
@@ -164,13 +168,17 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
     print("Waypoints sent to routing system: $selectedWaypoints");
 
     widget.onConfirmRoute(selectedWaypoints, selectedMode);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Route successfully confirmed!")),
-    );
   }
 
   Widget _buildLocationField(String placeholder, bool isStart) {
+    String locationText = isStart ? startLocation : destinationLocation;
+   locationText = locationText.isEmpty 
+      ? placeholder 
+      : locationText.replaceAll(RegExp(r'[^\w\s]'), '') // Remove punctuation
+                     .split(' ') // Split by spaces
+                     .take(2) // Get only the first two words
+                     .join(' '); // Join them back to a string
+
     return GestureDetector(
       onTap: () {
         _showLocationSuggestions(isStart);
@@ -184,11 +192,32 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        
           children: [
-            Text(placeholder,
+            Text(locationText,
                 style:
                     const TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
+                     if (isStart || isStart == false) 
+            if (locationText != placeholder)
+            IconButton(
+              icon: const Icon(Icons.delete, size: 20, color: Colors.red),
+              onPressed: () {
+                setState(() {
+                  if (isStart) {
+                    startLocation = '';
+                        _removeStop(0);
+                  } else {
+                    destinationLocation = '';
+                        _removeStop(1);
+                  }
+                });
+            
+              },
+              
+            ),
+            
             const Icon(Icons.arrow_drop_down, color: Colors.black54),
+            
           ],
         ),
       ),
@@ -204,9 +233,12 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (mounted) {
                 setState(() {
+                  
                   if (isStart && itinerary.isEmpty) {
+                    startLocation = selectedLocation;
                     itinerary.add(selectedLocation);
                   } else if (!isStart && itinerary.length < 2) {
+                    destinationLocation = selectedLocation;
                     itinerary.add(selectedLocation);
                   }
                 });
@@ -222,6 +254,11 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
     setState(() {
       itinerary.removeAt(index);
     });
+    if (widget.onTransportModeChange != null && 
+      (index == 0 || itinerary.length < 2)) {
+    // Let the parent know to clear cached routes
+    widget.onTransportModeChange!("clear_cache");
+  }
   }
 
   Widget _buildTransportModeSelection() {
@@ -242,7 +279,16 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
       onTap: () {
         setState(() {
           selectedMode = label;
+          
         });
+        
+        if (widget.onTransportModeChange != null) {
+        widget.onTransportModeChange!(label);
+      } 
+      // Otherwise use the confirm route handler if we have waypoints
+      else if (itinerary.length >= 2) {
+        widget.onConfirmRoute(List.from(itinerary), selectedMode);
+      }
       },
       child: Column(
         children: [

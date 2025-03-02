@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_places_autocomplete_text_field/google_places_autocomplete_text_field.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class SuggestionsPopup extends StatefulWidget {
   final Function(String) onSelect;
@@ -11,6 +13,7 @@ class SuggestionsPopup extends StatefulWidget {
 
 class SuggestionsPopupState extends State<SuggestionsPopup> {
   final TextEditingController _searchController = TextEditingController();
+
   List<String> suggestions = [
     "Restaurant",
     "Fast Food",
@@ -25,7 +28,10 @@ class SuggestionsPopupState extends State<SuggestionsPopup> {
   void initState() {
     super.initState();
     filteredSuggestions = suggestions;
+
+  
   }
+  
 
   void _filterSuggestions(String input) {
     setState(() {
@@ -51,13 +57,31 @@ class SuggestionsPopupState extends State<SuggestionsPopup> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextField(
-              controller: _searchController,
-              onChanged: _filterSuggestions,
-              decoration: const InputDecoration(
-                labelText: "Enter an address",
-                hintText: "Type address or select from list...",
-                border: OutlineInputBorder(),
+             GooglePlacesAutoCompleteTextFormField(
+              textEditingController: _searchController,
+              googleAPIKey: dotenv.env['GOOGLE_PLACES_API_KEY'] ?? "",
+              debounceTime: 400, 
+              countries: ["ca"], 
+              fetchCoordinates: true, 
+              onPlaceDetailsWithCoordinatesReceived: (prediction) {
+                print("Coordinates: (${prediction.lat}, ${prediction.lng})");
+                widget.onSelect(prediction.description ?? "");
+              },
+              onSuggestionClicked: (prediction) {
+                _searchController.text = prediction.description ?? "";
+                _searchController.selection = TextSelection.fromPosition(TextPosition(offset: prediction.description?.length ?? 0));
+                Navigator.pop(context);
+              },
+              onChanged: (input) {
+           
+                _filterSuggestions(input);
+              },
+              decoration: InputDecoration(
+                hintText: "Type address...", 
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                contentPadding: const EdgeInsets.all(10),
               ),
             ),
             const SizedBox(height: 10),

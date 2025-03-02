@@ -11,6 +11,8 @@ class RouteCard extends StatelessWidget {
   final String duration;
   final String description;
   final List<IconData> icons;
+  final dynamic routeData; 
+  final VoidCallback onCardTapped;
 
   const RouteCard({
     super.key,
@@ -19,11 +21,16 @@ class RouteCard extends StatelessWidget {
     required this.duration,
     required this.description,
     required this.icons,
+    required this.routeData,
+    required this.onCardTapped,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return GestureDetector(
+      onTap: onCardTapped,
+      child: 
+      Container(
       width: 382,
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       padding: const EdgeInsets.all(16),
@@ -79,6 +86,8 @@ class RouteCard extends StatelessWidget {
           ),
         ],
       ),
+    ),
     );
+
   }
 }
