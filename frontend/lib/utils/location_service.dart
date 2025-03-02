@@ -177,8 +177,9 @@ class LocationService {
     _positionStream?.cancel();
   }
 
-  // Returns the closest campus to the current location
-  String getClosestCampus() {
+  /// Returns the closest campus to the current location.
+  /// Made static to allow direct calls without an instance.
+  static String getClosestCampus(geo.Position currentPosition) {
     var campusCoordinates = {
       "SGW": [45.4973, -73.5784],
       "LOY": [45.4586, -73.6401]
@@ -190,7 +191,6 @@ class LocationService {
       campusCoordinates["SGW"]![0],
       campusCoordinates["SGW"]![1],
     );
-
     double distanceToLOY = geo.Geolocator.distanceBetween(
       currentPosition.latitude,
       currentPosition.longitude,
@@ -198,10 +198,6 @@ class LocationService {
       campusCoordinates["LOY"]![1],
     );
 
-    if (distanceToSGW < distanceToLOY) {
-      return "SGW";
-    } else {
-      return "LOY";
-    }
+    return (distanceToSGW < distanceToLOY) ? "SGW" : "LOY";
   }
 }
