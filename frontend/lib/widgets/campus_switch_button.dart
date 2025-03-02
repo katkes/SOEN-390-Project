@@ -7,13 +7,13 @@ import 'package:geolocator/geolocator.dart' as geolocator;
 class CampusSwitch extends StatefulWidget {
   final Function(String) onSelectionChanged;
   final Function(LatLng) onLocationChanged;
-  final String initialSelection;
+  final String? initialSelection;
 
   const CampusSwitch({
     super.key,
     required this.onSelectionChanged,
     required this.onLocationChanged,
-    this.initialSelection = 'SGW',
+    this.initialSelection,
   });
 
   @override
@@ -39,13 +39,30 @@ class _CampusSwitchState extends State<CampusSwitch> {
   @override
   void initState() {
     super.initState();
-    selectedBuilding = widget.initialSelection;
+    selectedBuilding = widget.initialSelection ??
+        'SGW'; // Default is SGW if selectedBuilding is null
     _initClosestCampus();
   }
 
   // Initializes the closest campus based on the user's current location.
   Future<void> _initClosestCampus() async {
     try {
+      // Check existing permission:
+      var permission = await geolocator.Geolocator.checkPermission();
+
+      // If permission is not granted, request it:
+      if (permission == geolocator.LocationPermission.denied) {
+        permission = await geolocator.Geolocator.requestPermission();
+      }
+
+      // If permission is still denied or permanently denied, handle it.
+      if (permission == geolocator.LocationPermission.denied ||
+          permission == geolocator.LocationPermission.deniedForever) {
+        print("User denied permissions to access the device's location.");
+        return; // Do not proceed if permission is denied.
+      }
+
+      // User has granted permission — retrieve location:
       geolocator.Position currentPos =
           await geolocator.Geolocator.getCurrentPosition(
         desiredAccuracy: geolocator.LocationAccuracy.low,
@@ -61,7 +78,7 @@ class _CampusSwitchState extends State<CampusSwitch> {
         widget.onLocationChanged(_campusLocations[selectedBuilding]!);
       }
     } catch (e) {
-      // Keep initialSelection on error
+      // For error handling (ex. location services disabled):
       print('Error initializing closest campus: $e');
     }
   }
