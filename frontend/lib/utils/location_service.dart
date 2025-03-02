@@ -198,6 +198,6 @@ class LocationService {
       campusCoordinates["LOY"]![1],
     );
 
-    return (distanceToSGW < distanceToLOY) ? "SGW" : "LOY";
+    return (distanceToSGW <= distanceToLOY) ? "SGW" : "LOY";
   }
 }

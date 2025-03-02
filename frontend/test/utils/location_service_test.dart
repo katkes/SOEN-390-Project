@@ -283,4 +283,66 @@ void main() {
     // Cleanup
     debugDefaultTargetPlatformOverride = null;
   });
+
+  // Tests for getClosestCampus
+  group('getClosestCampus Tests', () {
+    test('returns SGW when near SGW', () {
+      final position = geo.Position(
+        // Coordinates for the Bell Centre
+        latitude: 45.495590,
+        longitude: -73.568657,
+        timestamp: DateTime.now(),
+        accuracy: 1.0,
+        altitude: 0.0,
+        heading: 0.0,
+        speed: 0.0,
+        speedAccuracy: 0.0,
+        floor: null,
+        altitudeAccuracy: 0.0,
+        headingAccuracy: 0.0,
+      );
+
+      final campus = LocationService.getClosestCampus(position);
+      expect(campus, 'SGW');
+    });
+
+    test('returns Loyola when near Loyola', () {
+      final position = geo.Position(
+        // Coordinates for Rene-Lévesque Park
+        latitude: 45.428664,
+        longitude: -73.672164,
+        timestamp: DateTime.now(),
+        accuracy: 1.0,
+        altitude: 0.0,
+        heading: 0.0,
+        speed: 0.0,
+        speedAccuracy: 0.0,
+        floor: null,
+        altitudeAccuracy: 0.0,
+        headingAccuracy: 0.0,
+      );
+
+      final campus = LocationService.getClosestCampus(position);
+      expect(campus, 'LOY');
+    });
+
+    test('returns SGW when equidistant from both', () {
+      final position = geo.Position(
+        latitude: 45.4586,
+        longitude: -73.5167,
+        timestamp: DateTime.now(),
+        accuracy: 1.0,
+        altitude: 0.0,
+        heading: 0.0,
+        speed: 0.0,
+        speedAccuracy: 0.0,
+        floor: null,
+        altitudeAccuracy: 0.0,
+        headingAccuracy: 0.0,
+      );
+
+      final campus = LocationService.getClosestCampus(position);
+      expect(campus, 'SGW');
+    });
+  });
 }
