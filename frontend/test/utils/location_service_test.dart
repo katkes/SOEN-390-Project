@@ -284,7 +284,7 @@ void main() {
     debugDefaultTargetPlatformOverride = null;
   });
 
-  // Tests for getClosestCampus
+  // Tests for getClosestCampus method
   group('getClosestCampus Tests', () {
     test('returns SGW when near SGW', () {
       final position = geo.Position(
@@ -340,6 +340,49 @@ void main() {
         altitudeAccuracy: 0.0,
         headingAccuracy: 0.0,
       );
+
+      final campus = LocationService.getClosestCampus(position);
+      expect(campus, 'SGW');
+    });
+
+    test('returns SGW when permission is denied', () {
+      final position = geo.Position(
+        latitude: 0.0,
+        longitude: 0.0,
+        timestamp: DateTime.now(),
+        accuracy: 1.0,
+        altitude: 0.0,
+        heading: 0.0,
+        speed: 0.0,
+        speedAccuracy: 0.0,
+        floor: null,
+        altitudeAccuracy: 0.0,
+        headingAccuracy: 0.0,
+      );
+
+      mockGeolocatorPlatform
+          .setLocationPermission(geo.LocationPermission.denied);
+
+      final campus = LocationService.getClosestCampus(position);
+      expect(campus, 'SGW');
+    });
+
+    test('returns SGW when location is unavailable', () {
+      final position = geo.Position(
+        latitude: 0.0,
+        longitude: 0.0,
+        timestamp: DateTime.now(),
+        accuracy: 1.0,
+        altitude: 0.0,
+        heading: 0.0,
+        speed: 0.0,
+        speedAccuracy: 0.0,
+        floor: null,
+        altitudeAccuracy: 0.0,
+        headingAccuracy: 0.0,
+      );
+
+      mockGeolocatorPlatform.setLocationServiceEnabled(false);
 
       final campus = LocationService.getClosestCampus(position);
       expect(campus, 'SGW');
