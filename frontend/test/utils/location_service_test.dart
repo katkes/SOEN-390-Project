@@ -87,6 +87,9 @@ void main() {
   /// Initializes the [MockGeolocatorPlatform] and injects it into the
   /// [LocationService] instance. Also ensures that `currentPosition` is initialized.
   setUp(() {
+    // Reset any static state to prevent test interference
+    LocationService.resetInstance();
+
     mockGeolocatorPlatform = MockGeolocatorPlatform();
     locationService = LocationService(
         geolocator: mockGeolocatorPlatform); // Inject mock dependency
@@ -111,12 +114,15 @@ void main() {
 
     test('determinePermissions should return false when permission is denied',
         () async {
+      // Set up the mocks
       mockGeolocatorPlatform.setLocationServiceEnabled(true);
       mockGeolocatorPlatform
           .setLocationPermission(geo.LocationPermission.denied);
 
+      // Execute the test
       bool result = await locationService.determinePermissions();
 
+      // Verify the result
       expect(result, false);
     });
 
@@ -156,12 +162,12 @@ void main() {
     });
 
     test('startUp should throw exception when location services are disabled',
-        () {
+        () async {
       // Arrange
       mockGeolocatorPlatform.setLocationServiceEnabled(false);
 
-      // Act & Assert
-      expect(() => locationService.startUp(),
+      // Act & Assert - Use expectLater with async function execution
+      await expectLater(locationService.startUp,
           throwsA(isA<PermissionNotEnabledException>()));
     });
 
