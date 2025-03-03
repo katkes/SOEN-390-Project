@@ -18,7 +18,7 @@ class WaypointSelectionScreen extends StatefulWidget {
   final GeocodingService geocodingService;
   final LocationService locationService;
 
-  WaypointSelectionScreen(
+  const WaypointSelectionScreen(
       {super.key,
       required this.routeService,
       required this.geocodingService,
@@ -125,6 +125,7 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
         _routeCache[googleTransportMode] = {};
       }
       _routeCache[googleTransportMode]![waypointKey] = selectedRoutes;
+      if (!mounted) return;
 
       setState(() {
         _locationsChanged = false;
@@ -137,11 +138,15 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
       print(
           "Route details: ${topRoutes.first.distance} meters, ${topRoutes.first.duration} seconds");
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         isLoading = false;
         errorMessage = "Error finding route: ${e.toString()}";
       });
 
+      if (!mounted) {
+        return;
+      }
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(errorMessage!)),
       );

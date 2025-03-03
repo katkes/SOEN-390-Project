@@ -58,7 +58,7 @@ class SuggestionsPopupState extends State<SuggestionsPopup> {
               textEditingController: _searchController,
               googleAPIKey: dotenv.env['GOOGLE_PLACES_API_KEY'] ?? "",
               debounceTime: 400,
-              countries: ["ca"],
+              countries: const ["ca"],
               fetchCoordinates: true,
               onPlaceDetailsWithCoordinatesReceived: (prediction) {
                 print("Coordinates: (${prediction.lat}, ${prediction.lng})");

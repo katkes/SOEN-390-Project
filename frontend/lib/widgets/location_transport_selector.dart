@@ -4,7 +4,7 @@
 // The confirmed waypoints and transport mode are sent to the routing system for processing.
 
 import 'package:flutter/material.dart';
-import 'suggestions.dart';
+import 'package:soen_390/widgets/suggestions.dart';
 
 class LocationTransportSelector extends StatefulWidget {
   final Function(List<String>, String) onConfirmRoute;
@@ -233,27 +233,38 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
           onSelect: (selectedLocation) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (mounted) {
-                setState(() {
-                  if (isStart && itinerary.isEmpty) {
-                    startLocation = selectedLocation;
-                    itinerary.add(selectedLocation);
-                    if (widget.onLocationChanged != null) {
-                      widget.onLocationChanged!();
-                    }
-                  } else if (!isStart && itinerary.length < 2) {
-                    destinationLocation = selectedLocation;
-                    itinerary.add(selectedLocation);
-                    if (widget.onLocationChanged != null) {
-                      widget.onLocationChanged!();
-                    }
-                  }
-                });
+                _handleLocationSelection(selectedLocation, isStart);
               }
             });
           },
         );
       },
     );
+  }
+
+  void _handleLocationSelection(String selectedLocation, bool isStart) {
+    setState(() {
+      if (isStart) {
+        _setStartLocation(selectedLocation);
+      } else {
+        _setDestinationLocation(selectedLocation);
+      }
+      widget.onLocationChanged?.call();
+    });
+  }
+
+  void _setStartLocation(String selectedLocation) {
+    if (itinerary.isEmpty) {
+      startLocation = selectedLocation;
+      itinerary.add(selectedLocation);
+    }
+  }
+
+  void _setDestinationLocation(String selectedLocation) {
+    if (itinerary.length < 2) {
+      destinationLocation = selectedLocation;
+      itinerary.add(selectedLocation);
+    }
   }
 
   void _removeStop(int index) {

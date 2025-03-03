@@ -99,5 +99,22 @@ void main() {
       final result = await geocodingService.getCoordinates('Montreal');
       expect(result, equals(const LatLng(45.5017, -73.5673)));
     });
+    test('should return null on geocoding error', () async {
+      final mockResponse = '''
+  {
+    "status": "OVER_QUERY_LIMIT",
+    "results": []
+  }
+  ''';
+
+      when(mockClient.get(Uri.parse(
+              "https://maps.googleapis.com/maps/api/geocode/json?address=InvalidAddress&key=fake-api-key")))
+          .thenAnswer(
+        (_) async => http.Response(mockResponse, 200),
+      );
+
+      final result = await geocodingService.getCoordinates('InvalidAddress');
+      expect(result, isNull);
+    });
   });
 }
