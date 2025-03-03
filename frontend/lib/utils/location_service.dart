@@ -7,7 +7,31 @@ import 'package:soen_390/utils/permission_not_enabled_exception.dart';
 ///
 /// This class provides methods for determining permissions, retrieving the
 /// current location, updating the location, and creating a location stream.
+/// It uses the singleton pattern to ensure only one instance exists.
 class LocationService {
+  // Private static instance variable
+  static LocationService? _instance;
+
+  // Static getter for the singleton instance
+  static LocationService get instance {
+    _instance ??=
+        LocationService._internal(geolocator: geo.GeolocatorPlatform.instance);
+    return _instance!;
+  }
+
+  // Factory constructor that returns the singleton instance
+  factory LocationService({required geo.GeolocatorPlatform geolocator}) {
+    _instance ??= LocationService._internal(geolocator: geolocator);
+    return _instance!;
+  }
+
+  /// Private constructor
+  /// Creates a [LocationService] instance with dependency injection.
+  ///
+  /// The [geolocator] parameter is required and provides the platform-specific
+  /// implementation for location services.
+  LocationService._internal({required this.geolocator});
+
   final geo.GeolocatorPlatform geolocator;
 
   // Ensures platform-specific settings are initialized only once
@@ -35,12 +59,6 @@ class LocationService {
 
   /// The current location permission status.
   geo.LocationPermission permission = geo.LocationPermission.denied;
-
-  /// Creates a [LocationService] instance with dependency injection.
-  ///
-  /// The [geolocator] parameter is required and provides the platform-specific
-  /// implementation for location services.
-  LocationService({required this.geolocator});
 
   /// Determines if location services and permissions are enabled.
   ///
@@ -175,5 +193,34 @@ class LocationService {
   /// Stops the location stream.
   void stopListening() {
     _positionStream?.cancel();
+  }
+
+  /// Returns the closest campus to the current location.
+  /// Made static to allow direct calls without an instance.
+  static String getClosestCampus(geo.Position currentPosition) {
+    var campusCoordinates = {
+      "SGW": [45.4973, -73.5784],
+      "LOY": [45.4586, -73.6401]
+    };
+
+    double distanceToSGW = geo.Geolocator.distanceBetween(
+      currentPosition.latitude,
+      currentPosition.longitude,
+      campusCoordinates["SGW"]![0],
+      campusCoordinates["SGW"]![1],
+    );
+    double distanceToLOY = geo.Geolocator.distanceBetween(
+      currentPosition.latitude,
+      currentPosition.longitude,
+      campusCoordinates["LOY"]![0],
+      campusCoordinates["LOY"]![1],
+    );
+
+    return (distanceToSGW <= distanceToLOY) ? "SGW" : "LOY";
+  }
+
+  // Reset the instance for testing purposes
+  static void resetInstance() {
+    _instance = null;
   }
 }
