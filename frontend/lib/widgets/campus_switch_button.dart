@@ -56,21 +56,17 @@ class CampusSwitchState extends State<CampusSwitch> {
       await locationService.startUp();
 
       // Determine if location services are enabled.
-      bool locationEnabled = await locationService.determinePermissions();
-      if (!locationEnabled) {
+      if (!await locationService.determinePermissions()) {
         print('Location services are disabled.');
         return;
       }
 
-      // Retrieve the current location.
-      geolocator.Position currentPos =
-          await locationService.getCurrentLocation();
-
-      final newBuilding =
-          (location_service.LocationService.getClosestCampus(currentPos) ==
-                  "LOY")
-              ? "Loyola"
-              : "SGW";
+      // Retrieve the current location and determine the closest campus.
+      final newBuilding = (location_service.LocationService.getClosestCampus(
+                  await locationService.getCurrentLocation()) ==
+              "LOY")
+          ? "Loyola"
+          : "SGW";
 
       if (mounted) {
         setState(() => selectedBuilding = newBuilding);
