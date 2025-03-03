@@ -187,7 +187,10 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                   Positioned(
                     bottom: -80,
                     left: 0,
-                    child: SearchBarWidget(controller: searchController),
+                    child: SearchBarWidget(
+                      controller: searchController,
+                      onLocationFound: _updateCampusLocation,
+                    ),
                   ),
                   const Positioned(
                     bottom: 10,

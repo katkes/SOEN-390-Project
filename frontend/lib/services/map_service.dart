@@ -121,4 +121,51 @@ class MapService {
     }
     return polygons;
   }
+
+  Future<LatLng?> searchBuilding(String buildingName) async {
+    try {
+      final String data = await rootBundle
+          .loadString('assets/geojson_files/building_list.geojson');
+      final Map<String, dynamic> jsonData = jsonDecode(data);
+
+      for (var feature in jsonData['features']) {
+        var properties = feature['properties'];
+        var geometry = feature['geometry'];
+
+        if (geometry?['type'] == 'Point' && geometry['coordinates'] is List) {
+          String name = properties?['Building Long Name'] ?? "Unknown";
+          if (name.toLowerCase().contains(buildingName.toLowerCase())) {
+            double lon = geometry['coordinates'][0];
+            double lat = geometry['coordinates'][1];
+            return LatLng(lat, lon);
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error searching for building: $e');
+    }
+    return null;
+  }
+  Future<List<String>> getBuildingSuggestions(String query) async {
+    try {
+      if (query.isEmpty) return [];
+
+      final String data = await rootBundle.loadString('assets/geojson_files/building_list.geojson');
+      final Map<String, dynamic> jsonData = jsonDecode(data);
+      List<String> suggestions = [];
+
+      for (var feature in jsonData['features']) {
+        var properties = feature['properties'];
+        String name = properties?['Building Long Name'] ?? "Unknown";
+
+        if (name.toLowerCase().contains(query.toLowerCase())) {
+          suggestions.add(name);
+        }
+      }
+      return suggestions.take(1).toList();
+    } catch (e) {
+      debugPrint('Error getting building suggestions: $e');
+      return [];
+    }
+  }
 }
