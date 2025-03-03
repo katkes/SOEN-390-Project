@@ -151,7 +151,6 @@ void main() {
               )
             ]));
 
-    // ✅ Stub the recalculation API call
     when(mockHttpClient.get(
             Uri.parse("https://maps.googleapis.com/maps/api/directions/json?"
                 "origin=45.5025,-73.57"

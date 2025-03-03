@@ -134,7 +134,9 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
     );
   }
 
-//Temporary removable until multiple iternary is implemented
+  // TODO: Issue-128 - Reuse logic for UI to insert multiple tasks
+  // Temporary removable until multiple iternary is implemented
+
   // Widget _buildReorderableItinerary() {
   //   return ReorderableListView(
   //     shrinkWrap: true,

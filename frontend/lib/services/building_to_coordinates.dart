@@ -38,11 +38,8 @@ class GeocodingService {
       return null;
     }
 
-    // For development/testing, you could use placeholder coordinates
-    // This is useful if you don't want to make API calls during testing
     if (address.contains("New Stop")) {
-      // Return placeholder coordinates
-      return const LatLng(45.5088, -73.5540); // Example: Montreal Old Port
+      return const LatLng(45.5088, -73.5540); 
     }
 
     String url = "https://maps.googleapis.com/maps/api/geocode/json?"
