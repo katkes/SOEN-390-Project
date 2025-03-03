@@ -5,6 +5,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:soen_390/widgets/location_transport_selector.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:soen_390/widgets/suggestions.dart';
+import 'package:google_places_autocomplete_text_field/google_places_autocomplete_text_field.dart';
 
 class MockCallbacks {
   void onConfirmRoute(List<String> waypoints, String transportMode) {}
@@ -14,6 +17,8 @@ class MockCallbacks {
 
 void main() {
   late MockCallbacks mockCallbacks;
+
+  dotenv.testLoad(fileInput: 'GOOGLE_PLACES_API_KEY=mock-api-key');
 
   setUp(() {
     mockCallbacks = MockCallbacks();
@@ -216,5 +221,78 @@ void main() {
 
     expect(find.text("You must have at least a start and destination."),
         findsOneWidget);
+  });
+  testWidgets('Displays location fields and transport modes',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: LocationTransportSelector(
+            onConfirmRoute: (List<String> waypoints, String transportMode) {},
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    expect(find.text("Start Location"), findsOneWidget);
+    expect(find.text("Destination"), findsOneWidget);
+
+    expect(find.byIcon(Icons.directions_car), findsOneWidget);
+    expect(find.byIcon(Icons.directions_bike), findsOneWidget);
+    expect(find.byIcon(Icons.train), findsOneWidget);
+    expect(find.byIcon(Icons.directions_walk), findsOneWidget);
+  });
+  testWidgets('Opens SuggestionsPopup when tapping location fields',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: LocationTransportSelector(
+            onConfirmRoute: (List<String> waypoints, String transportMode) {},
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text("Start Location"));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(SuggestionsPopup), findsOneWidget);
+
+    await tester.tap(find.text("Restaurant"));
+    await tester.pumpAndSettle();
+
+    expect(find.text("Restaurant"), findsOneWidget);
+
+    await tester.tap(find.text("Destination"));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(SuggestionsPopup), findsOneWidget);
+
+    await tester.tap(find.text("Coffee"));
+    await tester.pumpAndSettle();
+
+    expect(find.text("Coffee"), findsOneWidget);
+  });
+  testWidgets('SuggestionsPopup calls onSuggestionClicked and closes dialog',
+      (WidgetTester tester) async {
+    dotenv.testLoad(fileInput: 'GOOGLE_PLACES_API_KEY=mock-api-key');
+
+    await tester.pumpWidget(MaterialApp(
+      home: SuggestionsPopup(onSelect: (value) {}),
+    ));
+
+    await tester.enterText(
+        find.byType(GooglePlacesAutoCompleteTextFormField), 'coffee');
+    await tester.pump();
+
+    await tester.tap(find.text('Coffee'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(SuggestionsPopup), findsNothing);
   });
 }

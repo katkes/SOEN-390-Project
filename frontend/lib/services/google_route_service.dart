@@ -211,12 +211,11 @@ class GoogleRouteService implements IRouteService {
       return;
     }
 
-    // ✅ Check if location services are enabled BEFORE starting navigation
+    // Check if location services are enabled BEFORE starting navigation
     final isLocationEnabled = await locationService.isLocationEnabled();
 
     if (!isLocationEnabled) {
-      print(
-          "❌ ERROR: Location services are disabled. Cannot start navigation.");
+      print("ERROR: Location services are disabled. Cannot start navigation.");
       return;
     }
 
@@ -252,8 +251,7 @@ class GoogleRouteService implements IRouteService {
       steps.add(StepResult(
         distance: step['distance']['value'].toDouble(),
         duration: step['duration']['value'].toDouble(),
-        instruction: step['html_instructions'] ??
-            "No instruction available", // ✅ Default if missing
+        instruction: step['html_instructions'] ?? "No instruction available",
         maneuver: step.containsKey('maneuver') ? step['maneuver'] : "unknown",
         startLocation: LatLng(
             step['start_location']['lat'], step['start_location']['lng']),

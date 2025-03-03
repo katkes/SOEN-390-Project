@@ -203,22 +203,21 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
             Text(locationText,
                 style:
                     const TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
-            if (isStart || isStart == false)
-              if (locationText != placeholder)
-                IconButton(
-                  icon: const Icon(Icons.delete, size: 20, color: Colors.red),
-                  onPressed: () {
-                    setState(() {
-                      if (isStart) {
-                        startLocation = '';
-                        _removeStop(0);
-                      } else {
-                        destinationLocation = '';
-                        _removeStop(1);
-                      }
-                    });
-                  },
-                ),
+            if (locationText != placeholder)
+              IconButton(
+                icon: const Icon(Icons.delete, size: 20, color: Colors.red),
+                onPressed: () {
+                  setState(() {
+                    if (isStart) {
+                      startLocation = '';
+                      _removeStop(0);
+                    } else {
+                      destinationLocation = '';
+                      _removeStop(1);
+                    }
+                  });
+                },
+              ),
             const Icon(Icons.arrow_drop_down, color: Colors.black54),
           ],
         ),
