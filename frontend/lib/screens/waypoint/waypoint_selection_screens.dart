@@ -4,14 +4,16 @@
 // The screen also integrates with the bottom navigation bar for seamless app navigation.
 
 import 'package:flutter/material.dart';
-import '../../widgets/location_transport_selector.dart';
-import '../../widgets/nav_bar.dart';
-import '../../widgets/route_card.dart';
+import 'package:soen_390/widgets/location_transport_selector.dart';
+import 'package:soen_390/widgets/nav_bar.dart';
+import 'package:soen_390/widgets/route_card.dart';
 import 'package:soen_390/services/google_route_service.dart';
 import 'package:soen_390/services/building_to_coordinates.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:soen_390/services/interfaces/route_service_interface.dart';
+import 'package:soen_390/utils/route_display.dart' as display;
+import 'package:soen_390/utils/route_utils.dart' as utils;
 
 class WaypointSelectionScreen extends StatefulWidget {
   final IRouteService routeService;
@@ -30,6 +32,8 @@ class WaypointSelectionScreen extends StatefulWidget {
 
 class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
   final int _selectedIndex = 1;
+  static const int _maxRoutes = 4;
+  static const int _minROutes = 2;
   bool isLoading = false;
   String? errorMessage;
   String? selectedMode;
@@ -55,7 +59,7 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
 
   void _handleRouteConfirmation(
       List<String> waypoints, String transportMode) async {
-    if (waypoints.length < 2) {
+    if (waypoints.length < _minROutes) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
             content: Text("You must have at least a start and destination.")),
@@ -64,7 +68,7 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
     }
 
     final String googleTransportMode =
-        _mapTransportModeToApiMode(transportMode);
+        utils.mapTransportModeToApiMode(transportMode);
     String waypointKey = "${waypoints.first}-${waypoints.last}";
 
     // Check cache with consistent keys
@@ -75,8 +79,14 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
       // Routes are cached, filter and display
       print("Routes are cached for $googleTransportMode, filtering...");
       final cachedRoutes = _routeCache[googleTransportMode]![waypointKey]!;
-      _displayRoutes(
-          cachedRoutes, transportMode, waypoints); // Display cached routes
+      display.displayRoutes(
+        context: context,
+        confirmedRoutes: confirmedRoutes,
+        updateRoutes: (routes) => setState(() => confirmedRoutes = routes),
+        waypoints: waypoints,
+        routes: cachedRoutes,
+        transportMode: transportMode,
+      ); // Display cached routes
       return;
     }
 
@@ -118,7 +128,8 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
 
       // Get the top 4 routes for the selected transport mode
       final selectedRoutes = routes[googleTransportMode]!;
-      final topRoutes = selectedRoutes.take(4).toList(); // Get the top 4 routes
+      final topRoutes =
+          selectedRoutes.take(_maxRoutes).toList(); // Get the top 4 routes
 
       // Store routes in cache
       if (!_routeCache.containsKey(googleTransportMode)) {
@@ -132,7 +143,14 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
       });
 
       // Display the routes
-      _displayRoutes(selectedRoutes, transportMode, waypoints);
+      display.displayRoutes(
+        context: context,
+        confirmedRoutes: confirmedRoutes,
+        updateRoutes: (routes) => setState(() => confirmedRoutes = routes),
+        waypoints: waypoints,
+        routes: topRoutes,
+        transportMode: transportMode,
+      );
 
       print("Final confirmed route: $waypoints, Mode: $transportMode");
       print(
@@ -167,94 +185,6 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
     });
   }
 
-// Helper function to display routes
-  void _displayRoutes(
-      List<RouteResult> routes, String transportMode, List<String> waypoints) {
-    setState(() {
-      confirmedRoutes = routes.map((route) {
-        return {
-          "title":
-              "${_shortenAddress(waypoints.first)} to ${_shortenAddress(waypoints.last)}",
-          "timeRange": _formatTimeRange(route.duration),
-          "duration": _formatDuration(route.duration),
-          "description": waypoints
-              .map((waypoint) => _shortenAddress(waypoint))
-              .join(" → "),
-          "icons": _getIconsForTransport(transportMode),
-          "routeData": route,
-        };
-      }).toList();
-      isLoading = false;
-    });
-  }
-
-  String _shortenAddress(String address) {
-    //Remove any components like province or country.
-    // We'll assume addresses have a format like "Building, Street, City, Province, Country"
-    final parts = address.split(", ");
-    if (parts.length > 2) {
-      // Remove last 2 parts (e.g., Province, Country)
-      return parts.take(parts.length - 2).join(", ");
-    }
-    return address; // Return as-is if it's already short.
-  }
-
-  List<IconData> _getIconsForTransport(String mode) {
-    switch (mode) {
-      case "Car":
-        return [Icons.directions_car];
-      case "Bike":
-        return [Icons.directions_bike];
-      case "Train or Bus":
-        return [Icons.train];
-      case "Walk":
-        return [Icons.directions_walk];
-      default:
-        return [Icons.help_outline];
-    }
-  }
-
-  String _mapTransportModeToApiMode(String uiMode) {
-    switch (uiMode) {
-      case "Car":
-        return "driving";
-      case "Bike":
-        return "bicycling";
-      case "Train or Bus":
-        return "transit";
-      case "Walk":
-        return "walking";
-      default:
-        return "transit";
-    }
-  }
-
-  // Helper method to format duration in seconds to human-readable format
-  String _formatDuration(double seconds) {
-    final int minutes = (seconds / 60).round();
-    if (minutes < 60) {
-      return "$minutes min";
-    } else {
-      final int hours = (minutes / 60).floor();
-      final int remainingMinutes = minutes % 60;
-      return "$hours h $remainingMinutes min";
-    }
-  }
-
-  // Helper method to format time range based on current time and duration
-  String _formatTimeRange(double seconds) {
-    final now = DateTime.now();
-    final arrival = now.add(Duration(seconds: seconds.round()));
-
-    String formatTime(DateTime time) {
-      final hour = time.hour > 12 ? time.hour - 12 : time.hour;
-      final period = time.hour >= 12 ? "PM" : "AM";
-      return "${hour == 0 ? 12 : hour}:${time.minute.toString().padLeft(2, '0')} $period";
-    }
-
-    return "${formatTime(now)} - ${formatTime(arrival)}";
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -281,7 +211,9 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
           const SizedBox(height: 10),
           Expanded(
             child: ListView.builder(
-              itemCount: confirmedRoutes.length,
+              itemCount: confirmedRoutes.length > _maxRoutes
+                  ? _maxRoutes
+                  : confirmedRoutes.length,
               itemBuilder: (context, index) {
                 final route = confirmedRoutes[index];
                 return RouteCard(

@@ -39,7 +39,7 @@ class GeocodingService {
     }
 
     if (address.contains("New Stop")) {
-      return const LatLng(45.5088, -73.5540); 
+      return const LatLng(45.5088, -73.5540);
     }
 
     String url = "https://maps.googleapis.com/maps/api/geocode/json?"

@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import 'package:soen_390/services/building_info_api.dart'; 
+import 'package:soen_390/services/building_info_api.dart';
 
 @GenerateMocks([http.Client])
 import 'building_info_retrieval_test.mocks.dart';
