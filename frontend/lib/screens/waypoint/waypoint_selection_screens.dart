@@ -14,12 +14,15 @@ import 'package:latlong2/latlong.dart';
 import 'package:soen_390/services/interfaces/route_service_interface.dart';
 
 class WaypointSelectionScreen extends StatefulWidget {
-  final IRouteService routeService; 
+  final IRouteService routeService;
   final GeocodingService geocodingService;
   final LocationService locationService;
 
-  WaypointSelectionScreen({super.key, required this.routeService, required this.geocodingService, required this.locationService});
-  
+  WaypointSelectionScreen(
+      {super.key,
+      required this.routeService,
+      required this.geocodingService,
+      required this.locationService});
 
   @override
   WaypointSelectionScreenState createState() => WaypointSelectionScreenState();
@@ -32,8 +35,10 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
   String? selectedMode;
   List<Map<String, dynamic>> confirmedRoutes = [];
   List<RouteResult> fetchedRoutes = [];
-  bool _locationsChanged = false; //adding boolean flag to track whether the locations have been updated.
-  final Map<String, Map<String, List<RouteResult>>> _routeCache = {}; //cache for routes
+  bool _locationsChanged =
+      false; //adding boolean flag to track whether the locations have been updated.
+  final Map<String, Map<String, List<RouteResult>>> _routeCache =
+      {}; //cache for routes
 
   // Injected services for route and geocoding functionality
   late GoogleRouteService routeService;
@@ -48,33 +53,37 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
     locationService = widget.locationService;
   }
 
-  void _handleRouteConfirmation(List<String> waypoints, String transportMode) async {
+  void _handleRouteConfirmation(
+      List<String> waypoints, String transportMode) async {
     if (waypoints.length < 2) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("You must have at least a start and destination.")),
+        const SnackBar(
+            content: Text("You must have at least a start and destination.")),
       );
       return;
     }
 
-    final String googleTransportMode = _mapTransportModeToApiMode(transportMode);
+    final String googleTransportMode =
+        _mapTransportModeToApiMode(transportMode);
     String waypointKey = "${waypoints.first}-${waypoints.last}";
 
     // Check cache with consistent keys
     if (!_locationsChanged &&
         _routeCache.containsKey(googleTransportMode) &&
         _routeCache[googleTransportMode]!.containsKey(waypointKey)) {
-          print("Cache hit for $waypointKey using $googleTransportMode mode");
-        // Routes are cached, filter and display
-        print("Routes are cached for $googleTransportMode, filtering...");
-        final cachedRoutes = _routeCache[googleTransportMode]![waypointKey]!;
-        _displayRoutes(cachedRoutes, transportMode, waypoints); // Display cached routes
-        return;
+      print("Cache hit for $waypointKey using $googleTransportMode mode");
+      // Routes are cached, filter and display
+      print("Routes are cached for $googleTransportMode, filtering...");
+      final cachedRoutes = _routeCache[googleTransportMode]![waypointKey]!;
+      _displayRoutes(
+          cachedRoutes, transportMode, waypoints); // Display cached routes
+      return;
     }
 
     if (selectedMode != transportMode) {
-        _clearConfirmedRoutes(); // Clear routes when mode changes
-        selectedMode = transportMode;
-       // _routeCache.clear();
+      _clearConfirmedRoutes(); // Clear routes when mode changes
+      selectedMode = transportMode;
+      // _routeCache.clear();
     }
 
     setState(() {
@@ -86,8 +95,10 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
 
     try {
       // Convert location names to coordinates using geocoding service
-      final LatLng? startPoint = await geocodingService.getCoordinates(waypoints.first);
-      final LatLng? endPoint = await geocodingService.getCoordinates(waypoints.last);
+      final LatLng? startPoint =
+          await geocodingService.getCoordinates(waypoints.first);
+      final LatLng? endPoint =
+          await geocodingService.getCoordinates(waypoints.last);
 
       if (startPoint == null || endPoint == null) {
         throw Exception("Could not find coordinates for one or more locations");
@@ -108,7 +119,7 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
       // Get the top 4 routes for the selected transport mode
       final selectedRoutes = routes[googleTransportMode]!;
       final topRoutes = selectedRoutes.take(4).toList(); // Get the top 4 routes
-      
+
       // Store routes in cache
       if (!_routeCache.containsKey(googleTransportMode)) {
         _routeCache[googleTransportMode] = {};
@@ -116,14 +127,15 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
       _routeCache[googleTransportMode]![waypointKey] = selectedRoutes;
 
       setState(() {
-  _locationsChanged = false;
-});
-      
+        _locationsChanged = false;
+      });
+
       // Display the routes
       _displayRoutes(selectedRoutes, transportMode, waypoints);
 
       print("Final confirmed route: $waypoints, Mode: $transportMode");
-      print("Route details: ${topRoutes.first.distance} meters, ${topRoutes.first.duration} seconds");
+      print(
+          "Route details: ${topRoutes.first.distance} meters, ${topRoutes.first.duration} seconds");
     } catch (e) {
       setState(() {
         isLoading = false;
@@ -134,35 +146,42 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
         SnackBar(content: Text(errorMessage!)),
       );
     }
-}
-void _setLocationChanged(){
-  setState(() {
-        _locationsChanged = true;
-        _routeCache.clear();
+  }
+
+  void _setLocationChanged() {
+    setState(() {
+      _locationsChanged = true;
+      _routeCache.clear();
     });
-}
+  }
+
 //function to clear the confirmed routes list
   void _clearConfirmedRoutes() {
-   setState(() {
+    setState(() {
       confirmedRoutes = [];
-   });
-}
+    });
+  }
+
 // Helper function to display routes
-void _displayRoutes(List<RouteResult> routes, String transportMode, List<String> waypoints) {
-     setState(() {
-         confirmedRoutes = routes.map((route) {
-             return {
-                 "title": "${_shortenAddress(waypoints.first)} to ${_shortenAddress(waypoints.last)}",
-                 "timeRange": _formatTimeRange(route.duration),
-                 "duration": _formatDuration(route.duration),
-                 "description": waypoints.map((waypoint) => _shortenAddress(waypoint)).join(" → "),
-                 "icons": _getIconsForTransport(transportMode),
-                 "routeData": route,
-             };
-         }).toList();
-         isLoading = false;
-     });
-}
+  void _displayRoutes(
+      List<RouteResult> routes, String transportMode, List<String> waypoints) {
+    setState(() {
+      confirmedRoutes = routes.map((route) {
+        return {
+          "title":
+              "${_shortenAddress(waypoints.first)} to ${_shortenAddress(waypoints.last)}",
+          "timeRange": _formatTimeRange(route.duration),
+          "duration": _formatDuration(route.duration),
+          "description": waypoints
+              .map((waypoint) => _shortenAddress(waypoint))
+              .join(" → "),
+          "icons": _getIconsForTransport(transportMode),
+          "routeData": route,
+        };
+      }).toList();
+      isLoading = false;
+    });
+  }
 
   String _shortenAddress(String address) {
     //Remove any components like province or country.
@@ -231,8 +250,6 @@ void _displayRoutes(List<RouteResult> routes, String transportMode, List<String>
     return "${formatTime(now)} - ${formatTime(arrival)}";
   }
 
-  
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -252,7 +269,10 @@ void _displayRoutes(List<RouteResult> routes, String transportMode, List<String>
       ),
       body: Column(
         children: [
-          LocationTransportSelector(onConfirmRoute: _handleRouteConfirmation, onLocationChanged: _setLocationChanged,),
+          LocationTransportSelector(
+            onConfirmRoute: _handleRouteConfirmation,
+            onLocationChanged: _setLocationChanged,
+          ),
           const SizedBox(height: 10),
           Expanded(
             child: ListView.builder(

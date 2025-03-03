@@ -27,10 +27,7 @@ void main() {
             description: description,
             icons: icons,
             routeData: null,
-            onCardTapped: () => {
-              
-            },
-           
+            onCardTapped: () => {},
           ),
         ),
       ),

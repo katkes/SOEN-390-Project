@@ -14,7 +14,6 @@ import 'package:soen_390/services/interfaces/route_service_interface.dart'; // I
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:soen_390/services/building_info_api.dart';
 
-
 /// The entry point of the application.
 ///
 /// This function initializes the Riverpod provider scope and starts the app.
@@ -66,7 +65,6 @@ class MyHomePage extends ConsumerStatefulWidget {
 
   /// The service responsible for managing HTTP requests.
   final HttpService httpService;
-  
 
   /// Creates an instance of `MyHomePage`.
   const MyHomePage({
@@ -123,18 +121,19 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
   }
 
   void _openWaypointSelection() {
-   
-    final buildingToCoordinatesService = ref.watch(buildingToCoordinatesProvider);
+    final buildingToCoordinatesService =
+        ref.watch(buildingToCoordinatesProvider);
     final locationService = ref.watch(locationServiceProvider);
     final routeService = ref.watch(routeServiceProvider);
 
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => WaypointSelectionScreen(
-        routeService: routeService,
-        geocodingService: buildingToCoordinatesService,
-        locationService: locationService,
-      )),
+      MaterialPageRoute(
+          builder: (context) => WaypointSelectionScreen(
+                routeService: routeService,
+                geocodingService: buildingToCoordinatesService,
+                locationService: locationService,
+              )),
     );
   }
 

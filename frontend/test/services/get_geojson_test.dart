@@ -82,7 +82,5 @@ void main() {
       expect(buildingNames, contains('Engineering Building'));
       expect(buildingNames.length, 3);
     });
-    
-
   });
 }
