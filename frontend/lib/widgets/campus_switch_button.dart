@@ -54,12 +54,6 @@ class CampusSwitchState extends State<CampusSwitch> {
       // Await startUp() so that exceptions are caught.
       await locationService.startUp();
 
-      // Determine if location services are enabled.
-      if (!await locationService.determinePermissions()) {
-        print('Location services are disabled.');
-        return;
-      }
-
       // Retrieve the current location and determine the closest campus.
       final newBuilding = (location_service.LocationService.getClosestCampus(
                   await locationService.getCurrentLocation()) ==
@@ -75,6 +69,11 @@ class CampusSwitchState extends State<CampusSwitch> {
     } catch (e) {
       // For error handling (ex. location services disabled).
       print('Error initializing closest campus: $e');
+
+      // Determine if location services are enabled.
+      if (!await locationService.determinePermissions()) {
+        print('Location services are disabled.');
+      }
     }
   }
 
