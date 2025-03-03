@@ -87,6 +87,9 @@ void main() {
   /// Initializes the [MockGeolocatorPlatform] and injects it into the
   /// [LocationService] instance. Also ensures that `currentPosition` is initialized.
   setUp(() {
+    // Reset any static state to prevent test interference
+    LocationService.resetInstance();
+
     mockGeolocatorPlatform = MockGeolocatorPlatform();
     locationService = LocationService(
         geolocator: mockGeolocatorPlatform); // Inject mock dependency
@@ -111,12 +114,15 @@ void main() {
 
     test('determinePermissions should return false when permission is denied',
         () async {
+      // Set up the mocks
       mockGeolocatorPlatform.setLocationServiceEnabled(true);
       mockGeolocatorPlatform
           .setLocationPermission(geo.LocationPermission.denied);
 
+      // Execute the test
       bool result = await locationService.determinePermissions();
 
+      // Verify the result
       expect(result, false);
     });
 
@@ -156,12 +162,12 @@ void main() {
     });
 
     test('startUp should throw exception when location services are disabled',
-        () {
+        () async {
       // Arrange
       mockGeolocatorPlatform.setLocationServiceEnabled(false);
 
-      // Act & Assert
-      expect(() => locationService.startUp(),
+      // Act & Assert - Use expectLater with async function execution
+      await expectLater(locationService.startUp,
           throwsA(isA<PermissionNotEnabledException>()));
     });
 
@@ -282,5 +288,110 @@ void main() {
 
     // Cleanup
     debugDefaultTargetPlatformOverride = null;
+  });
+
+  // Tests for getClosestCampus method
+  group('getClosestCampus Tests', () {
+    test('returns SGW when near SGW', () {
+      final position = geo.Position(
+        // Coordinates for the Bell Centre
+        latitude: 45.495590,
+        longitude: -73.568657,
+        timestamp: DateTime.now(),
+        accuracy: 1.0,
+        altitude: 0.0,
+        heading: 0.0,
+        speed: 0.0,
+        speedAccuracy: 0.0,
+        floor: null,
+        altitudeAccuracy: 0.0,
+        headingAccuracy: 0.0,
+      );
+
+      final campus = LocationService.getClosestCampus(position);
+      expect(campus, 'SGW');
+    });
+
+    test('returns Loyola when near Loyola', () {
+      final position = geo.Position(
+        // Coordinates for Rene-Lévesque Park
+        latitude: 45.428664,
+        longitude: -73.672164,
+        timestamp: DateTime.now(),
+        accuracy: 1.0,
+        altitude: 0.0,
+        heading: 0.0,
+        speed: 0.0,
+        speedAccuracy: 0.0,
+        floor: null,
+        altitudeAccuracy: 0.0,
+        headingAccuracy: 0.0,
+      );
+
+      final campus = LocationService.getClosestCampus(position);
+      expect(campus, 'LOY');
+    });
+
+    test('returns SGW when equidistant from both', () {
+      final position = geo.Position(
+        latitude: 45.4586,
+        longitude: -73.5167,
+        timestamp: DateTime.now(),
+        accuracy: 1.0,
+        altitude: 0.0,
+        heading: 0.0,
+        speed: 0.0,
+        speedAccuracy: 0.0,
+        floor: null,
+        altitudeAccuracy: 0.0,
+        headingAccuracy: 0.0,
+      );
+
+      final campus = LocationService.getClosestCampus(position);
+      expect(campus, 'SGW');
+    });
+
+    test('returns SGW when permission is denied', () {
+      final position = geo.Position(
+        latitude: 0.0,
+        longitude: 0.0,
+        timestamp: DateTime.now(),
+        accuracy: 1.0,
+        altitude: 0.0,
+        heading: 0.0,
+        speed: 0.0,
+        speedAccuracy: 0.0,
+        floor: null,
+        altitudeAccuracy: 0.0,
+        headingAccuracy: 0.0,
+      );
+
+      mockGeolocatorPlatform
+          .setLocationPermission(geo.LocationPermission.denied);
+
+      final campus = LocationService.getClosestCampus(position);
+      expect(campus, 'SGW');
+    });
+
+    test('returns SGW when location is unavailable', () {
+      final position = geo.Position(
+        latitude: 0.0,
+        longitude: 0.0,
+        timestamp: DateTime.now(),
+        accuracy: 1.0,
+        altitude: 0.0,
+        heading: 0.0,
+        speed: 0.0,
+        speedAccuracy: 0.0,
+        floor: null,
+        altitudeAccuracy: 0.0,
+        headingAccuracy: 0.0,
+      );
+
+      mockGeolocatorPlatform.setLocationServiceEnabled(false);
+
+      final campus = LocationService.getClosestCampus(position);
+      expect(campus, 'SGW');
+    });
   });
 }

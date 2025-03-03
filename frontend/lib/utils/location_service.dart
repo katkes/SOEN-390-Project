@@ -1,23 +1,46 @@
 import 'dart:async';
 import 'package:soen_390/utils/permission_not_enabled_exception.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:geolocator/geolocator.dart' as geo;
 
 /// Service for managing location-related functionality.
 ///
 /// This class provides methods for determining permissions, retrieving the
 /// current location, updating the location, and creating a location stream.
+/// It uses the singleton pattern to ensure only one instance exists.
 class LocationService {
-  final GeolocatorPlatform geolocator;
+  // Private static instance variable
+  static LocationService? _instance;
+
+  // Static getter for the singleton instance
+  static LocationService get instance {
+    _instance ??=
+        LocationService._internal(geolocator: geo.GeolocatorPlatform.instance);
+    return _instance!;
+  }
+
+  // Factory constructor that returns the singleton instance
+  factory LocationService({required geo.GeolocatorPlatform geolocator}) {
+    _instance ??= LocationService._internal(geolocator: geolocator);
+    return _instance!;
+  }
+
+  /// Private constructor
+  /// Creates a [LocationService] instance with dependency injection.
+  ///
+  /// The [geolocator] parameter is required and provides the platform-specific
+  /// implementation for location services.
+  LocationService._internal({required this.geolocator});
+
+  final geo.GeolocatorPlatform geolocator;
 
   bool _isLocSettingInitialized = false;
-  late Position currentPosition;
-  late final LocationSettings locSetting;
-  StreamSubscription<Position>? _positionStream;
+  late geo.Position currentPosition;
+  late final geo.LocationSettings locSetting;
+  StreamSubscription<geo.Position>? _positionStream;
   bool serviceEnabled = false;
-  LocationPermission permission = LocationPermission.denied;
 
-  /// Creates a [LocationService] instance with dependency injection.
-  LocationService({required this.geolocator});
+  /// The current location permission status.
+  geo.LocationPermission permission = geo.LocationPermission.denied;
 
   Future<bool> isLocationEnabled() async {
     return await geolocator.isLocationServiceEnabled();
@@ -31,32 +54,32 @@ class LocationService {
     permission = await geolocator.checkPermission();
     print("Initial Permission: $permission");
 
-    if (permission == LocationPermission.denied) {
+    if (permission == geo.LocationPermission.denied) {
       permission = await geolocator.requestPermission();
       print("Requested Permission: $permission");
     }
 
-    if (permission == LocationPermission.deniedForever) {
+    if (permission == geo.LocationPermission.deniedForever) {
       print("Permissions denied forever.");
       return false;
     }
 
-    if (permission == LocationPermission.denied) {
-      Position? position = await geolocator.getLastKnownPosition();
+    if (permission == geo.LocationPermission.denied) {
+      geo.Position? position = await geolocator.getLastKnownPosition();
       if (position != null) {
         currentPosition = position;
       }
       return false;
     }
 
-    return serviceEnabled && permission != LocationPermission.denied;
+    return serviceEnabled && permission != geo.LocationPermission.denied;
   }
 
   /// Retrieves the current location with low accuracy.
-  Future<Position> getCurrentLocation() async {
+  Future<geo.Position> getCurrentLocation() async {
     return await geolocator.getCurrentPosition(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.low,
+      locationSettings: const geo.LocationSettings(
+        accuracy: geo.LocationAccuracy.low,
       ),
     );
   }
@@ -64,17 +87,17 @@ class LocationService {
   /// Updates the `currentPosition` with low accuracy.
   Future<void> updateCurrentLocation() async {
     currentPosition = await geolocator.getCurrentPosition(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.low,
+      locationSettings: const geo.LocationSettings(
+        accuracy: geo.LocationAccuracy.low,
       ),
     );
   }
 
   /// Retrieves the current location with high accuracy.
-  Future<Position> getCurrentLocationAccurately() async {
+  Future<geo.Position> getCurrentLocationAccurately() async {
     return await geolocator.getCurrentPosition(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.best,
+      locationSettings: const geo.LocationSettings(
+        accuracy: geo.LocationAccuracy.best,
       ),
     );
   }
@@ -82,14 +105,14 @@ class LocationService {
   /// Updates the `currentPosition` with high accuracy.
   Future<void> updateCurrentLocationAccurately() async {
     currentPosition = await geolocator.getCurrentPosition(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.best,
+      locationSettings: const geo.LocationSettings(
+        accuracy: geo.LocationAccuracy.best,
       ),
     );
   }
 
   /// Manually sets the current position.
-  void takePosition(Position p) {
+  void takePosition(geo.Position p) {
     currentPosition = p;
   }
 
@@ -98,8 +121,8 @@ class LocationService {
     if (_isLocSettingInitialized) return;
     _isLocSettingInitialized = true;
 
-    locSetting = const LocationSettings(
-      accuracy: LocationAccuracy.high,
+    locSetting = const geo.LocationSettings(
+      accuracy: geo.LocationAccuracy.high,
       distanceFilter: 4,
     );
   }
@@ -108,7 +131,7 @@ class LocationService {
   void createLocationStream() {
     _positionStream = geolocator
         .getPositionStream(locationSettings: locSetting)
-        .listen((Position position) {
+        .listen((geo.Position position) {
       currentPosition = position;
     });
   }
@@ -129,9 +152,38 @@ class LocationService {
     _positionStream?.cancel();
   }
 
+  /// Returns the closest campus to the current location.
+  /// Made static to allow direct calls without an instance.
+  static String getClosestCampus(geo.Position currentPosition) {
+    var campusCoordinates = {
+      "SGW": [45.4973, -73.5784],
+      "LOY": [45.4586, -73.6401]
+    };
+
+    double distanceToSGW = geo.Geolocator.distanceBetween(
+      currentPosition.latitude,
+      currentPosition.longitude,
+      campusCoordinates["SGW"]![0],
+      campusCoordinates["SGW"]![1],
+    );
+    double distanceToLOY = geo.Geolocator.distanceBetween(
+      currentPosition.latitude,
+      currentPosition.longitude,
+      campusCoordinates["LOY"]![0],
+      campusCoordinates["LOY"]![1],
+    );
+
+    return (distanceToSGW <= distanceToLOY) ? "SGW" : "LOY";
+  }
+
+  // Reset the instance for testing purposes
+  static void resetInstance() {
+    _instance = null;
+  }
+
   /// Provides a stream of position updates.
   /// Ensures encapsulation by preventing direct access to `geolocator`.
-  Stream<Position> getPositionStream() {
+  Stream<geo.Position> getPositionStream() {
     if (!_isLocSettingInitialized) {
       setPlatformSpecificLocationSettings();
     }

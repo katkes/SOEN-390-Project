@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:soen_390/utils/location_service.dart' as location_service;
 
 class CampusSwitch extends StatefulWidget {
   final Function(String) onSelectionChanged;
@@ -12,13 +13,16 @@ class CampusSwitch extends StatefulWidget {
     required this.onSelectionChanged,
     required this.onLocationChanged,
     this.initialSelection = 'SGW',
-  });
+  }) : assert(
+          initialSelection == 'SGW' || initialSelection == 'Loyola',
+          'initialSelection must be either "SGW" or "Loyola"',
+        );
 
   @override
-  State<CampusSwitch> createState() => _CampusSwitchState();
+  State<CampusSwitch> createState() => CampusSwitchState();
 }
 
-class _CampusSwitchState extends State<CampusSwitch> {
+class CampusSwitchState extends State<CampusSwitch> {
   late String selectedBuilding;
   final Map<String, LatLng> _campusLocations = {
     'SGW': const LatLng(45.497856, -73.579588),
@@ -38,6 +42,39 @@ class _CampusSwitchState extends State<CampusSwitch> {
   void initState() {
     super.initState();
     selectedBuilding = widget.initialSelection;
+    _initClosestCampus();
+  }
+
+  // Initializes the closest campus based on the user's current location.
+  Future<void> _initClosestCampus() async {
+    // Get the singleton instance.
+    final locationService = location_service.LocationService.instance;
+
+    try {
+      // Await startUp() so that exceptions are caught.
+      await locationService.startUp();
+
+      // Retrieve the current location and determine the closest campus.
+      final newBuilding = (location_service.LocationService.getClosestCampus(
+                  await locationService.getCurrentLocation()) ==
+              "LOY")
+          ? "Loyola"
+          : "SGW";
+
+      if (mounted) {
+        setState(() => selectedBuilding = newBuilding);
+        widget.onSelectionChanged(selectedBuilding);
+        widget.onLocationChanged(_campusLocations[selectedBuilding]!);
+      }
+    } catch (e) {
+      // For error handling (ex. location services disabled).
+      print('Error initializing closest campus: $e');
+
+      // Determine if location services are enabled.
+      if (!await locationService.determinePermissions()) {
+        print('Location services are disabled.');
+      }
+    }
   }
 
   @override
