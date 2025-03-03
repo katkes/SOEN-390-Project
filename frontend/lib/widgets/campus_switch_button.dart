@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:soen_390/utils/location_service.dart' as location_service;
-import 'package:geolocator/geolocator.dart' as geolocator;
 
 class CampusSwitch extends StatefulWidget {
   final Function(String) onSelectionChanged;
