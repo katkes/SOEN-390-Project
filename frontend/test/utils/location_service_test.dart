@@ -189,7 +189,60 @@ void main() {
       // Ensure locSetting is properly initialized
       expect(() => locationService.locSetting, isNot(throwsA(anything)));
     });
+
+    test(
+        'isLocationEnabled should return true when location services are enabled',
+        () async {
+      // Arrange
+      mockGeolocatorPlatform.setLocationServiceEnabled(true);
+
+      // Act
+      bool result = await locationService.isLocationEnabled();
+
+      // Assert
+      expect(result, true);
+    });
+
+    test(
+        'isLocationEnabled should return false when location services are disabled',
+        () async {
+      // Arrange
+      mockGeolocatorPlatform.setLocationServiceEnabled(false);
+
+      // Act
+      bool result = await locationService.isLocationEnabled();
+
+      // Assert
+      expect(result, false);
+    });
+
+    test('getPositionStream should return a stream of positions', () async {
+      // Arrange
+      locationService.setPlatformSpecificLocationSettings();
+
+      // Act
+      final positionStream = locationService.getPositionStream();
+
+      // Assert
+      expect(await positionStream.first, mockPosition);
+    });
+
+    test(
+        'getPositionStream should initialize location settings if not initialized',
+        () async {
+      // Arrange
+      locationService = LocationService(geolocator: mockGeolocatorPlatform);
+
+      // Act
+      final positionStream = locationService.getPositionStream();
+
+      // Assert
+      expect(await positionStream.first, mockPosition);
+      expect(locationService.locSetting.accuracy, geo.LocationAccuracy.high);
+      expect(locationService.locSetting.distanceFilter, 4);
+    });
   });
+
   test('getCurrentLocationAccurately should return mocked position', () async {
     final position = await locationService.getCurrentLocationAccurately();
 
