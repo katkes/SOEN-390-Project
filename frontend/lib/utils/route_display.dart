@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:soen_390/utils/route_utils.dart';
 import 'package:soen_390/services/interfaces/route_service_interface.dart';
 
+//helper function for displaying route information
 void displayRoutes({
   required BuildContext context,
   required List<Map<String, dynamic>> confirmedRoutes,

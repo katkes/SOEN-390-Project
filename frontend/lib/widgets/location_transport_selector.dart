@@ -46,7 +46,6 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
         children: [
           _buildLocationInput(),
           const SizedBox(height: 10),
-          //_buildReorderableItinerary(), temporarily removed
           const SizedBox(height: 20),
           _buildTransportModeSelection(),
           const SizedBox(height: 20),
