@@ -9,9 +9,10 @@ import 'suggestions.dart';
 class LocationTransportSelector extends StatefulWidget {
   final Function(List<String>, String) onConfirmRoute;
   final Function(String)? onTransportModeChange;
+  final Function()? onLocationChanged;
 
   const LocationTransportSelector(
-      {super.key, required this.onConfirmRoute, this.onTransportModeChange});
+      {super.key, this.onLocationChanged, required this.onConfirmRoute, this.onTransportModeChange});
 
   @override
   LocationTransportSelectorState createState() =>
@@ -24,8 +25,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   String selectedTimeOption = "Leave Now"; // Default time selection
   String selectedLocation = ''; //variable to store selected location address
   String startLocation = ''; // variable to store start location address
-  String destinationLocation =
-      ''; // variable to store destination location address
+  String destinationLocation = ''; // variable to store destination location address
 
   @override
   Widget build(BuildContext context) {
@@ -234,9 +234,11 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
                   if (isStart && itinerary.isEmpty) {
                     startLocation = selectedLocation;
                     itinerary.add(selectedLocation);
+                    if(widget.onLocationChanged != null) {widget.onLocationChanged!();}
                   } else if (!isStart && itinerary.length < 2) {
                     destinationLocation = selectedLocation;
                     itinerary.add(selectedLocation);
+                   if(widget.onLocationChanged != null) {widget.onLocationChanged!();}
                   }
                 });
               }
@@ -250,6 +252,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   void _removeStop(int index) {
     setState(() {
       itinerary.removeAt(index);
+      if(widget.onLocationChanged != null) {widget.onLocationChanged!();}
     });
     if (widget.onTransportModeChange != null &&
         (index == 0 || itinerary.length < 2)) {

@@ -96,7 +96,7 @@ void main() {
   });
 
   test('should not start navigation if no route is selected', () async {
-    final destination = LatLng(45.5087, -73.554);
+    final destination = const LatLng(45.5087, -73.554);
     final mode = 'driving';
 
     await googleRouteService.startLiveNavigation(
@@ -109,7 +109,7 @@ void main() {
   });
   test('should not start navigation if location services are disabled',
       () async {
-    final destination = LatLng(45.5087, -73.554);
+    final destination = const LatLng(45.5087, -73.554);
     final mode = 'driving';
     when(mockLocationService.isLocationEnabled())
         .thenAnswer((_) async => false);
@@ -124,12 +124,12 @@ void main() {
   });
   test('should start navigation and trigger updates on location change',
       () async {
-    final destination = LatLng(45.5087, -73.554);
+    final destination = const LatLng(45.5087, -73.554);
     final mode = 'driving';
     final route = RouteResult(
       distance: 1000,
       duration: 600,
-      routePoints: [LatLng(45.5017, -73.5673)],
+      routePoints: [const LatLng(45.5017, -73.5673)],
       steps: [],
     );
     googleRouteService.selectRoute([route], 0);
@@ -170,7 +170,7 @@ void main() {
       },
     );
 
-    await Future.delayed(Duration(milliseconds: 100));
+    await Future.delayed(const Duration(milliseconds: 100));
 
     expect(updateCalled, isTrue);
   });

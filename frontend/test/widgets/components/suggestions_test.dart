@@ -1,18 +1,15 @@
+///
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:soen_390/widgets/suggestions.dart'; // Ensure you import your SuggestionsPopup correctly
+import 'package:soen_390/widgets/suggestions.dart';
 
 void main() {
-  // Before running any tests, load the dotenv configuration
-  setUpAll(() async {
-    await dotenv.load(fileName: ".env"); // Load the .env file once before all tests
-  });
 
   testWidgets('SuggestionsPopup renders correctly', (WidgetTester tester) async {
     // Set the environment variable for testing
-    dotenv.env['GOOGLE_PLACES_API_KEY'] = 'mock-api-key';
-    
+    dotenv.testLoad(fileInput: 'GOOGLE_PLACES_API_KEY=mock-api-key');
+
     // Define a callback for onSelect
     String selectedSuggestion = '';
 
@@ -43,10 +40,10 @@ void main() {
 
   testWidgets('SuggestionsPopup calls API on search', (WidgetTester tester) async {
     // Set the environment variable for testing
-    dotenv.env['GOOGLE_PLACES_API_KEY'] = 'mock-api-key';
+    dotenv.testLoad(fileInput: 'GOOGLE_PLACES_API_KEY=mock-api-key');
 
     String selectedSuggestion = '';
-    
+
     await tester.pumpWidget(MaterialApp(
       home: SuggestionsPopup(onSelect: (selected) {
         selectedSuggestion = selected;
