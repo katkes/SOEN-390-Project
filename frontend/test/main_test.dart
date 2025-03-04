@@ -12,6 +12,21 @@ import 'package:soen_390/services/http_service.dart';
 import 'package:soen_390/services/interfaces/route_service_interface.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:soen_390/services/building_info_api.dart';
+import 'package:soen_390/utils/location_service.dart';
+import 'package:soen_390/services/building_to_coordinates.dart';
+
+/// Test suite for the main application and services in the SOEN-390 project.
+///
+/// This file contains tests for the core components of the application, including:
+/// - The integration of various mocked services such as `RouteService`, `HttpService`, and `LocationService`.
+/// - Tests for UI elements like the `MaterialApp`, `NavigationBar`, and different screens in the app.
+/// - Mocking of network requests and handling of map tiles for testing purposes.
+///
+/// The tests use the `flutter_test` package for widget testing, the `mockito` package
+/// for mocking service classes, and `flutter_riverpod` for overriding providers in
+/// the test environment. The purpose of these tests is to ensure that the application
+/// initializes correctly with the mocked dependencies and that the main UI components
+/// are rendered and navigated correctly.
 
 // Generate mocks for the interfaces - using GenerateNiceMocks for better behavior
 @GenerateNiceMocks([
@@ -20,6 +35,8 @@ import 'package:soen_390/services/building_info_api.dart';
   MockSpec<http.Client>(),
   MockSpec<BuildingPopUps>(),
   MockSpec<GoogleMapsApiClient>(),
+  MockSpec<GeocodingService>(),
+  MockSpec<LocationService>(),
 ])
 import 'main_test.mocks.dart';
 
@@ -30,6 +47,8 @@ class TestWrapper extends StatelessWidget {
   final HttpService mockHttpService;
   final GoogleMapsApiClient mockMapsApiClient;
   final BuildingPopUps mockBuildingPopUps;
+  final GeocodingService mockGeocodingService;
+  final LocationService mockLocationService;
 
   const TestWrapper({
     required this.child,
@@ -37,6 +56,8 @@ class TestWrapper extends StatelessWidget {
     required this.mockHttpService,
     required this.mockMapsApiClient,
     required this.mockBuildingPopUps,
+    required this.mockGeocodingService,
+    required this.mockLocationService,
     super.key,
   });
 
@@ -46,6 +67,8 @@ class TestWrapper extends StatelessWidget {
       overrides: [
         routeServiceProvider.overrideWithValue(mockRouteService),
         httpServiceProvider.overrideWithValue(mockHttpService),
+        buildingToCoordinatesProvider.overrideWithValue(mockGeocodingService),
+        locationServiceProvider.overrideWithValue(mockLocationService),
       ],
       child: child,
     );
@@ -58,6 +81,8 @@ void main() {
   late MockClient mockHttpClient;
   late MockGoogleMapsApiClient mockMapsApiClient;
   late MockBuildingPopUps mockBuildingPopUps;
+  late MockGeocodingService mockGeocodingService;
+  late MockLocationService mockLocationService;
 
   setUpAll(() async {
     // Mock dotenv to avoid loading the actual .env file in tests
@@ -72,6 +97,8 @@ void main() {
     mockHttpClient = MockClient();
     mockMapsApiClient = MockGoogleMapsApiClient();
     mockBuildingPopUps = MockBuildingPopUps();
+    mockGeocodingService = MockGeocodingService();
+    mockLocationService = MockLocationService();
 
     // Set up mock behavior for getRoute method
     when(mockRouteService.getRoute(
@@ -84,6 +111,16 @@ void main() {
         routePoints: [
           const LatLng(45.497856, -73.579588),
           const LatLng(45.498000, -73.580000),
+        ],
+        steps: [
+          StepResult(
+            distance: 500.0,
+            duration: 300.0,
+            instruction: "Turn left onto Main St.",
+            maneuver: "turn-left",
+            startLocation: const LatLng(45.497856, -73.579588),
+            endLocation: const LatLng(45.498000, -73.580000),
+          ),
         ],
       );
     });
@@ -174,6 +211,8 @@ void main() {
         mockHttpService: mockHttpService,
         mockBuildingPopUps: mockBuildingPopUps,
         mockMapsApiClient: mockMapsApiClient,
+        mockGeocodingService: mockGeocodingService,
+        mockLocationService: mockLocationService,
         child: const MyApp(),
       ),
     );
@@ -197,6 +236,8 @@ void main() {
         mockHttpService: mockHttpService,
         mockBuildingPopUps: mockBuildingPopUps,
         mockMapsApiClient: mockMapsApiClient,
+        mockGeocodingService: mockGeocodingService,
+        mockLocationService: mockLocationService,
         child: const MyApp(),
       ),
     );
@@ -215,6 +256,8 @@ void main() {
         mockHttpService: mockHttpService,
         mockBuildingPopUps: mockBuildingPopUps,
         mockMapsApiClient: mockMapsApiClient,
+        mockGeocodingService: mockGeocodingService,
+        mockLocationService: mockLocationService,
         child: const MyApp(),
       ),
     );
