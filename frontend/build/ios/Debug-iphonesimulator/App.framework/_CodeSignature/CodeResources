@@ -8,13 +8,17 @@
 		<data>
 		h5OB7aKzS5WR9SemvZAyN6FEkJs=
 		</data>
+		<key>flutter_assets/.env</key>
+		<data>
+		I+3u9U8wrsnggl4DDOcnfNvdKvg=
+		</data>
 		<key>flutter_assets/AssetManifest.bin</key>
 		<data>
-		yBKa76yKHsjKsbPqrZk0rblYsC4=
+		Xr1uMlUk47ZUdZYUNhmVrWYwOwE=
 		</data>
 		<key>flutter_assets/AssetManifest.json</key>
 		<data>
-		5WbB0dQ3+tqgXjRPxrFOjq8tuCE=
+		BOQavkEhPqkFxAxfSt0xRa9rioo=
 		</data>
 		<key>flutter_assets/FontManifest.json</key>
 		<data>
@@ -22,7 +26,19 @@
 		</data>
 		<key>flutter_assets/NOTICES.Z</key>
 		<data>
-		VKQx768CB4GERMcQEt0FbwkJPco=
+		ql/RIYQCM8nk1cdpE/BY07rlBm8=
+		</data>
+		<key>flutter_assets/assets/geojson_files/building_boundaries.geojson</key>
+		<data>
+		dpaL7p9K9p7/iUHVQwBbA1L61As=
+		</data>
+		<key>flutter_assets/assets/geojson_files/building_list.geojson</key>
+		<data>
+		d/SCO0uo3CvsewBh25ZMTQevoKE=
+		</data>
+		<key>flutter_assets/assets/images/buildings/hall.png</key>
+		<data>
+		sTZgcZSakWcN4HwgTZwyLPOhT6I=
 		</data>
 		<key>flutter_assets/fonts/MaterialIcons-Regular.otf</key>
 		<data>
@@ -30,11 +46,11 @@
 		</data>
 		<key>flutter_assets/isolate_snapshot_data</key>
 		<data>
-		qWRCYkB2ANaCGuWJ6K6EbAqreNE=
+		RI3zgJitz0LEL5tMDX7m0Uknm40=
 		</data>
 		<key>flutter_assets/kernel_blob.bin</key>
 		<data>
-		34z3YlmJUkw+OsctyJH9GFKriDM=
+		P+nYvY21J6aSlWj8pdiBuN2xgNI=
 		</data>
 		<key>flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>
 		<data>
@@ -55,18 +71,25 @@
 	</dict>
 	<key>files2</key>
 	<dict>
+		<key>flutter_assets/.env</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			gI5ga6aCzKx94crOgwp1uQAl/87vxUglOrBinpz/lhk=
+			</data>
+		</dict>
 		<key>flutter_assets/AssetManifest.bin</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			0g4fk58UvtMABh3ZfS4OTRXdb4+EJbGgylW5e+z+2no=
+			yTU+2Zxdh6GqC6PKGyVhDeWAKJh/Lt1R3tdhbpO2VJQ=
 			</data>
 		</dict>
 		<key>flutter_assets/AssetManifest.json</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			dmvOavY8AMGMzpeAZFd/PyAIgDpo14SE2KNuyHPJQiY=
+			snqJ52iGM5+sYlSRbxZFpqzME05GmOYcHZMFW09SVZ8=
 			</data>
 		</dict>
 		<key>flutter_assets/FontManifest.json</key>
@@ -80,7 +103,28 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			Tn3zzOqtb1QB1o9JV0fLuzLOJ+oupekmO3/cV2YElag=
+			Qst4mE/PNtfqLkVeqGQ5znwT0LXbJ+n7+CQ2RMRVMSc=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/geojson_files/building_boundaries.geojson</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			VRgoVYuiRXvXl9Vyq9I1ljw7TQsFjOO76xaZfs2SUZA=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/geojson_files/building_list.geojson</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			U7RLGR2bk2opHA0B9hGvGlh7Avtjo8MtoFJmxzxW1Jk=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/buildings/hall.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			XN0OwK0esM/8wRlUmGI+w/i+molCk4qby8pPg4SksJ8=
 			</data>
 		</dict>
 		<key>flutter_assets/fonts/MaterialIcons-Regular.otf</key>
@@ -94,14 +138,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			SOJ5rERauzhaCV7eUD78eXv8seogEgSQP/xrVhwDCq8=
+			HMYZHCTzOod6pVdgC+dxVoaB5HzcHkTNLwyAEhCnAfw=
 			</data>
 		</dict>
 		<key>flutter_assets/kernel_blob.bin</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			VHpfJq+wey1SbrTNNBW6PB7PZpIvs4SyBDwWYLEsFIk=
+			ilZY6YHwJAwUFPoRhnfnANG1weBV8adHee5PCvrVIMg=
 			</data>
 		</dict>
 		<key>flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>
