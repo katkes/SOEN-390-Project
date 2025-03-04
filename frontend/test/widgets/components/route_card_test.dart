@@ -26,6 +26,8 @@ void main() {
             duration: duration,
             description: description,
             icons: icons,
+            routeData: null,
+            onCardTapped: () => {},
           ),
         ),
       ),
