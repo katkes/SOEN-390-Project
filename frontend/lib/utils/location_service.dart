@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:soen_390/utils/permission_not_enabled_exception.dart';
 import 'package:geolocator/geolocator.dart' as geo;
+import 'package:latlong2/latlong.dart';
 
 /// Service for managing location-related functionality.
 ///
@@ -13,14 +14,14 @@ class LocationService {
 
   // Static getter for the singleton instance
   static LocationService get instance {
-    _instance ??=
-        LocationService._internal(geolocator: geo.GeolocatorPlatform.instance);
+     _instance ??=
+         LocationService._internal(geolocator: geo.GeolocatorPlatform.instance);
     return _instance!;
   }
 
   // Factory constructor that returns the singleton instance
   factory LocationService({required geo.GeolocatorPlatform geolocator}) {
-    _instance ??= LocationService._internal(geolocator: geolocator);
+    //_instance ??= LocationService._internal(geolocator: geolocator);
     return _instance!;
   }
 
@@ -189,4 +190,9 @@ class LocationService {
     }
     return geolocator.getPositionStream(locationSettings: locSetting);
   }
+
+  LatLng convertPositionToLatLng(geo.Position p) {
+    return new LatLng(p.latitude, p.longitude);
+  }
+
 }

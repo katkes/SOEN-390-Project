@@ -6,14 +6,15 @@ import 'package:http/http.dart' as http;
 import 'package:soen_390/services/map_service.dart';
 import 'package:soen_390/utils/marker_tap_handler.dart';
 import '../services/building_info_api.dart';
+import "package:soen_390/utils/location_service.dart";
 
 /// A widget that displays an interactive map with routing functionality.
 ///
 /// The map allows users to visualize locations, interact with markers,
 /// and calculate routes between two selected points using the injected `IRouteService`.
 class MapWidget extends StatefulWidget {
-  /// The initial location where the map is centered.
 
+  /// The initial location where the map is centered.
   final LatLng location;
 
   /// The HTTP client used for network requests related to map tiles.
@@ -122,10 +123,24 @@ class _MapWidgetState extends State<MapWidget> {
       });
       setState(() {
         _buildingMarkers = markers;
+        _buildingMarkers.add( const Marker(
+            point: LatLng(0, 0),
+            width: 80,
+            height: 80,
+            child: Icon(
+              Icons.location_pin,
+              color: Colors.blue,
+              size: 40),
+        )
+        );
       });
     } catch (e) {
       print('Error loading building markers: $e');
     }
+  }
+
+  void updateCurrentLocationMarker() {
+
   }
 
   /// Loads the building boundaries from the map service
@@ -162,6 +177,11 @@ class _MapWidgetState extends State<MapWidget> {
       routePoints = routeResult.routePoints;
     });
   }
+
+
+
+
+
 
   /// Builds the map widget with the FlutterMap and its children
   @override
@@ -203,6 +223,9 @@ class _MapWidgetState extends State<MapWidget> {
     );
   }
 
+
+
+
   /// Handles user taps on the map to set the `from` and `to` locations.
   ///
   /// - If `isPairly` is false, updates `from` location.
@@ -220,7 +243,7 @@ class _MapWidgetState extends State<MapWidget> {
       _fetchRoute();
     });
   }
-}
+} //end of _MapWidgetState class
 
 /// Example usage of `MapWidget` inside a `MyPage` scaffold.
 class MyPage extends StatelessWidget {

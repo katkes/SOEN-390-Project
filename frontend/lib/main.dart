@@ -13,12 +13,20 @@ import 'package:soen_390/services/http_service.dart'; // Import HttpService
 import 'package:soen_390/services/interfaces/route_service_interface.dart'; // Import IRouteService
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:soen_390/services/building_info_api.dart';
+import "package:soen_390/utils/location_service.dart";
 
 /// The entry point of the application.
 ///
 /// This function initializes the Riverpod provider scope and starts the app.
 void main() async {
-  await dotenv.load(fileName: ".env");
+   WidgetsFlutterBinding.ensureInitialized();
+  try{
+    await dotenv.load(fileName: ".env");
+
+  } catch (e) {
+    print("An error occurred when loading the .env file: $e");
+  }
+
   runApp(
     const ProviderScope(
       child: MyApp(),
