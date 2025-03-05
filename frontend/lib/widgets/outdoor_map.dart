@@ -123,8 +123,9 @@ class _MapWidgetState extends State<MapWidget> {
       });
       setState(() {
         _buildingMarkers = markers;
+        //this is the user's current location. Add this through the "getCurrentLocation" function
         _buildingMarkers.add( const Marker(
-            point: LatLng(0, 0),
+            point: LatLng(0, 0), //replace with current location longitude and latitude
             width: 80,
             height: 80,
             child: Icon(
@@ -139,8 +140,10 @@ class _MapWidgetState extends State<MapWidget> {
     }
   }
 
+  //function to periodically update the current location of the user on the map.
   void updateCurrentLocationMarker() {
-
+    //set up a location stream, and update the list _buildingMarkers
+    //preferably, udate the current location at each event change.
   }
 
   /// Loads the building boundaries from the map service
