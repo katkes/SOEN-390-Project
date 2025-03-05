@@ -28,5 +28,7 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>NSLocationUsageDescription</key>
+    <string>This app needs access to your location to determine the nearest campus.</string>
 </dict>
 </plist>

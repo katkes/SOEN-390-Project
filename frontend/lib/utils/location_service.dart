@@ -1,51 +1,52 @@
 import 'dart:async';
-import 'package:geolocator/geolocator.dart' as geo;
-import 'package:flutter/foundation.dart';
 import 'package:soen_390/utils/permission_not_enabled_exception.dart';
+import 'package:geolocator/geolocator.dart' as geo;
 
 /// Service for managing location-related functionality.
 ///
 /// This class provides methods for determining permissions, retrieving the
 /// current location, updating the location, and creating a location stream.
+/// It uses the singleton pattern to ensure only one instance exists.
 class LocationService {
+  // Private static instance variable
+  static LocationService? _instance;
+
+  // Static getter for the singleton instance
+  static LocationService get instance {
+    _instance ??=
+        LocationService._internal(geolocator: geo.GeolocatorPlatform.instance);
+    return _instance!;
+  }
+
+  // Factory constructor that returns the singleton instance
+  factory LocationService({required geo.GeolocatorPlatform geolocator}) {
+    _instance ??= LocationService._internal(geolocator: geolocator);
+    return _instance!;
+  }
+
+  /// Private constructor
+  /// Creates a [LocationService] instance with dependency injection.
+  ///
+  /// The [geolocator] parameter is required and provides the platform-specific
+  /// implementation for location services.
+  LocationService._internal({required this.geolocator});
+
   final geo.GeolocatorPlatform geolocator;
 
-  // Ensures platform-specific settings are initialized only once
   bool _isLocSettingInitialized = false;
-
-  /// The current position of the device.
-  ///
-  /// This variable contains the latest known position and is updated
-  /// whenever a new location is retrieved.
   late geo.Position currentPosition;
-
-  /// Platform-specific location settings.
-  ///
-  /// These settings are initialized once and used for location updates.
   late final geo.LocationSettings locSetting;
-
-  /// Stream subscription for tracking location changes.
   StreamSubscription<geo.Position>? _positionStream;
-
-  /// Indicates whether location services are enabled.
-  /// serviceEnabled and permission are set to false/denied because the initial assumption should be so
-  /// Accessing location without having the permission will cause errors.
-  /// This value gets updated once the application is opened.
   bool serviceEnabled = false;
 
   /// The current location permission status.
   geo.LocationPermission permission = geo.LocationPermission.denied;
 
-  /// Creates a [LocationService] instance with dependency injection.
-  ///
-  /// The [geolocator] parameter is required and provides the platform-specific
-  /// implementation for location services.
-  LocationService({required this.geolocator});
+  Future<bool> isLocationEnabled() async {
+    return await geolocator.isLocationServiceEnabled();
+  }
 
   /// Determines if location services and permissions are enabled.
-  ///
-  /// Returns `true` if location services are enabled and permissions are granted,
-  /// otherwise returns `false`.
   Future<bool> determinePermissions() async {
     serviceEnabled = await geolocator.isLocationServiceEnabled();
     print("Service Enabled: $serviceEnabled");
@@ -75,8 +76,6 @@ class LocationService {
   }
 
   /// Retrieves the current location with low accuracy.
-  ///
-  /// Returns a [geo.Position] object representing the current location.
   Future<geo.Position> getCurrentLocation() async {
     return await geolocator.getCurrentPosition(
       locationSettings: const geo.LocationSettings(
@@ -95,8 +94,6 @@ class LocationService {
   }
 
   /// Retrieves the current location with high accuracy.
-  ///
-  /// Returns a [geo.Position] object representing the current location.
   Future<geo.Position> getCurrentLocationAccurately() async {
     return await geolocator.getCurrentPosition(
       locationSettings: const geo.LocationSettings(
@@ -115,42 +112,22 @@ class LocationService {
   }
 
   /// Manually sets the current position.
-  ///
-  /// The [p] parameter is the [geo.Position] to set as the current position.
   void takePosition(geo.Position p) {
     currentPosition = p;
   }
 
   /// Initializes platform-specific location settings.
-  ///
-  /// This method ensures that location settings are initialized only once.
   void setPlatformSpecificLocationSettings() {
     if (_isLocSettingInitialized) return;
     _isLocSettingInitialized = true;
 
-    if (defaultTargetPlatform == TargetPlatform.android) {
-      locSetting = const geo.LocationSettings(
-        accuracy: geo.LocationAccuracy.high,
-        distanceFilter: 4,
-      );
-    } else if (defaultTargetPlatform == TargetPlatform.iOS ||
-        defaultTargetPlatform == TargetPlatform.macOS) {
-      locSetting = const geo.LocationSettings(
-        accuracy: geo.LocationAccuracy.high,
-        distanceFilter: 4,
-      );
-    } else {
-      locSetting = const geo.LocationSettings(
-        accuracy: geo.LocationAccuracy.high,
-        distanceFilter: 4,
-      );
-    }
+    locSetting = const geo.LocationSettings(
+      accuracy: geo.LocationAccuracy.high,
+      distanceFilter: 4,
+    );
   }
 
   /// Creates a location stream for continuous updates.
-  ///
-  /// This method initializes a stream that updates the `currentPosition`
-  /// whenever the device's location changes.
   void createLocationStream() {
     _positionStream = geolocator
         .getPositionStream(locationSettings: locSetting)
@@ -160,8 +137,6 @@ class LocationService {
   }
 
   /// Starts up location services, ensuring permissions and settings are set.
-  ///
-  /// Throws a [PermissionNotEnabledException] if location services are disabled.
   Future<void> startUp() async {
     bool locationEnabled = await determinePermissions();
     if (locationEnabled) {
@@ -175,5 +150,43 @@ class LocationService {
   /// Stops the location stream.
   void stopListening() {
     _positionStream?.cancel();
+  }
+
+  /// Returns the closest campus to the current location.
+  /// Made static to allow direct calls without an instance.
+  static String getClosestCampus(geo.Position currentPosition) {
+    var campusCoordinates = {
+      "SGW": [45.4973, -73.5784],
+      "LOY": [45.4586, -73.6401]
+    };
+
+    double distanceToSGW = geo.Geolocator.distanceBetween(
+      currentPosition.latitude,
+      currentPosition.longitude,
+      campusCoordinates["SGW"]![0],
+      campusCoordinates["SGW"]![1],
+    );
+    double distanceToLOY = geo.Geolocator.distanceBetween(
+      currentPosition.latitude,
+      currentPosition.longitude,
+      campusCoordinates["LOY"]![0],
+      campusCoordinates["LOY"]![1],
+    );
+
+    return (distanceToSGW <= distanceToLOY) ? "SGW" : "LOY";
+  }
+
+  // Reset the instance for testing purposes
+  static void resetInstance() {
+    _instance = null;
+  }
+
+  /// Provides a stream of position updates.
+  /// Ensures encapsulation by preventing direct access to `geolocator`.
+  Stream<geo.Position> getPositionStream() {
+    if (!_isLocSettingInitialized) {
+      setPlatformSpecificLocationSettings();
+    }
+    return geolocator.getPositionStream(locationSettings: locSetting);
   }
 }

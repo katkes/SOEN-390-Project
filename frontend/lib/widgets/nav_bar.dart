@@ -19,7 +19,7 @@ class NavBar extends StatelessWidget {
         NavigationDestination(
           selectedIcon: Icon(Icons.home),
           icon: Icon(Icons.home_outlined),
-          label: 'Home',
+          label: 'Homedd',
         ),
         NavigationDestination(
           selectedIcon: Icon(Icons.map),

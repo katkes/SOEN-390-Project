@@ -2,8 +2,7 @@
 ///
 /// The [SearchBarWidget] contains a [TextField] for user input. It expands
 /// when focused and collapses when unfocused. The widget uses an
-/// [AnimatedContainer] to animate the expansion and collapse, and an
-/// [AnimatedOpacity] to fade in and out the [TextField].
+/// [AnimatedContainer] to animate the expansion and collapse.
 library;
 
 import 'package:flutter/material.dart';
@@ -71,14 +70,15 @@ class SearchBarWidgetState extends State<SearchBarWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        Align(
-          alignment: Alignment.bottomLeft,
-          child: Padding(
-            padding: const EdgeInsets.only(left: 20, bottom: 90),
-            child: GestureDetector(
+    return Align(
+      alignment: Alignment.bottomLeft,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 20, bottom: 90),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            GestureDetector(
               onTap: () {
                 setState(() {
                   isExpanded = !isExpanded;
@@ -100,8 +100,7 @@ class SearchBarWidgetState extends State<SearchBarWidget> {
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black
-                          .withValues(red: 0, green: 0, blue: 0, alpha: 0.25),
+                      color: Colors.black.withAlpha(64),
                       blurRadius: 10,
                       offset: const Offset(0, 0),
                     ),
@@ -118,11 +117,10 @@ class SearchBarWidgetState extends State<SearchBarWidget> {
                           controller: widget.controller,
                           onChanged: _updateSuggestions,
                           onSubmitted: _performSearch,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             hintText: 'Search for Building',
                             hintStyle: TextStyle(
-                              color: Colors.black.withValues(
-                                  red: 0, green: 0, blue: 0, alpha: 77),
+                              color: Color.fromARGB(77, 0, 0, 0),
                               fontSize: 16,
                               fontFamily: 'Inter',
                               fontWeight: FontWeight.w400,
@@ -136,48 +134,56 @@ class SearchBarWidgetState extends State<SearchBarWidget> {
                 ),
               ),
             ),
-          ),
-        ),
-        Positioned(
-          left: 20,
-          top: -90,
-          child: AnimatedOpacity(
-            duration: const Duration(milliseconds: 300),
-            opacity: isExpanded && _suggestions.isNotEmpty ? 1.0 : 0.0,
-            child: Container(
-              width: 250,
-              padding: const EdgeInsets.all(8.0),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(2.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black
-                        .withValues(red: 0, green: 0, blue: 0, alpha: 0.25),
-                    blurRadius: 0,
-                    offset: const Offset(0, 0),
-                  ),
-                ],
+            if (isExpanded && _suggestions.isNotEmpty)
+              Container(
+                margin: const EdgeInsets.only(top: 5),
+                width: 240,
+                padding: const EdgeInsets.all(8.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(2.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withAlpha(63),
+                      blurRadius: 0,
+                      offset: const Offset(0, 0),
+                    ),
+                  ],
+                ),
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: _suggestions.length,
+                  itemBuilder: (context, index) {
+                    final suggestion = _suggestions[index];
+                    return InkWell(
+                      onTap: () {
+                        debugPrint("Tapped suggestion: $suggestion");
+                        setState(() {
+                          widget.controller.text = suggestion;
+                          _suggestions.clear();
+                        });
+
+                        _performSearch(suggestion);
+                        Future.delayed(const Duration(milliseconds: 300), () {
+                          if (mounted) {
+                            _focusNode.unfocus();
+                          }
+                        });
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                        child: Text(
+                          suggestion,
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: _suggestions.map((suggestion) {
-                  return ListTile(
-                    title: Text(suggestion),
-                    onTap: () {
-                      widget.controller.text = suggestion;
-                      _performSearch(suggestion);
-                      setState(() {
-                        _suggestions = [];
-                      });
-                    },
-                  );
-                }).toList(),
-              ),
-            ),
-          ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

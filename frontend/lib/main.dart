@@ -121,9 +121,19 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
   }
 
   void _openWaypointSelection() {
+    final buildingToCoordinatesService =
+        ref.watch(buildingToCoordinatesProvider);
+    final locationService = ref.watch(locationServiceProvider);
+    final routeService = ref.watch(routeServiceProvider);
+
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const WaypointSelectionScreen()),
+      MaterialPageRoute(
+          builder: (context) => WaypointSelectionScreen(
+                routeService: routeService,
+                geocodingService: buildingToCoordinatesService,
+                locationService: locationService,
+              )),
     );
   }
 

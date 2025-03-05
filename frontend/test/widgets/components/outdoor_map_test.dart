@@ -34,15 +34,30 @@ void main() {
     mockBuildingPopUps = MockBuildingPopUps();
 
     // Mocking route service response
-    when(mockRouteService.getRoute(from: anyNamed('from'), to: anyNamed('to')))
-        .thenAnswer((_) async => RouteResult(
-              distance: 5000.0,
-              duration: 600.0,
-              routePoints: [
-                const LatLng(45.5017, -73.5673),
-                const LatLng(45.508, -73.56)
-              ],
-            ));
+    when(mockRouteService.getRoute(
+      from: anyNamed('from'),
+      to: anyNamed('to'),
+    )).thenAnswer((_) async {
+      return RouteResult(
+        distance: 1000.0,
+        duration: 600.0,
+        routePoints: [
+          const LatLng(45.497856, -73.579588),
+          const LatLng(45.498000, -73.580000),
+        ],
+        steps: [
+          // ✅ Add this
+          StepResult(
+            distance: 500.0,
+            duration: 300.0,
+            instruction: "Turn left onto Main St.",
+            maneuver: "turn-left",
+            startLocation: const LatLng(45.497856, -73.579588),
+            endLocation: const LatLng(45.498000, -73.580000),
+          ),
+        ],
+      );
+    });
 
     final transparentPixelPng = Uint8List.fromList([
       0x89,

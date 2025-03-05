@@ -1,34 +1,18 @@
 import 'package:flutter/material.dart';
 
-/// A widget that displays building information in a popup format.
-///
-/// This widget creates a popup display containing building information including:
-/// * Building name (automatically abbreviated if too long)
-/// * Building address
-/// * Building photo (optional)
-///
-/// The popup uses the app's primary color scheme and provides a consistent
-/// layout for building information across the application.
-///
-/// Example usage:
-/// ```dart
-/// BuildingInformationPopup(
-///   buildingName: 'Henry F. Hall Building',
-///   buildingAddress: '1455 De Maisonneuve Blvd. W.',
-///   photoUrl: 'https://example.com/hall-building.jpg',
-/// )
-/// ```
 
 class BuildingInformationPopup extends StatelessWidget {
   final String buildingName;
   final String buildingAddress;
   final String? photoUrl;
+  final Function() onNavigateToWaypointPage; // Callback function to navigate
 
   const BuildingInformationPopup({
     super.key,
     required this.buildingName,
     required this.buildingAddress,
     this.photoUrl,
+    required this.onNavigateToWaypointPage, // Accept the callback
   });
 
   String _getAbbreviatedName(String name) {
@@ -54,38 +38,37 @@ class BuildingInformationPopup extends StatelessWidget {
             children: [
               photoUrl != null
                   ? Image.network(
-                      photoUrl!,
-                      fit: BoxFit.cover,
-                      width: 200,
-                      height: 100,
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null) return child;
-                        return const SizedBox(
-                          width: 200,
-                          height: 100,
-                          child: Center(child: CircularProgressIndicator()),
-                        );
-                      },
-                      errorBuilder: (context, error, stackTrace) {
-                        return Image.asset(
-                          "assets/images/buildings/hall.png",
-                          fit: BoxFit.cover,
-                          width: 200,
-                          height: 100,
-                        );
-                      },
-                    )
+                photoUrl!,
+                fit: BoxFit.cover,
+                width: 200,
+                height: 100,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return const SizedBox(
+                    width: 200,
+                    height: 100,
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                },
+                errorBuilder: (context, error, stackTrace) {
+                  return Image.asset(
+                    "assets/images/buildings/hall.png",
+                    fit: BoxFit.cover,
+                    width: 200,
+                    height: 100,
+                  );
+                },
+              )
                   : Image.asset(
-                      "assets/images/buildings/hall.png",
-                      fit: BoxFit.cover,
-                      width: 200,
-                      height: 100,
-                    ),
+                "assets/images/buildings/hall.png",
+                fit: BoxFit.cover,
+                width: 200,
+                height: 100,
+              ),
               const SizedBox(height: 10),
               Text(
                 abbreviatedName,
-                style:
-                    const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 5),
               Text(
@@ -99,9 +82,7 @@ class BuildingInformationPopup extends StatelessWidget {
             bottom: -10,
             right: 2,
             child: ElevatedButton(
-              onPressed: () {
-                print("Button clicked");
-              },
+              onPressed: onNavigateToWaypointPage, // Call the callback
               style: ElevatedButton.styleFrom(
                 backgroundColor: burgundyColor,
                 shape: RoundedRectangleBorder(
@@ -122,3 +103,12 @@ class BuildingInformationPopup extends StatelessWidget {
     );
   }
 }
+
+
+// builder: (context) => LocationTransportSelector(
+// initialDestination: buildingAddress, // Autofill destination
+// onConfirmRoute: (waypoints, mode) {
+// // Handle confirmed route
+// print("Confirmed waypoints: $waypoints, Mode: $mode");
+// },
+// ),
