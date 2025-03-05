@@ -6,6 +6,7 @@
 import 'package:flutter/material.dart';
 import 'package:soen_390/widgets/location_transport_selector.dart';
 import 'package:soen_390/widgets/nav_bar.dart';
+import 'package:soen_390/widgets/outdoor_map.dart';
 import 'package:soen_390/widgets/route_card.dart';
 import 'package:soen_390/services/google_route_service.dart';
 import 'package:soen_390/services/building_to_coordinates.dart';
@@ -224,8 +225,8 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
                   icons: route["icons"],
                   routeData: route["routeData"],
                   onCardTapped: () {
-                    // When card is tapped, navigate back to the main screen (WaypointSelectionScreen)
-                    Navigator.pop(context);
+                  
+
                   },
                 );
               },

@@ -48,6 +48,7 @@ class _MapWidgetState extends State<MapWidget> {
   List<Polygon> _buildingPolygons = [];
   String? _selectedBuildingName;
   String? _selectedBuildingAddress;
+  
 
   /// The starting location for route calculation.
   late LatLng from;
@@ -195,6 +196,15 @@ class _MapWidgetState extends State<MapWidget> {
             MarkerLayer(
               markers: [
                 ..._buildingMarkers,
+              ],
+            ),
+            PolylineLayer(
+              polylines: [
+                Polyline(
+                  points: routePoints,
+                  strokeWidth: 4.0,
+                  color: const Color.fromARGB(255, 54, 152, 244),
+                ),
               ],
             ),
           ],
