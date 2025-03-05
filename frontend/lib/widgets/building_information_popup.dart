@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:soen_390/providers/service_providers.dart';
+import 'package:soen_390/screens/waypoint/waypoint_selection_screens.dart';
 
 class BuildingInformationPopup extends StatelessWidget {
   final String buildingName;
   final String buildingAddress;
   final String? photoUrl;
-  final Function() onNavigateToWaypointPage; // Callback function to navigate
 
   const BuildingInformationPopup({
     super.key,
     required this.buildingName,
     required this.buildingAddress,
     this.photoUrl,
-    required this.onNavigateToWaypointPage, // Accept the callback
   });
 
   String _getAbbreviatedName(String name) {
@@ -21,6 +21,25 @@ class BuildingInformationPopup extends StatelessWidget {
     } else {
       return name;
     }
+  }
+
+  void openWaypointSelection(BuildContext context) {
+    final container = ProviderScope.containerOf(context);
+    final routeService = container.read(routeServiceProvider);
+    final locationService = container.read(locationServiceProvider);
+    final buildingToCoordinatesService =
+        container.read(buildingToCoordinatesProvider);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => WaypointSelectionScreen(
+          routeService: routeService,
+          geocodingService: buildingToCoordinatesService,
+          locationService: locationService,
+        ),
+      ),
+    );
   }
 
   @override
@@ -38,37 +57,38 @@ class BuildingInformationPopup extends StatelessWidget {
             children: [
               photoUrl != null
                   ? Image.network(
-                photoUrl!,
-                fit: BoxFit.cover,
-                width: 200,
-                height: 100,
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return const SizedBox(
-                    width: 200,
-                    height: 100,
-                    child: Center(child: CircularProgressIndicator()),
-                  );
-                },
-                errorBuilder: (context, error, stackTrace) {
-                  return Image.asset(
-                    "assets/images/buildings/hall.png",
-                    fit: BoxFit.cover,
-                    width: 200,
-                    height: 100,
-                  );
-                },
-              )
+                      photoUrl!,
+                      fit: BoxFit.cover,
+                      width: 200,
+                      height: 100,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return const SizedBox(
+                          width: 200,
+                          height: 100,
+                          child: Center(child: CircularProgressIndicator()),
+                        );
+                      },
+                      errorBuilder: (context, error, stackTrace) {
+                        return Image.asset(
+                          "assets/images/buildings/hall.png",
+                          fit: BoxFit.cover,
+                          width: 200,
+                          height: 100,
+                        );
+                      },
+                    )
                   : Image.asset(
-                "assets/images/buildings/hall.png",
-                fit: BoxFit.cover,
-                width: 200,
-                height: 100,
-              ),
+                      "assets/images/buildings/hall.png",
+                      fit: BoxFit.cover,
+                      width: 200,
+                      height: 100,
+                    ),
               const SizedBox(height: 10),
               Text(
                 abbreviatedName,
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 5),
               Text(
@@ -82,7 +102,7 @@ class BuildingInformationPopup extends StatelessWidget {
             bottom: -10,
             right: 2,
             child: ElevatedButton(
-              onPressed: onNavigateToWaypointPage, // Call the callback
+              onPressed: () => openWaypointSelection(context),
               style: ElevatedButton.styleFrom(
                 backgroundColor: burgundyColor,
                 shape: RoundedRectangleBorder(
@@ -103,7 +123,6 @@ class BuildingInformationPopup extends StatelessWidget {
     );
   }
 }
-
 
 // builder: (context) => LocationTransportSelector(
 // initialDestination: buildingAddress, // Autofill destination
