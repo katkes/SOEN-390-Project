@@ -19,12 +19,14 @@ class WaypointSelectionScreen extends StatefulWidget {
   final IRouteService routeService;
   final GeocodingService geocodingService;
   final LocationService locationService;
+  final String? initialDestination;
 
   const WaypointSelectionScreen(
       {super.key,
       required this.routeService,
       required this.geocodingService,
-      required this.locationService});
+      required this.locationService,
+        this.initialDestination,});
 
   @override
   WaypointSelectionScreenState createState() => WaypointSelectionScreenState();
@@ -205,6 +207,7 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
       body: Column(
         children: [
           LocationTransportSelector(
+            initialDestination: widget.initialDestination,
             onConfirmRoute: _handleRouteConfirmation,
             onLocationChanged: _setLocationChanged,
           ),

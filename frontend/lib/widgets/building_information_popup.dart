@@ -37,6 +37,7 @@ class BuildingInformationPopup extends StatelessWidget {
           routeService: routeService,
           geocodingService: buildingToCoordinatesService,
           locationService: locationService,
+          initialDestination: buildingAddress,
         ),
       ),
     );

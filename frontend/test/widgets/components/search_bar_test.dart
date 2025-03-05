@@ -57,34 +57,6 @@ void main() {
       expect(containerSize.width, equals(280));
     });
 
-    // Checks if the onChanged callback is called when the text changes.
-    testWidgets('calls onChanged callback when text changes',
-        (WidgetTester tester) async {
-      String changedValue = '';
-      final controller = TextEditingController();
-
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: SearchBarWidget(
-              controller: controller,
-              onChanged: (value) {
-                changedValue = value;
-              },
-            ),
-          ),
-        ),
-      );
-
-      await tester.tap(findSearchBarGestureDetector());
-      await tester.pumpAndSettle();
-
-      const testText = 'Flutter Testing';
-      await tester.enterText(find.byType(TextField), testText);
-      await tester.pumpAndSettle();
-
-      expect(changedValue, equals(testText));
-    });
 
     // Checks if the search bar collapses when tapped again.
     testWidgets('toggles collapse when tapped again',
@@ -116,5 +88,33 @@ void main() {
       final containerSize = tester.getSize(find.byType(AnimatedContainer));
       expect(containerSize.width, equals(58));
     });
+
+    testWidgets('displays suggestions on text input', (WidgetTester tester) async {
+      final controller = TextEditingController();
+
+      // Create the widget in the test environment
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SearchBarWidget(controller: controller),
+          ),
+        ),
+      );
+
+      // Tap to expand the search bar
+      await tester.tap(findSearchBarGestureDetector());
+      await tester.pumpAndSettle();
+
+      // Input a search query that would trigger suggestions
+      await tester.enterText(find.byType(TextField), 'a');
+
+      // Allow time for suggestions to populate
+      await tester.pumpAndSettle();
+
+      // Check that the suggestion list is displayed
+      expect(find.byType(ListView), findsOneWidget);
+      expect(find.byType(InkWell), findsWidgets);
+    });
+
   });
 }
