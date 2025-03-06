@@ -15,21 +15,34 @@ abstract class IRouteService {
   });
 }
 
-/// Represents the result of a route calculation.
-class RouteResult {
-  /// The total distance of the route in meters.
+class StepResult {
   final double distance;
-
-  /// The estimated duration of the route in seconds.
   final double duration;
+  final String instruction;
+  final String maneuver;
+  final LatLng startLocation;
+  final LatLng endLocation;
 
-  /// A list of geographic points representing the route path.
+  StepResult({
+    required this.distance,
+    required this.duration,
+    required this.instruction,
+    required this.maneuver,
+    required this.startLocation,
+    required this.endLocation,
+  });
+}
+
+class RouteResult {
+  final double distance;
+  final double duration;
   final List<LatLng> routePoints;
+  final List<StepResult> steps;
 
-  /// Creates a new [RouteResult] with the given [distance], [duration], and [routePoints].
   RouteResult({
     required this.distance,
     required this.duration,
     required this.routePoints,
+    required this.steps,
   });
 }

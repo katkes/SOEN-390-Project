@@ -18,6 +18,7 @@ permissions:
 jobs:
   setup_gcs:
     name: Setup GCS Folder
+    timeout-minutes: 60
     runs-on: [our-runner]
 
     steps:
@@ -47,6 +48,10 @@ jobs:
         with:
           architecture: x64
 
+      - name: Copy env file
+        working-directory: ./frontend
+        run: cp -n ~/env/.env .
+
       - name: Run Flutter Doctor
         working-directory: ./frontend
         run: flutter doctor
@@ -54,6 +59,7 @@ jobs:
       - name: Install Flutter Dependencies
         working-directory: ./frontend
         run: flutter pub get
+
 
   linting:
     name: Lint & Format Check
@@ -64,6 +70,10 @@ jobs:
       - name: Verify Flutter formatting
         working-directory: ./frontend
         run: dart format --output=none --set-exit-if-changed .
+
+      - name: Copy env file
+        working-directory: ./frontend
+        run: cp -n ~/env/.env .
 
       - name: Run Flutter Analyze and Generate Report
         working-directory: ./frontend
@@ -124,6 +134,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Copy env file
+        working-directory: ./frontend
+        run: cp -n ~/env/.env .
+
       - name: Run Flutter tests and generate reports
         working-directory: ./frontend
         run: |
@@ -170,6 +184,11 @@ jobs:
     if: github.event_name == 'pull_request'  
 
     steps:
+
+      - name: Copy env file
+        working-directory: ./frontend
+        run: cp -n ~/env/.env .
+
       - name: Build Flutter APK
         working-directory: ./frontend
         run: flutter build apk --release
@@ -233,3 +252,22 @@ jobs:
           gsutil cp frontend/reports/sonar-flutter-lint.json gs://soen_390_reports/$BRANCH_NAME/frontend/
 
 
+  cleanup:
+    name: Cleanup Runner Disk Space
+    runs-on: [our-runner]
+    if: github.event_name == 'pull_request'  
+    needs: [setup_flutter, linting, testing, flutter_build, sonarqube]
+
+    steps:
+      - name: Free Up Space - Remove Gradle Cache
+        run: |
+          echo "Cleaning up Gradle caches..."
+          rm -rf ~/.gradle/caches
+          rm -rf ~/.gradle/wrapper
+          echo "Gradle cache cleaned."
+
+      - name: Free Up Space - Remove Actions Runner Work Directory
+        run: |
+          echo "Cleaning up Actions runner workspace..."
+          rm -rf ~/actions-runner/_work/*
+          echo "Actions runner workspace cleaned."

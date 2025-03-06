@@ -5,17 +5,38 @@ import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:http/http.dart' as http;
 import 'dart:typed_data';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:soen_390/main.dart';
 import 'package:soen_390/providers/service_providers.dart';
 import 'package:soen_390/services/http_service.dart';
 import 'package:soen_390/services/interfaces/route_service_interface.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:soen_390/services/building_info_api.dart';
+import 'package:soen_390/utils/location_service.dart';
+import 'package:soen_390/services/building_to_coordinates.dart';
+
+/// Test suite for the main application and services in the SOEN-390 project.
+///
+/// This file contains tests for the core components of the application, including:
+/// - The integration of various mocked services such as `RouteService`, `HttpService`, and `LocationService`.
+/// - Tests for UI elements like the `MaterialApp`, `NavigationBar`, and different screens in the app.
+/// - Mocking of network requests and handling of map tiles for testing purposes.
+///
+/// The tests use the `flutter_test` package for widget testing, the `mockito` package
+/// for mocking service classes, and `flutter_riverpod` for overriding providers in
+/// the test environment. The purpose of these tests is to ensure that the application
+/// initializes correctly with the mocked dependencies and that the main UI components
+/// are rendered and navigated correctly.
 
 // Generate mocks for the interfaces - using GenerateNiceMocks for better behavior
 @GenerateNiceMocks([
   MockSpec<IRouteService>(),
   MockSpec<HttpService>(),
-  MockSpec<http.Client>()
+  MockSpec<http.Client>(),
+  MockSpec<BuildingPopUps>(),
+  MockSpec<GoogleMapsApiClient>(),
+  MockSpec<GeocodingService>(),
+  MockSpec<LocationService>(),
 ])
 import 'main_test.mocks.dart';
 
@@ -24,11 +45,19 @@ class TestWrapper extends StatelessWidget {
   final Widget child;
   final IRouteService mockRouteService;
   final HttpService mockHttpService;
+  final GoogleMapsApiClient mockMapsApiClient;
+  final BuildingPopUps mockBuildingPopUps;
+  final GeocodingService mockGeocodingService;
+  final LocationService mockLocationService;
 
   const TestWrapper({
     required this.child,
     required this.mockRouteService,
     required this.mockHttpService,
+    required this.mockMapsApiClient,
+    required this.mockBuildingPopUps,
+    required this.mockGeocodingService,
+    required this.mockLocationService,
     super.key,
   });
 
@@ -38,6 +67,8 @@ class TestWrapper extends StatelessWidget {
       overrides: [
         routeServiceProvider.overrideWithValue(mockRouteService),
         httpServiceProvider.overrideWithValue(mockHttpService),
+        buildingToCoordinatesProvider.overrideWithValue(mockGeocodingService),
+        locationServiceProvider.overrideWithValue(mockLocationService),
       ],
       child: child,
     );
@@ -48,11 +79,26 @@ void main() {
   late MockIRouteService mockRouteService;
   late MockHttpService mockHttpService;
   late MockClient mockHttpClient;
+  late MockGoogleMapsApiClient mockMapsApiClient;
+  late MockBuildingPopUps mockBuildingPopUps;
+  late MockGeocodingService mockGeocodingService;
+  late MockLocationService mockLocationService;
+
+  setUpAll(() async {
+    // Mock dotenv to avoid loading the actual .env file in tests
+    dotenv.testLoad(fileInput: '''
+      GOOGLE_MAPS_API_KEY=mocked_api_key
+    ''');
+  });
 
   setUp(() {
     mockRouteService = MockIRouteService();
     mockHttpService = MockHttpService();
     mockHttpClient = MockClient();
+    mockMapsApiClient = MockGoogleMapsApiClient();
+    mockBuildingPopUps = MockBuildingPopUps();
+    mockGeocodingService = MockGeocodingService();
+    mockLocationService = MockLocationService();
 
     // Set up mock behavior for getRoute method
     when(mockRouteService.getRoute(
@@ -66,11 +112,20 @@ void main() {
           const LatLng(45.497856, -73.579588),
           const LatLng(45.498000, -73.580000),
         ],
+        steps: [
+          StepResult(
+            distance: 500.0,
+            duration: 300.0,
+            instruction: "Turn left onto Main St.",
+            maneuver: "turn-left",
+            startLocation: const LatLng(45.497856, -73.579588),
+            endLocation: const LatLng(45.498000, -73.580000),
+          ),
+        ],
       );
     });
 
     // Mock the client property on the HttpService
-    // This is the key fix for the first error
     when(mockHttpService.client).thenReturn(mockHttpClient);
 
     // Add transparent PNG mock response for map tiles
@@ -150,23 +205,23 @@ void main() {
 
   testWidgets('Main initializes with mocked dependencies',
       (WidgetTester tester) async {
-    // Wrap MyApp with our test wrapper that injects the mocks
     await tester.pumpWidget(
       TestWrapper(
         mockRouteService: mockRouteService,
         mockHttpService: mockHttpService,
+        mockBuildingPopUps: mockBuildingPopUps,
+        mockMapsApiClient: mockMapsApiClient,
+        mockGeocodingService: mockGeocodingService,
+        mockLocationService: mockLocationService,
         child: const MyApp(),
       ),
     );
 
-    // Verify MyApp is in the widget tree
     expect(find.byType(MyApp), findsOneWidget);
     expect(find.byType(MaterialApp), findsOneWidget);
 
-    // Allow the widget tree to build completely
     await tester.pumpAndSettle();
 
-    // Find MyHomePage and verify it's using our mocked dependencies
     final MyHomePage homePage =
         tester.widget<MyHomePage>(find.byType(MyHomePage));
     expect(homePage.routeService, equals(mockRouteService));
@@ -179,13 +234,16 @@ void main() {
       TestWrapper(
         mockRouteService: mockRouteService,
         mockHttpService: mockHttpService,
+        mockBuildingPopUps: mockBuildingPopUps,
+        mockMapsApiClient: mockMapsApiClient,
+        mockGeocodingService: mockGeocodingService,
+        mockLocationService: mockLocationService,
         child: const MyApp(),
       ),
     );
 
     await tester.pumpAndSettle();
 
-    // Test that UI elements are properly rendered
     expect(find.text('Campus Map'), findsOneWidget);
     expect(find.byType(IconButton), findsWidgets);
   });
@@ -196,28 +254,28 @@ void main() {
       TestWrapper(
         mockRouteService: mockRouteService,
         mockHttpService: mockHttpService,
+        mockBuildingPopUps: mockBuildingPopUps,
+        mockMapsApiClient: mockMapsApiClient,
+        mockGeocodingService: mockGeocodingService,
+        mockLocationService: mockLocationService,
         child: const MyApp(),
       ),
     );
 
     await tester.pumpAndSettle();
 
-    // Find the NavigationBar
     final navigationBar = find.byType(NavigationBar);
     expect(navigationBar, findsOneWidget);
 
-    // Find and tap the Profile navigation destination
     final profileDestination = find.byWidgetPredicate(
       (widget) => widget is NavigationDestination && widget.label == 'Profile',
       description: 'Profile navigation destination',
     );
     expect(profileDestination, findsOneWidget);
 
-    // Tap the profile destination
     await tester.tap(profileDestination);
     await tester.pumpAndSettle();
 
-    // Verify navigation happened
     expect(find.text('Profile Page'), findsOneWidget);
   });
 
@@ -229,7 +287,6 @@ void main() {
       ],
     );
 
-    // Verify the providers return our mocked instances
     final routeService = container.read(routeServiceProvider);
     final httpService = container.read(httpServiceProvider);
 
@@ -238,7 +295,6 @@ void main() {
   });
 
   test('RouteService getRoute mock works', () async {
-    // Test that our mock behaves as expected
     final result = await mockRouteService.getRoute(
       from: const LatLng(45.0, -73.0),
       to: const LatLng(46.0, -74.0),
@@ -249,7 +305,6 @@ void main() {
     expect(result.duration, equals(600.0));
     expect(result.routePoints.length, equals(2));
 
-    // Verify the mock was called with any parameters
     verify(mockRouteService.getRoute(
       from: anyNamed('from'),
       to: anyNamed('to'),

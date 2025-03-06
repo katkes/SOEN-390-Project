@@ -87,6 +87,9 @@ void main() {
   /// Initializes the [MockGeolocatorPlatform] and injects it into the
   /// [LocationService] instance. Also ensures that `currentPosition` is initialized.
   setUp(() {
+    // Reset any static state to prevent test interference
+    LocationService.resetInstance();
+
     mockGeolocatorPlatform = MockGeolocatorPlatform();
     locationService = LocationService(
         geolocator: mockGeolocatorPlatform); // Inject mock dependency
@@ -111,12 +114,15 @@ void main() {
 
     test('determinePermissions should return false when permission is denied',
         () async {
+      // Set up the mocks
       mockGeolocatorPlatform.setLocationServiceEnabled(true);
       mockGeolocatorPlatform
           .setLocationPermission(geo.LocationPermission.denied);
 
+      // Execute the test
       bool result = await locationService.determinePermissions();
 
+      // Verify the result
       expect(result, false);
     });
 
@@ -156,12 +162,12 @@ void main() {
     });
 
     test('startUp should throw exception when location services are disabled',
-        () {
+        () async {
       // Arrange
       mockGeolocatorPlatform.setLocationServiceEnabled(false);
 
-      // Act & Assert
-      expect(() => locationService.startUp(),
+      // Act & Assert - Use expectLater with async function execution
+      await expectLater(locationService.startUp,
           throwsA(isA<PermissionNotEnabledException>()));
     });
 
@@ -183,104 +189,268 @@ void main() {
       // Ensure locSetting is properly initialized
       expect(() => locationService.locSetting, isNot(throwsA(anything)));
     });
-  });
-  test('getCurrentLocationAccurately should return mocked position', () async {
-    final position = await locationService.getCurrentLocationAccurately();
 
-    expect(position.latitude, mockPosition.latitude);
-    expect(position.longitude, mockPosition.longitude);
-  });
+    test(
+        'isLocationEnabled should return true when location services are enabled',
+        () async {
+      // Arrange
+      mockGeolocatorPlatform.setLocationServiceEnabled(true);
 
-  test('updateCurrentLocationAccurately should update currentPosition',
-      () async {
-    await locationService.updateCurrentLocationAccurately();
+      // Act
+      bool result = await locationService.isLocationEnabled();
 
-    expect(locationService.currentPosition.latitude, mockPosition.latitude);
-    expect(locationService.currentPosition.longitude, mockPosition.longitude);
-  });
+      // Assert
+      expect(result, true);
+    });
 
-  test('stopListening should cancel position stream subscription', () {
-    locationService.setPlatformSpecificLocationSettings();
-    locationService.createLocationStream();
+    test(
+        'isLocationEnabled should return false when location services are disabled',
+        () async {
+      // Arrange
+      mockGeolocatorPlatform.setLocationServiceEnabled(false);
 
-    locationService.stopListening();
+      // Act
+      bool result = await locationService.isLocationEnabled();
 
-    // No direct way to check if stream is cancelled, but we can verify no errors occur
-    expect(() => locationService.stopListening(), returnsNormally);
-  });
+      // Assert
+      expect(result, false);
+    });
 
-  test('determinePermissions handles deniedForever permission', () async {
-    mockGeolocatorPlatform.setLocationServiceEnabled(true);
-    mockGeolocatorPlatform
-        .setLocationPermission(geo.LocationPermission.deniedForever);
+    test('getPositionStream should return a stream of positions', () async {
+      // Arrange
+      locationService.setPlatformSpecificLocationSettings();
 
-    bool result = await locationService.determinePermissions();
+      // Act
+      final positionStream = locationService.getPositionStream();
 
-    expect(result, false);
-    expect(locationService.permission, geo.LocationPermission.deniedForever);
-  });
+      // Assert
+      final position = await positionStream.first;
+      expect(position.latitude, mockPosition.latitude);
+      expect(position.longitude, mockPosition.longitude);
+    });
 
-  test('takePosition correctly updates currentPosition', () {
-    final newPosition = geo.Position(
-        latitude: 40.7128,
-        longitude: -74.0060,
-        timestamp: DateTime.now(),
-        accuracy: 0.0,
-        altitude: 0.0,
-        heading: 0.0,
-        speed: 0.0,
-        speedAccuracy: 0.0,
-        altitudeAccuracy: 0.0,
-        headingAccuracy: 0.0);
+    test(
+        'getPositionStream should initialize location settings if not initialized',
+        () async {
+      // Arrange
+      locationService = LocationService(geolocator: mockGeolocatorPlatform);
 
-    locationService.takePosition(newPosition);
+      // Act
+      final positionStream = locationService.getPositionStream();
 
-    expect(locationService.currentPosition.latitude, 40.7128);
-    expect(locationService.currentPosition.longitude, -74.0060);
-  });
+      // Assert
+      final position = await positionStream.first;
+      expect(position.latitude, mockPosition.latitude);
+      expect(position.longitude, mockPosition.longitude);
+      expect(locationService.locSetting.accuracy, geo.LocationAccuracy.high);
+      expect(locationService.locSetting.distanceFilter, 4);
+    });
 
-  test('setPlatformSpecificLocationSettings should initialize only once', () {
-    locationService.setPlatformSpecificLocationSettings();
-    final initialSettings = locationService.locSetting;
+    test('getCurrentLocationAccurately should return mocked position',
+        () async {
+      final position = await locationService.getCurrentLocationAccurately();
 
-    // Call again to verify it doesn't change
-    locationService.setPlatformSpecificLocationSettings();
+      expect(position.latitude, mockPosition.latitude);
+      expect(position.longitude, mockPosition.longitude);
+    });
 
-    expect(locationService.locSetting, equals(initialSettings));
-  });
+    test('updateCurrentLocationAccurately should update currentPosition',
+        () async {
+      await locationService.updateCurrentLocationAccurately();
 
-  test('setPlatformSpecificLocationSettings initializes iOS settings correctly',
-      () {
-    // Arrange
-    debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-    locationService = LocationService(geolocator: mockGeolocatorPlatform);
+      expect(locationService.currentPosition.latitude, mockPosition.latitude);
+      expect(locationService.currentPosition.longitude, mockPosition.longitude);
+    });
 
-    // Act
-    locationService.setPlatformSpecificLocationSettings();
+    test('stopListening should cancel position stream subscription', () {
+      locationService.setPlatformSpecificLocationSettings();
+      locationService.createLocationStream();
 
-    // Assert
-    expect(locationService.locSetting.accuracy, geo.LocationAccuracy.high);
-    expect(locationService.locSetting.distanceFilter, 4);
+      locationService.stopListening();
 
-    // Cleanup
-    debugDefaultTargetPlatformOverride = null;
-  });
+      // No direct way to check if stream is cancelled, but we can verify no errors occur
+      expect(() => locationService.stopListening(), returnsNormally);
+    });
 
-  test(
-      'setPlatformSpecificLocationSettings initializes other platform settings correctly',
-      () {
-    // Arrange
-    debugDefaultTargetPlatformOverride = TargetPlatform.linux;
-    locationService = LocationService(geolocator: mockGeolocatorPlatform);
+    test('determinePermissions handles deniedForever permission', () async {
+      mockGeolocatorPlatform.setLocationServiceEnabled(true);
+      mockGeolocatorPlatform
+          .setLocationPermission(geo.LocationPermission.deniedForever);
 
-    // Act
-    locationService.setPlatformSpecificLocationSettings();
+      bool result = await locationService.determinePermissions();
 
-    // Assert
-    expect(locationService.locSetting.accuracy, geo.LocationAccuracy.high);
-    expect(locationService.locSetting.distanceFilter, 4);
+      expect(result, false);
+      expect(locationService.permission, geo.LocationPermission.deniedForever);
+    });
 
-    // Cleanup
-    debugDefaultTargetPlatformOverride = null;
+    test('takePosition correctly updates currentPosition', () {
+      final newPosition = geo.Position(
+          latitude: 40.7128,
+          longitude: -74.0060,
+          timestamp: DateTime.now(),
+          accuracy: 0.0,
+          altitude: 0.0,
+          heading: 0.0,
+          speed: 0.0,
+          speedAccuracy: 0.0,
+          altitudeAccuracy: 0.0,
+          headingAccuracy: 0.0);
+
+      locationService.takePosition(newPosition);
+
+      expect(locationService.currentPosition.latitude, 40.7128);
+      expect(locationService.currentPosition.longitude, -74.0060);
+    });
+
+    test('setPlatformSpecificLocationSettings should initialize only once', () {
+      locationService.setPlatformSpecificLocationSettings();
+      final initialSettings = locationService.locSetting;
+
+      // Call again to verify it doesn't change
+      locationService.setPlatformSpecificLocationSettings();
+
+      expect(locationService.locSetting, equals(initialSettings));
+    });
+
+    test(
+        'setPlatformSpecificLocationSettings initializes iOS settings correctly',
+        () {
+      // Arrange
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      locationService = LocationService(geolocator: mockGeolocatorPlatform);
+
+      // Act
+      locationService.setPlatformSpecificLocationSettings();
+
+      // Assert
+      expect(locationService.locSetting.accuracy, geo.LocationAccuracy.high);
+      expect(locationService.locSetting.distanceFilter, 4);
+
+      // Cleanup
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    test(
+        'setPlatformSpecificLocationSettings initializes other platform settings correctly',
+        () {
+      // Arrange
+      debugDefaultTargetPlatformOverride = TargetPlatform.linux;
+      locationService = LocationService(geolocator: mockGeolocatorPlatform);
+
+      // Act
+      locationService.setPlatformSpecificLocationSettings();
+
+      // Assert
+      expect(locationService.locSetting.accuracy, geo.LocationAccuracy.high);
+      expect(locationService.locSetting.distanceFilter, 4);
+
+      // Cleanup
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    // Tests for getClosestCampus method
+    group('getClosestCampus Tests', () {
+      test('returns SGW when near SGW', () {
+        final position = geo.Position(
+          // Coordinates for the Bell Centre
+          latitude: 45.495590,
+          longitude: -73.568657,
+          timestamp: DateTime.now(),
+          accuracy: 1.0,
+          altitude: 0.0,
+          heading: 0.0,
+          speed: 0.0,
+          speedAccuracy: 0.0,
+          floor: null,
+          altitudeAccuracy: 0.0,
+          headingAccuracy: 0.0,
+        );
+
+        final campus = LocationService.getClosestCampus(position);
+        expect(campus, 'SGW');
+      });
+
+      test('returns Loyola when near Loyola', () {
+        final position = geo.Position(
+          // Coordinates for Rene-Lévesque Park
+          latitude: 45.428664,
+          longitude: -73.672164,
+          timestamp: DateTime.now(),
+          accuracy: 1.0,
+          altitude: 0.0,
+          heading: 0.0,
+          speed: 0.0,
+          speedAccuracy: 0.0,
+          floor: null,
+          altitudeAccuracy: 0.0,
+          headingAccuracy: 0.0,
+        );
+
+        final campus = LocationService.getClosestCampus(position);
+        expect(campus, 'LOY');
+      });
+
+      test('returns SGW when equidistant from both', () {
+        final position = geo.Position(
+          latitude: 45.4586,
+          longitude: -73.5167,
+          timestamp: DateTime.now(),
+          accuracy: 1.0,
+          altitude: 0.0,
+          heading: 0.0,
+          speed: 0.0,
+          speedAccuracy: 0.0,
+          floor: null,
+          altitudeAccuracy: 0.0,
+          headingAccuracy: 0.0,
+        );
+
+        final campus = LocationService.getClosestCampus(position);
+        expect(campus, 'SGW');
+      });
+
+      test('returns SGW when permission is denied', () {
+        final position = geo.Position(
+          latitude: 0.0,
+          longitude: 0.0,
+          timestamp: DateTime.now(),
+          accuracy: 1.0,
+          altitude: 0.0,
+          heading: 0.0,
+          speed: 0.0,
+          speedAccuracy: 0.0,
+          floor: null,
+          altitudeAccuracy: 0.0,
+          headingAccuracy: 0.0,
+        );
+
+        mockGeolocatorPlatform
+            .setLocationPermission(geo.LocationPermission.denied);
+
+        final campus = LocationService.getClosestCampus(position);
+        expect(campus, 'SGW');
+      });
+
+      test('returns SGW when location is unavailable', () {
+        final position = geo.Position(
+          latitude: 0.0,
+          longitude: 0.0,
+          timestamp: DateTime.now(),
+          accuracy: 1.0,
+          altitude: 0.0,
+          heading: 0.0,
+          speed: 0.0,
+          speedAccuracy: 0.0,
+          floor: null,
+          altitudeAccuracy: 0.0,
+          headingAccuracy: 0.0,
+        );
+
+        mockGeolocatorPlatform.setLocationServiceEnabled(false);
+
+        final campus = LocationService.getClosestCampus(position);
+        expect(campus, 'SGW');
+      });
+    });
   });
 }
