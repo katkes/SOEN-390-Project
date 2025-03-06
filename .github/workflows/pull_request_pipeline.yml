@@ -52,10 +52,6 @@ jobs:
         working-directory: ./frontend
         run: cp -n ~/env/.env .
 
-      - name: Check env file is here
-        working-directory: ./frontend
-        run: ls -a
-
       - name: Run Flutter Doctor
         working-directory: ./frontend
         run: flutter doctor
@@ -78,10 +74,6 @@ jobs:
       - name: Copy env file
         working-directory: ./frontend
         run: cp -n ~/env/.env .
-
-      - name: Check env file is here
-        working-directory: ./frontend
-        run: ls -a
 
       - name: Run Flutter Analyze and Generate Report
         working-directory: ./frontend
@@ -145,10 +137,6 @@ jobs:
       - name: Copy env file
         working-directory: ./frontend
         run: cp -n ~/env/.env .
-
-      - name: Check env file is here
-        working-directory: ./frontend
-        run: ls -a
 
       - name: Run Flutter tests and generate reports
         working-directory: ./frontend
