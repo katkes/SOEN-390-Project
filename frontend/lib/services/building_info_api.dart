@@ -1,5 +1,5 @@
 /// This file contains the API class for fetching building information from Google Maps API.
-/// The API key is stored in a .env file and is accessed using the flutter_dotenv package.
+/// The API key is stored in a ..env file and is accessed using the flutter_dotenv package.
 /// The fetchBuildingInformation method takes in the latitude, longitude, and location name as parameters and returns a map of the location information.
 ///   - The latitude and longitude are used to fetch the place ID of the location.
 ///  - The place ID is then used to fetch the location details such as phone number, website, rating, opening hours, and types.

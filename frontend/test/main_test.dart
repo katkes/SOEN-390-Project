@@ -85,7 +85,7 @@ void main() {
   late MockLocationService mockLocationService;
 
   setUpAll(() async {
-    // Mock dotenv to avoid loading the actual .env file in tests
+    // Mock dotenv to avoid loading the actual ..env file in tests
     dotenv.testLoad(fileInput: '''
       GOOGLE_MAPS_API_KEY=mocked_api_key
     ''');

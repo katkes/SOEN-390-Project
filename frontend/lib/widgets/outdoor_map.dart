@@ -6,13 +6,15 @@ import 'package:http/http.dart' as http;
 import 'package:soen_390/services/map_service.dart';
 import 'package:soen_390/utils/marker_tap_handler.dart';
 import '../services/building_info_api.dart';
-import "package:soen_390/utils/location_service.dart";
+import "package:soen_390/utils/location_service.dart" as location_service;
 
 /// A widget that displays an interactive map with routing functionality.
 ///
 /// The map allows users to visualize locations, interact with markers,
 /// and calculate routes between two selected points using the injected `IRouteService`.
 class MapWidget extends StatefulWidget {
+
+  //final location_service.LocationService locationService = location_service.LocationService.instance;
 
   /// The initial location where the map is centered.
   final LatLng location;

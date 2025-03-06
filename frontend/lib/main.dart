@@ -21,10 +21,10 @@ import "package:soen_390/utils/location_service.dart";
 void main() async {
    WidgetsFlutterBinding.ensureInitialized();
   try{
-    await dotenv.load(fileName: ".env");
+    await dotenv.load(fileName: "..env");
 
   } catch (e) {
-    print("An error occurred when loading the .env file: $e");
+    print("An error occurred when loading the ..env file: $e");
   }
 
   runApp(
