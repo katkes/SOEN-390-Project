@@ -91,6 +91,12 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
   late BuildingPopUps _buildingPopUps;
   late GoogleMapsApiClient _mapsApiClient;
 
+  final GlobalKey<MapWidgetState> _mapWidgetKey = GlobalKey<MapWidgetState>();
+
+  void _handleBuildingSelected(LatLng location) {
+    _mapWidgetKey.currentState?.selectMarker(location);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -173,6 +179,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(30),
                           child: MapWidget(
+                            key: _mapWidgetKey,
                             location: _currentLocation,
                             routeService: widget.routeService,
                             httpClient: widget.httpService.client,
@@ -200,6 +207,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                     child: SearchBarWidget(
                       controller: searchController,
                       onLocationFound: _updateCampusLocation,
+                      onBuildingSelected: _handleBuildingSelected,
                     ),
                   ),
                   const Positioned(

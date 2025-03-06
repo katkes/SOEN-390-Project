@@ -25,12 +25,21 @@ class MapWidget extends StatefulWidget {
   final GoogleMapsApiClient mapsApiClient;
   final BuildingPopUps buildingPopUps;
 
+  void selectMarker(LatLng location) {
+    MapWidgetState? state = _mapWidgetKey.currentState;
+    if (state != null) {
+      state.selectMarker(location);
+    }
+  }
+
+  final GlobalKey<MapWidgetState> _mapWidgetKey = GlobalKey<MapWidgetState>();
+
   /// Creates an instance of `MapWidget` with required dependencies.
   ///
   /// - [location]: The initial `LatLng` location for the map.
   /// - [httpClient]: The HTTP client used for loading map tiles.
   /// - [routeService]: The service used to fetch navigation routes.
-  const MapWidget(
+  MapWidget(
       {super.key,
       required this.location,
       required this.httpClient,
@@ -39,10 +48,10 @@ class MapWidget extends StatefulWidget {
       required this.buildingPopUps});
 
   @override
-  State<MapWidget> createState() => _MapWidgetState();
+  State<MapWidget> createState() => MapWidgetState();
 }
 
-class _MapWidgetState extends State<MapWidget> {
+class MapWidgetState extends State<MapWidget> {
   late MapController _mapController;
   List<Marker> _buildingMarkers = [];
   List<Polygon> _buildingPolygons = [];
@@ -74,12 +83,32 @@ class _MapWidgetState extends State<MapWidget> {
   ///
   late MarkerTapHandler _markerTapHandler;
 
+  MarkerTapHandler get markerTapHandler => _markerTapHandler;
+
+  void selectMarker(LatLng location) {
+    // Update selected marker in MapService
+    _mapService.selectMarker(location);
+
+    // Reload markers to reflect the change
+    _loadBuildingLocations();
+
+    // Move map to the selected location
+    _mapController.move(location, 17.0);
+  }
+
   ///Initializing the widget with _mapController, _mapService, _markerTapHandler, and loads initial functions
   @override
   void initState() {
     super.initState();
     _mapController = MapController();
     _mapService = MapService();
+
+    _mapService.onMarkerCleared = () {
+      // Use onMarkerCleared
+      setState(() {
+        _loadBuildingLocations();
+      });
+    };
     _markerTapHandler = MarkerTapHandler(
       onBuildingInfoUpdated: (name, address) {
         setState(() {

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:async';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -22,9 +23,32 @@ import 'package:flutter/material.dart';
 class MapService {
   static const Color markerColor = Color(0xFF912338);
   static const Color polygonFillColor = Color(0x33FF0000);
+  static const Color secondaryMarkerColor = Color.fromARGB(255, 255, 39, 39);
   static const Color polygonBorderColor = Colors.red;
   static const double markerSize = 40.0;
   static const double borderStrokeWidth = 2.0;
+
+  LatLng? _selectedMarkerLocation;
+  Timer? _markerClearTimer;
+  Function? onMarkerCleared;
+
+  void selectMarker(LatLng location) {
+    _selectedMarkerLocation = location;
+    _startClearTimer();
+  }
+
+  LatLng? get selectedMarkerLocation => _selectedMarkerLocation;
+
+  void _startClearTimer() {
+    _markerClearTimer?.cancel();
+    _markerClearTimer = Timer(const Duration(seconds: 5), () {
+      _selectedMarkerLocation = null;
+      _markerClearTimer = null;
+      if (onMarkerCleared != null) {
+        onMarkerCleared!();
+      }
+    });
+  }
 
   Future<List<Marker>> loadBuildingMarkers(Function onMarkerTapped) async {
     try {
@@ -54,9 +78,21 @@ class MapService {
           String name = properties?['Building Long Name'] ?? "Unknown";
           String address = properties?['Address'] ?? "No address available";
 
+          final currentLocation = LatLng(lat, lon);
+
+          // Check if this marker is the selected one
+          bool isSelected = _selectedMarkerLocation != null &&
+              _selectedMarkerLocation!.latitude == lat &&
+              _selectedMarkerLocation!.longitude == lon;
+
+          // Use red for selected marker, default color otherwise
+          Color markerColor = isSelected
+              ? MapService.secondaryMarkerColor
+              : MapService.markerColor;
+
           markers.add(
             Marker(
-              point: LatLng(lat, lon),
+              point: currentLocation,
               width: markerSize,
               height: markerSize,
               child: GestureDetector(
@@ -64,7 +100,7 @@ class MapService {
                   onMarkerTapped(
                       lat, lon, name, address, details.globalPosition);
                 },
-                child: const Icon(Icons.location_pin,
+                child: Icon(Icons.location_pin,
                     color: markerColor, size: markerSize),
               ),
             ),
@@ -169,5 +205,38 @@ class MapService {
       debugPrint('Error getting building suggestions: $e');
       return [];
     }
+  }
+
+  //searches building by name and returns its location and details
+  Future<Map<String, dynamic>?> searchBuildingWithDetails(
+      String buildingName) async {
+    try {
+      final String data = await rootBundle
+          .loadString('assets/geojson_files/building_list.geojson');
+      final Map<String, dynamic> jsonData = jsonDecode(data);
+
+      for (var feature in jsonData['features']) {
+        var properties = feature['properties'];
+        var geometry = feature['geometry'];
+
+        if (geometry?['type'] == 'Point' && geometry['coordinates'] is List) {
+          String name = properties?['Building Long Name'] ?? "Unknown";
+          if (name.toLowerCase().contains(buildingName.toLowerCase())) {
+            double lon = geometry['coordinates'][0];
+            double lat = geometry['coordinates'][1];
+            String address = properties?['Address'] ?? "No address available";
+
+            return {
+              'location': LatLng(lat, lon),
+              'name': name,
+              'address': address
+            };
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error searching for building with details: $e');
+    }
+    return null;
   }
 }
