@@ -38,8 +38,8 @@
 }</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/katkes/SOEN-390-Project.git&quot;,
-    &quot;accountId&quot;: &quot;5f1e24b4-c42a-4138-b249-06a380d80cdd&quot;
+    &quot;url&quot;: &quot;https://github.com/katkes/SOEN-390-Project&quot;,
+    &quot;accountId&quot;: &quot;66d55239-3d53-40ea-9f9d-0b39410ba7f1&quot;
   }
 }</component>
   <component name="ProjectColorInfo">{
@@ -98,6 +98,7 @@
         <item itemvalue="Flutter Test.determinePermissions should return true when permission is granted" />
         <item itemvalue="Flutter Test.tests in location_service_test.dart" />
         <item itemvalue="Dart Command Line App.main.dart" />
+        <item itemvalue="Flutter Test.Testing transportation process" />
       </list>
     </recent_temporary>
   </component>
@@ -168,6 +169,17 @@
     </task>
     <option name="localTasksCounter" value="8" />
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Comments for description of frontend files" />
