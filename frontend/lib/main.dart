@@ -90,6 +90,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
   // http.Client? _httpClient;
   late BuildingPopUps _buildingPopUps;
   late GoogleMapsApiClient _mapsApiClient;
+  List<LatLng> polylinePoints = [];
 
   @override
   void initState() {
@@ -106,6 +107,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
   }
 
   void _onItemTapped(int index) {
+    polylinePoints = [];
     setState(() {
       _selectedIndex = index;
     });
@@ -126,7 +128,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
     final locationService = ref.watch(locationServiceProvider);
     final routeService = ref.watch(routeServiceProvider);
 
-    final selectedRouteData = await Navigator.push(
+    final RouteResult selectedRouteData = await Navigator.push(
       context,
       MaterialPageRoute(
           builder: (context) => WaypointSelectionScreen(
@@ -135,13 +137,13 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                 locationService: locationService,
               )),
     );
-    if (selectedRouteData != null) {
+    if(selectedRouteData != null) {
       print("Received route data: $selectedRouteData");
-      List<LatLng> polylinePoints = List<LatLng>.from(selectedRouteData["routeData"]);
-      print("Received route data: $polylinePoints");
-      for (var point in polylinePoints) {
-            print("Lat: ${point.latitude}, Lng: ${point.longitude}");
-          }
+      polylinePoints = selectedRouteData.routePoints;
+     setState(() {
+      polylinePoints = selectedRouteData.routePoints;
+    });
+     
     }
   }
 
@@ -186,6 +188,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                             httpClient: widget.httpService.client,
                             mapsApiClient: _mapsApiClient,
                             buildingPopUps: _buildingPopUps,
+                            routePoints: polylinePoints
                           ),
                         ),
                       ),

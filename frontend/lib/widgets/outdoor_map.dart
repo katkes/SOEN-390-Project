@@ -25,6 +25,10 @@ class MapWidget extends StatefulWidget {
   final GoogleMapsApiClient mapsApiClient;
   final BuildingPopUps buildingPopUps;
 
+
+  /// A list of `LatLng` points representing the route path.
+  final List<LatLng> routePoints;
+
   /// Creates an instance of `MapWidget` with required dependencies.
   ///
   /// - [location]: The initial `LatLng` location for the map.
@@ -36,7 +40,8 @@ class MapWidget extends StatefulWidget {
       required this.httpClient,
       required this.routeService,
       required this.mapsApiClient,
-      required this.buildingPopUps});
+      required this.buildingPopUps,
+      required this.routePoints});
 
   @override
   State<MapWidget> createState() => _MapWidgetState();
@@ -57,7 +62,7 @@ class _MapWidgetState extends State<MapWidget> {
   late LatLng to;
 
   /// A list of `LatLng` points representing the route path.
-  List<LatLng> routePoints = [];
+ 
 
   /// The total distance of the calculated route in meters.
   double distance = 0.0;
@@ -76,9 +81,11 @@ class _MapWidgetState extends State<MapWidget> {
   late MarkerTapHandler _markerTapHandler;
 
   ///Initializing the widget with _mapController, _mapService, _markerTapHandler, and loads initial functions
+  
   @override
   void initState() {
     super.initState();
+    //widget.onRoutePointsChanged(routePoints); // this line crashes the map
     _mapController = MapController();
     _mapService = MapService();
     _markerTapHandler = MarkerTapHandler(
@@ -95,25 +102,12 @@ class _MapWidgetState extends State<MapWidget> {
     );
     _loadBuildingLocations();
     _loadBuildingBoundaries();
+    
 
-    // from = widget.location;
-    // to = LatLng(
-    //     widget.location.latitude + 0.005, widget.location.longitude + 0.005);
-    // _fetchRoute();
+
   }
 
-  /// Updates the widget when the location changes
-  // @override
-  // void didUpdateWidget(MapWidget oldWidget) {
-  //   super.didUpdateWidget(oldWidget);
-  //   if (oldWidget.location != widget.location) {
-  //     _mapController.move(widget.location, 17.0);
-  //     from = widget.location;
-  //     _fetchRoute();
-  //   }
-  // }
 
-  /// Loads the building locations from the map service
   Future<void> _loadBuildingLocations() async {
     try {
       final markers = await _mapService
@@ -141,29 +135,6 @@ class _MapWidgetState extends State<MapWidget> {
     }
   }
 
-  /// Fetches a route from `from` to `to` using the injected `IRouteService`.
-  ///
-  /// The result updates the state with new distance, duration, and route points.
-  Future<void> _fetchRoute() async {
-    final routeResult = await widget.routeService.getRoute(from: from, to: to);
-
-    if (routeResult == null || routeResult.routePoints.isEmpty) {
-      // If no route is found or if the route points list is empty, we can either clear the polyline or handle accordingly
-      setState(() {
-        distance = 0.0;
-        duration = 0.0;
-        routePoints = []; // Clear the route points if no route is found
-      });
-      return;
-    }
-
-    setState(() {
-      distance = routeResult.distance;
-      duration = routeResult.duration;
-      routePoints = routeResult.routePoints;
-    });
-  }
-
   /// Builds the map widget with the FlutterMap and its children
   @override
   Widget build(BuildContext context) {
@@ -185,26 +156,34 @@ class _MapWidgetState extends State<MapWidget> {
             ),
           ),
           children: [
+          
             TileLayer(
               urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
               additionalOptions: const {},
               tileProvider: NetworkTileProvider(httpClient: widget.httpClient),
             ),
+          if (!widget.routePoints.isNotEmpty)
             PolygonLayer(
               polygons: _buildingPolygons,
             ),
+          if (!widget.routePoints.isNotEmpty)
             MarkerLayer(
               markers: [
                 ..._buildingMarkers,
               ],
             ),
-           if (routePoints.isNotEmpty)
+           if (widget.routePoints.isNotEmpty)
             PolylineLayer(
               polylines: [
+               Polyline(
+                  points: widget.routePoints,
+                  strokeWidth: 10.0,
+                  color: Color.fromARGB(100, 0, 0, 0), // Soft black shadow with transparency
+                ),
                 Polyline(
-                  points: routePoints,
-                  strokeWidth: 4.0,
-                  color: const Color.fromARGB(255, 54, 152, 244),
+                  points: widget.routePoints,
+                  strokeWidth: 6.0,
+                  color: Color.fromRGBO(54, 152, 244, 0.8), // Nice vivid blue with 80% opacity
                 ),
               ],
             ),
@@ -214,23 +193,6 @@ class _MapWidgetState extends State<MapWidget> {
     );
   }
 
-  /// Handles user taps on the map to set the `from` and `to` locations.
-  ///
-  /// - If `isPairly` is false, updates `from` location.
-  /// - Otherwise, updates `to` location.
-  /// - Toggles `isPairly` after every selection.
-  /// - Calls `_fetchRoute()` to update the route accordingly.
-  // void _handleMapTap(TapPosition tapPosition, LatLng latLng) {
-  //   setState(() {
-  //     if (!isPairly) {
-  //       from = latLng;
-  //     } else {
-  //       to = latLng;
-  //     }
-  //     isPairly = !isPairly;
-  //     _fetchRoute();
-  //   });
-  // }
 }
 
 /// Example usage of `MapWidget` inside a `MyPage` scaffold.
@@ -275,6 +237,7 @@ class MyPage extends StatelessWidget {
           routeService: routeService,
           mapsApiClient: mapsApiClient,
           buildingPopUps: buildingPopUps,
+          routePoints: [],
         ),
       ),
     );
