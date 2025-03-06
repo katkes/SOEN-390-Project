@@ -48,6 +48,10 @@ jobs:
         with:
           architecture: x64
 
+      - name: Copy env file
+        working-directory: ./frontend
+        run: cp -n ~/env/.env .
+
       - name: Run Flutter Doctor
         working-directory: ./frontend
         run: flutter doctor
@@ -55,6 +59,7 @@ jobs:
       - name: Install Flutter Dependencies
         working-directory: ./frontend
         run: flutter pub get
+
 
   linting:
     name: Lint & Format Check
