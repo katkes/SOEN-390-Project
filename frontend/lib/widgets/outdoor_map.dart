@@ -6,7 +6,9 @@ import 'package:http/http.dart' as http;
 import 'package:soen_390/services/map_service.dart';
 import 'package:soen_390/utils/marker_tap_handler.dart';
 import '../services/building_info_api.dart';
-import "package:soen_390/utils/location_service.dart" as location_service;
+import "package:soen_390/utils/location_service.dart";
+import "package:geolocator/geolocator.dart";
+import "package:soen_390/widgets/user_location_marker.dart";
 
 /// A widget that displays an interactive map with routing functionality.
 ///
@@ -14,7 +16,7 @@ import "package:soen_390/utils/location_service.dart" as location_service;
 /// and calculate routes between two selected points using the injected `IRouteService`.
 class MapWidget extends StatefulWidget {
 
-  //final location_service.LocationService locationService = location_service.LocationService.instance;
+  //final LocationServiceWithNoInjection locationService = LocationServiceWithNoInjection.instance;
 
   /// The initial location where the map is centered.
   final LatLng location;
@@ -33,6 +35,8 @@ class MapWidget extends StatefulWidget {
   /// - [location]: The initial `LatLng` location for the map.
   /// - [httpClient]: The HTTP client used for loading map tiles.
   /// - [routeService]: The service used to fetch navigation routes.
+  ///
+  /// removed const due to issues - Arnab
   const MapWidget(
       {super.key,
       required this.location,
@@ -43,9 +47,13 @@ class MapWidget extends StatefulWidget {
 
   @override
   State<MapWidget> createState() => _MapWidgetState();
-}
+} //end of class
+
 
 class _MapWidgetState extends State<MapWidget> {
+
+  LocationService locationService = LocationService.instance;
+
   late MapController _mapController;
   List<Marker> _buildingMarkers = [];
   List<Polygon> _buildingPolygons = [];
@@ -123,14 +131,17 @@ class _MapWidgetState extends State<MapWidget> {
         _markerTapHandler.onMarkerTapped(
             lat, lon, name, address, tapPosition, context);
       });
+
+       Position p = await locationService.getCurrentLocationAccurately();
+
       setState(() {
         _buildingMarkers = markers;
         //this is the user's current location. Add this through the "getCurrentLocation" function
-        _buildingMarkers.add( const Marker(
-            point: LatLng(0, 0), //replace with current location longitude and latitude
+        _buildingMarkers.add(  Marker(
+            point: LatLng(p.latitude, p.longitude), //replace with current location longitude and latitude
             width: 80,
             height: 80,
-            child: Icon(
+            child: const Icon(
               Icons.location_pin,
               color: Colors.blue,
               size: 40),
@@ -144,8 +155,7 @@ class _MapWidgetState extends State<MapWidget> {
 
   //function to periodically update the current location of the user on the map.
   void updateCurrentLocationMarker() {
-    //set up a location stream, and update the list _buildingMarkers
-    //preferably, udate the current location at each event change.
+
   }
 
   /// Loads the building boundaries from the map service
@@ -222,6 +232,7 @@ class _MapWidgetState extends State<MapWidget> {
                 ..._buildingMarkers,
               ],
             ),
+        CurrentLocationWidget(),
           ],
         ),
       ),
