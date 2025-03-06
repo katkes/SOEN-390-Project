@@ -47,6 +47,7 @@ dependencies:
   plugin_platform_interface: ^2.1.8
   google_places_autocomplete_text_field: ^1.0.0
   flutter_inappwebview: ^6.0.0
+  flutter_js: ^0.8.0
 
 dev_dependencies:
   flutter_test:

@@ -1,45 +1,130 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
-    <title>Mappedin Web Embed Example</title>
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
-      charset="UTF-8"
-    />
-    <link
-      href="https://d1p5cqqchvbqmy.cloudfront.net/web2/release/mappedin-web.css"
-      rel="stylesheet"
-    />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mappedin Map</title>
     <style>
       body,
-      html,
-      #mappedin-map {
-        width: 100%;
+      html {
+        margin: 0;
+        padding: 0;
         height: 100%;
-        margin: 0px;
-        position: relative;
-        touch-action: none;
+      }
+      #map-container {
+        width: 100%;
+        height: 90vh;
+      }
+      h1 {
+        color: red;
+        margin: 0;
+        padding: 10px;
+      }
+      #status {
+        padding: 10px;
+        color: blue;
       }
     </style>
   </head>
   <body>
-    <div data-key="externalId" id="mappedin-map"></div>
-    <script type="text/javascript">
-      //the keys there are just the test keys on the mappedin website, in order to integrate the concorida buildings we will need the enterprise keys.
-      window.mappedin = {
-        miKey: {
-          id: "5eab30aa91b055001a68e996",
-          key: "RJyRXKcryCMy4erZqqCbuB1NbR66QTGNXVE0x3Pg6oCIlUR1",
-        },
-        venue: "mappedin-demo-campus",
-        language: "en",
-        vertical: "mall",
-      };
+    <h1>Mappedin HTML Loaded!</h1>
+    <div id="status">Loading Mappedin library...</div>
+    <div id="map-container"></div>
+
+    <script>
+      // First check if we can access external resources at all
+      fetch("https://www.google.com")
+        .then((response) => {
+          document.getElementById("status").innerHTML +=
+            "<br>✓ Network connection works";
+        })
+        .catch((error) => {
+          document.getElementById("status").innerHTML +=
+            "<br>✗ Network error: " + error;
+        });
+
+      // Dynamically load the script
+      function loadScript(url, callback) {
+        document.getElementById("status").innerHTML +=
+          "<br>Trying to load: " + url;
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.async = true;
+
+        if (script.readyState) {
+          // For old IE
+          script.onreadystatechange = function () {
+            if (
+              script.readyState === "loaded" ||
+              script.readyState === "complete"
+            ) {
+              script.onreadystatechange = null;
+              callback();
+            }
+          };
+        } else {
+          script.onload = function () {
+            document.getElementById("status").innerHTML +=
+              "<br>✓ Script loaded successfully";
+            callback();
+          };
+        }
+
+        script.onerror = function () {
+          document.getElementById("status").innerHTML +=
+            "<br>✗ Failed to load script";
+        };
+
+        script.src = url;
+        document.body.appendChild(script);
+      }
+
+      // Load Mappedin
+      loadScript(
+        "https://d1p5cqqchvbqmy.cloudfront.net/web2/release/mappedin-web.js",
+        function () {
+          document.getElementById("status").innerHTML +=
+            "<br>Checking Mappedin...";
+          if (typeof Mappedin !== "undefined") {
+            document.getElementById("status").innerHTML +=
+              "<br>✓ Mappedin loaded!";
+            initializeMap();
+          } else {
+            document.getElementById("status").innerHTML +=
+              "<br>✗ Mappedin not available";
+          }
+        }
+      );
+
+      // Initialize map
+      async function initializeMap() {
+        try {
+          document.getElementById("status").innerHTML +=
+            "<br>Initializing venue...";
+          const venue = await Mappedin.initialize({
+            clientId: "",
+            clientSecret: "",
+            mapId: "",
+          });
+
+          document.getElementById("status").innerHTML +=
+            "<br>Creating map view...";
+          const mapView = new Mappedin.MapView({
+            venue: venue,
+            containerId: "map-container",
+          });
+
+          document.getElementById("status").innerHTML +=
+            "<br>Initializing map...";
+          await mapView.init();
+          document.getElementById("status").innerHTML +=
+            "<br>✓ Map initialized successfully!";
+        } catch (error) {
+          document.getElementById("status").innerHTML +=
+            "<br>✗ Error: " + error.message;
+          console.error(error);
+        }
+      }
     </script>
-    <script
-      type="module"
-      src="https://d1p5cqqchvbqmy.cloudfront.net/web2/release/mappedin-web.js"
-    ></script>
   </body>
 </html>
