@@ -225,9 +225,12 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
                   icons: route["icons"],
                   routeData: route["routeData"],
                   onCardTapped: () {
-                  
+                  List<LatLng>polyline = route["routeData"].routePoints;
+                  print(polyline);
+                 
 
-                  },
+                  Navigator.pop(context, route["routeData"]);
+                },
                 );
               },
             ),

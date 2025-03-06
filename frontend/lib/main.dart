@@ -120,13 +120,13 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
     });
   }
 
-  void _openWaypointSelection() {
+  void _openWaypointSelection() async {
     final buildingToCoordinatesService =
         ref.watch(buildingToCoordinatesProvider);
     final locationService = ref.watch(locationServiceProvider);
     final routeService = ref.watch(routeServiceProvider);
 
-    Navigator.push(
+    final selectedRouteData = await Navigator.push(
       context,
       MaterialPageRoute(
           builder: (context) => WaypointSelectionScreen(
@@ -135,6 +135,14 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                 locationService: locationService,
               )),
     );
+    if (selectedRouteData != null) {
+      print("Received route data: $selectedRouteData");
+      List<LatLng> polylinePoints = List<LatLng>.from(selectedRouteData["routeData"]);
+      print("Received route data: $polylinePoints");
+      for (var point in polylinePoints) {
+            print("Lat: ${point.latitude}, Lng: ${point.longitude}");
+          }
+    }
   }
 
   @override

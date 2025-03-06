@@ -96,22 +96,22 @@ class _MapWidgetState extends State<MapWidget> {
     _loadBuildingLocations();
     _loadBuildingBoundaries();
 
-    from = widget.location;
-    to = LatLng(
-        widget.location.latitude + 0.005, widget.location.longitude + 0.005);
-    _fetchRoute();
+    // from = widget.location;
+    // to = LatLng(
+    //     widget.location.latitude + 0.005, widget.location.longitude + 0.005);
+    // _fetchRoute();
   }
 
   /// Updates the widget when the location changes
-  @override
-  void didUpdateWidget(MapWidget oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.location != widget.location) {
-      _mapController.move(widget.location, 17.0);
-      from = widget.location;
-      _fetchRoute();
-    }
-  }
+  // @override
+  // void didUpdateWidget(MapWidget oldWidget) {
+  //   super.didUpdateWidget(oldWidget);
+  //   if (oldWidget.location != widget.location) {
+  //     _mapController.move(widget.location, 17.0);
+  //     from = widget.location;
+  //     _fetchRoute();
+  //   }
+  // }
 
   /// Loads the building locations from the map service
   Future<void> _loadBuildingLocations() async {
@@ -179,7 +179,7 @@ class _MapWidgetState extends State<MapWidget> {
             initialZoom: 14.0,
             minZoom: 11.0,
             maxZoom: 17.0,
-            onTap: _handleMapTap,
+            // onTap: _handleMapTap,
             interactionOptions: const InteractionOptions(
               flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
             ),
@@ -198,6 +198,7 @@ class _MapWidgetState extends State<MapWidget> {
                 ..._buildingMarkers,
               ],
             ),
+           if (routePoints.isNotEmpty)
             PolylineLayer(
               polylines: [
                 Polyline(
@@ -219,17 +220,17 @@ class _MapWidgetState extends State<MapWidget> {
   /// - Otherwise, updates `to` location.
   /// - Toggles `isPairly` after every selection.
   /// - Calls `_fetchRoute()` to update the route accordingly.
-  void _handleMapTap(TapPosition tapPosition, LatLng latLng) {
-    setState(() {
-      if (!isPairly) {
-        from = latLng;
-      } else {
-        to = latLng;
-      }
-      isPairly = !isPairly;
-      _fetchRoute();
-    });
-  }
+  // void _handleMapTap(TapPosition tapPosition, LatLng latLng) {
+  //   setState(() {
+  //     if (!isPairly) {
+  //       from = latLng;
+  //     } else {
+  //       to = latLng;
+  //     }
+  //     isPairly = !isPairly;
+  //     _fetchRoute();
+  //   });
+  // }
 }
 
 /// Example usage of `MapWidget` inside a `MyPage` scaffold.
