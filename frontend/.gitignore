@@ -6,6 +6,7 @@
 *.iml
 *.iws
 *.ipr
+../.idea/workspace.xml
 
 # Build files
 build/

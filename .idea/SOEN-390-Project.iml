@@ -12,6 +12,13 @@
       <excludeFolder url="file://$MODULE_DIR$/frontend/windows/flutter/ephemeral/.plugin_symlinks/geolocator_windows/example/.dart_tool" />
       <excludeFolder url="file://$MODULE_DIR$/frontend/windows/flutter/ephemeral/.plugin_symlinks/geolocator_windows/example/.pub" />
       <excludeFolder url="file://$MODULE_DIR$/frontend/windows/flutter/ephemeral/.plugin_symlinks/geolocator_windows/example/build" />
+      <excludeFolder url="file://$MODULE_DIR$/backend" />
+      <excludeFolder url="file://$MODULE_DIR$/frontend/.idea/caches" />
+      <excludeFolder url="file://$MODULE_DIR$/frontend/android/.gradle" />
+      <excludeFolder url="file://$MODULE_DIR$/frontend/lib/.idea" />
+      <excludeFolder url="file://$MODULE_DIR$/frontend/linux/flutter/ephemeral" />
+      <excludeFolder url="file://$MODULE_DIR$/frontend/macos/Flutter/ephemeral" />
+      <excludeFolder url="file://$MODULE_DIR$/frontend/windows/flutter/ephemeral" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

@@ -195,11 +195,6 @@ class _MapWidgetState extends State<MapWidget> {
     });
   }
 
-
-
-
-
-
   /// Builds the map widget with the FlutterMap and its children
   @override
   Widget build(BuildContext context) {

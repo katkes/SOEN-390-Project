@@ -137,15 +137,6 @@ class LocationService {
     });
   }
 
-  //same method as above, but this one will return you the position object instead.
-  // Future<geo.Position> createLocationStreamReturn() {
-  //   _positionStream = geolocator
-  //       .getPositionStream(locationSettings: locSetting)
-  //       .listen((geo.Position position) {
-  //     return position;
-  //   });
-  // }
-
   /// Starts up location services, ensuring permissions and settings are set.
   Future<void> startUp() async {
     bool locationEnabled = await determinePermissions();
