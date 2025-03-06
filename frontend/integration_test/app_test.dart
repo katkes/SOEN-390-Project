@@ -108,12 +108,14 @@ void main() {
       expect(find.text('Start Location'), findsOneWidget);
 
       // Selecting start location
-      await selectLocation(tester, "Start Location",
-          "Hall Building Auditorium, Boulevard De Maisonneuve Ouest, Montreal, QC, Canada");
+      String startLocation =
+          "Hall Building Auditorium, Boulevard De Maisonneuve Ouest, Montreal, QC, Canada";
+      await selectLocation(tester, "Start Location", startLocation);
 
       // Selecting destination
-      await selectLocation(tester, "Destination",
-          "Stinger Dome, Sherbrooke Street West, Montreal, QC, Canada");
+      String destinationLocation =
+          "Stinger Dome, Sherbrooke Street West, Montreal, QC, Canada";
+      await selectLocation(tester, "Destination", destinationLocation);
 
       // Selecting car transportation option
       final carButton = find.byIcon(Icons.directions_car);

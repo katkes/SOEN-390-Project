@@ -23,7 +23,7 @@ pubspec.lock
 Thumbs.db
 
 # Environment variables
-.env
+assets/.env
 .env.local
 
 # Logs
