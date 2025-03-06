@@ -30,6 +30,9 @@ class BuildingInformationPopup extends StatelessWidget {
     final buildingToCoordinatesService =
         container.read(buildingToCoordinatesProvider);
 
+    final sentDestination =
+        "$buildingName, $buildingAddress, Montreal, Quebec, Canada";
+
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -37,7 +40,7 @@ class BuildingInformationPopup extends StatelessWidget {
           routeService: routeService,
           geocodingService: buildingToCoordinatesService,
           locationService: locationService,
-          initialDestination: buildingAddress,
+          initialDestination: sentDestination,
         ),
       ),
     );

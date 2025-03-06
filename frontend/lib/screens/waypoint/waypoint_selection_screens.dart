@@ -21,12 +21,13 @@ class WaypointSelectionScreen extends StatefulWidget {
   final LocationService locationService;
   final String? initialDestination;
 
-  const WaypointSelectionScreen(
-      {super.key,
-      required this.routeService,
-      required this.geocodingService,
-      required this.locationService,
-        this.initialDestination,});
+  const WaypointSelectionScreen({
+    super.key,
+    required this.routeService,
+    required this.geocodingService,
+    required this.locationService,
+    this.initialDestination,
+  });
 
   @override
   WaypointSelectionScreenState createState() => WaypointSelectionScreenState();

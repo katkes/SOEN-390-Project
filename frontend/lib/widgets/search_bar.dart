@@ -13,7 +13,8 @@ class SearchBarWidget extends StatefulWidget {
   final TextEditingController controller;
   final Function(LatLng)? onLocationFound;
 
-  const SearchBarWidget({super.key, required this.controller, this.onLocationFound});
+  const SearchBarWidget(
+      {super.key, required this.controller, this.onLocationFound});
 
   @override
   SearchBarWidgetState createState() => SearchBarWidgetState();
@@ -171,7 +172,8 @@ class SearchBarWidgetState extends State<SearchBarWidget> {
                         });
                       },
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 16),
                         child: Text(
                           suggestion,
                           style: const TextStyle(fontSize: 16),

@@ -146,11 +146,13 @@ class MapService {
     }
     return null;
   }
+
   Future<List<String>> getBuildingSuggestions(String query) async {
     try {
       if (query.isEmpty) return [];
 
-      final String data = await rootBundle.loadString('assets/geojson_files/building_list.geojson');
+      final String data = await rootBundle
+          .loadString('assets/geojson_files/building_list.geojson');
       final Map<String, dynamic> jsonData = jsonDecode(data);
       List<String> suggestions = [];
 

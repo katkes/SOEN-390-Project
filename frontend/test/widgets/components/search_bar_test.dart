@@ -57,7 +57,6 @@ void main() {
       expect(containerSize.width, equals(280));
     });
 
-
     // Checks if the search bar collapses when tapped again.
     testWidgets('toggles collapse when tapped again',
         (WidgetTester tester) async {
@@ -89,7 +88,8 @@ void main() {
       expect(containerSize.width, equals(58));
     });
 
-    testWidgets('displays suggestions on text input', (WidgetTester tester) async {
+    testWidgets('displays suggestions on text input',
+        (WidgetTester tester) async {
       final controller = TextEditingController();
 
       // Create the widget in the test environment
@@ -115,6 +115,5 @@ void main() {
       expect(find.byType(ListView), findsOneWidget);
       expect(find.byType(InkWell), findsWidgets);
     });
-
   });
 }

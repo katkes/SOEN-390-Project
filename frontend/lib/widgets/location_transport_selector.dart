@@ -14,10 +14,10 @@ class LocationTransportSelector extends StatefulWidget {
 
   const LocationTransportSelector(
       {super.key,
-        this.onLocationChanged,
-        required this.onConfirmRoute,
-        this.onTransportModeChange,
-        this.initialDestination});
+      this.onLocationChanged,
+      required this.onConfirmRoute,
+      this.onTransportModeChange,
+      this.initialDestination});
 
   @override
   LocationTransportSelectorState createState() =>
@@ -38,6 +38,14 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
     super.initState();
     if (widget.initialDestination != null) {
       destinationLocation = widget.initialDestination!;
+
+      if (itinerary.length > 1) {
+        itinerary[1] = widget.initialDestination!;
+      } else if (itinerary.length == 1) {
+        itinerary.add(widget.initialDestination!);
+      } else {
+        itinerary.add(widget.initialDestination!);
+      }
     }
   }
 
@@ -163,10 +171,10 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
     locationText = locationText.isEmpty
         ? placeholder
         : locationText
-        .replaceAll(RegExp(r'[^\w\s]'), '') // Remove punctuation
-        .split(' ') // Split by spaces
-        .take(2) // Get only the first two words
-        .join(' '); // Join them back to a string
+            .replaceAll(RegExp(r'[^\w\s]'), '') // Remove punctuation
+            .split(' ') // Split by spaces
+            .take(2) // Get only the first two words
+            .join(' '); // Join them back to a string
 
     return GestureDetector(
       onTap: () {
@@ -184,7 +192,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
           children: [
             Text(locationText,
                 style:
-                const TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
             if (locationText != placeholder)
               IconButton(
                 icon: const Icon(Icons.delete, size: 20, color: Colors.red),
@@ -236,9 +244,12 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   }
 
   void _setStartLocation(String selectedLocation) {
+    startLocation = selectedLocation;
+
     if (itinerary.isEmpty) {
-      startLocation = selectedLocation;
       itinerary.add(selectedLocation);
+    } else {
+      itinerary.insert(0, selectedLocation);
     }
   }
 
