@@ -21,7 +21,7 @@ class LocationService {
 
   // Factory constructor that returns the singleton instance
   factory LocationService({required geo.GeolocatorPlatform geolocator}) {
-    //_instance ??= LocationService._internal(geolocator: geolocator);
+     _instance ??= LocationService._internal(geolocator: geolocator);
     return _instance!;
   }
 
@@ -136,6 +136,15 @@ class LocationService {
       currentPosition = position;
     });
   }
+
+  //same method as above, but this one will return you the position object instead.
+  // Future<geo.Position> createLocationStreamReturn() {
+  //   _positionStream = geolocator
+  //       .getPositionStream(locationSettings: locSetting)
+  //       .listen((geo.Position position) {
+  //     return position;
+  //   });
+  // }
 
   /// Starts up location services, ensuring permissions and settings are set.
   Future<void> startUp() async {

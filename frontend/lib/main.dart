@@ -19,9 +19,9 @@ import "package:soen_390/utils/location_service.dart";
 ///
 /// This function initializes the Riverpod provider scope and starts the app.
 void main() async {
-   WidgetsFlutterBinding.ensureInitialized();
+   //WidgetsFlutterBinding.ensureInitialized();
   try{
-    await dotenv.load(fileName: "..env");
+    await dotenv.load(fileName: ".env");
 
   } catch (e) {
     print("An error occurred when loading the ..env file: $e");
