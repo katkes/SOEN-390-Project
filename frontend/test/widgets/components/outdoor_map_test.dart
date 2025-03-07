@@ -218,4 +218,33 @@ void main() {
       expect(mapWidget.routeService, equals(mockRouteService));
     });
   });
+
+      testWidgets('MapWidget displays Polyline when routePoints are provided', (WidgetTester tester) async {
+      final routePoints = [
+        const LatLng(45.497856, -73.579588),
+        const LatLng(45.498000, -73.580000),
+      ];
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: MapWidget(
+              location: testLocation,
+              httpClient: mockHttpClient,
+              routeService: mockRouteService,
+              mapsApiClient: mockMapsApiClient,
+              buildingPopUps: mockBuildingPopUps,
+              routePoints: routePoints,
+            ),
+          ),
+        ),
+      );
+
+      await tester.pump();
+
+      expect(find.byType(PolylineLayer), findsOneWidget);
+      final polylineLayer = tester.widget<PolylineLayer>(find.byType(PolylineLayer));
+      expect(polylineLayer.polylines.isNotEmpty, isTrue);
+      expect(polylineLayer.polylines.first.points, equals(routePoints));
+    });  
 }
