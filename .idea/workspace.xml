@@ -4,10 +4,13 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d0d732de-4191-4af8-81e9-6d66c2d25976" name="Changes" comment="Functionalities for searching building with auto complete added in. Test not included yet.">
+    <list default="true" id="d0d732de-4191-4af8-81e9-6d66c2d25976" name="Changes" comment="Testing for the searchbar functionality to autofill buildings and testing for the pop up to navigte to find my way added">
+      <change beforePath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/coverage/lcov.info" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/coverage/lcov.info" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/lib/widgets/nav_bar.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/lib/widgets/nav_bar.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/lib/services/map_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/lib/services/map_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/lib/widgets/campus_switch_button.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/lib/widgets/campus_switch_button.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/lib/widgets/search_bar.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/lib/widgets/search_bar.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
