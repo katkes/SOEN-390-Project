@@ -132,21 +132,21 @@ class _MapWidgetState extends State<MapWidget> {
             lat, lon, name, address, tapPosition, context);
       });
 
-       Position p = await locationService.getCurrentLocationAccurately();
+       // Position p = await locationService.getCurrentLocationAccurately();
 
       setState(() {
         _buildingMarkers = markers;
         //this is the user's current location. Add this through the "getCurrentLocation" function
-        _buildingMarkers.add(  Marker(
-            point: LatLng(p.latitude, p.longitude), //replace with current location longitude and latitude
-            width: 80,
-            height: 80,
-            child: const Icon(
-              Icons.location_pin,
-              color: Colors.blue,
-              size: 40),
-        )
-        );
+        // _buildingMarkers.add(  Marker(
+        //     point: LatLng(p.latitude, p.longitude), //replace with current location longitude and latitude
+        //     width: 80,
+        //     height: 80,
+        //     child: const Icon(
+        //       Icons.location_pin,
+        //       color: Colors.blue,
+        //       size: 40),
+        // )
+        // );
       });
     } catch (e) {
       print('Error loading building markers: $e');
@@ -235,9 +235,6 @@ class _MapWidgetState extends State<MapWidget> {
       ),
     );
   }
-
-
-
 
   /// Handles user taps on the map to set the `from` and `to` locations.
   ///

@@ -4,16 +4,12 @@ import 'package:google_places_autocomplete_text_field/google_places_autocomplete
 import 'dart:async';
 import 'package:latlong2/latlong.dart';
 
-
 class CurrentLocationWidget extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return CurrentLocationLayer(
-       positionStream: const LocationMarkerDataStreamFactory().fromGeolocatorPositionStream(),
-
-
-      style: const LocationMarkerStyle(
+      positionStream: const LocationMarkerDataStreamFactory().fromGeolocatorPositionStream(),
+      style: LocationMarkerStyle(
         marker: DefaultLocationMarker(
           child: Icon(
             //Icons.navigation,
@@ -23,6 +19,9 @@ class CurrentLocationWidget extends StatelessWidget {
         ),
         markerSize: Size(40, 40),
         markerDirection: MarkerDirection.heading,
+        accuracyCircleColor: Colors.blue.withOpacity(0.2),
+        headingSectorColor: Colors.blue.withOpacity(0.4),
+        headingSectorRadius: 60,
       ),
     );
   }

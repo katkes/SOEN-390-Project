@@ -6,6 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="257aa008-c06a-4b7a-bc1c-790da5fa81f3" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/lib/utils/location_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/lib/utils/location_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/lib/widgets/outdoor_map.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/lib/widgets/outdoor_map.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/lib/widgets/user_location_marker.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/lib/widgets/user_location_marker.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

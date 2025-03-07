@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:soen_390/utils/permission_not_enabled_exception.dart';
 import 'package:geolocator/geolocator.dart' as geo;
 import 'package:latlong2/latlong.dart';
-
+import "package:flutter/foundation.dart";
 /// Service for managing location-related functionality.
 ///
 /// This class provides methods for determining permissions, retrieving the
@@ -119,13 +119,38 @@ class LocationService {
 
   /// Initializes platform-specific location settings.
   void setPlatformSpecificLocationSettings() {
-    if (_isLocSettingInitialized) return;
-    _isLocSettingInitialized = true;
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      locSetting = geo.AndroidSettings(
+          accuracy: geo.LocationAccuracy.high,
+          distanceFilter: 4, //number of meters until location updates again.
+          forceLocationManager:
+          true, //forces to use the legacy code instead of the newer one. Bunch of places say its better?
+          intervalDuration: const Duration(seconds: 10),
+          //keeps app alive when in background
+          foregroundNotificationConfig: const geo.ForegroundNotificationConfig(
+            notificationText:
+            "Concordia navigation app will continue to receive your location even when you aren't using it",
+            notificationTitle: "Running in Background",
+            enableWakeLock:
+            true, //if system sleeps, this makes sure all the notification events dont come crashing in all at once
+          ));
+    } else if (defaultTargetPlatform == TargetPlatform.iOS ||
+        defaultTargetPlatform == TargetPlatform.macOS) {
+      locSetting = geo.AppleSettings(
+        accuracy: geo.LocationAccuracy.high,
+        activityType: geo.ActivityType.fitness,
+        distanceFilter: 4,
+        pauseLocationUpdatesAutomatically: true,
+        //keep this false because our app wont start up in the background. User needs to open it.
+        showBackgroundLocationIndicator: false,
+      );
+    } else {
+      locSetting = const geo.LocationSettings(
+        accuracy: geo.LocationAccuracy.high,
+        distanceFilter: 4,
+      );
+    }
 
-    locSetting = const geo.LocationSettings(
-      accuracy: geo.LocationAccuracy.high,
-      distanceFilter: 4,
-    );
   }
 
   /// Creates a location stream for continuous updates.
