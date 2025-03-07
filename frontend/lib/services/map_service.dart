@@ -239,4 +239,47 @@ class MapService {
     }
     return null;
   }
+
+  Future<String?> getCampusByBuilding(String buildingName) async {
+    try {
+      final String data = await rootBundle
+          .loadString('assets/geojson_files/building_list.geojson');
+      final Map<String, dynamic> jsonData = jsonDecode(data);
+
+      for (var feature in jsonData['features']) {
+        var properties = feature['properties'];
+
+        if (properties?['Building Long Name'] == buildingName) {
+          return properties?['Campus'] ?? "Unknown Campus";
+        }
+      }
+    } catch (e) {
+      debugPrint('Error loading campus data: $e');
+    }
+    return null;
+  }
+
+  Future<String?> findCampusForBuilding(String buildingName) async {
+    try {
+      final String data = await rootBundle
+          .loadString('assets/geojson_files/building_list.geojson');
+      final Map<String, dynamic> jsonData = jsonDecode(data);
+
+      if (jsonData['features'] is List) {
+        for (var feature in jsonData['features']) {
+          var properties = feature['properties'];
+
+          // Check if the building name matches the one in the GeoJSON data
+          if (properties?['Building Long Name'] == buildingName) {
+            return properties?['Campus'] ?? "Unknown Campus"; // Return the campus name
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error loading campus data: $e');
+    }
+    return null; // Return null if no matching building is found
+  }
+
+
 }

@@ -13,12 +13,14 @@ class SearchBarWidget extends StatefulWidget {
   final TextEditingController controller;
   final Function(LatLng)? onLocationFound;
   final Function(LatLng)? onBuildingSelected;
+  final Function(String)? onCampusSelected; // New callback to pass campus to CampusSwitch
 
   const SearchBarWidget({
     super.key,
     required this.controller,
     this.onLocationFound,
     this.onBuildingSelected,
+    this.onCampusSelected,  // Accept campus selection callback
   });
 
   @override
@@ -30,6 +32,8 @@ class SearchBarWidgetState extends State<SearchBarWidget> {
   final FocusNode _focusNode = FocusNode();
   final MapService _mapService = MapService();
   List<String> _suggestions = [];
+
+  String? campus; // To store the campus associated with the building
 
   @override
   void initState() {
@@ -47,38 +51,25 @@ class SearchBarWidgetState extends State<SearchBarWidget> {
     super.dispose();
   }
 
-  // void _performSearch(String query) async {
-  //   if (query.isNotEmpty) {
-  //     LatLng? location = await _mapService.searchBuilding(query);
-  //     if (location != null) {
-  //       debugPrint("Moving to location: $location");
-  //       widget.onLocationFound?.call(location);
-
-  //       if (widget.onBuildingSelected != null) {
-  //         widget.onBuildingSelected!(location);
-  //       }
-  //     } else {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         const SnackBar(content: Text("Building not found")),
-  //       );
-  //     }
-  //   }
-  // }
   void _performSearch(String query) async {
     if (query.isNotEmpty) {
-      // Use searchBuildingWithDetails to get more building information
-      final buildingDetails =
-          await _mapService.searchBuildingWithDetails(query);
+      final buildingDetails = await _mapService.searchBuildingWithDetails(query);
 
       if (buildingDetails != null) {
         final location = buildingDetails['location'] as LatLng;
-        debugPrint("Moving to location: $location");
-
-        // Notify listeners (MapWidget) about the found location
         widget.onLocationFound?.call(location);
-
-        // Notify listeners about the selected building so marker can be highlighted
         widget.onBuildingSelected?.call(location);
+
+        campus = await _mapService.findCampusForBuilding(query);
+        if(campus == "LOY"){
+          campus = "Loyola";
+        }
+        debugPrint("Building belongs to: ${campus ?? 'Unknown'}");
+
+        // Pass the campus value to CampusSwitch via the callback
+        if (campus != null) {
+          widget.onCampusSelected?.call(campus!);  // Notify the CampusSwitch widget of the campus
+        }
       } else {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -222,3 +213,4 @@ class SearchBarWidgetState extends State<SearchBarWidget> {
     );
   }
 }
+

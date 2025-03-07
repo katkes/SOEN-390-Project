@@ -6,17 +6,17 @@ import 'package:soen_390/utils/location_service.dart' as location_service;
 class CampusSwitch extends StatefulWidget {
   final Function(String) onSelectionChanged;
   final Function(LatLng) onLocationChanged;
-  final String initialSelection;
+  final String selectedCampus;
 
   const CampusSwitch({
     super.key,
     required this.onSelectionChanged,
     required this.onLocationChanged,
-    this.initialSelection = 'SGW',
+    required this.selectedCampus,
   }) : assert(
-          initialSelection == 'SGW' || initialSelection == 'Loyola',
-          'initialSelection must be either "SGW" or "Loyola"',
-        );
+  selectedCampus == 'SGW' || selectedCampus == 'Loyola',
+  'selectedCampus must be either "SGW" or "Loyola"',
+  );
 
   @override
   State<CampusSwitch> createState() => CampusSwitchState();
@@ -41,8 +41,18 @@ class CampusSwitchState extends State<CampusSwitch> {
   @override
   void initState() {
     super.initState();
-    selectedBuilding = widget.initialSelection;
+    selectedBuilding = widget.selectedCampus;
     _initClosestCampus();
+  }
+
+  @override
+  void didUpdateWidget(CampusSwitch oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.selectedCampus != oldWidget.selectedCampus) {
+      setState(() {
+        selectedBuilding = widget.selectedCampus;
+      });
+    }
   }
 
   // Initializes the closest campus based on the user's current location.
@@ -56,8 +66,8 @@ class CampusSwitchState extends State<CampusSwitch> {
 
       // Retrieve the current location and determine the closest campus.
       final newBuilding = (location_service.LocationService.getClosestCampus(
-                  await locationService.getCurrentLocation()) ==
-              "LOY")
+          await locationService.getCurrentLocation()) ==
+          "LOY")
           ? "Loyola"
           : "SGW";
 

@@ -79,30 +79,36 @@ class MyHomePage extends ConsumerStatefulWidget {
 }
 
 class _MyHomePageState extends ConsumerState<MyHomePage> {
-  /// Controls the search bar input.
+  // Set initial campus to SGW (default campus)
+  String selectedCampus = 'SGW';
   TextEditingController searchController = TextEditingController();
-
-  /// The currently selected index for the bottom navigation bar.
   int _selectedIndex = 0;
-
-  /// The user's current location on the map.
   LatLng _currentLocation = const LatLng(45.497856, -73.579588);
-  // http.Client? _httpClient;
   late BuildingPopUps _buildingPopUps;
   late GoogleMapsApiClient _mapsApiClient;
 
   final GlobalKey<MapWidgetState> _mapWidgetKey = GlobalKey<MapWidgetState>();
 
-  void _handleBuildingSelected(LatLng location) {
-    _mapWidgetKey.currentState?.selectMarker(location);
+  void _handleCampusSelected(String campus) {
+    setState(() {
+      selectedCampus = campus;
+      print(selectedCampus);
+    });
+  }
+
+  void _handleLocationChanged(LatLng location) {
+    setState(() {
+      _currentLocation = location;
+    });
   }
 
   @override
   void initState() {
     super.initState();
     _mapsApiClient = GoogleMapsApiClient(
-        apiKey: dotenv.env['GOOGLE_MAPS_API_KEY']!,
-        client: widget.httpService.client);
+      apiKey: dotenv.env['GOOGLE_MAPS_API_KEY']!,
+      client: widget.httpService.client,
+    );
     _buildingPopUps = BuildingPopUps(mapsApiClient: _mapsApiClient);
   }
 
@@ -117,29 +123,20 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
     });
   }
 
-  /// Updates the user's current location on the map.
-  ///
-  /// Called when the user selects a different campus location.
-  void _updateCampusLocation(LatLng newLocation) {
-    setState(() {
-      _currentLocation = newLocation;
-    });
-  }
-
   void _openWaypointSelection() {
-    final buildingToCoordinatesService =
-        ref.watch(buildingToCoordinatesProvider);
+    final buildingToCoordinatesService = ref.watch(buildingToCoordinatesProvider);
     final locationService = ref.watch(locationServiceProvider);
     final routeService = ref.watch(routeServiceProvider);
 
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => WaypointSelectionScreen(
-                routeService: routeService,
-                geocodingService: buildingToCoordinatesService,
-                locationService: locationService,
-              )),
+        builder: (context) => WaypointSelectionScreen(
+          routeService: routeService,
+          geocodingService: buildingToCoordinatesService,
+          locationService: locationService,
+        ),
+      ),
     );
   }
 
@@ -196,8 +193,9 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                     right: 0,
                     child: Center(
                       child: CampusSwitch(
-                        onSelectionChanged: (selectedCampus) {},
-                        onLocationChanged: _updateCampusLocation,
+                        selectedCampus: selectedCampus, // Pass selected campus
+                        onSelectionChanged: _handleCampusSelected, // Update campus on selection change
+                        onLocationChanged: _handleLocationChanged, // Update location on change
                       ),
                     ),
                   ),
@@ -206,8 +204,8 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                     left: 0,
                     child: SearchBarWidget(
                       controller: searchController,
-                      onLocationFound: _updateCampusLocation,
-                      onBuildingSelected: _handleBuildingSelected,
+                      onCampusSelected: _handleCampusSelected, // Pass the callback for campus selection
+                      onLocationFound: _handleLocationChanged, // Update location when a building is selected
                     ),
                   ),
                   const Positioned(
@@ -237,3 +235,4 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
     );
   }
 }
+
