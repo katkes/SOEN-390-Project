@@ -89,6 +89,10 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
 
   final GlobalKey<MapWidgetState> _mapWidgetKey = GlobalKey<MapWidgetState>();
 
+   void _handleBuildingSelected(LatLng location) {
+    _mapWidgetKey.currentState?.selectMarker(location);
+  }
+
   void _handleCampusSelected(String campus) {
     setState(() {
       selectedCampus = campus;
@@ -193,9 +197,9 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                     right: 0,
                     child: Center(
                       child: CampusSwitch(
-                        selectedCampus: selectedCampus, // Pass selected campus
-                        onSelectionChanged: _handleCampusSelected, // Update campus on selection change
-                        onLocationChanged: _handleLocationChanged, // Update location on change
+                        selectedCampus: selectedCampus, 
+                        onSelectionChanged: _handleCampusSelected, 
+                        onLocationChanged: _handleLocationChanged, 
                       ),
                     ),
                   ),
@@ -204,8 +208,9 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                     left: 0,
                     child: SearchBarWidget(
                       controller: searchController,
-                      onCampusSelected: _handleCampusSelected, // Pass the callback for campus selection
-                      onLocationFound: _handleLocationChanged, // Update location when a building is selected
+                      onCampusSelected: _handleCampusSelected, 
+                      onLocationFound: _handleLocationChanged, 
+                      onBuildingSelected: _handleBuildingSelected,
                     ),
                   ),
                   const Positioned(

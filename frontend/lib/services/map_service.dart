@@ -41,7 +41,7 @@ class MapService {
 
   void _startClearTimer() {
     _markerClearTimer?.cancel();
-    _markerClearTimer = Timer(const Duration(seconds: 5), () {
+    _markerClearTimer = Timer(const Duration(seconds: 7), () {
       _selectedMarkerLocation = null;
       _markerClearTimer = null;
       if (onMarkerCleared != null) {
