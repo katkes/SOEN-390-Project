@@ -25,7 +25,6 @@ class MapWidget extends StatefulWidget {
   final GoogleMapsApiClient mapsApiClient;
   final BuildingPopUps buildingPopUps;
 
-
   /// A list of `LatLng` points representing the route path.
   final List<LatLng> routePoints;
 
@@ -53,7 +52,6 @@ class _MapWidgetState extends State<MapWidget> {
   List<Polygon> _buildingPolygons = [];
   String? _selectedBuildingName;
   String? _selectedBuildingAddress;
-  
 
   /// The starting location for route calculation.
   late LatLng from;
@@ -62,7 +60,6 @@ class _MapWidgetState extends State<MapWidget> {
   late LatLng to;
 
   /// A list of `LatLng` points representing the route path.
- 
 
   /// The total distance of the calculated route in meters.
   double distance = 0.0;
@@ -81,7 +78,7 @@ class _MapWidgetState extends State<MapWidget> {
   late MarkerTapHandler _markerTapHandler;
 
   ///Initializing the widget with _mapController, _mapService, _markerTapHandler, and loads initial functions
-  
+
   @override
   void initState() {
     super.initState();
@@ -102,11 +99,7 @@ class _MapWidgetState extends State<MapWidget> {
     );
     _loadBuildingLocations();
     _loadBuildingBoundaries();
-    
-
-
   }
-
 
   Future<void> _loadBuildingLocations() async {
     try {
@@ -156,43 +149,43 @@ class _MapWidgetState extends State<MapWidget> {
             ),
           ),
           children: [
-          
             TileLayer(
               urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
               additionalOptions: const {},
               tileProvider: NetworkTileProvider(httpClient: widget.httpClient),
             ),
-          if (!widget.routePoints.isNotEmpty)
-            PolygonLayer(
-              polygons: _buildingPolygons,
-            ),
-          if (!widget.routePoints.isNotEmpty)
-            MarkerLayer(
-              markers: [
-                ..._buildingMarkers,
-              ],
-            ),
-           if (widget.routePoints.isNotEmpty)
-            PolylineLayer(
-              polylines: [
-               Polyline(
-                  points: widget.routePoints,
-                  strokeWidth: 10.0,
-                  color: Color.fromARGB(100, 0, 0, 0), // Soft black shadow with transparency
-                ),
-                Polyline(
-                  points: widget.routePoints,
-                  strokeWidth: 6.0,
-                  color: Color.fromRGBO(54, 152, 244, 0.8), // Nice vivid blue with 80% opacity
-                ),
-              ],
-            ),
+            if (!widget.routePoints.isNotEmpty)
+              PolygonLayer(
+                polygons: _buildingPolygons,
+              ),
+            if (!widget.routePoints.isNotEmpty)
+              MarkerLayer(
+                markers: [
+                  ..._buildingMarkers,
+                ],
+              ),
+            if (widget.routePoints.isNotEmpty)
+              PolylineLayer(
+                polylines: [
+                  Polyline(
+                    points: widget.routePoints,
+                    strokeWidth: 10.0,
+                    color: const Color.fromARGB(
+                        100, 0, 0, 0), // Soft black shadow with transparency
+                  ),
+                  Polyline(
+                    points: widget.routePoints,
+                    strokeWidth: 6.0,
+                    color: const Color.fromRGBO(
+                        54, 152, 244, 0.8), // Nice vivid blue with 80% opacity
+                  ),
+                ],
+              ),
           ],
         ),
       ),
     );
   }
-
 }
 
 /// Example usage of `MapWidget` inside a `MyPage` scaffold.

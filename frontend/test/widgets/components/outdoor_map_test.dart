@@ -153,6 +153,7 @@ void main() {
             routeService: mockRouteService,
             mapsApiClient: mockMapsApiClient,
             buildingPopUps: mockBuildingPopUps,
+            routePoints: [],
           ),
         ),
       ),
@@ -160,81 +161,6 @@ void main() {
 
     await tester.pump();
     expect(find.byType(FlutterMap), findsOneWidget);
-  });
-
-  /// Test that the [MapWidget] fetches a route when initialized.
-  testWidgets('MapWidget fetches a route on init', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: MapWidget(
-            location: testLocation,
-            httpClient: mockHttpClient,
-            routeService: mockRouteService,
-            mapsApiClient: mockMapsApiClient,
-            buildingPopUps: mockBuildingPopUps,
-          ),
-        ),
-      ),
-    );
-
-    await tester.pump();
-    verify(mockRouteService.getRoute(
-            from: anyNamed('from'), to: anyNamed('to')))
-        .called(1);
-  });
-
-// Test that the [MapWidget] calls _fetchRoute when the location is updated.
-  testWidgets('MapWidget calls _fetchRoute when location is updated',
-      (WidgetTester tester) async {
-    // First, render with initial location
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: MapWidget(
-            location: testLocation,
-            httpClient: mockHttpClient,
-            routeService: mockRouteService,
-            mapsApiClient: mockMapsApiClient,
-            buildingPopUps: mockBuildingPopUps,
-          ),
-        ),
-      ),
-    );
-
-    await tester.pump();
-
-    // Verify initial route fetch
-    verify(mockRouteService.getRoute(
-            from: anyNamed('from'), to: anyNamed('to')))
-        .called(1);
-
-    // Reset mock to clearly verify next calls
-    clearInteractions(mockRouteService);
-
-    // Update with new location
-    final newLocation = const LatLng(45.505, -73.565);
-
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: MapWidget(
-            location: newLocation,
-            httpClient: mockHttpClient,
-            routeService: mockRouteService,
-            mapsApiClient: mockMapsApiClient,
-            buildingPopUps: mockBuildingPopUps,
-          ),
-        ),
-      ),
-    );
-
-    await tester.pump();
-
-    // Verify that getRoute was called again
-    verify(mockRouteService.getRoute(
-            from: anyNamed('from'), to: anyNamed('to')))
-        .called(1);
   });
 
   /// Test that the [MapWidget] handles null route result gracefully without crashing.
@@ -253,6 +179,7 @@ void main() {
             routeService: mockRouteService,
             mapsApiClient: mockMapsApiClient,
             buildingPopUps: mockBuildingPopUps,
+            routePoints: [],
           ),
         ),
       ),

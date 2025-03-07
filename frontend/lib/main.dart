@@ -137,14 +137,11 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                 locationService: locationService,
               )),
     );
-    if(selectedRouteData != null) {
-      print("Received route data: $selectedRouteData");
-      polylinePoints = selectedRouteData.routePoints;
-     setState(() {
+    print("Received route data: $selectedRouteData");
+    polylinePoints = selectedRouteData.routePoints;
+    setState(() {
       polylinePoints = selectedRouteData.routePoints;
     });
-     
-    }
   }
 
   @override
@@ -183,13 +180,12 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(30),
                           child: MapWidget(
-                            location: _currentLocation,
-                            routeService: widget.routeService,
-                            httpClient: widget.httpService.client,
-                            mapsApiClient: _mapsApiClient,
-                            buildingPopUps: _buildingPopUps,
-                            routePoints: polylinePoints
-                          ),
+                              location: _currentLocation,
+                              routeService: widget.routeService,
+                              httpClient: widget.httpService.client,
+                              mapsApiClient: _mapsApiClient,
+                              buildingPopUps: _buildingPopUps,
+                              routePoints: polylinePoints),
                         ),
                       ),
                     ),
