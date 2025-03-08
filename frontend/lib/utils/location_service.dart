@@ -3,11 +3,13 @@ import 'package:soen_390/utils/permission_not_enabled_exception.dart';
 import 'package:geolocator/geolocator.dart' as geo;
 import 'package:latlong2/latlong.dart';
 import "package:flutter/foundation.dart";
+
 /// Service for managing location-related functionality.
 ///
 /// This class provides methods for determining permissions, retrieving the
 /// current location, updating the location, and creating a location stream.
 /// It uses the singleton pattern to ensure only one instance exists.
+
 class LocationService {
   // Private static instance variable
   static LocationService? _instance;
@@ -24,7 +26,7 @@ class LocationService {
      _instance ??= LocationService._internal(geolocator: geolocator);
     return _instance!;
   }
-
+  
   /// Private constructor
   /// Creates a [LocationService] instance with dependency injection.
   ///
@@ -118,40 +120,37 @@ class LocationService {
   }
 
   /// Initializes platform-specific location settings.
-  void setPlatformSpecificLocationSettings() {
-    if (defaultTargetPlatform == TargetPlatform.android) {
-      locSetting = geo.AndroidSettings(
-          accuracy: geo.LocationAccuracy.high,
-          distanceFilter: 4, //number of meters until location updates again.
-          forceLocationManager:
-          true, //forces to use the legacy code instead of the newer one. Bunch of places say its better?
-          intervalDuration: const Duration(seconds: 10),
-          //keeps app alive when in background
-          foregroundNotificationConfig: const geo.ForegroundNotificationConfig(
-            notificationText:
-            "Concordia navigation app will continue to receive your location even when you aren't using it",
-            notificationTitle: "Running in Background",
-            enableWakeLock:
-            true, //if system sleeps, this makes sure all the notification events dont come crashing in all at once
-          ));
-    } else if (defaultTargetPlatform == TargetPlatform.iOS ||
-        defaultTargetPlatform == TargetPlatform.macOS) {
-      locSetting = geo.AppleSettings(
-        accuracy: geo.LocationAccuracy.high,
-        activityType: geo.ActivityType.fitness,
-        distanceFilter: 4,
-        pauseLocationUpdatesAutomatically: true,
-        //keep this false because our app wont start up in the background. User needs to open it.
-        showBackgroundLocationIndicator: false,
-      );
-    } else {
-      locSetting = const geo.LocationSettings(
+ void setPlatformSpecificLocationSettings() {
+  if (_isLocSettingInitialized) return; // Only initialize once
+  if (defaultTargetPlatform == TargetPlatform.android) {
+    locSetting = geo.AndroidSettings(
         accuracy: geo.LocationAccuracy.high,
         distanceFilter: 4,
-      );
-    }
-
+        forceLocationManager: true,
+        intervalDuration: const Duration(seconds: 10),
+        foregroundNotificationConfig: const geo.ForegroundNotificationConfig(
+          notificationText: "Concordia navigation app will continue to receive your location even when you aren't using it",
+          notificationTitle: "Running in Background",
+          enableWakeLock: true,
+        ));
+  } else if (defaultTargetPlatform == TargetPlatform.iOS ||
+             defaultTargetPlatform == TargetPlatform.macOS) {
+    locSetting = geo.AppleSettings(
+      accuracy: geo.LocationAccuracy.high,
+      activityType: geo.ActivityType.fitness,
+      distanceFilter: 4,
+      pauseLocationUpdatesAutomatically: true,
+      showBackgroundLocationIndicator: false,
+    );
+  } else {
+    locSetting = const geo.LocationSettings(
+      accuracy: geo.LocationAccuracy.high,
+      distanceFilter: 4,
+    );
   }
+  _isLocSettingInitialized = true; 
+}
+
 
   /// Creates a location stream for continuous updates.
   void createLocationStream() {
@@ -164,14 +163,15 @@ class LocationService {
 
   /// Starts up location services, ensuring permissions and settings are set.
   Future<void> startUp() async {
-    bool locationEnabled = await determinePermissions();
-    if (locationEnabled) {
-      setPlatformSpecificLocationSettings();
-      createLocationStream();
-    } else {
-      throw PermissionNotEnabledException();
-    }
+  bool locationEnabled = await determinePermissions();
+  if (locationEnabled) {
+    setPlatformSpecificLocationSettings(); // Initializes platform-specific settings
+    createLocationStream();
+  } else {
+    throw PermissionNotEnabledException();
   }
+}
+
 
   /// Stops the location stream.
   void stopListening() {
@@ -218,6 +218,12 @@ class LocationService {
 
   LatLng convertPositionToLatLng(geo.Position p) {
     return new LatLng(p.latitude, p.longitude);
+  }
+  //Provides stream of latlong positions
+  Stream<LatLng> getLatLngStream() {
+    return getPositionStream().map((geo.Position position) {
+      return LatLng(position.latitude, position.longitude);
+    });
   }
 
 }
