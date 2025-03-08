@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -77,7 +78,10 @@ class _MapWidgetState extends State<MapWidget> {
   ///
   late MarkerTapHandler _markerTapHandler;
 
-  ///Initializing the widget with _mapController, _mapService, _markerTapHandler, and loads initial functions
+  List<LatLng> animatedPoints = [];
+  int animationIndex = 0;
+  Timer? animationTimer;
+  double animationProgress = 0.0; // Track progress between points
 
   @override
   void initState() {
@@ -128,6 +132,69 @@ class _MapWidgetState extends State<MapWidget> {
     }
   }
 
+  /// Called when the widget's configuration changes. Manages starting or stopping the polyline animation based on changes to the routePoints
+  @override
+  void didUpdateWidget(MapWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.routePoints != oldWidget.routePoints &&
+        widget.routePoints.isNotEmpty) {
+      _startPolylineAnimation();
+    } else if (widget.routePoints.isEmpty) {
+      _stopPolylineAnimation();
+      setState(() {
+        animatedPoints.clear();
+        animationIndex = 0;
+        animationProgress = 0.0;
+      });
+    }
+  }
+
+  /// Starts the polyline animation by initializing animation variables and setting up a timer to update the animatedPoints
+  void _startPolylineAnimation() {
+    _stopPolylineAnimation(); // Stop previous animation
+    animatedPoints.clear(); // Reset animation data
+    animationIndex = 0;
+    animationProgress = 0.0;
+    animationTimer = Timer.periodic(const Duration(milliseconds: 14), (timer) {
+      if (animationIndex < widget.routePoints.length - 1) {
+        animationProgress += 0.7; // Increment animation progress
+        if (animationProgress >= 1.0) {
+          animationProgress = 0.0;
+          animationIndex++;
+        }
+        setState(() {
+          animatedPoints.clear();
+          for (int i = 0; i < animationIndex; i++) {
+            animatedPoints.add(widget.routePoints[i]);
+          }
+          if (animationIndex < widget.routePoints.length - 1) {
+            final start = widget.routePoints[animationIndex];
+            final end = widget.routePoints[animationIndex + 1];
+            final lat = start.latitude +
+                (end.latitude - start.latitude) * animationProgress;
+            final lng = start.longitude +
+                (end.longitude - start.longitude) * animationProgress;
+            animatedPoints.add(LatLng(lat, lng));
+          }
+        });
+      } else {
+        _stopPolylineAnimation();
+      }
+    });
+  }
+
+  /// Cancels the animation timer, stopping the polyline animation.
+  void _stopPolylineAnimation() {
+    animationTimer?.cancel();
+  }
+
+  /// Stops the polyline animation and disposes of the widget
+  @override
+  void dispose() {
+    _stopPolylineAnimation();
+    super.dispose();
+  }
+
   /// Builds the map widget with the FlutterMap and its children
   @override
   Widget build(BuildContext context) {
@@ -164,17 +231,17 @@ class _MapWidgetState extends State<MapWidget> {
                   ..._buildingMarkers,
                 ],
               ),
-            if (widget.routePoints.isNotEmpty)
+            if (animatedPoints.isNotEmpty)
               PolylineLayer(
                 polylines: [
                   Polyline(
-                    points: widget.routePoints,
+                    points: animatedPoints,
                     strokeWidth: 10.0,
                     color: const Color.fromARGB(
                         100, 0, 0, 0), // Soft black shadow with transparency
                   ),
                   Polyline(
-                    points: widget.routePoints,
+                    points: animatedPoints,
                     strokeWidth: 6.0,
                     color: const Color.fromRGBO(
                         54, 152, 244, 0.8), // Nice vivid blue with 80% opacity
