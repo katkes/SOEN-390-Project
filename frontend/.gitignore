@@ -35,3 +35,4 @@ logs/
 .cache/
 
 # Android build files
+/.idea/
