@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -6,20 +8,22 @@ import 'package:http/http.dart' as http;
 import 'package:soen_390/services/map_service.dart';
 import 'package:soen_390/utils/marker_tap_handler.dart';
 import '../services/building_info_api.dart';
-import "package:soen_390/utils/location_service.dart";
-import "package:geolocator/geolocator.dart";
-import "package:soen_390/widgets/user_location_marker.dart";
+//import "package:soen_390/utils/location_service.dart";
+import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 
 /// A widget that displays an interactive map with routing functionality.
 ///
 /// The map allows users to visualize locations, interact with markers,
 /// and calculate routes between two selected points using the injected `IRouteService`.
 class MapWidget extends StatefulWidget {
-
   //final LocationServiceWithNoInjection locationService = LocationServiceWithNoInjection.instance;
 
   /// The initial location where the map is centered.
   final LatLng location;
+
+  ///The initial location where the user is.
+
+  final LatLng userLocation;
 
   /// The HTTP client used for network requests related to map tiles.
   final http.Client httpClient;
@@ -40,6 +44,7 @@ class MapWidget extends StatefulWidget {
   const MapWidget(
       {super.key,
       required this.location,
+      required this.userLocation,
       required this.httpClient,
       required this.routeService,
       required this.mapsApiClient,
@@ -49,11 +54,7 @@ class MapWidget extends StatefulWidget {
   State<MapWidget> createState() => _MapWidgetState();
 } //end of class
 
-
 class _MapWidgetState extends State<MapWidget> {
-
-  LocationService locationService = LocationService.instance;
-
   late MapController _mapController;
   List<Marker> _buildingMarkers = [];
   List<Polygon> _buildingPolygons = [];
@@ -112,6 +113,11 @@ class _MapWidgetState extends State<MapWidget> {
     _fetchRoute();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   /// Updates the widget when the location changes
   @override
   void didUpdateWidget(MapWidget oldWidget) {
@@ -132,21 +138,10 @@ class _MapWidgetState extends State<MapWidget> {
             lat, lon, name, address, tapPosition, context);
       });
 
-       // Position p = await locationService.getCurrentLocationAccurately();
+      // Position p = await locationService.getCurrentLocationAccurately();
 
       setState(() {
         _buildingMarkers = markers;
-        //this is the user's current location. Add this through the "getCurrentLocation" function
-        // _buildingMarkers.add(  Marker(
-        //     point: LatLng(p.latitude, p.longitude), //replace with current location longitude and latitude
-        //     width: 80,
-        //     height: 80,
-        //     child: const Icon(
-        //       Icons.location_pin,
-        //       color: Colors.blue,
-        //       size: 40),
-        // )
-        // );
       });
     } catch (e) {
       print('Error loading building markers: $e');
@@ -207,9 +202,9 @@ class _MapWidgetState extends State<MapWidget> {
           mapController: _mapController,
           options: MapOptions(
             initialCenter: widget.location,
-            initialZoom: 14.0,
+            initialZoom: 17.0,
             minZoom: 11.0,
-            maxZoom: 17.0,
+            maxZoom: 20.0,
             onTap: _handleMapTap,
             interactionOptions: const InteractionOptions(
               flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
@@ -221,6 +216,29 @@ class _MapWidgetState extends State<MapWidget> {
               additionalOptions: const {},
               tileProvider: NetworkTileProvider(httpClient: widget.httpClient),
             ),
+            AnimatedLocationMarkerLayer(
+              position: LocationMarkerPosition(
+                latitude: widget.userLocation.latitude,
+                longitude: widget.userLocation.longitude,
+                accuracy: 50,
+              ),
+              style: const LocationMarkerStyle(
+                marker: DefaultLocationMarker(
+                  child: Icon(
+                    Icons.navigation,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+                markerSize: Size(35, 35),
+                markerDirection: MarkerDirection.heading,
+                accuracyCircleColor: Color.fromARGB(78, 33, 149, 243),
+              ),
+              moveAnimationDuration: const Duration(milliseconds: 500),
+              moveAnimationCurve: Curves.fastOutSlowIn,
+              rotateAnimationDuration: const Duration(milliseconds: 300),
+              rotateAnimationCurve: Curves.easeInOut,
+            ),
             PolygonLayer(
               polygons: _buildingPolygons,
             ),
@@ -229,7 +247,6 @@ class _MapWidgetState extends State<MapWidget> {
                 ..._buildingMarkers,
               ],
             ),
-            CurrentLocationWidget(),
           ],
         ),
       ),
@@ -266,6 +283,7 @@ class MyPage extends StatelessWidget {
   /// The initial location for the map.
 
   final LatLng location;
+  final LatLng userLocation;
   final GoogleMapsApiClient mapsApiClient;
   final BuildingPopUps buildingPopUps;
 
@@ -273,6 +291,7 @@ class MyPage extends StatelessWidget {
   const MyPage({
     required this.httpClient,
     required this.location,
+    required this.userLocation,
     required this.routeService,
     required this.mapsApiClient,
     required this.buildingPopUps,
@@ -293,6 +312,7 @@ class MyPage extends StatelessWidget {
       body: Center(
         child: MapWidget(
           location: location,
+          userLocation: userLocation,
           httpClient: httpClient,
           routeService: routeService,
           mapsApiClient: mapsApiClient,

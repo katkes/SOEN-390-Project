@@ -3,11 +3,11 @@ import 'package:soen_390/utils/permission_not_enabled_exception.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/foundation.dart';
 
-class LocationServiceWithNoInjection{
-
+class LocationServiceWithNoInjection {
   late Position currentPosition;
   LocationServiceWithNoInjection._internal();
-  static LocationServiceWithNoInjection instance = LocationServiceWithNoInjection._internal();
+  static LocationServiceWithNoInjection instance =
+      LocationServiceWithNoInjection._internal();
   late final LocationSettings locSetting;
   StreamSubscription<Position>? _positionStream;
 
@@ -18,13 +18,11 @@ class LocationServiceWithNoInjection{
   }
 
   Future<bool> determinePermissions() async {
-
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       return false;
     }
-    permission =
-    await Geolocator.checkPermission();
+    permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
@@ -80,15 +78,13 @@ class LocationServiceWithNoInjection{
       locSetting = AndroidSettings(
           accuracy: LocationAccuracy.high,
           distanceFilter: 4,
-          forceLocationManager:
-          true,
+          forceLocationManager: true,
           intervalDuration: const Duration(seconds: 10),
           foregroundNotificationConfig: const ForegroundNotificationConfig(
             notificationText:
-            "Concordia navigation app will continue to receive your location even when you aren't using it",
+                "Concordia navigation app will continue to receive your location even when you aren't using it",
             notificationTitle: "Running in Background",
-            enableWakeLock:
-            true,
+            enableWakeLock: true,
           ));
     } else if (defaultTargetPlatform == TargetPlatform.iOS ||
         defaultTargetPlatform == TargetPlatform.macOS) {
@@ -126,7 +122,6 @@ class LocationServiceWithNoInjection{
     }
   }
 
-
   void stopListening() async {
     await _positionStream?.cancel();
   }
@@ -134,7 +129,4 @@ class LocationServiceWithNoInjection{
   StreamSubscription<Position>? getStreamobj() {
     return _positionStream;
   }
-
-
-
 } //end of class

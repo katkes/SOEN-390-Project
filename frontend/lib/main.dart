@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:soen_390/screens/waypoint/waypoint_selection_screens.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:soen_390/widgets/nav_bar.dart';
@@ -9,22 +8,20 @@ import 'package:soen_390/widgets/campus_switch_button.dart';
 import 'package:soen_390/widgets/indoor_navigation_button.dart';
 import 'package:soen_390/widgets/outdoor_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:soen_390/providers/service_providers.dart'; 
-import 'package:soen_390/services/http_service.dart'; 
-import 'package:soen_390/services/interfaces/route_service_interface.dart'; 
+import 'package:soen_390/providers/service_providers.dart';
+import 'package:soen_390/services/http_service.dart';
+import 'package:soen_390/services/interfaces/route_service_interface.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:soen_390/services/building_info_api.dart';
 import 'package:soen_390/utils/location_service.dart';
-
 
 /// The entry point of the application.
 ///
 /// This function initializes the Riverpod provider scope and starts the app.
 void main() async {
-   //WidgetsFlutterBinding.ensureInitialized();
-  try{
+  //WidgetsFlutterBinding.ensureInitialized();
+  try {
     await dotenv.load(fileName: ".env");
-
   } catch (e) {
     print("An error occurred when loading the ..env file: $e");
   }
@@ -109,7 +106,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
     super.initState();
     _mapsApiClient = GoogleMapsApiClient(
         apiKey: dotenv.env['GOOGLE_MAPS_API_KEY']!,
-        client: widget.httpService.client as BaseClient);
+        client: widget.httpService.client);
     _buildingPopUps = BuildingPopUps(mapsApiClient: _mapsApiClient);
 
     //This initializes the location service and listens for updates
@@ -126,7 +123,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
     });
   }
 
-  @override 
+  @override
   void dispose() {
     super.dispose();
     _locationService.stopListening();
