@@ -1,3 +1,10 @@
+/*
+ *
+ * This screen loads a local HTML file (assets/mappedin.html) that embeds a Mappedin map.
+ * The HTML is loaded using rootBundle and then displayed in an InAppWebView.
+ * WebView settings enable JavaScript and useHybridComposition (for Android).
+ */
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
