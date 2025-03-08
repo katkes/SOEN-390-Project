@@ -3,13 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 class MappedinMapScreen extends StatefulWidget {
-  const MappedinMapScreen({Key? key}) : super(key: key);
+  const MappedinMapScreen({super.key});
 
   @override
   MappedinMapScreenState createState() => MappedinMapScreenState();
 }
 
-class _MappedinMapScreenState extends State<MappedinMapScreen> {
+class MappedinMapScreenState extends State<MappedinMapScreen> {
   String? _htmlData;
 
   @override
