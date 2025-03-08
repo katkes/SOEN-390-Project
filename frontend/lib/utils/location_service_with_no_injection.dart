@@ -43,29 +43,29 @@ class LocationServiceWithNoInjection {
 
   Future<Position> getCurrentLocation() async {
     return await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.low,
-      forceAndroidLocationManager: true,
+      // desiredAccuracy: LocationAccuracy.low,
+      // forceAndroidLocationManager: true,
     );
   }
 
   Future<void> updateCurrentLocation() async {
     currentPosition = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.low,
-      forceAndroidLocationManager: true,
+      // desiredAccuracy: LocationAccuracy.low,
+      // forceAndroidLocationManager: true,
     );
   }
 
   Future<Position> getCurrentLocationAccurately() async {
     return await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.best,
-      forceAndroidLocationManager: true,
+      // desiredAccuracy: LocationAccuracy.best,
+      // forceAndroidLocationManager: true,
     );
   }
 
   Future<void> updateCurrentLocationAccurately() async {
     currentPosition = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.best,
-      forceAndroidLocationManager: true,
+      // desiredAccuracy: LocationAccuracy.best,
+      // forceAndroidLocationManager: true,
     );
   }
 
