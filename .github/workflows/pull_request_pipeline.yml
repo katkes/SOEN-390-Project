@@ -202,7 +202,7 @@ jobs:
   sonarqube:
     name: SonarCloud Analysis
     runs-on: [our-runner]
-    needs: [linting, testing, flutter_build]  
+    needs: [linting, testing]  # needs flutter_build
     if: github.event_name == 'pull_request'  
 
     steps:
@@ -256,7 +256,7 @@ jobs:
     name: Cleanup Runner Disk Space
     runs-on: [our-runner]
     if: github.event_name == 'pull_request'  
-    needs: [setup_flutter, linting, testing, flutter_build, sonarqube]
+    needs: [setup_flutter, linting, testing, sonarqube] # needs flutter_build
 
     steps:
       - name: Free Up Space - Remove Gradle Cache
