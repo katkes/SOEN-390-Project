@@ -207,7 +207,6 @@ class MapWidgetState extends State<MapWidget> {
             initialZoom: 14.0,
             minZoom: 11.0,
             maxZoom: 17.0,
-            onTap: _handleMapTap,
             interactionOptions: const InteractionOptions(
               flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
             ),
@@ -232,23 +231,6 @@ class MapWidgetState extends State<MapWidget> {
     );
   }
 
-  /// Handles user taps on the map to set the `from` and `to` locations.
-  ///
-  /// - If `isPairly` is false, updates `from` location.
-  /// - Otherwise, updates `to` location.
-  /// - Toggles `isPairly` after every selection.
-  /// - Calls `_fetchRoute()` to update the route accordingly.
-  void _handleMapTap(TapPosition tapPosition, LatLng latLng) {
-    setState(() {
-      if (!isPairly) {
-        from = latLng;
-      } else {
-        to = latLng;
-      }
-      isPairly = !isPairly;
-      _fetchRoute();
-    });
-  }
 }
 
 /// Example usage of `MapWidget` inside a `MyPage` scaffold.
