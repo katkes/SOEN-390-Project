@@ -5,9 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="257aa008-c06a-4b7a-bc1c-790da5fa81f3" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/.flutter-plugins-dependencies" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/.flutter-plugins-dependencies" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/test/utils/location_service_test.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/test/utils/location_service_test.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,7 +53,9 @@
   "keyToString": {
     "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
     "Dart Command Line App.main.dart.executor": "Run",
+    "Flutter Test.converting a position object to a LatLng one.executor": "Run",
     "Flutter Test.determinePermissions should return true when permission is granted.executor": "Run",
+    "Flutter Test.testing platform location settings for iOS.executor": "Run",
     "Flutter Test.tests in location_service_test.dart.executor": "Run",
     "Flutter Test.tests in main_test.dart.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -73,14 +76,21 @@
       <command value="flutter pub get" />
     </option>
   </component>
-  <component name="RunManager" selected="Flutter Test.tests in main_test.dart">
-    <configuration name="main.dart" type="DartCommandLineRunConfigurationType" factoryName="Dart Command Line Application" temporary="true" nameIsGenerated="true">
-      <option name="filePath" value="$PROJECT_DIR$/frontend/lib/main.dart" />
-      <option name="workingDirectory" value="$PROJECT_DIR$/frontend" />
+  <component name="RunManager" selected="Flutter Test.converting a position object to a LatLng one">
+    <configuration name="converting a position object to a LatLng one" type="FlutterTestConfigType" factoryName="Flutter Test" temporary="true" nameIsGenerated="true">
+      <option name="testName" value="converting a position object to a LatLng one" />
+      <option name="testFile" value="$PROJECT_DIR$/frontend/test/utils/location_service_test.dart" />
+      <option name="useRegexp" value="false" />
       <method v="2" />
     </configuration>
     <configuration name="determinePermissions should return true when permission is granted" type="FlutterTestConfigType" factoryName="Flutter Test" temporary="true" nameIsGenerated="true">
       <option name="testName" value="determinePermissions should return true when permission is granted" />
+      <option name="testFile" value="$PROJECT_DIR$/frontend/test/utils/location_service_test.dart" />
+      <option name="useRegexp" value="false" />
+      <method v="2" />
+    </configuration>
+    <configuration name="testing platform location settings for iOS" type="FlutterTestConfigType" factoryName="Flutter Test" temporary="true" nameIsGenerated="true">
+      <option name="testName" value="testing platform location settings for iOS" />
       <option name="testFile" value="$PROJECT_DIR$/frontend/test/utils/location_service_test.dart" />
       <option name="useRegexp" value="false" />
       <method v="2" />
@@ -97,10 +107,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Flutter Test.converting a position object to a LatLng one" />
+        <item itemvalue="Flutter Test.testing platform location settings for iOS" />
+        <item itemvalue="Flutter Test.tests in location_service_test.dart" />
         <item itemvalue="Flutter Test.tests in main_test.dart" />
         <item itemvalue="Flutter Test.determinePermissions should return true when permission is granted" />
-        <item itemvalue="Flutter Test.tests in location_service_test.dart" />
-        <item itemvalue="Dart Command Line App.main.dart" />
       </list>
     </recent_temporary>
   </component>
