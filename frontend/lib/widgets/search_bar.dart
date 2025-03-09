@@ -52,7 +52,7 @@ class SearchBarWidgetState extends State<SearchBarWidget> {
     super.dispose();
   }
 
-  void _performSearch(String query) async {
+  void performSearch(String query) async {
     if (query.isNotEmpty) {
       final buildingDetails =
           await _mapService.searchBuildingWithDetails(query);
@@ -141,10 +141,11 @@ class SearchBarWidgetState extends State<SearchBarWidget> {
                       const SizedBox(width: 10),
                       Expanded(
                         child: TextField(
+                          key: const Key("searchBarTextField"),
                           focusNode: _focusNode,
                           controller: widget.controller,
                           onChanged: _updateSuggestions,
-                          onSubmitted: _performSearch,
+                          onSubmitted: performSearch,
                           decoration: const InputDecoration(
                             hintText: 'Search for Building',
                             hintStyle: TextStyle(
@@ -164,6 +165,7 @@ class SearchBarWidgetState extends State<SearchBarWidget> {
             ),
             if (isExpanded && _suggestions.isNotEmpty)
               Container(
+                key: const Key("123"),
                 margin: const EdgeInsets.only(top: 5),
                 width: 240,
                 padding: const EdgeInsets.all(8.0),
@@ -191,7 +193,7 @@ class SearchBarWidgetState extends State<SearchBarWidget> {
                           _suggestions.clear();
                         });
 
-                        _performSearch(suggestion);
+                        performSearch(suggestion);
                         Future.delayed(const Duration(milliseconds: 300), () {
                           if (mounted) {
                             _focusNode.unfocus();
