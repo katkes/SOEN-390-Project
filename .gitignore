@@ -21,4 +21,5 @@ frontend/Documentation
 *.iws
 *.ipr
 
+.flutter-plugins-dependencies
 
