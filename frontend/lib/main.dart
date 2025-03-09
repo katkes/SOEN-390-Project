@@ -110,12 +110,9 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
       _locationService.getLatLngStream().listen((LatLng location) {
         setState(() {
           _userLiveLocation = location;
-          print("User live location updated: $location");
         });
       });
-    }).catchError((e) {
-      print("Error starting location service: $e");
-    });
+    }).catchError((e) {});
   }
 
   @override

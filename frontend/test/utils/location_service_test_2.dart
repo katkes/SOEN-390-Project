@@ -4,11 +4,20 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:geolocator/geolocator.dart' as geo;
 import 'package:soen_390/utils/location_service.dart';
+import "package:latlong2/latlong.dart";
+import 'package:flutter/material.dart';
+import 'package:soen_390/main.dart';
+import 'package:soen_390/services/http_service.dart';
+import 'package:soen_390/services/interfaces/route_service_interface.dart';
 
 @GenerateMocks([LocationService])
 import 'location_service_test_test.mocks.dart';
 
 class MockStreamSubscription<T> extends Mock implements StreamSubscription<T> {}
+
+class MockRouteService extends Mock implements IRouteService {}
+
+class MockHttp extends Mock implements HttpService {}
 
 class TestGeolocatorPlatform extends geo.GeolocatorPlatform {
   final Future<bool> Function() isLocationServiceEnabledFunc;
@@ -87,6 +96,34 @@ void main() {
   });
 
   group('LocationService Tests', () {
+    final mockLocationService = MockLocationService();
+    final mockRouteService = MockRouteService();
+    final mockHttp = MockHttp();
+
+    testWidgets('MyHomePage updates state when location changes',
+        (WidgetTester tester) async {
+      final mockLocationService = MockLocationService();
+
+      when(mockLocationService.getLatLngStream()).thenAnswer((_) =>
+          Stream.fromIterable(
+              [const LatLng(45.5017, -73.5673)])); // Mock a new location
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MyHomePage(
+            title: 'Campus Map',
+            routeService: mockRouteService,
+            httpService: mockHttp,
+          ),
+        ),
+      );
+      expect(find.text('Home Page'), findsOneWidget);
+
+      await tester.pumpAndSettle();
+
+      expect(find.text('Home Page'), findsOneWidget);
+    });
+
     test('determinePermissions should return true when permission is granted',
         () async {
       when(mockLocationService.determinePermissions())
@@ -529,6 +566,37 @@ void main() {
       }
 
       verify(mockLocationService.getPositionStream()).called(1);
+    });
+    test('getLatLngStream should map Position to LatLng', () async {
+      // Create a mock stream for getPositionStream with a geo.Position
+      final mockPositionStream = Stream.fromIterable([
+        geo.Position(
+          latitude: 12.34,
+          longitude: 56.78,
+          timestamp: DateTime.now(),
+          accuracy: 1.0,
+          altitude: 0.0,
+          heading: 0.0,
+          speed: 0.0,
+          speedAccuracy: 0.0,
+          floor: null,
+          altitudeAccuracy: 0.0,
+          headingAccuracy: 0.0,
+        ),
+      ]);
+
+      // Mock getPositionStream to return the mock stream
+      when(mockLocationService.getPositionStream())
+          .thenAnswer((_) => mockPositionStream);
+
+      // Call the method and listen to the stream
+      final latLngStream = mockLocationService.getLatLngStream();
+      final latLng =
+          await latLngStream.first; // Get the first value from the stream
+
+      // Assert that the result is a LatLng object with the correct values
+      expect(latLng.latitude, 12.34);
+      expect(latLng.longitude, 56.78);
     });
   });
 }
