@@ -420,9 +420,13 @@ void main() {
 
     group("testing platform specific Locations", () {
       test("testing platform location settings for iOS", () {
+
         debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+
+        LocationService.resetInstance();
         locationService = LocationService(geolocator: mockGeolocatorPlatform);
         locationService.setPlatformSpecificLocationSettings();
+        print(locationService.locSetting); // "Instance of 'AppleSettings'"
         final updatedAppleSettings = locationService.locSetting as geo.AppleSettings;
 
         // Assert: Check if the settings are correctly initialized for other platforms
