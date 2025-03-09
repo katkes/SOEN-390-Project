@@ -67,13 +67,16 @@ jobs:
     needs: setup_flutter  
 
     steps:
-      - name: Verify Flutter formatting
-        working-directory: ./frontend
-        run: dart format --output=none --set-exit-if-changed .
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Copy env file
         working-directory: ./frontend
         run: cp -n ~/env/.env .
+
+      - name: Verify Flutter formatting
+        working-directory: ./frontend
+        run: dart format --output=none --set-exit-if-changed .
 
       - name: Run Flutter Analyze and Generate Report
         working-directory: ./frontend
