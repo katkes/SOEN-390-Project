@@ -67,6 +67,12 @@ jobs:
     needs: setup_flutter  
 
     steps:
+      - name: Free Up Space - Remove Actions Runner Work Directory
+        run: |
+          echo "Cleaning up Actions runner workspace..."
+          rm -rf ~/actions-runner/_work/*
+          echo "Actions runner workspace cleaned."
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
