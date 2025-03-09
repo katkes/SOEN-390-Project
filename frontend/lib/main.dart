@@ -86,6 +86,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
   int _selectedIndex = 0;
   LatLng _currentLocation = const LatLng(45.497856, -73.579588);
   LatLng _userLiveLocation = const LatLng(5.497856, -73.579588);
+  late LocationService _locationService;
 
   late BuildingPopUps _buildingPopUps;
   late GoogleMapsApiClient _mapsApiClient;
@@ -108,11 +109,6 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
       _currentLocation = location;
     });
   }
-=======
-  LatLng _userLiveLocation = const LatLng(5.497856, -73.579588);  
-
-  late LocationService _locationService;
->>>>>>> main
 
   @override
   void initState() {
