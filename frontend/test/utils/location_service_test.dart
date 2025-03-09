@@ -3,6 +3,7 @@ import 'package:mockito/mockito.dart';
 import 'package:geolocator/geolocator.dart' as geo;
 import 'package:soen_390/utils/location_service.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
+import 'package:soen_390/utils/permission_not_enabled_exception.dart';
 import 'package:flutter/foundation.dart'
     show debugDefaultTargetPlatformOverride, TargetPlatform;
 import "package:latlong2/latlong.dart";
@@ -191,6 +192,18 @@ void main() {
 
       // Ensure locSetting is properly initialized
       expect(() => locationService.locSetting, isNot(throwsA(anything)));
+    });
+    test(
+        'startUp should throw PermissionNotEnabledException when permission is denied',
+        () async {
+      // Arrange
+      mockGeolocatorPlatform.setLocationServiceEnabled(true);
+      mockGeolocatorPlatform
+          .setLocationPermission(geo.LocationPermission.denied);
+
+      // Act & Assert
+      expect(() => locationService.startUp(),
+          throwsA(isA<PermissionNotEnabledException>()));
     });
 
     test(
