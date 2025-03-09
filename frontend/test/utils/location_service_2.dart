@@ -104,9 +104,8 @@ void main() {
         (WidgetTester tester) async {
       final mockLocationService = MockLocationService();
 
-      when(mockLocationService.getLatLngStream()).thenAnswer((_) =>
-          Stream.fromIterable(
-              [const LatLng(45.5017, -73.5673)])); // Mock a new location
+      when(mockLocationService.getLatLngStream()).thenAnswer(
+          (_) => Stream.fromIterable([const LatLng(45.5017, -73.5673)]));
 
       await tester.pumpWidget(
         MaterialApp(

@@ -90,8 +90,6 @@ void main() {
   /// [LocationService] instance. Also ensures that `currentPosition` is initialized.
   setUp(() {
     //  Reset any static state to prevent test interference
-    //LocationService.resetInstance();
-
     mockGeolocatorPlatform = MockGeolocatorPlatform();
     LocationService.resetInstance();
     locationService = LocationService(

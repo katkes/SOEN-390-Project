@@ -148,13 +148,6 @@ class _MapWidgetState extends State<MapWidget> {
     }
   }
 
-  //DEPRICATED
-  //function to periodically update the current location of the user on the map.
-  // void updateCurrentLocationMarker() {
-  //  listen to stream
-  //  Everytime a new position event comes up, remove the last marker and add a new one corresponding to the new location.
-  // }
-
   /// Loads the building boundaries from the map service
   Future<void> _loadBuildingBoundaries() async {
     try {
