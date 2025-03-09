@@ -32,6 +32,3 @@ logs/
 
 # Cache
 .cache/
-
-# Android build files
-android/
