@@ -230,7 +230,6 @@ class MapWidgetState extends State<MapWidget> {
       ),
     );
   }
-
 }
 
 /// Example usage of `MapWidget` inside a `MyPage` scaffold.
