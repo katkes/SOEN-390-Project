@@ -10,6 +10,7 @@ class RouteCard extends StatelessWidget {
   final String timeRange;
   final String duration;
   final String description;
+  final bool isCrossCampus;
   final List<IconData> icons;
   final dynamic routeData;
   final VoidCallback onCardTapped;
@@ -20,6 +21,7 @@ class RouteCard extends StatelessWidget {
     required this.timeRange,
     required this.duration,
     required this.description,
+    required this.isCrossCampus,
     required this.icons,
     required this.routeData,
     required this.onCardTapped,
@@ -69,12 +71,15 @@ class RouteCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const SizedBox(width: 10),
+                if (isCrossCampus)
+                  const Text("Cross-campus route",
+                      style: TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.bold)),
                 Flexible(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
-                    children: icons
-                        .map((icon) => Padding(
+                    children:  
+                    icons.map((icon) => Padding(
                               padding: const EdgeInsets.only(left: 8),
                               child: Icon(icon, size: 20),
                             ))

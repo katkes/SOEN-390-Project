@@ -35,6 +35,7 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
   static const int _maxRoutes = 4;
   static const int _minROutes = 2;
   bool isLoading = false;
+  bool isCrossCampus = false;
   String? errorMessage;
   String? selectedMode;
   List<Map<String, dynamic>> confirmedRoutes = [];
@@ -120,8 +121,8 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
         to: endPoint,
       );
 
-      final isRouteInterCampus = GoogleRouteService.isRouteInterCampus(from: startPoint, to: endPoint);
-      print("Route involves campus switch: $isRouteInterCampus");
+      isCrossCampus = GoogleRouteService.isRouteInterCampus(from: startPoint, to: endPoint);
+      print("Route involves campus switch: $isCrossCampus");
 
       if (routes.isEmpty ||
           !routes.containsKey(googleTransportMode) ||
@@ -226,6 +227,7 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
                   description: route["description"],
                   icons: route["icons"],
                   routeData: route["routeData"],
+                  isCrossCampus: isCrossCampus,
                   onCardTapped: () {
                     // When card is tapped, navigate back to the main screen (WaypointSelectionScreen)
                     Navigator.pop(context);
