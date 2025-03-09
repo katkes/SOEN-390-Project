@@ -256,7 +256,7 @@ void main() {
       expect(locationService.currentPosition.longitude, -74.0060);
     });
 
-    test ("converting a position object to a LatLng one", () {
+    test("converting a position object to a LatLng one", () {
       final newPosition = geo.Position(
           latitude: 40.7128,
           longitude: -74.0060,
@@ -274,7 +274,6 @@ void main() {
 
       expect(newPosition.latitude, ln.latitude);
       expect(newPosition.longitude, ln.longitude);
-
     });
 
     test(
@@ -416,20 +415,18 @@ void main() {
         final campus = LocationService.getClosestCampus(position);
         expect(campus, 'SGW');
       });
-
-
     });
 
     group("testing platform specific Locations", () {
       test("testing platform location settings for iOS", () {
-
         debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
 
         LocationService.resetInstance();
         locationService = LocationService(geolocator: mockGeolocatorPlatform);
         locationService.setPlatformSpecificLocationSettings();
         print(locationService.locSetting); // "Instance of 'AppleSettings'"
-        final updatedAppleSettings = locationService.locSetting as geo.AppleSettings;
+        final updatedAppleSettings =
+            locationService.locSetting as geo.AppleSettings;
 
         // Assert: Check if the settings are correctly initialized for other platforms
         expect(updatedAppleSettings.accuracy, geo.LocationAccuracy.high);
@@ -443,26 +440,25 @@ void main() {
       });
     });
   });
-    
-    test('convertPositionToLatLng correctly converts geo.Position to LatLng',
-        () {
-      final geo.Position position = geo.Position(
-        latitude: 45.4979,
-        longitude: -73.5796,
-        timestamp: DateTime.now(),
-        accuracy: 1.0,
-        altitude: 0.0,
-        heading: 0.0,
-        speed: 0.0,
-        altitudeAccuracy: 0,
-        headingAccuracy: 0,
-        speedAccuracy: 0.0,
-      );
 
-      final LatLng result =
-          LocationService.instance.convertPositionToLatLng(position);
+  test('convertPositionToLatLng correctly converts geo.Position to LatLng', () {
+    final geo.Position position = geo.Position(
+      latitude: 45.4979,
+      longitude: -73.5796,
+      timestamp: DateTime.now(),
+      accuracy: 1.0,
+      altitude: 0.0,
+      heading: 0.0,
+      speed: 0.0,
+      altitudeAccuracy: 0,
+      headingAccuracy: 0,
+      speedAccuracy: 0.0,
+    );
 
-      expect(result.latitude, 45.4979);
-      expect(result.longitude, -73.5796);
-    });
+    final LatLng result =
+        LocationService.instance.convertPositionToLatLng(position);
+
+    expect(result.latitude, 45.4979);
+    expect(result.longitude, -73.5796);
+  });
 }
