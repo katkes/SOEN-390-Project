@@ -23,7 +23,7 @@ pubspec.lock
 Thumbs.db
 
 # Environment variables
-.env
+assets/.env
 .env.local
 
 # Logs
@@ -32,3 +32,7 @@ logs/
 
 # Cache
 .cache/
+
+# Android build files
+android/
+/.idea/
