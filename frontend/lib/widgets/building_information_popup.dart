@@ -127,11 +127,3 @@ class BuildingInformationPopup extends StatelessWidget {
     );
   }
 }
-
-// builder: (context) => LocationTransportSelector(
-// initialDestination: buildingAddress, // Autofill destination
-// onConfirmRoute: (waypoints, mode) {
-// // Handle confirmed route
-// print("Confirmed waypoints: $waypoints, Mode: $mode");
-// },
-// ),

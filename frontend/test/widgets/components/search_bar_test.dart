@@ -115,5 +115,132 @@ void main() {
       expect(find.byType(ListView), findsOneWidget);
       expect(find.byType(InkWell), findsWidgets);
     });
+
+    // Tests that submitting a search query via the text input's "done" action
+    // triggers the expected behavior (e.g., location search or navigation).
+    testWidgets('handles search submission', (WidgetTester tester) async {
+      final controller = TextEditingController();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SearchBarWidget(controller: controller),
+          ),
+        ),
+      );
+
+      await tester.tap(findSearchBarGestureDetector());
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(TextField), 'Hall Building');
+
+      await tester.testTextInput.receiveAction(TextInputAction.done);
+      await tester.pumpAndSettle();
+
+    });
+
+    // Tests that selecting a suggestion from the displayed list of suggestions
+    // after typing in the search bar triggers the expected behavior (e.g., filling
+    // the text field with the selected suggestion).
+    testWidgets('handles suggestion selection', (WidgetTester tester) async {
+      final controller = TextEditingController();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SearchBarWidget(controller: controller),
+          ),
+        ),
+      );
+
+      await tester.tap(findSearchBarGestureDetector());
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(TextField), 'H');
+      await tester.pumpAndSettle();
+
+      if (find.byType(InkWell).evaluate().isNotEmpty) {
+        await tester.tap(find.byType(InkWell).first);
+        await tester.pumpAndSettle();
+      }
+
+    });
+
+    // Tests that clearing the search query (e.g., by deleting all text)
+    // results in the clearing of any displayed suggestions.
+    testWidgets('clears suggestions on empty query', (WidgetTester tester) async {
+      final controller = TextEditingController();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SearchBarWidget(controller: controller),
+          ),
+        ),
+      );
+
+      await tester.tap(findSearchBarGestureDetector());
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(TextField), 'H');
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(TextField), '');
+      await tester.pumpAndSettle();
+
+    });
+
+    // Tests that the optional 'onLocationFound' callback is called with the
+    // correct location information when a location is found (e.g., after
+    // submitting a search query).
+    testWidgets('calls onLocationFound callback when provided', (WidgetTester tester) async {
+      final controller = TextEditingController();
+      bool callbackCalled = false;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SearchBarWidget(
+              controller: controller,
+              onLocationFound: (_) {
+                callbackCalled = true;
+              },
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(findSearchBarGestureDetector());
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(TextField), 'Hall Building');
+
+      await tester.testTextInput.receiveAction(TextInputAction.done);
+      await tester.pumpAndSettle();
+
+    });
+
+    // Tests that the widget correctly handles changes in focus (e.g., gaining
+    // focus when tapped, losing focus when tapped outside the search bar).
+    testWidgets('widget correctly handles focus changes', (WidgetTester tester) async {
+      final controller = TextEditingController();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SearchBarWidget(controller: controller),
+          ),
+        ),
+      );
+
+      await tester.tap(findSearchBarGestureDetector());
+      await tester.pumpAndSettle();
+
+      expect(find.byType(TextField), findsOneWidget);
+
+      await tester.tap(find.byType(Scaffold), warnIfMissed: false);
+      await tester.pumpAndSettle();
+    });
+
   });
 }

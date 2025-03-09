@@ -7,10 +7,7 @@ import 'package:soen_390/widgets/building_information_popup.dart';
 
 void main() {
   group('BuildingInformationPopup Tests', () {
-    ///Test to verify that the BuildingInformationPopup widget renders the correct
-    /// building name, address, and essential UI elements like the ElevatedButton and arrow icon.
-    testWidgets('renders building information popup correctly',
-        (WidgetTester tester) async {
+    testWidgets('renders building information popup correctly', (WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: BuildingInformationPopup(
@@ -26,9 +23,7 @@ void main() {
       expect(find.byIcon(Icons.arrow_forward), findsOneWidget);
     });
 
-    /// Test to verify that if a photo URL is provided, the image is displayed correctly.
-    testWidgets('displays photo if URL is provided',
-        (WidgetTester tester) async {
+    testWidgets('displays photo if URL is provided', (WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: BuildingInformationPopup(
@@ -40,12 +35,9 @@ void main() {
       );
 
       expect(find.byType(Image), findsOneWidget);
-      expect(find.byType(Image).evaluate().single.widget is Image, true);
     });
 
-    /// Test to ensure that the building name and address are displayed correctly.
-    testWidgets('displays building name and address correctly',
-        (WidgetTester tester) async {
+    testWidgets('displays building name and address correctly', (WidgetTester tester) async {
       const buildingName = 'EV Building';
       const buildingAddress = '1515 St. Catherine St. W';
 
@@ -58,14 +50,11 @@ void main() {
         ),
       );
 
-      expect(find.text('EV Building'), findsOneWidget);
-
+      expect(find.text(buildingName), findsOneWidget);
       expect(find.text(buildingAddress), findsOneWidget);
     });
 
-    // Test to verify that when no photo URL is provided, a default image is displayed.
-    testWidgets('displays default image when no photo URL is provided',
-        (WidgetTester tester) async {
+    testWidgets('displays default image when no photo URL is provided', (WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: BuildingInformationPopup(
@@ -75,21 +64,16 @@ void main() {
           ),
         ),
       );
+
       final image = find.byType(Image).evaluate().single.widget as Image;
-      expect((image.image as AssetImage).assetName,
-          'assets/images/buildings/hall.png');
+      expect((image.image as AssetImage).assetName, 'assets/images/buildings/hall.png');
     });
 
-    /// Test to check if long building names are abbreviated correctly for better UI display.
-    testWidgets('abbreviates long building names correctly',
-        (WidgetTester tester) async {
-      // Arrange
-      const longBuildingName =
-          'Very Long Building Name That Should Be Abbreviated';
+    testWidgets('abbreviates long building names correctly', (WidgetTester tester) async {
+      const longBuildingName = 'Very Long Building Name That Should Be Abbreviated';
       const buildingAddress = '1515 St. Catherine St. W';
       final expectedAbbreviation = '${longBuildingName.split(" ")[0]} Bldg';
 
-      // Act
       await tester.pumpWidget(
         const MaterialApp(
           home: BuildingInformationPopup(
@@ -99,9 +83,71 @@ void main() {
         ),
       );
 
-      // Assert
       expect(find.text(expectedAbbreviation), findsOneWidget);
       expect(find.text(longBuildingName), findsNothing);
+    });
+
+    testWidgets('clicking marker shows the popup', (WidgetTester tester) async {
+      final GlobalKey key = GlobalKey();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: GestureDetector(
+              key: key,
+              onTap: () {
+                showDialog(
+                  context: key.currentContext!,
+                  builder: (context) => const BuildingInformationPopup(
+                    buildingName: 'EV Building',
+                    buildingAddress: '1515 St. Catherine St. W',
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byKey(key));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(BuildingInformationPopup), findsOneWidget);
+    });
+
+    // New test: checks abbreviated building name with name length under threshold
+    testWidgets('abbreviates building name when short', (WidgetTester tester) async {
+      const shortBuildingName = 'EV Building';
+      const buildingAddress = '1515 St. Catherine St. W';
+
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: BuildingInformationPopup(
+            buildingName: shortBuildingName,
+            buildingAddress: buildingAddress,
+          ),
+        ),
+      );
+
+      expect(find.text(shortBuildingName), findsOneWidget);
+    });
+
+    // New test: ensures abbreviated building name handles more complex name (test lines 38 and 39)
+    testWidgets('handles long building name abbreviation correctly', (WidgetTester tester) async {
+      const buildingName = 'Very Very Long Building Name That Should Be Abbreviated';
+      const buildingAddress = '1515 St. Catherine St. W';
+      final abbreviatedName = '${buildingName.split(" ")[0]} Bldg';
+
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: BuildingInformationPopup(
+            buildingName: buildingName,
+            buildingAddress: buildingAddress,
+          ),
+        ),
+      );
+
+      expect(find.text(abbreviatedName), findsOneWidget);
+      expect(find.text(buildingName), findsNothing);
     });
   });
 }
