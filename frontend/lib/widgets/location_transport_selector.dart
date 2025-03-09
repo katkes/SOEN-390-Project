@@ -161,7 +161,6 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
     }
 
     List<String> selectedWaypoints = List.from(itinerary);
-    print("Waypoints sent to routing system: $selectedWaypoints");
 
     widget.onConfirmRoute(selectedWaypoints, selectedMode);
   }
@@ -271,6 +270,30 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
         (index == 0 || itinerary.length < 2)) {
       // Let the parent know to clear cached routes
       widget.onTransportModeChange!("clear_cache");
+    }
+  }
+
+  //public methods to facilitate testing
+  void removeStopForTest(int index) {
+    _removeStop(index);
+  }
+
+  void setStartLocation(String selectedLocation) {
+    startLocation = selectedLocation;
+
+    if (itinerary.isEmpty) {
+      itinerary.add(selectedLocation);
+    } else {
+      itinerary.insert(0, selectedLocation);
+    }
+  }
+
+  void setDestinationLocation(String selectedLocation) {
+    destinationLocation = selectedLocation;
+    if (itinerary.length < 2) {
+      itinerary.add(selectedLocation);
+    } else if (itinerary.length == 2) {
+      itinerary[1] = selectedLocation;
     }
   }
 
