@@ -176,33 +176,33 @@ jobs:
         
         
 
-  # TODO: Debug as to why this step is not building properly (Gradle task assembleRelease failed with exit code 143)
-  # flutter_build:
-  #   name: Build Flutter Project
-  #   runs-on: [our-runner]
-  #   needs: setup_flutter
-  #   if: github.event_name == 'pull_request'  
 
-  #   steps:
+  flutter_build:
+    name: Build Flutter Project
+    runs-on: [our-runner]
+    needs: setup_flutter
+    if: github.event_name == 'pull_request'  
 
-  #     - name: Copy env file
-  #       working-directory: ./frontend
-  #       run: cp -n ~/env/.env .
+    steps:
 
-  #     - name: Build Flutter APK
-  #       working-directory: ./frontend
-  #       run: flutter build apk --release
+      - name: Copy env file
+        working-directory: ./frontend
+        run: cp -n ~/env/.env .
 
-  #     - name: Upload APK artifact
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: flutter-apk
-  #         path: frontend/build/app/outputs/flutter-apk/app-release.apk
+      - name: Build Flutter APK
+        working-directory: ./frontend
+        run: flutter build apk --release
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutter-apk
+          path: frontend/build/app/outputs/flutter-apk/app-release.apk
 
   sonarqube:
     name: SonarCloud Analysis
     runs-on: [our-runner]
-    needs: [linting, testing]  # needs flutter_build
+    needs: [linting, testing, flutter_build]  
     if: github.event_name == 'pull_request'  
 
     steps:
@@ -256,7 +256,7 @@ jobs:
     name: Cleanup Runner Disk Space
     runs-on: [our-runner]
     if: github.event_name == 'pull_request'  
-    needs: [setup_flutter, linting, testing, sonarqube] # needs flutter_build
+    needs: [setup_flutter, linting, testing, flutter_build, sonarqube] 
 
     steps:
       - name: Free Up Space - Remove Gradle Cache
