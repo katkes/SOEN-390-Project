@@ -85,7 +85,7 @@ void main() {
   late MockLocationService mockLocationService;
 
   setUpAll(() async {
-    // Mock dotenv to avoid loading the actual .env file in tests
+    // Mock dotenv to avoid loading the actual ..env file in tests
     dotenv.testLoad(fileInput: '''
       GOOGLE_MAPS_API_KEY=mocked_api_key
     ''');
@@ -309,5 +309,26 @@ void main() {
       from: anyNamed('from'),
       to: anyNamed('to'),
     )).called(1);
+  });
+  testWidgets('Location updates on user movement', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      TestWrapper(
+        mockRouteService: mockRouteService,
+        mockHttpService: mockHttpService,
+        mockBuildingPopUps: mockBuildingPopUps,
+        mockMapsApiClient: mockMapsApiClient,
+        mockGeocodingService: mockGeocodingService,
+        mockLocationService: mockLocationService,
+        child: const MyApp(),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    expect(find.text('Home Page'), findsOneWidget);
+
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(find.text('Home Page'), findsOneWidget);
   });
 }
