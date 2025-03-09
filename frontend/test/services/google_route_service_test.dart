@@ -254,5 +254,4 @@ void main() {
       expect(result, isFalse);
     });
   });
-    
 }

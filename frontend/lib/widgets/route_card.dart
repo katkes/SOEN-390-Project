@@ -73,13 +73,13 @@ class RouteCard extends StatelessWidget {
               children: [
                 if (isCrossCampus)
                   const Text("Cross-campus route",
-                      style: TextStyle(
-                          fontSize: 14, fontWeight: FontWeight.bold)),
+                      style:
+                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
                 Flexible(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
-                    children:  
-                    icons.map((icon) => Padding(
+                    children: icons
+                        .map((icon) => Padding(
                               padding: const EdgeInsets.only(left: 8),
                               child: Icon(icon, size: 20),
                             ))

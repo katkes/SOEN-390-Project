@@ -177,7 +177,6 @@ class LocationService {
     return (distanceToSGW <= distanceToLOY) ? "SGW" : "LOY";
   }
 
-
   /// Returns true if less than 2km to SGW campus
   static bool checkIfPositionIsAtSGW(LatLng coordinates) {
     var sgwCoordinates = [45.4973, -73.5784];
@@ -188,10 +187,10 @@ class LocationService {
       sgwCoordinates[0],
       sgwCoordinates[1],
     );
-  
+
     if (distanceToSGW <= 2000) {
       return true;
-    } 
+    }
     return false;
   }
 
@@ -205,13 +204,12 @@ class LocationService {
       loyCoordinates[0],
       loyCoordinates[1],
     );
-  
+
     if (distanceToLOY <= 2000) {
       return true;
-    } 
+    }
     return false;
   }
-    
 
   /// Reset the instance for testing purposes
   static void resetInstance() {
