@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:latlong2/latlong.dart';
 import 'package:soen_390/utils/permission_not_enabled_exception.dart';
 import 'package:geolocator/geolocator.dart' as geo;
 
@@ -176,7 +177,43 @@ class LocationService {
     return (distanceToSGW <= distanceToLOY) ? "SGW" : "LOY";
   }
 
-  // Reset the instance for testing purposes
+
+  /// Returns true if less than 2km to SGW campus
+  static bool checkIfPositionIsAtSGW(LatLng coordinates) {
+    var sgwCoordinates = [45.4973, -73.5784];
+
+    double distanceToSGW = geo.Geolocator.distanceBetween(
+      coordinates.latitude,
+      coordinates.longitude,
+      sgwCoordinates[0],
+      sgwCoordinates[1],
+    );
+  
+    if (distanceToSGW <= 2000) {
+      return true;
+    } 
+    return false;
+  }
+
+  /// Returns true if less than 2km to LOY campus
+  static bool checkIfPositionIsAtLOY(LatLng coordinates) {
+    var loyCoordinates = [45.4586, -73.6401];
+
+    double distanceToLOY = geo.Geolocator.distanceBetween(
+      coordinates.latitude,
+      coordinates.longitude,
+      loyCoordinates[0],
+      loyCoordinates[1],
+    );
+  
+    if (distanceToLOY <= 2000) {
+      return true;
+    } 
+    return false;
+  }
+    
+
+  /// Reset the instance for testing purposes
   static void resetInstance() {
     _instance = null;
   }

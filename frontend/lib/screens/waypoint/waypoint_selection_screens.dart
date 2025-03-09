@@ -120,6 +120,9 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
         to: endPoint,
       );
 
+      final isRouteInterCampus = GoogleRouteService.isRouteInterCampus(from: startPoint, to: endPoint);
+      print("Route involves campus switch: $isRouteInterCampus");
+
       if (routes.isEmpty ||
           !routes.containsKey(googleTransportMode) ||
           routes[googleTransportMode]!.isEmpty) {

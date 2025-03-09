@@ -100,6 +100,32 @@ class GoogleRouteService implements IRouteService {
     return routes;
   }
 
+  /// Checks if a route between two locations is inter-campus.
+  /// 
+  /// A route is considered inter-campus if it starts at Loyola (LOY) and ends at St. George's West (SGW),
+  /// or vice versa, but not necessarily passing through both.
+  /// 
+  /// - [from]: The starting location of the route.
+  /// - [to]: The ending location of the route.
+  ///
+  /// Returns True if the route is inter-campus, false otherwise.
+  static bool isRouteInterCampus({
+    required LatLng from,
+    required LatLng to,
+  }) {
+    final fromSGW = LocationService.checkIfPositionIsAtSGW(from);
+    final fromLOY = LocationService.checkIfPositionIsAtLOY(from);
+
+    final toSGW = LocationService.checkIfPositionIsAtSGW(to);
+    final toLOY = LocationService.checkIfPositionIsAtLOY(to);
+
+    if ((fromLOY && toSGW) || (fromSGW && toLOY)) {
+      return true;
+    }
+    return false;
+  }
+
+
   /// Fetches routes from Google Maps API.
   ///
   /// - [from]: The starting location as `LatLng`.

@@ -210,4 +210,49 @@ void main() {
       expect(selectedRoute, isNull);
     });
   });
+
+  group('isRouteInterCampus Tests', () {
+    test('returns true when route is from LOY to SGW', () {
+      // LOY campus coordinates
+      final from = const LatLng(45.4586, -73.6401);
+      // SGW campus coordinates
+      final to = const LatLng(45.4973, -73.5784);
+      final result = GoogleRouteService.isRouteInterCampus(from: from, to: to);
+      expect(result, isTrue);
+    });
+
+    test('returns true when route is from SGW to LOY', () {
+      // SGW campus coordinates
+      final from = const LatLng(45.4973, -73.5784);
+      // LOY campus coordinates
+      final to = const LatLng(45.4586, -73.6401);
+      final result = GoogleRouteService.isRouteInterCampus(from: from, to: to);
+      expect(result, isTrue);
+    });
+
+    test('returns false when both locations are at LOY', () {
+      // Both coordinates at LOY campus
+      final from = const LatLng(45.4586, -73.6401);
+      final to = const LatLng(45.4586, -73.6401);
+      final result = GoogleRouteService.isRouteInterCampus(from: from, to: to);
+      expect(result, isFalse);
+    });
+
+    test('returns false when both locations are at SGW', () {
+      // Both coordinates at SGW campus
+      final from = const LatLng(45.4973, -73.5784);
+      final to = const LatLng(45.4973, -73.5784);
+      final result = GoogleRouteService.isRouteInterCampus(from: from, to: to);
+      expect(result, isFalse);
+    });
+
+    test('returns false when route is not inter-campus', () {
+      // Coordinates that are not within either campus radius
+      final from = const LatLng(45.0, -73.0);
+      final to = const LatLng(46.0, -74.0);
+      final result = GoogleRouteService.isRouteInterCampus(from: from, to: to);
+      expect(result, isFalse);
+    });
+  });
+    
 }

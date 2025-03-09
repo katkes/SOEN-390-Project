@@ -452,5 +452,79 @@ void main() {
         expect(campus, 'SGW');
       });
     });
+
+    group('checkIfPositionIsAtSGW Tests', () {
+      test('returns true when position is within 2km of SGW campus', () {
+        // Using the exact SGW coordinates: 45.4973, -73.5784
+        final position = geo.Position(
+          latitude: 45.4973,
+          longitude: -73.5784,
+          timestamp: DateTime.now(),
+          altitude: 0.0,
+          altitudeAccuracy: 0.0,
+          accuracy: 0.0,
+          heading: 0.0,
+          headingAccuracy: 0.0,
+          speed: 0.0,
+          speedAccuracy: 0.0,
+        );
+        expect(LocationService.checkIfPositionIsAtSGW(position), isTrue);
+      });
+
+      test('returns false when position is more than 2km away from SGW campus',
+          () {
+        // Coordinates far from SGW campus
+        final position = geo.Position(
+          latitude: 45.4500,
+          longitude: -73.7000,
+          timestamp: DateTime.now(),
+          altitude: 0.0,
+          altitudeAccuracy: 0.0,
+          accuracy: 0.0,
+          heading: 0.0,
+          headingAccuracy: 0.0,
+          speed: 0.0,
+          speedAccuracy: 0.0,
+        );
+        expect(LocationService.checkIfPositionIsAtSGW(position), isFalse);
+      });
+    });
+
+    group('checkIfPositionIsAtLOY Tests', () {
+      test('returns true when position is within 2km of LOY campus', () {
+        // Using the exact LOY coordinates: 45.4586, -73.6401
+        final position = geo.Position(
+          latitude: 45.4586,
+          longitude: -73.6401,
+          timestamp: DateTime.now(),
+          altitude: 0.0,
+          altitudeAccuracy: 0.0,
+          accuracy: 0.0,
+          heading: 0.0,
+          headingAccuracy: 0.0,
+          speed: 0.0,
+          speedAccuracy: 0.0,
+        );
+        expect(LocationService.checkIfPositionIsAtLOY(position), isTrue);
+      });
+
+      test('returns false when position is more than 2km away from LOY campus',
+          () {
+        // Coordinates far from LOY campus
+        final position = geo.Position(
+          latitude: 45.5000,
+          longitude: -73.5500,
+          timestamp: DateTime.now(),
+          altitude: 0.0,
+          altitudeAccuracy: 0.0,
+          accuracy: 0.0,
+          heading: 0.0,
+          headingAccuracy: 0.0,
+          speed: 0.0,
+          speedAccuracy: 0.0,
+        );
+        expect(LocationService.checkIfPositionIsAtLOY(position), isFalse);
+      });
+    });
   });
 }
