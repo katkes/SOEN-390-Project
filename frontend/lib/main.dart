@@ -197,7 +197,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                           borderRadius: BorderRadius.circular(30),
                           child: MapWidget(
                               location: _currentLocation,
-                            userLocation: _userLiveLocation,
+                              userLocation: _userLiveLocation,
                               routeService: widget.routeService,
                               httpClient: widget.httpService.client,
                               mapsApiClient: _mapsApiClient,

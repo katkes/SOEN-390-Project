@@ -434,7 +434,7 @@ void main() {
     expect(find.byType(PolylineLayer), findsOneWidget);
   });
 
-   testWidgets('MapWidget properly cleans up on dispose',
+  testWidgets('MapWidget properly cleans up on dispose',
       (WidgetTester tester) async {
     final routePoints = [
       const LatLng(45.497856, -73.579588),
