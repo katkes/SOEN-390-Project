@@ -97,6 +97,33 @@ void main() {
       expect(result, true);
       verify(mockLocationService.determinePermissions()).called(1);
     });
+    test(
+        'should return false if permission is denied but position is available',
+        () async {
+      when(testGeolocator.checkPermission())
+          .thenAnswer((_) async => geo.LocationPermission.denied);
+
+      final mockPosition = geo.Position(
+        latitude: 0.0,
+        longitude: 0.0,
+        timestamp: DateTime.now(),
+        altitude: 0.0,
+        accuracy: 0.0,
+        heading: 0.0,
+        speed: 0.0,
+        speedAccuracy: 0.0,
+        altitudeAccuracy: 0,
+        headingAccuracy: 0,
+      );
+      when(testGeolocator.getLastKnownPosition())
+          .thenAnswer((_) async => mockPosition);
+
+      final result = await mockLocationService.getCurrentLocation();
+
+      expect(result, false);
+
+      expect(mockLocationService.currentPosition, equals(mockPosition));
+    });
 
     test('determinePermissions should return false when permission is denied',
         () async {

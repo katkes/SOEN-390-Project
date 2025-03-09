@@ -32,6 +32,7 @@ class MockGeolocatorPlatform extends Mock
     implements geo.GeolocatorPlatform {
   geo.LocationPermission _permission = geo.LocationPermission.whileInUse;
   bool _locationServicesEnabled = true;
+  Future<geo.LocationPermission> Function()? requestPermissionOverride;
 
   /// Sets the mock location permission for testing.
   void setLocationPermission(geo.LocationPermission permission) {
@@ -91,6 +92,7 @@ void main() {
     //LocationService.resetInstance();
 
     mockGeolocatorPlatform = MockGeolocatorPlatform();
+    LocationService.resetInstance();
     locationService = LocationService(
         geolocator: mockGeolocatorPlatform); // Inject mock dependency
 
@@ -441,4 +443,26 @@ void main() {
       });
     });
   });
+    
+    test('convertPositionToLatLng correctly converts geo.Position to LatLng',
+        () {
+      final geo.Position position = geo.Position(
+        latitude: 45.4979,
+        longitude: -73.5796,
+        timestamp: DateTime.now(),
+        accuracy: 1.0,
+        altitude: 0.0,
+        heading: 0.0,
+        speed: 0.0,
+        altitudeAccuracy: 0,
+        headingAccuracy: 0,
+        speedAccuracy: 0.0,
+      );
+
+      final LatLng result =
+          LocationService.instance.convertPositionToLatLng(position);
+
+      expect(result.latitude, 45.4979);
+      expect(result.longitude, -73.5796);
+    });
 }
