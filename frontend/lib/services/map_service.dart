@@ -37,19 +37,17 @@ class MapService {
 
   void selectMarker(LatLng location) {
     _selectedMarkerLocation = location;
-    _startClearTimer();
+    startClearTimer();
   }
 
   LatLng? get selectedMarkerLocation => _selectedMarkerLocation;
 
-  void _startClearTimer() {
+  void startClearTimer() {
     _markerClearTimer?.cancel();
     _markerClearTimer = Timer(const Duration(seconds: 7), () {
       _selectedMarkerLocation = null;
       _markerClearTimer = null;
-      if (onMarkerCleared != null) {
-        onMarkerCleared!();
-      }
+      onMarkerCleared?.call();
     });
   }
 

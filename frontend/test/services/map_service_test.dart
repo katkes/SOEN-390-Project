@@ -92,5 +92,68 @@ void main() {
       expect(polygons.first.points, isNotEmpty);
       expect(polygons.first.points.first, const LatLng(45.5017, -73.5673));
     });
+
+    test('startClearTimer sets timer and clears marker location', () async {
+      // Arrange
+      final LatLng testLocation = const LatLng(45.5017, -73.5673);
+      mapService.selectMarker(testLocation);
+
+      // Act
+      mapService.startClearTimer();
+
+      // Assert
+      expect(mapService.selectedMarkerLocation, equals(testLocation));
+
+      // Wait for the timer to expire
+      await Future.delayed(const Duration(seconds: 8));
+
+      // Verify that the marker location is cleared
+      expect(mapService.selectedMarkerLocation, isNull);
+    });
+
+    test('startClearTimer calls onMarkerCleared callback', () async {
+      // Arrange
+      final LatLng testLocation = const LatLng(45.5017, -73.5673);
+      mapService.selectMarker(testLocation);
+
+      bool callbackCalled = false;
+      mapService.onMarkerCleared = () {
+        callbackCalled = true;
+      };
+
+      // Act
+      mapService.startClearTimer();
+
+      // Wait for the timer to expire
+      await Future.delayed(const Duration(seconds: 8));
+
+      // Verify that the callback was called
+      expect(callbackCalled, isTrue);
+    });
+
+    test('startClearTimer cancels previous timer if called again', () async {
+      // Arrange
+      final LatLng testLocation = const LatLng(45.5017, -73.5673);
+      mapService.selectMarker(testLocation);
+
+      bool callbackCalled = false;
+      mapService.onMarkerCleared = () {
+        callbackCalled = true;
+      };
+
+      // Act
+      mapService.startClearTimer();
+
+      // Wait for a short duration and call _startClearTimer again
+      await Future.delayed(const Duration(seconds: 3));
+      mapService.startClearTimer();
+
+      // Wait for the timer to expire
+      await Future.delayed(const Duration(seconds: 8));
+
+      // Verify that the callback was called only once
+      expect(callbackCalled, isTrue);
+      expect(mapService.selectedMarkerLocation, isNull);
+    });
   });
 }
