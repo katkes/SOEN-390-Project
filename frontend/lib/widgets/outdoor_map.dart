@@ -61,6 +61,7 @@ class _MapWidgetState extends State<MapWidget> {
   late LatLng to;
 
   /// A list of `LatLng` points representing the route path.
+  List<LatLng> routePoints = [];
 
   /// The total distance of the calculated route in meters.
   double distance = 0.0;
@@ -103,6 +104,10 @@ class _MapWidgetState extends State<MapWidget> {
     );
     _loadBuildingLocations();
     _loadBuildingBoundaries();
+    from = widget.location;
+    to = LatLng(
+        widget.location.latitude + 0.005, widget.location.longitude + 0.005);
+    _fetchRoute();
   }
 
   Future<void> _loadBuildingLocations() async {
@@ -132,10 +137,38 @@ class _MapWidgetState extends State<MapWidget> {
     }
   }
 
+  /// Fetches a route from `from` to `to` using the injected `IRouteService`.
+  ///
+  /// The result updates the state with new distance, duration, and route points.
+  Future<void> _fetchRoute() async {
+    final routeResult = await widget.routeService.getRoute(from: from, to: to);
+
+    if (routeResult == null || routeResult.routePoints.isEmpty) {
+      // If no route is found or if the route points list is empty, we can either clear the polyline or handle accordingly
+      setState(() {
+        distance = 0.0;
+        duration = 0.0;
+        routePoints = []; // Clear the route points if no route is found
+      });
+      return;
+    }
+
+    setState(() {
+      distance = routeResult.distance;
+      duration = routeResult.duration;
+      routePoints = routeResult.routePoints;
+    });
+  }
+
   /// Called when the widget's configuration changes. Manages starting or stopping the polyline animation based on changes to the routePoints
   @override
   void didUpdateWidget(MapWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.location != widget.location) {
+      _mapController.move(widget.location, 17.0);
+      from = widget.location;
+      _fetchRoute();
+    }
     if (widget.routePoints != oldWidget.routePoints &&
         widget.routePoints.isNotEmpty) {
       _startPolylineAnimation();
@@ -210,7 +243,6 @@ class _MapWidgetState extends State<MapWidget> {
             initialZoom: 14.0,
             minZoom: 11.0,
             maxZoom: 17.0,
-            // onTap: _handleMapTap,
             interactionOptions: const InteractionOptions(
               flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
             ),
