@@ -1,10 +1,19 @@
 //This test test the functionality of the building_information_popup.dart file
 //It tests upon clicking the marker, the building information is displayed
 
+import 'package:mockito/annotations.dart';  
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:soen_390/widgets/building_information_popup.dart';
+import 'package:soen_390/utils/location_service.dart';
+import 'package:soen_390/services/google_route_service.dart';
+import 'package:soen_390/services/building_to_coordinates.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:soen_390/providers/service_providers.dart';
 
+
+@GenerateMocks([GoogleRouteService, LocationService, GeocodingService])
+import 'building_popover_test.mocks.dart';
 void main() {
   group('BuildingInformationPopup Tests', () {
     testWidgets('renders building information popup correctly', (WidgetTester tester) async {
@@ -149,5 +158,72 @@ void main() {
       expect(find.text(abbreviatedName), findsOneWidget);
       expect(find.text(buildingName), findsNothing);
     });
+    
   });
+ group('BuildingInformationPopup Tests', () {
+    testWidgets('renders building information popup correctly', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: BuildingInformationPopup(
+            buildingName: 'EV Building',
+            buildingAddress: '1515 St. Catherine St. W',
+          ),
+        ),
+      );
+
+      expect(find.text('EV Building'), findsOneWidget);
+      expect(find.text('1515 St. Catherine St. W'), findsOneWidget);
+      expect(find.byType(ElevatedButton), findsOneWidget);
+      expect(find.byIcon(Icons.arrow_forward), findsOneWidget);
+    });
+
+    testWidgets('clicking marker shows the popup', (WidgetTester tester) async {
+      final GlobalKey key = GlobalKey();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: GestureDetector(
+              key: key,
+              onTap: () {
+                showDialog(
+                  context: key.currentContext!,
+                  builder: (context) => const BuildingInformationPopup(
+                    buildingName: 'EV Building',
+                    buildingAddress: '1515 St. Catherine St. W',
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byKey(key));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(BuildingInformationPopup), findsOneWidget);
+    });
+
+    testWidgets('opens waypoint selection on button press', (WidgetTester tester) async {
+      await tester.pumpWidget(
+    ProviderScope(
+      overrides: [
+        routeServiceProvider.overrideWithValue(MockGoogleRouteService()),
+        locationServiceProvider.overrideWithValue(MockLocationService()),
+        buildingToCoordinatesProvider.overrideWithValue(MockGeocodingService()),
+      ],
+      child: const MaterialApp(
+        home: BuildingInformationPopup(
+          buildingName: 'EV Building',
+          buildingAddress: '1515 St. Catherine St. W',
+        ),
+      ),
+    ),
+  );
+
+      await tester.tap(find.byIcon(Icons.arrow_forward));
+      await tester.pumpAndSettle();
+    });
+  });
+
 }

@@ -27,6 +27,7 @@ class MapService {
   static const Color polygonBorderColor = Colors.red;
   static const double markerSize = 40.0;
   static const double borderStrokeWidth = 2.0;
+  
 
   LatLng? _selectedMarkerLocation;
   Timer? _markerClearTimer;
@@ -157,32 +158,6 @@ class MapService {
     }
     return polygons;
   }
-
-  Future<LatLng?> searchBuilding(String buildingName) async {
-    try {
-      final String data = await rootBundle
-          .loadString('assets/geojson_files/building_list.geojson');
-      final Map<String, dynamic> jsonData = jsonDecode(data);
-
-      for (var feature in jsonData['features']) {
-        var properties = feature['properties'];
-        var geometry = feature['geometry'];
-
-        if (geometry?['type'] == 'Point' && geometry['coordinates'] is List) {
-          String name = properties?['Building Long Name'] ?? "Unknown";
-          if (name.toLowerCase().contains(buildingName.toLowerCase())) {
-            double lon = geometry['coordinates'][0];
-            double lat = geometry['coordinates'][1];
-            return LatLng(lat, lon);
-          }
-        }
-      }
-    } catch (e) {
-      debugPrint('Error searching for building: $e');
-    }
-    return null;
-  }
-
   Future<List<String>> getBuildingSuggestions(String query) async {
     try {
       if (query.isEmpty) return [];
@@ -236,25 +211,6 @@ class MapService {
       }
     } catch (e) {
       debugPrint('Error searching for building with details: $e');
-    }
-    return null;
-  }
-
-  Future<String?> getCampusByBuilding(String buildingName) async {
-    try {
-      final String data = await rootBundle
-          .loadString('assets/geojson_files/building_list.geojson');
-      final Map<String, dynamic> jsonData = jsonDecode(data);
-
-      for (var feature in jsonData['features']) {
-        var properties = feature['properties'];
-
-        if (properties?['Building Long Name'] == buildingName) {
-          return properties?['Campus'] ?? "Unknown Campus";
-        }
-      }
-    } catch (e) {
-      debugPrint('Error loading campus data: $e');
     }
     return null;
   }
