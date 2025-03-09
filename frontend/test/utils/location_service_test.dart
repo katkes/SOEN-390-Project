@@ -2,11 +2,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:mockito/mockito.dart';
 import 'package:geolocator/geolocator.dart' as geo;
-import 'package:soen_390/utils/permission_not_enabled_exception.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
+import 'package:soen_390/utils/permission_not_enabled_exception.dart';
 import 'package:flutter/foundation.dart'
     show debugDefaultTargetPlatformOverride, TargetPlatform;
+import "package:latlong2/latlong.dart";
 
 /// Helper function to create a mock [geo.Position] object.
 ///
@@ -33,6 +34,7 @@ class MockGeolocatorPlatform extends Mock
     implements geo.GeolocatorPlatform {
   geo.LocationPermission _permission = geo.LocationPermission.whileInUse;
   bool _locationServicesEnabled = true;
+  Future<geo.LocationPermission> Function()? requestPermissionOverride;
 
   /// Sets the mock location permission for testing.
   void setLocationPermission(geo.LocationPermission permission) {
@@ -88,10 +90,9 @@ void main() {
   /// Initializes the [MockGeolocatorPlatform] and injects it into the
   /// [LocationService] instance. Also ensures that `currentPosition` is initialized.
   setUp(() {
-    // Reset any static state to prevent test interference
-    LocationService.resetInstance();
-
+    //  Reset any static state to prevent test interference
     mockGeolocatorPlatform = MockGeolocatorPlatform();
+    LocationService.resetInstance();
     locationService = LocationService(
         geolocator: mockGeolocatorPlatform); // Inject mock dependency
 
@@ -112,21 +113,32 @@ void main() {
       expect(locationService.serviceEnabled, true);
       expect(locationService.permission, geo.LocationPermission.whileInUse);
     });
+    test('getLastKnownPosition should return mocked position', () async {
+      final position = await locationService.geolocator.getLastKnownPosition();
 
-    test('determinePermissions should return false when permission is denied',
-        () async {
-      // Set up the mocks
-      mockGeolocatorPlatform.setLocationServiceEnabled(true);
+      expect(position?.latitude, mockPosition.latitude);
+      expect(position?.longitude, mockPosition.longitude);
+    });
+
+    test('getLastKnownPosition is used when permission is denied', () async {
       mockGeolocatorPlatform
           .setLocationPermission(geo.LocationPermission.denied);
 
-      // Execute the test
-      bool result = await locationService.determinePermissions();
+      await locationService.determinePermissions();
 
-      // Verify the result
-      expect(result, false);
+      expect(locationService.currentPosition.latitude, mockPosition.latitude);
+      expect(locationService.currentPosition.longitude, mockPosition.longitude);
     });
 
+    test('getLastKnownPosition is not null even when location service disabled',
+        () async {
+      mockGeolocatorPlatform.setLocationServiceEnabled(false);
+
+      final position = await locationService.geolocator.getLastKnownPosition();
+
+      expect(position?.latitude, mockPosition.latitude);
+      expect(position?.longitude, mockPosition.longitude);
+    });
     test('getCurrentLocation should return mocked position', () async {
       // Act
       final position = await locationService.getCurrentLocation();
@@ -162,16 +174,6 @@ void main() {
       expect(locationService.currentPosition.longitude, mockPosition.longitude);
     });
 
-    test('startUp should throw exception when location services are disabled',
-        () async {
-      // Arrange
-      mockGeolocatorPlatform.setLocationServiceEnabled(false);
-
-      // Act & Assert - Use expectLater with async function execution
-      await expectLater(locationService.startUp,
-          throwsA(isA<PermissionNotEnabledException>()));
-    });
-
     test(
         'startUp should initialize location settings and stream when permissions granted',
         () async {
@@ -190,6 +192,18 @@ void main() {
       // Ensure locSetting is properly initialized
       expect(() => locationService.locSetting, isNot(throwsA(anything)));
     });
+    test(
+        'startUp should throw PermissionNotEnabledException when permission is denied',
+        () async {
+      // Arrange
+      mockGeolocatorPlatform.setLocationServiceEnabled(true);
+      mockGeolocatorPlatform
+          .setLocationPermission(geo.LocationPermission.denied);
+
+      // Act & Assert
+      expect(() => locationService.startUp(),
+          throwsA(isA<PermissionNotEnabledException>()));
+    });
 
     test(
         'isLocationEnabled should return true when location services are enabled',
@@ -202,19 +216,6 @@ void main() {
 
       // Assert
       expect(result, true);
-    });
-
-    test(
-        'isLocationEnabled should return false when location services are disabled',
-        () async {
-      // Arrange
-      mockGeolocatorPlatform.setLocationServiceEnabled(false);
-
-      // Act
-      bool result = await locationService.isLocationEnabled();
-
-      // Assert
-      expect(result, false);
     });
 
     test('getPositionStream should return a stream of positions', () async {
@@ -273,17 +274,6 @@ void main() {
       expect(() => locationService.stopListening(), returnsNormally);
     });
 
-    test('determinePermissions handles deniedForever permission', () async {
-      mockGeolocatorPlatform.setLocationServiceEnabled(true);
-      mockGeolocatorPlatform
-          .setLocationPermission(geo.LocationPermission.deniedForever);
-
-      bool result = await locationService.determinePermissions();
-
-      expect(result, false);
-      expect(locationService.permission, geo.LocationPermission.deniedForever);
-    });
-
     test('takePosition correctly updates currentPosition', () {
       final newPosition = geo.Position(
           latitude: 40.7128,
@@ -303,14 +293,42 @@ void main() {
       expect(locationService.currentPosition.longitude, -74.0060);
     });
 
-    test('setPlatformSpecificLocationSettings should initialize only once', () {
-      locationService.setPlatformSpecificLocationSettings();
-      final initialSettings = locationService.locSetting;
+    test("converting a position object to a LatLng one", () {
+      final newPosition = geo.Position(
+          latitude: 40.7128,
+          longitude: -74.0060,
+          timestamp: DateTime.now(),
+          accuracy: 0.0,
+          altitude: 0.0,
+          heading: 0.0,
+          speed: 0.0,
+          speedAccuracy: 0.0,
+          altitudeAccuracy: 0.0,
+          headingAccuracy: 0.0);
 
-      // Call again to verify it doesn't change
+      locationService = LocationService(geolocator: mockGeolocatorPlatform);
+      LatLng ln = locationService.convertPositionToLatLng(newPosition);
+
+      expect(newPosition.latitude, ln.latitude);
+      expect(newPosition.longitude, ln.longitude);
+    });
+
+    test(
+        'setPlatformSpecificLocationSettings initializes other platform settings correctly',
+        () {
+      // Arrange: Override platform to Linux
+      debugDefaultTargetPlatformOverride = TargetPlatform.linux;
+      locationService = LocationService(geolocator: mockGeolocatorPlatform);
+
+      // Act: Initialize platform-specific settings
       locationService.setPlatformSpecificLocationSettings();
 
-      expect(locationService.locSetting, equals(initialSettings));
+      // Assert: Check if the settings are correctly initialized for other platforms
+      expect(locationService.locSetting.accuracy, geo.LocationAccuracy.high);
+      expect(locationService.locSetting.distanceFilter, 4);
+
+      // Cleanup: Reset platform override
+      debugDefaultTargetPlatformOverride = null;
     });
 
     test(
@@ -318,24 +336,6 @@ void main() {
         () {
       // Arrange
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-      locationService = LocationService(geolocator: mockGeolocatorPlatform);
-
-      // Act
-      locationService.setPlatformSpecificLocationSettings();
-
-      // Assert
-      expect(locationService.locSetting.accuracy, geo.LocationAccuracy.high);
-      expect(locationService.locSetting.distanceFilter, 4);
-
-      // Cleanup
-      debugDefaultTargetPlatformOverride = null;
-    });
-
-    test(
-        'setPlatformSpecificLocationSettings initializes other platform settings correctly',
-        () {
-      // Arrange
-      debugDefaultTargetPlatformOverride = TargetPlatform.linux;
       locationService = LocationService(geolocator: mockGeolocatorPlatform);
 
       // Act

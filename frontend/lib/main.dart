@@ -8,11 +8,12 @@ import 'package:soen_390/widgets/campus_switch_button.dart';
 import 'package:soen_390/widgets/indoor_navigation_button.dart';
 import 'package:soen_390/widgets/outdoor_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:soen_390/providers/service_providers.dart'; // Import providers
-import 'package:soen_390/services/http_service.dart'; // Import HttpService
-import 'package:soen_390/services/interfaces/route_service_interface.dart'; // Import IRouteService
+import 'package:soen_390/providers/service_providers.dart';
+import 'package:soen_390/services/http_service.dart';
+import 'package:soen_390/services/interfaces/route_service_interface.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:soen_390/services/building_info_api.dart';
+import 'package:soen_390/utils/location_service.dart';
 
 /// The entry point of the application.
 ///
@@ -87,9 +88,13 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
 
   /// The user's current location on the map.
   LatLng _currentLocation = const LatLng(45.497856, -73.579588);
+  LatLng _userLiveLocation = const LatLng(5.497856, -73.579588);
+
   // http.Client? _httpClient;
   late BuildingPopUps _buildingPopUps;
   late GoogleMapsApiClient _mapsApiClient;
+
+  late LocationService _locationService;
 
   @override
   void initState() {
@@ -98,11 +103,22 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
         apiKey: dotenv.env['GOOGLE_MAPS_API_KEY']!,
         client: widget.httpService.client);
     _buildingPopUps = BuildingPopUps(mapsApiClient: _mapsApiClient);
+
+    //This initializes the location service and listens for updates
+    _locationService = LocationService.instance;
+    _locationService.startUp().then((_) {
+      _locationService.getLatLngStream().listen((LatLng location) {
+        setState(() {
+          _userLiveLocation = location;
+        });
+      });
+    }).catchError((e) {});
   }
 
   @override
   void dispose() {
     super.dispose();
+    _locationService.stopListening();
   }
 
   void _onItemTapped(int index) {
@@ -174,6 +190,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                           borderRadius: BorderRadius.circular(30),
                           child: MapWidget(
                             location: _currentLocation,
+                            userLocation: _userLiveLocation,
                             routeService: widget.routeService,
                             httpClient: widget.httpService.client,
                             mapsApiClient: _mapsApiClient,

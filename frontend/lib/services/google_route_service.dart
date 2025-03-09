@@ -28,7 +28,7 @@ class GoogleRouteService implements IRouteService {
   ///
   /// - [locationService]: Manages location tracking.
   /// - [httpService]: Handles HTTP requests.
-  /// - [apiKey]: Optional API key for requests. Defaults to the value in `.env`.
+  /// - [apiKey]: Optional API key for requests. Defaults to the value in `..env`.
   ///
   /// Throws an exception if the API key is missing.
   GoogleRouteService({
@@ -38,7 +38,7 @@ class GoogleRouteService implements IRouteService {
   }) : apiKey = apiKey ?? dotenv.env['GOOGLE_MAPS_API_KEY'] ?? "" {
     if (this.apiKey.isEmpty) {
       throw Exception(
-          "ERROR: Missing Google Maps API Key! Provide one or check your .env file.");
+          "ERROR: Missing Google Maps API Key! Provide one or check your ..env file.");
     }
   }
 

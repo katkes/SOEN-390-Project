@@ -1,8 +1,23 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <!-- These are all the permission we will (probably) need for the location services. -->
+    <!--    For accurate location fetching-->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <!--    For general location fetching-->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <!--    For fetching location while app is in background-->
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" android:label="ACCESS_BACKGROUND_LOCATION" android:permission="android.permission.ACCESS_FINE_LOCATION"/>
+    <!--    Necessary to fetch location updates continuously-->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+
+
     <application
         android:label="soen_390"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        >
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -31,6 +46,7 @@
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
+    <uses-permission android:name="android.permission.INTERNET" />
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and
          https://developer.android.com/reference/android/content/Intent#ACTION_PROCESS_TEXT.
