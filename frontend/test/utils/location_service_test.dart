@@ -113,7 +113,32 @@ void main() {
       expect(locationService.serviceEnabled, true);
       expect(locationService.permission, geo.LocationPermission.whileInUse);
     });
+    test('getLastKnownPosition should return mocked position', () async {
+      final position = await locationService.geolocator.getLastKnownPosition();
 
+      expect(position?.latitude, mockPosition.latitude);
+      expect(position?.longitude, mockPosition.longitude);
+    });
+
+    test('getLastKnownPosition is used when permission is denied', () async {
+      mockGeolocatorPlatform
+          .setLocationPermission(geo.LocationPermission.denied);
+
+      await locationService.determinePermissions();
+
+      expect(locationService.currentPosition.latitude, mockPosition.latitude);
+      expect(locationService.currentPosition.longitude, mockPosition.longitude);
+    });
+
+    test('getLastKnownPosition is not null even when location service disabled',
+        () async {
+      mockGeolocatorPlatform.setLocationServiceEnabled(false);
+
+      final position = await locationService.geolocator.getLastKnownPosition();
+
+      expect(position?.latitude, mockPosition.latitude);
+      expect(position?.longitude, mockPosition.longitude);
+    });
     test('getCurrentLocation should return mocked position', () async {
       // Act
       final position = await locationService.getCurrentLocation();
