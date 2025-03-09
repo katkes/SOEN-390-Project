@@ -275,6 +275,7 @@ void main() {
       await tester.pumpAndSettle();
     });
 
+    //test that the map widget is rendered with empty route points initially
     testWidgets('MyPage renders MapWidget with empty routePoints initially',
         (WidgetTester tester) async {
       // Pump the MaterialApp with MyPage as the home widget.
