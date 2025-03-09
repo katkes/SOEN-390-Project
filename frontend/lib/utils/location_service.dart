@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:latlong2/latlong.dart';
 import 'package:soen_390/utils/permission_not_enabled_exception.dart';
 import 'package:geolocator/geolocator.dart' as geo;
-import 'package:latlong2/latlong.dart';
 import "package:flutter/foundation.dart";
 
 /// Service for managing location-related functionality.
