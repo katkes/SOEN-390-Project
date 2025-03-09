@@ -1,4 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:geolocator_platform_interface/geolocator_platform_interface.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:mockito/mockito.dart';
 import 'package:geolocator/geolocator.dart' as geo;
 import 'package:soen_390/utils/permission_not_enabled_exception.dart';
@@ -456,36 +458,15 @@ void main() {
     group('checkIfPositionIsAtSGW Tests', () {
       test('returns true when position is within 2km of SGW campus', () {
         // Using the exact SGW coordinates: 45.4973, -73.5784
-        final position = geo.Position(
-          latitude: 45.4973,
-          longitude: -73.5784,
-          timestamp: DateTime.now(),
-          altitude: 0.0,
-          altitudeAccuracy: 0.0,
-          accuracy: 0.0,
-          heading: 0.0,
-          headingAccuracy: 0.0,
-          speed: 0.0,
-          speedAccuracy: 0.0,
-        );
+        const position = LatLng(45.4973, -73.5784);
         expect(LocationService.checkIfPositionIsAtSGW(position), isTrue);
       });
 
       test('returns false when position is more than 2km away from SGW campus',
           () {
         // Coordinates far from SGW campus
-        final position = geo.Position(
-          latitude: 45.4500,
-          longitude: -73.7000,
-          timestamp: DateTime.now(),
-          altitude: 0.0,
-          altitudeAccuracy: 0.0,
-          accuracy: 0.0,
-          heading: 0.0,
-          headingAccuracy: 0.0,
-          speed: 0.0,
-          speedAccuracy: 0.0,
-        );
+        const position = LatLng(45.4500, -73.7000);
+
         expect(LocationService.checkIfPositionIsAtSGW(position), isFalse);
       });
     });
@@ -493,36 +474,14 @@ void main() {
     group('checkIfPositionIsAtLOY Tests', () {
       test('returns true when position is within 2km of LOY campus', () {
         // Using the exact LOY coordinates: 45.4586, -73.6401
-        final position = geo.Position(
-          latitude: 45.4586,
-          longitude: -73.6401,
-          timestamp: DateTime.now(),
-          altitude: 0.0,
-          altitudeAccuracy: 0.0,
-          accuracy: 0.0,
-          heading: 0.0,
-          headingAccuracy: 0.0,
-          speed: 0.0,
-          speedAccuracy: 0.0,
-        );
+        const position = LatLng(45.4586, -73.6401);
         expect(LocationService.checkIfPositionIsAtLOY(position), isTrue);
       });
 
       test('returns false when position is more than 2km away from LOY campus',
           () {
         // Coordinates far from LOY campus
-        final position = geo.Position(
-          latitude: 45.5000,
-          longitude: -73.5500,
-          timestamp: DateTime.now(),
-          altitude: 0.0,
-          altitudeAccuracy: 0.0,
-          accuracy: 0.0,
-          heading: 0.0,
-          headingAccuracy: 0.0,
-          speed: 0.0,
-          speedAccuracy: 0.0,
-        );
+        const position = LatLng(45.5000, -73.5500);
         expect(LocationService.checkIfPositionIsAtLOY(position), isFalse);
       });
     });
