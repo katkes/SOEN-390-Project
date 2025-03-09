@@ -155,5 +155,48 @@ void main() {
       expect(callbackCalled, isTrue);
       expect(mapService.selectedMarkerLocation, isNull);
     });
+
+    test('selectMarker correctly identifies selected marker', () async {
+      // Arrange
+      final LatLng testLocation = const LatLng(45.4966, -73.58609);
+      mapService.selectMarker(testLocation);
+
+      // Act
+      final markers = await mapService
+          .loadBuildingMarkers((lat, lon, name, address, position) {});
+
+      // Assert
+      final selectedMarker = markers.firstWhere(
+          (marker) =>
+              marker.point.latitude == testLocation.latitude &&
+              marker.point.longitude == testLocation.longitude,
+          orElse: () => throw Exception('Marker not found'));
+      expect(selectedMarker, isNotNull);
+      expect(selectedMarker.point, equals(testLocation));
+    });
+
+    test('loadBuildingMarkers handles errors gracefully', () async {
+      // Arrange
+      const String invalidGeoJson = '''
+  {
+    "type": "InvalidFeatureCollection",
+    "features": []
+  }
+  ''';
+
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMessageHandler(
+        'flutter/assets',
+        (message) async => ByteData.view(
+            Uint8List.fromList(utf8.encode(invalidGeoJson)).buffer),
+      );
+
+      // Act
+      final markers = await mapService
+          .loadBuildingMarkers((lat, lon, name, address, position) {});
+
+      // Assert
+      expect(markers, isEmpty);
+    });
   });
 }
