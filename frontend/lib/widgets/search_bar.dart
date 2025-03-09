@@ -13,14 +13,15 @@ class SearchBarWidget extends StatefulWidget {
   final TextEditingController controller;
   final Function(LatLng)? onLocationFound;
   final Function(LatLng)? onBuildingSelected;
-  final Function(String)? onCampusSelected; // New callback to pass campus to CampusSwitch
+  final Function(String)?
+      onCampusSelected; // New callback to pass campus to CampusSwitch
 
   const SearchBarWidget({
     super.key,
     required this.controller,
     this.onLocationFound,
     this.onBuildingSelected,
-    this.onCampusSelected,  // Accept campus selection callback
+    this.onCampusSelected, // Accept campus selection callback
   });
 
   @override
@@ -53,7 +54,8 @@ class SearchBarWidgetState extends State<SearchBarWidget> {
 
   void _performSearch(String query) async {
     if (query.isNotEmpty) {
-      final buildingDetails = await _mapService.searchBuildingWithDetails(query);
+      final buildingDetails =
+          await _mapService.searchBuildingWithDetails(query);
 
       if (buildingDetails != null) {
         final location = buildingDetails['location'] as LatLng;
@@ -61,14 +63,15 @@ class SearchBarWidgetState extends State<SearchBarWidget> {
         widget.onBuildingSelected?.call(location);
 
         campus = await _mapService.findCampusForBuilding(query);
-        if(campus == "LOY"){
+        if (campus == "LOY") {
           campus = "Loyola";
         }
         debugPrint("Building belongs to: ${campus ?? 'Unknown'}");
 
         // Pass the campus value to CampusSwitch via the callback
         if (campus != null) {
-          widget.onCampusSelected?.call(campus!);  // Notify the CampusSwitch widget of the campus
+          widget.onCampusSelected
+              ?.call(campus!); // Notify the CampusSwitch widget of the campus
         }
       } else {
         if (mounted) {
@@ -213,4 +216,3 @@ class SearchBarWidgetState extends State<SearchBarWidget> {
     );
   }
 }
-

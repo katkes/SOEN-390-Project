@@ -1,7 +1,7 @@
 //This test test the functionality of the building_information_popup.dart file
 //It tests upon clicking the marker, the building information is displayed
 
-import 'package:mockito/annotations.dart';  
+import 'package:mockito/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:soen_390/widgets/building_information_popup.dart';
@@ -11,12 +11,13 @@ import 'package:soen_390/services/building_to_coordinates.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:soen_390/providers/service_providers.dart';
 
-
 @GenerateMocks([GoogleRouteService, LocationService, GeocodingService])
 import 'building_popover_test.mocks.dart';
+
 void main() {
   group('BuildingInformationPopup Tests', () {
-    testWidgets('renders building information popup correctly', (WidgetTester tester) async {
+    testWidgets('renders building information popup correctly',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: BuildingInformationPopup(
@@ -32,7 +33,8 @@ void main() {
       expect(find.byIcon(Icons.arrow_forward), findsOneWidget);
     });
 
-    testWidgets('displays photo if URL is provided', (WidgetTester tester) async {
+    testWidgets('displays photo if URL is provided',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: BuildingInformationPopup(
@@ -46,7 +48,8 @@ void main() {
       expect(find.byType(Image), findsOneWidget);
     });
 
-    testWidgets('displays building name and address correctly', (WidgetTester tester) async {
+    testWidgets('displays building name and address correctly',
+        (WidgetTester tester) async {
       const buildingName = 'EV Building';
       const buildingAddress = '1515 St. Catherine St. W';
 
@@ -63,7 +66,8 @@ void main() {
       expect(find.text(buildingAddress), findsOneWidget);
     });
 
-    testWidgets('displays default image when no photo URL is provided', (WidgetTester tester) async {
+    testWidgets('displays default image when no photo URL is provided',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: BuildingInformationPopup(
@@ -75,11 +79,14 @@ void main() {
       );
 
       final image = find.byType(Image).evaluate().single.widget as Image;
-      expect((image.image as AssetImage).assetName, 'assets/images/buildings/hall.png');
+      expect((image.image as AssetImage).assetName,
+          'assets/images/buildings/hall.png');
     });
 
-    testWidgets('abbreviates long building names correctly', (WidgetTester tester) async {
-      const longBuildingName = 'Very Long Building Name That Should Be Abbreviated';
+    testWidgets('abbreviates long building names correctly',
+        (WidgetTester tester) async {
+      const longBuildingName =
+          'Very Long Building Name That Should Be Abbreviated';
       const buildingAddress = '1515 St. Catherine St. W';
       final expectedAbbreviation = '${longBuildingName.split(" ")[0]} Bldg';
 
@@ -124,7 +131,8 @@ void main() {
     });
 
     // New test: checks abbreviated building name with name length under threshold
-    testWidgets('abbreviates building name when short', (WidgetTester tester) async {
+    testWidgets('abbreviates building name when short',
+        (WidgetTester tester) async {
       const shortBuildingName = 'EV Building';
       const buildingAddress = '1515 St. Catherine St. W';
 
@@ -141,8 +149,10 @@ void main() {
     });
 
     // New test: ensures abbreviated building name handles more complex name (test lines 38 and 39)
-    testWidgets('handles long building name abbreviation correctly', (WidgetTester tester) async {
-      const buildingName = 'Very Very Long Building Name That Should Be Abbreviated';
+    testWidgets('handles long building name abbreviation correctly',
+        (WidgetTester tester) async {
+      const buildingName =
+          'Very Very Long Building Name That Should Be Abbreviated';
       const buildingAddress = '1515 St. Catherine St. W';
       final abbreviatedName = '${buildingName.split(" ")[0]} Bldg';
 
@@ -158,10 +168,10 @@ void main() {
       expect(find.text(abbreviatedName), findsOneWidget);
       expect(find.text(buildingName), findsNothing);
     });
-    
   });
- group('BuildingInformationPopup Tests', () {
-    testWidgets('renders building information popup correctly', (WidgetTester tester) async {
+  group('BuildingInformationPopup Tests', () {
+    testWidgets('renders building information popup correctly',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: BuildingInformationPopup(
@@ -204,26 +214,27 @@ void main() {
       expect(find.byType(BuildingInformationPopup), findsOneWidget);
     });
 
-    testWidgets('opens waypoint selection on button press', (WidgetTester tester) async {
+    testWidgets('opens waypoint selection on button press',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
-    ProviderScope(
-      overrides: [
-        routeServiceProvider.overrideWithValue(MockGoogleRouteService()),
-        locationServiceProvider.overrideWithValue(MockLocationService()),
-        buildingToCoordinatesProvider.overrideWithValue(MockGeocodingService()),
-      ],
-      child: const MaterialApp(
-        home: BuildingInformationPopup(
-          buildingName: 'EV Building',
-          buildingAddress: '1515 St. Catherine St. W',
+        ProviderScope(
+          overrides: [
+            routeServiceProvider.overrideWithValue(MockGoogleRouteService()),
+            locationServiceProvider.overrideWithValue(MockLocationService()),
+            buildingToCoordinatesProvider
+                .overrideWithValue(MockGeocodingService()),
+          ],
+          child: const MaterialApp(
+            home: BuildingInformationPopup(
+              buildingName: 'EV Building',
+              buildingAddress: '1515 St. Catherine St. W',
+            ),
+          ),
         ),
-      ),
-    ),
-  );
+      );
 
       await tester.tap(find.byIcon(Icons.arrow_forward));
       await tester.pumpAndSettle();
     });
   });
-
 }

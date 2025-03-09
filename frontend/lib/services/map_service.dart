@@ -27,7 +27,6 @@ class MapService {
   static const Color polygonBorderColor = Colors.red;
   static const double markerSize = 40.0;
   static const double borderStrokeWidth = 2.0;
-  
 
   LatLng? _selectedMarkerLocation;
   Timer? _markerClearTimer;
@@ -158,6 +157,7 @@ class MapService {
     }
     return polygons;
   }
+
   Future<List<String>> getBuildingSuggestions(String query) async {
     try {
       if (query.isEmpty) return [];
@@ -227,7 +227,8 @@ class MapService {
 
           // Check if the building name matches the one in the GeoJSON data
           if (properties?['Building Long Name'] == buildingName) {
-            return properties?['Campus'] ?? "Unknown Campus"; // Return the campus name
+            return properties?['Campus'] ??
+                "Unknown Campus"; // Return the campus name
           }
         }
       }
@@ -236,6 +237,4 @@ class MapService {
     }
     return null; // Return null if no matching building is found
   }
-
-
 }

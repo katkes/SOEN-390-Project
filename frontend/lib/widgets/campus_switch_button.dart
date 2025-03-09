@@ -14,9 +14,9 @@ class CampusSwitch extends StatefulWidget {
     required this.onLocationChanged,
     required this.selectedCampus,
   }) : assert(
-  selectedCampus == 'SGW' || selectedCampus == 'Loyola',
-  'selectedCampus must be either "SGW" or "Loyola"',
-  );
+          selectedCampus == 'SGW' || selectedCampus == 'Loyola',
+          'selectedCampus must be either "SGW" or "Loyola"',
+        );
 
   @override
   State<CampusSwitch> createState() => CampusSwitchState();
@@ -66,8 +66,8 @@ class CampusSwitchState extends State<CampusSwitch> {
 
       // Retrieve the current location and determine the closest campus.
       final newBuilding = (location_service.LocationService.getClosestCampus(
-          await locationService.getCurrentLocation()) ==
-          "LOY")
+                  await locationService.getCurrentLocation()) ==
+              "LOY")
           ? "Loyola"
           : "SGW";
 

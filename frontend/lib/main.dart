@@ -89,7 +89,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
 
   final GlobalKey<MapWidgetState> _mapWidgetKey = GlobalKey<MapWidgetState>();
 
-   void _handleBuildingSelected(LatLng location) {
+  void _handleBuildingSelected(LatLng location) {
     _mapWidgetKey.currentState?.selectMarker(location);
   }
 
@@ -128,7 +128,8 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
   }
 
   void _openWaypointSelection() {
-    final buildingToCoordinatesService = ref.watch(buildingToCoordinatesProvider);
+    final buildingToCoordinatesService =
+        ref.watch(buildingToCoordinatesProvider);
     final locationService = ref.watch(locationServiceProvider);
     final routeService = ref.watch(routeServiceProvider);
 
@@ -197,9 +198,9 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                     right: 0,
                     child: Center(
                       child: CampusSwitch(
-                        selectedCampus: selectedCampus, 
-                        onSelectionChanged: _handleCampusSelected, 
-                        onLocationChanged: _handleLocationChanged, 
+                        selectedCampus: selectedCampus,
+                        onSelectionChanged: _handleCampusSelected,
+                        onLocationChanged: _handleLocationChanged,
                       ),
                     ),
                   ),
@@ -208,8 +209,8 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                     left: 0,
                     child: SearchBarWidget(
                       controller: searchController,
-                      onCampusSelected: _handleCampusSelected, 
-                      onLocationFound: _handleLocationChanged, 
+                      onCampusSelected: _handleCampusSelected,
+                      onLocationFound: _handleLocationChanged,
                       onBuildingSelected: _handleBuildingSelected,
                     ),
                   ),
@@ -240,4 +241,3 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
     );
   }
 }
-
