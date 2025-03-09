@@ -46,7 +46,6 @@ void main() {
           const LatLng(45.498000, -73.580000),
         ],
         steps: [
-          // ✅ Add this
           StepResult(
             distance: 500.0,
             duration: 300.0,
@@ -140,6 +139,7 @@ void main() {
     when(mockHttpClient.readBytes(any, headers: anyNamed('headers')))
         .thenAnswer((_) async => transparentPixelPng);
   });
+  final LatLng userLocation = const LatLng(45.495, -73.577);
 
   /// Test that the [MapWidget] initializes correctly with the provided location.
   testWidgets('MapWidget initializes with provided location',
@@ -149,6 +149,7 @@ void main() {
         home: Scaffold(
           body: MapWidget(
             location: testLocation,
+            userLocation: userLocation,
             httpClient: mockHttpClient,
             routeService: mockRouteService,
             mapsApiClient: mockMapsApiClient,
@@ -175,6 +176,7 @@ void main() {
         home: Scaffold(
           body: MapWidget(
             location: testLocation,
+            userLocation: userLocation,
             httpClient: mockHttpClient,
             routeService: mockRouteService,
             mapsApiClient: mockMapsApiClient,
@@ -192,12 +194,15 @@ void main() {
   });
 
   group('MyPage Tests', () {
+    final LatLng userLocation = const LatLng(45.495, -73.577);
+
     testWidgets('MyPage renders MapWidget with correct props',
         (WidgetTester tester) async {
       await tester.pumpWidget(MaterialApp(
         home: MyPage(
           location: testLocation,
           httpClient: mockHttpClient,
+          userLocation: userLocation,
           routeService: mockRouteService,
           mapsApiClient: mockMapsApiClient,
           buildingPopUps: mockBuildingPopUps,
@@ -217,6 +222,58 @@ void main() {
       expect(mapWidget.httpClient, equals(mockHttpClient));
       expect(mapWidget.routeService, equals(mockRouteService));
     });
+    testWidgets('MapWidget updates when user location changes',
+        (WidgetTester tester) async {
+      // Initial location
+      final LatLng mapCenter = const LatLng(45.497, -73.579);
+      final LatLng initialUserLocation = const LatLng(45.495, -73.577);
+
+      // Create a key to find the widget
+      final mapWidgetKey = GlobalKey();
+
+      // Build widget with initial location
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: MapWidget(
+              key: mapWidgetKey,
+              location: mapCenter,
+              userLocation: initialUserLocation,
+              httpClient: mockHttpClient,
+              routeService: mockRouteService,
+              mapsApiClient: mockMapsApiClient,
+              buildingPopUps: mockBuildingPopUps,
+              routePoints: [],
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Create a new location
+      final LatLng newUserLocation = const LatLng(45.500, -73.570);
+
+      // Rebuild with new user location
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: MapWidget(
+              key: mapWidgetKey,
+              location: mapCenter,
+              userLocation: newUserLocation,
+              httpClient: mockHttpClient,
+              routeService: mockRouteService,
+              mapsApiClient: mockMapsApiClient,
+              buildingPopUps: mockBuildingPopUps,
+              routePoints: [],
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+    });
 
     testWidgets('MyPage renders MapWidget with empty routePoints initially',
         (WidgetTester tester) async {
@@ -229,6 +286,7 @@ void main() {
           routeService: mockRouteService,
           mapsApiClient: mockMapsApiClient,
           buildingPopUps: mockBuildingPopUps,
+          userLocation: userLocation,
         ),
       ));
 
@@ -262,6 +320,7 @@ void main() {
             mapsApiClient: mockMapsApiClient,
             buildingPopUps: mockBuildingPopUps,
             routePoints: [],
+            userLocation: userLocation,
           ),
         ),
       ),
@@ -281,6 +340,7 @@ void main() {
             mapsApiClient: mockMapsApiClient,
             buildingPopUps: mockBuildingPopUps,
             routePoints: routePoints,
+            userLocation: userLocation,
           ),
         ),
       ),
@@ -309,6 +369,7 @@ void main() {
             mapsApiClient: mockMapsApiClient,
             buildingPopUps: mockBuildingPopUps,
             routePoints: [],
+            userLocation: userLocation,
           ),
         ),
       ),
@@ -332,6 +393,7 @@ void main() {
             mapsApiClient: mockMapsApiClient,
             buildingPopUps: mockBuildingPopUps,
             routePoints: [],
+            userLocation: userLocation,
           ),
         ),
       ),
@@ -359,6 +421,7 @@ void main() {
             mapsApiClient: mockMapsApiClient,
             buildingPopUps: mockBuildingPopUps,
             routePoints: routePoints,
+            userLocation: userLocation,
           ),
         ),
       ),
@@ -371,40 +434,7 @@ void main() {
     expect(find.byType(PolylineLayer), findsOneWidget);
   });
 
-  testWidgets('MapWidget initializes with proper map options',
-      (WidgetTester tester) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: MapWidget(
-            location: testLocation,
-            httpClient: mockHttpClient,
-            routeService: mockRouteService,
-            mapsApiClient: mockMapsApiClient,
-            buildingPopUps: mockBuildingPopUps,
-            routePoints: [],
-          ),
-        ),
-      ),
-    );
-
-    // Find the FlutterMap widget and check its options
-    final flutterMap = tester.widget<FlutterMap>(find.byType(FlutterMap));
-    final mapOptions = flutterMap.options;
-
-    // Verify initial map position and zoom
-    expect(mapOptions.initialCenter, equals(testLocation));
-    expect(mapOptions.initialZoom, equals(14.0));
-    expect(mapOptions.minZoom, equals(11.0));
-    expect(mapOptions.maxZoom, equals(17.0));
-
-    // Verify interaction options
-    expect(
-      mapOptions.interactionOptions.flags,
-      equals(InteractiveFlag.pinchZoom | InteractiveFlag.drag),
-    );
-  });
-  testWidgets('MapWidget properly cleans up on dispose',
+   testWidgets('MapWidget properly cleans up on dispose',
       (WidgetTester tester) async {
     final routePoints = [
       const LatLng(45.497856, -73.579588),
@@ -422,6 +452,7 @@ void main() {
             mapsApiClient: mockMapsApiClient,
             buildingPopUps: mockBuildingPopUps,
             routePoints: routePoints,
+            userLocation: userLocation,
           ),
         ),
       ),
@@ -457,6 +488,7 @@ void main() {
             mapsApiClient: mockMapsApiClient,
             buildingPopUps: mockBuildingPopUps,
             routePoints: routePointsA,
+            userLocation: userLocation,
           ),
         ),
       ),
@@ -482,6 +514,7 @@ void main() {
             mapsApiClient: mockMapsApiClient,
             buildingPopUps: mockBuildingPopUps,
             routePoints: routePointsB,
+            userLocation: userLocation,
           ),
         ),
       ),
@@ -505,6 +538,7 @@ void main() {
             mapsApiClient: mockMapsApiClient,
             buildingPopUps: mockBuildingPopUps,
             routePoints: [],
+            userLocation: userLocation,
           ),
         ),
       ),

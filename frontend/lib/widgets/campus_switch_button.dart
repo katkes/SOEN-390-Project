@@ -51,9 +51,6 @@ class CampusSwitchState extends State<CampusSwitch> {
     final locationService = location_service.LocationService.instance;
 
     try {
-      // Await startUp() so that exceptions are caught.
-      await locationService.startUp();
-
       // Retrieve the current location and determine the closest campus.
       final newBuilding = (location_service.LocationService.getClosestCampus(
                   await locationService.getCurrentLocation()) ==

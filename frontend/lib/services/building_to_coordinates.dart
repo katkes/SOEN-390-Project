@@ -14,7 +14,7 @@ class GeocodingService {
   /// Creates a new instance of `GeocodingService`.
   ///
   /// - [httpService]: Handles HTTP requests.
-  /// - [apiKey]: Optional API key for requests. Defaults to the value in `.env`.
+  /// - [apiKey]: Optional API key for requests. Defaults to the value in `..env`.
   ///
   /// Throws an exception if the API key is missing.
   GeocodingService({
@@ -23,7 +23,7 @@ class GeocodingService {
   }) : apiKey = apiKey ?? dotenv.env['GOOGLE_MAPS_API_KEY'] ?? "" {
     if (this.apiKey.isEmpty) {
       throw Exception(
-          "ERROR: Missing Google Maps API Key! Provide one or check your .env file.");
+          "ERROR: Missing Google Maps API Key! Provide one or check your ..env file.");
     }
   }
 
