@@ -46,7 +46,6 @@ void main() {
           const LatLng(45.498000, -73.580000),
         ],
         steps: [
-          // ✅ Add this
           StepResult(
             distance: 500.0,
             duration: 300.0,
@@ -140,6 +139,7 @@ void main() {
     when(mockHttpClient.readBytes(any, headers: anyNamed('headers')))
         .thenAnswer((_) async => transparentPixelPng);
   });
+  final LatLng userLocation = const LatLng(45.495, -73.577);
 
   /// Test that the [MapWidget] initializes correctly with the provided location.
   testWidgets('MapWidget initializes with provided location',
@@ -149,6 +149,7 @@ void main() {
         home: Scaffold(
           body: MapWidget(
             location: testLocation,
+            userLocation: userLocation,
             httpClient: mockHttpClient,
             routeService: mockRouteService,
             mapsApiClient: mockMapsApiClient,
@@ -169,6 +170,7 @@ void main() {
         home: Scaffold(
           body: MapWidget(
             location: testLocation,
+            userLocation: userLocation,
             httpClient: mockHttpClient,
             routeService: mockRouteService,
             mapsApiClient: mockMapsApiClient,
@@ -193,6 +195,7 @@ void main() {
         home: Scaffold(
           body: MapWidget(
             location: testLocation,
+            userLocation: userLocation,
             httpClient: mockHttpClient,
             routeService: mockRouteService,
             mapsApiClient: mockMapsApiClient,
@@ -220,6 +223,7 @@ void main() {
         home: Scaffold(
           body: MapWidget(
             location: newLocation,
+            userLocation: userLocation,
             httpClient: mockHttpClient,
             routeService: mockRouteService,
             mapsApiClient: mockMapsApiClient,
@@ -249,6 +253,7 @@ void main() {
         home: Scaffold(
           body: MapWidget(
             location: testLocation,
+            userLocation: userLocation,
             httpClient: mockHttpClient,
             routeService: mockRouteService,
             mapsApiClient: mockMapsApiClient,
@@ -265,12 +270,15 @@ void main() {
   });
 
   group('MyPage Tests', () {
+    final LatLng userLocation = const LatLng(45.495, -73.577);
+
     testWidgets('MyPage renders MapWidget with correct props',
         (WidgetTester tester) async {
       await tester.pumpWidget(MaterialApp(
         home: MyPage(
           location: testLocation,
           httpClient: mockHttpClient,
+          userLocation: userLocation,
           routeService: mockRouteService,
           mapsApiClient: mockMapsApiClient,
           buildingPopUps: mockBuildingPopUps,
@@ -289,6 +297,56 @@ void main() {
       expect(mapWidget.location, equals(testLocation));
       expect(mapWidget.httpClient, equals(mockHttpClient));
       expect(mapWidget.routeService, equals(mockRouteService));
+    });
+    testWidgets('MapWidget updates when user location changes',
+        (WidgetTester tester) async {
+      // Initial location
+      final LatLng mapCenter = const LatLng(45.497, -73.579);
+      final LatLng initialUserLocation = const LatLng(45.495, -73.577);
+
+      // Create a key to find the widget
+      final mapWidgetKey = GlobalKey();
+
+      // Build widget with initial location
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: MapWidget(
+              key: mapWidgetKey,
+              location: mapCenter,
+              userLocation: initialUserLocation,
+              httpClient: mockHttpClient,
+              routeService: mockRouteService,
+              mapsApiClient: mockMapsApiClient,
+              buildingPopUps: mockBuildingPopUps,
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Create a new location
+      final LatLng newUserLocation = const LatLng(45.500, -73.570);
+
+      // Rebuild with new user location
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: MapWidget(
+              key: mapWidgetKey,
+              location: mapCenter,
+              userLocation: newUserLocation,
+              httpClient: mockHttpClient,
+              routeService: mockRouteService,
+              mapsApiClient: mockMapsApiClient,
+              buildingPopUps: mockBuildingPopUps,
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
     });
   });
 }

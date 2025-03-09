@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -6,15 +8,22 @@ import 'package:http/http.dart' as http;
 import 'package:soen_390/services/map_service.dart';
 import 'package:soen_390/utils/marker_tap_handler.dart';
 import '../services/building_info_api.dart';
+//import "package:soen_390/utils/location_service.dart";
+import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 
 /// A widget that displays an interactive map with routing functionality.
 ///
 /// The map allows users to visualize locations, interact with markers,
 /// and calculate routes between two selected points using the injected `IRouteService`.
 class MapWidget extends StatefulWidget {
-  /// The initial location where the map is centered.
+  //final LocationServiceWithNoInjection locationService = LocationServiceWithNoInjection.instance;
 
+  /// The initial location where the map is centered.
   final LatLng location;
+
+  ///The initial location where the user is.
+
+  final LatLng userLocation;
 
   /// The HTTP client used for network requests related to map tiles.
   final http.Client httpClient;
@@ -42,6 +51,7 @@ class MapWidget extends StatefulWidget {
   MapWidget(
       {super.key,
       required this.location,
+      required this.userLocation,
       required this.httpClient,
       required this.routeService,
       required this.mapsApiClient,
@@ -130,6 +140,11 @@ class MapWidgetState extends State<MapWidget> {
     _fetchRoute();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   /// Updates the widget when the location changes
   @override
   void didUpdateWidget(MapWidget oldWidget) {
@@ -149,6 +164,9 @@ class MapWidgetState extends State<MapWidget> {
         _markerTapHandler.onMarkerTapped(
             lat, lon, name, address, tapPosition, context);
       });
+
+      // Position p = await locationService.getCurrentLocationAccurately();
+
       setState(() {
         _buildingMarkers = markers;
       });
@@ -204,9 +222,10 @@ class MapWidgetState extends State<MapWidget> {
           mapController: _mapController,
           options: MapOptions(
             initialCenter: widget.location,
-            initialZoom: 14.0,
+            initialZoom: 17.0,
             minZoom: 11.0,
-            maxZoom: 17.0,
+            maxZoom: 20.0,
+            onTap: _handleMapTap,
             interactionOptions: const InteractionOptions(
               flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
             ),
@@ -216,6 +235,29 @@ class MapWidgetState extends State<MapWidget> {
               urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
               additionalOptions: const {},
               tileProvider: NetworkTileProvider(httpClient: widget.httpClient),
+            ),
+            AnimatedLocationMarkerLayer(
+              position: LocationMarkerPosition(
+                latitude: widget.userLocation.latitude,
+                longitude: widget.userLocation.longitude,
+                accuracy: 50,
+              ),
+              style: const LocationMarkerStyle(
+                marker: DefaultLocationMarker(
+                  child: Icon(
+                    Icons.navigation,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+                markerSize: Size(35, 35),
+                markerDirection: MarkerDirection.heading,
+                accuracyCircleColor: Color.fromARGB(78, 33, 149, 243),
+              ),
+              moveAnimationDuration: const Duration(milliseconds: 500),
+              moveAnimationCurve: Curves.fastOutSlowIn,
+              rotateAnimationDuration: const Duration(milliseconds: 300),
+              rotateAnimationCurve: Curves.easeInOut,
             ),
             PolygonLayer(
               polygons: _buildingPolygons,
@@ -230,7 +272,25 @@ class MapWidgetState extends State<MapWidget> {
       ),
     );
   }
-}
+
+  /// Handles user taps on the map to set the `from` and `to` locations.
+  ///
+  /// - If `isPairly` is false, updates `from` location.
+  /// - Otherwise, updates `to` location.
+  /// - Toggles `isPairly` after every selection.
+  /// - Calls `_fetchRoute()` to update the route accordingly.
+  void _handleMapTap(TapPosition tapPosition, LatLng latLng) {
+    setState(() {
+      if (!isPairly) {
+        from = latLng;
+      } else {
+        to = latLng;
+      }
+      isPairly = !isPairly;
+      _fetchRoute();
+    });
+  }
+} //end of _MapWidgetState class
 
 /// Example usage of `MapWidget` inside a `MyPage` scaffold.
 class MyPage extends StatelessWidget {
@@ -243,6 +303,7 @@ class MyPage extends StatelessWidget {
   /// The initial location for the map.
 
   final LatLng location;
+  final LatLng userLocation;
   final GoogleMapsApiClient mapsApiClient;
   final BuildingPopUps buildingPopUps;
 
@@ -250,6 +311,7 @@ class MyPage extends StatelessWidget {
   const MyPage({
     required this.httpClient,
     required this.location,
+    required this.userLocation,
     required this.routeService,
     required this.mapsApiClient,
     required this.buildingPopUps,
@@ -270,6 +332,7 @@ class MyPage extends StatelessWidget {
       body: Center(
         child: MapWidget(
           location: location,
+          userLocation: userLocation,
           httpClient: httpClient,
           routeService: routeService,
           mapsApiClient: mapsApiClient,
