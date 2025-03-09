@@ -60,6 +60,12 @@ jobs:
         working-directory: ./frontend
         run: flutter pub get
 
+      - name: Free Up Space - Remove Actions Runner Work Directory
+        run: |
+          echo "Cleaning up Actions runner workspace..."
+          rm -rf ~/actions-runner/_work/*
+          echo "Actions runner workspace cleaned."
+
 
   linting:
     name: Lint & Format Check
@@ -128,6 +134,12 @@ jobs:
           BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||' | tr '/' '_')
           gsutil cp frontend/reports/sonar-flutter-lint.json gs://soen_390_reports/$BRANCH_NAME/frontend/
 
+      - name: Free Up Space - Remove Actions Runner Work Directory
+        run: |
+          echo "Cleaning up Actions runner workspace..."
+          rm -rf ~/actions-runner/_work/*
+          echo "Actions runner workspace cleaned."
+
   testing:
     name: Run Flutter Tests
     runs-on: [our-runner]
@@ -176,6 +188,12 @@ jobs:
           BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||' | tr '/' '_')
           gsutil cp frontend/reports/test_report.xml gs://soen_390_reports/$BRANCH_NAME/frontend/
           gsutil cp frontend/reports/lcov.info gs://soen_390_reports/$BRANCH_NAME/frontend/
+
+      - name: Free Up Space - Remove Actions Runner Work Directory
+        run: |
+          echo "Cleaning up Actions runner workspace..."
+          rm -rf ~/actions-runner/_work/*
+          echo "Actions runner workspace cleaned."
         
         
 
@@ -187,6 +205,10 @@ jobs:
     if: github.event_name == 'pull_request'  
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Copy env file
         working-directory: ./frontend
@@ -201,6 +223,12 @@ jobs:
         with:
           name: flutter-apk
           path: frontend/build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Free Up Space - Remove Actions Runner Work Directory
+        run: |
+          echo "Cleaning up Actions runner workspace..."
+          rm -rf ~/actions-runner/_work/*
+          echo "Actions runner workspace cleaned."
 
   sonarqube:
     name: SonarCloud Analysis
@@ -253,6 +281,11 @@ jobs:
           gsutil cp frontend/reports/lcov.info gs://soen_390_reports/$BRANCH_NAME/frontend/
           gsutil cp frontend/reports/test_report.xml gs://soen_390_reports/$BRANCH_NAME/frontend/
           gsutil cp frontend/reports/sonar-flutter-lint.json gs://soen_390_reports/$BRANCH_NAME/frontend/
+      - name: Free Up Space - Remove Actions Runner Work Directory
+        run: |
+          echo "Cleaning up Actions runner workspace..."
+          rm -rf ~/actions-runner/_work/*
+          echo "Actions runner workspace cleaned."
 
 
   cleanup:
