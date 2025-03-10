@@ -1,34 +1,21 @@
 import 'package:flutter/material.dart';
-
-/// A widget that displays building information in a popup format.
-///
-/// This widget creates a popup display containing building information including:
-/// * Building name (automatically abbreviated if too long)
-/// * Building address
-/// * Building photo (optional)
-///
-/// The popup uses the app's primary color scheme and provides a consistent
-/// layout for building information across the application.
-///
-/// Example usage:
-/// ```dart
-/// BuildingInformationPopup(
-///   buildingName: 'Henry F. Hall Building',
-///   buildingAddress: '1455 De Maisonneuve Blvd. W.',
-///   photoUrl: 'https://example.com/hall-building.jpg',
-/// )
-/// ```
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:soen_390/providers/service_providers.dart';
+import 'package:soen_390/screens/waypoint/waypoint_selection_screens.dart';
+import 'package:soen_390/services/interfaces/route_service_interface.dart';
 
 class BuildingInformationPopup extends StatelessWidget {
   final String buildingName;
   final String buildingAddress;
   final String? photoUrl;
 
+  final Function(RouteResult)? onRouteSelected;
   const BuildingInformationPopup({
     super.key,
     required this.buildingName,
     required this.buildingAddress,
     this.photoUrl,
+    this.onRouteSelected,
   });
 
   String _getAbbreviatedName(String name) {
@@ -36,6 +23,34 @@ class BuildingInformationPopup extends StatelessWidget {
       return "${name.split(" ")[0]} Bldg";
     } else {
       return name;
+    }
+  }
+
+  void openWaypointSelection(BuildContext context) async {
+    final container = ProviderScope.containerOf(context);
+    final routeService = container.read(routeServiceProvider);
+    final locationService = container.read(locationServiceProvider);
+    final buildingToCoordinatesService =
+        container.read(buildingToCoordinatesProvider);
+
+    final sentDestination =
+        "$buildingName, $buildingAddress, Montreal, Quebec, Canada";
+
+    final RouteResult? result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => WaypointSelectionScreen(
+          routeService: routeService,
+          geocodingService: buildingToCoordinatesService,
+          locationService: locationService,
+          initialDestination: sentDestination,
+        ),
+      ),
+    );
+
+    if (result != null && context.mounted) {
+      onRouteSelected?.call(result);
+      Navigator.pop(context, result);
     }
   }
 
@@ -99,9 +114,7 @@ class BuildingInformationPopup extends StatelessWidget {
             bottom: -10,
             right: 2,
             child: ElevatedButton(
-              onPressed: () {
-                print("Button clicked");
-              },
+              onPressed: () => openWaypointSelection(context),
               style: ElevatedButton.styleFrom(
                 backgroundColor: burgundyColor,
                 shape: RoundedRectangleBorder(

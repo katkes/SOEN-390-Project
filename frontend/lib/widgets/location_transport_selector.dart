@@ -10,12 +10,14 @@ class LocationTransportSelector extends StatefulWidget {
   final Function(List<String>, String) onConfirmRoute;
   final Function(String)? onTransportModeChange;
   final Function()? onLocationChanged;
+  final String? initialDestination;
 
   const LocationTransportSelector(
       {super.key,
       this.onLocationChanged,
       required this.onConfirmRoute,
-      this.onTransportModeChange});
+      this.onTransportModeChange,
+      this.initialDestination});
 
   @override
   LocationTransportSelectorState createState() =>
@@ -30,6 +32,22 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   String startLocation = ''; // variable to store start location address
   String destinationLocation =
       ''; // variable to store destination location address
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialDestination != null) {
+      destinationLocation = widget.initialDestination!;
+
+      if (itinerary.length > 1) {
+        itinerary[1] = widget.initialDestination!;
+      } else if (itinerary.length == 1) {
+        itinerary.add(widget.initialDestination!);
+      } else {
+        itinerary.add(widget.initialDestination!);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -133,35 +151,6 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
     );
   }
 
-  // TODO: Issue-128 - Reuse logic for UI to insert multiple tasks
-  // Temporary removable until multiple iternary is implemented
-
-  // Widget _buildReorderableItinerary() {
-  //   return ReorderableListView(
-  //     shrinkWrap: true,
-  //     physics: const NeverScrollableScrollPhysics(),
-  //     onReorder: (oldIndex, newIndex) {
-  //       setState(() {
-  //         if (newIndex > oldIndex) newIndex -= 1;
-  //         final item = itinerary.removeAt(oldIndex);
-  //         itinerary.insert(newIndex, item);
-  //       });
-  //     },
-  //     children: [
-  //       for (int index = 0; index < itinerary.length; index++)
-  //         ListTile(
-  //           key: ValueKey(itinerary[index]),
-  //           title: Text(itinerary[index]),
-  //           leading: const Icon(Icons.drag_handle),
-  //           trailing: IconButton(
-  //             icon: const Icon(Icons.delete, color: Colors.red),
-  //             onPressed: () => _removeStop(index),
-  //           ),
-  //         ),
-  //     ],
-  //   );
-  // }
-
   void _confirmRoute() {
     if (itinerary.length < 2) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -172,7 +161,6 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
     }
 
     List<String> selectedWaypoints = List.from(itinerary);
-    print("Waypoints sent to routing system: $selectedWaypoints");
 
     widget.onConfirmRoute(selectedWaypoints, selectedMode);
   }
@@ -255,9 +243,12 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   }
 
   void _setStartLocation(String selectedLocation) {
+    startLocation = selectedLocation;
+
     if (itinerary.isEmpty) {
-      startLocation = selectedLocation;
       itinerary.add(selectedLocation);
+    } else {
+      itinerary.insert(0, selectedLocation);
     }
   }
 
@@ -279,6 +270,30 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
         (index == 0 || itinerary.length < 2)) {
       // Let the parent know to clear cached routes
       widget.onTransportModeChange!("clear_cache");
+    }
+  }
+
+  //public methods to facilitate testing
+  void removeStopForTest(int index) {
+    _removeStop(index);
+  }
+
+  void setStartLocation(String selectedLocation) {
+    startLocation = selectedLocation;
+
+    if (itinerary.isEmpty) {
+      itinerary.add(selectedLocation);
+    } else {
+      itinerary.insert(0, selectedLocation);
+    }
+  }
+
+  void setDestinationLocation(String selectedLocation) {
+    destinationLocation = selectedLocation;
+    if (itinerary.length < 2) {
+      itinerary.add(selectedLocation);
+    } else if (itinerary.length == 2) {
+      itinerary[1] = selectedLocation;
     }
   }
 

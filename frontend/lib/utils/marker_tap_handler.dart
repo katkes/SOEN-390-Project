@@ -6,6 +6,7 @@ import 'package:soen_390/services/building_info_api.dart';
 import 'package:popover/popover.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:soen_390/widgets/building_information_popup.dart';
+import 'package:soen_390/services/interfaces/route_service_interface.dart';
 
 /// Handles tap interactions with map markers representing buildings.
 ///
@@ -27,11 +28,13 @@ class MarkerTapHandler {
   final MapController mapController;
   final BuildingPopUps buildingPopUps;
   bool _hasTapped = false;
+  final Function(RouteResult)? onRouteSelected;
 
   MarkerTapHandler({
     required this.onBuildingInfoUpdated,
     required this.mapController,
     required this.buildingPopUps,
+    this.onRouteSelected,
   });
   void onMarkerTapped(
     double lat,
@@ -58,7 +61,6 @@ class MarkerTapHandler {
         .fetchBuildingInformation(lat, lon, name)
         .then((buildingInfo) {
       String? photoUrl = buildingInfo["photo"];
-      print("Fetched photo URL: $photoUrl");
 
       Future.delayed(const Duration(milliseconds: 300), () {
         if (context.mounted) {
@@ -68,10 +70,10 @@ class MarkerTapHandler {
               buildingName: name,
               buildingAddress: address,
               photoUrl: photoUrl,
+              onRouteSelected: onRouteSelected,
             ),
             onPop: () {
               _hasTapped = false;
-              print('Popover closed');
             },
             direction: PopoverDirection.top,
             width: 220,
@@ -82,11 +84,18 @@ class MarkerTapHandler {
             barrierColor: Colors.transparent,
             radius: 8,
             arrowDyOffset: offset - 180,
-          );
+          ).then((value) {
+            // Handle the route result returned from the popover
+            if (value != null &&
+                value is RouteResult &&
+                onRouteSelected != null) {
+              onRouteSelected!(value);
+            }
+          });
         }
       });
     }).catchError((error) {
-      print("Error fetching building photo: $error");
+      _hasTapped = false;
     });
   }
 }

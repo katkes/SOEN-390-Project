@@ -35,33 +35,46 @@ class MapWidget extends StatefulWidget {
 
   /// A list of `LatLng` points representing the route path.
   final List<LatLng> routePoints;
+  final Function(RouteResult)? onRouteSelected;
 
   /// Creates an instance of `MapWidget` with required dependencies.
   ///
   /// - [location]: The initial `LatLng` location for the map.
   /// - [httpClient]: The HTTP client used for loading map tiles.
   /// - [routeService]: The service used to fetch navigation routes.
-  ///
-  /// removed const due to issues - Arnab
-  const MapWidget(
-      {super.key,
-      required this.location,
-      required this.userLocation,
-      required this.httpClient,
-      required this.routeService,
-      required this.mapsApiClient,
-      required this.buildingPopUps,
-      required this.routePoints});
+  const MapWidget({
+    super.key,
+    required this.location,
+    required this.userLocation,
+    required this.httpClient,
+    required this.routeService,
+    required this.mapsApiClient,
+    required this.buildingPopUps,
+    required this.routePoints,
+    this.onRouteSelected,
+  });
 
+  // void selectMarker(LatLng location){
+  //   MapWidgetState? state = _mapWidgetKey.currentState;
+
+  //   if (state!= null) {
+  //     state.selectMarker(location);
+  //   }
+
+  // }
+
+  // final GlobalKey<MapWidgetState>
   @override
-  State<MapWidget> createState() => _MapWidgetState();
-} //end of class
+  State<MapWidget> createState() => MapWidgetState();
+}
 
-class _MapWidgetState extends State<MapWidget> {
+class MapWidgetState extends State<MapWidget> {
   late MapController _mapController;
   List<Marker> _buildingMarkers = [];
   List<Polygon> _buildingPolygons = [];
+  // ignore: unused_field
   String? _selectedBuildingName;
+  // ignore: unused_field
   String? _selectedBuildingAddress;
 
   /// The starting location for route calculation.
@@ -86,6 +99,19 @@ class _MapWidgetState extends State<MapWidget> {
   ///
   late MarkerTapHandler _markerTapHandler;
 
+  MarkerTapHandler get markerTapHandler => _markerTapHandler;
+
+  void selectMarker(LatLng location) {
+    // Update selected marker in MapService
+    _mapService.selectMarker(location);
+
+    // Reload markers to reflect the change
+    _loadBuildingLocations();
+
+    // Move map to the selected location
+    _mapController.move(location, 17.0);
+  }
+
   List<LatLng> animatedPoints = [];
   int animationIndex = 0;
   Timer? animationTimer;
@@ -97,17 +123,23 @@ class _MapWidgetState extends State<MapWidget> {
     //widget.onRoutePointsChanged(routePoints); // this line crashes the map
     _mapController = MapController();
     _mapService = MapService();
+
+    _mapService.onMarkerCleared = () {
+      // Use onMarkerCleared
+      setState(() {
+        _loadBuildingLocations();
+      });
+    };
     _markerTapHandler = MarkerTapHandler(
       onBuildingInfoUpdated: (name, address) {
         setState(() {
           _selectedBuildingName = name;
           _selectedBuildingAddress = address;
-          print(
-              'Building selected: Name = $_selectedBuildingName, Address = $_selectedBuildingAddress');
         });
       },
       mapController: _mapController,
       buildingPopUps: widget.buildingPopUps,
+      onRouteSelected: widget.onRouteSelected,
     );
     _loadBuildingLocations();
     _loadBuildingBoundaries();
@@ -123,8 +155,6 @@ class _MapWidgetState extends State<MapWidget> {
         _markerTapHandler.onMarkerTapped(
             lat, lon, name, address, tapPosition, context);
       });
-
-      // Position p = await locationService.getCurrentLocationAccurately();
 
       setState(() {
         _buildingMarkers = markers;
@@ -294,6 +324,7 @@ class _MapWidgetState extends State<MapWidget> {
     );
   }
 }
+//end of _MapWidgetState class
 
 /// Example usage of `MapWidget` inside a `MyPage` scaffold.
 class MyPage extends StatelessWidget {

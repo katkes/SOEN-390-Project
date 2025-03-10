@@ -331,4 +331,52 @@ void main() {
 
     expect(find.text('Home Page'), findsOneWidget);
   });
+
+  testWidgets('_handleCampusSelected updates selected campus',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(
+      TestWrapper(
+        mockRouteService: mockRouteService,
+        mockHttpService: mockHttpService,
+        mockBuildingPopUps: mockBuildingPopUps,
+        mockMapsApiClient: mockMapsApiClient,
+        mockGeocodingService: mockGeocodingService,
+        mockLocationService: mockLocationService,
+        child: const MyApp(),
+      ),
+    );
+
+    final myHomePageState =
+        tester.state<MyHomePageState>(find.byType(MyHomePage));
+    const testCampus = 'Loyola';
+
+    myHomePageState.handleCampusSelected(testCampus);
+    await tester.pump();
+
+    expect(myHomePageState.selectedCampus, testCampus);
+  });
+
+  testWidgets('_handleLocationChanged updates current location',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(
+      TestWrapper(
+        mockRouteService: mockRouteService,
+        mockHttpService: mockHttpService,
+        mockBuildingPopUps: mockBuildingPopUps,
+        mockMapsApiClient: mockMapsApiClient,
+        mockLocationService: mockLocationService,
+        mockGeocodingService: mockGeocodingService,
+        child: const MyApp(),
+      ),
+    );
+
+    final myHomePageState =
+        tester.state<MyHomePageState>(find.byType(MyHomePage));
+    final newLocation = const LatLng(45.5100, -73.5700);
+
+    myHomePageState.handleLocationChanged(newLocation);
+    await tester.pump();
+
+    expect(myHomePageState.currentLocation, newLocation);
+  });
 }

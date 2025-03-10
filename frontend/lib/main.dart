@@ -76,33 +76,47 @@ class MyHomePage extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<MyHomePage> createState() => _MyHomePageState();
+  ConsumerState<MyHomePage> createState() => MyHomePageState();
 }
 
-class _MyHomePageState extends ConsumerState<MyHomePage> {
-  /// Controls the search bar input.
+class MyHomePageState extends ConsumerState<MyHomePage> {
+  // Set initial campus to SGW (default campus)
+  String selectedCampus = 'SGW';
   TextEditingController searchController = TextEditingController();
-
-  /// The currently selected index for the bottom navigation bar.
   int _selectedIndex = 0;
-
-  /// The user's current location on the map.
-  LatLng _currentLocation = const LatLng(45.497856, -73.579588);
+  LatLng currentLocation = const LatLng(45.497856, -73.579588);
   LatLng _userLiveLocation = const LatLng(5.497856, -73.579588);
+  late LocationService _locationService;
 
-  // http.Client? _httpClient;
   late BuildingPopUps _buildingPopUps;
   late GoogleMapsApiClient _mapsApiClient;
 
-  late LocationService _locationService;
   List<LatLng> polylinePoints = [];
+  final GlobalKey<MapWidgetState> _mapWidgetKey = GlobalKey<MapWidgetState>();
+
+  void _handleBuildingSelected(LatLng location) async {
+    _mapWidgetKey.currentState?.selectMarker(location);
+  }
+
+  void handleCampusSelected(String campus) {
+    setState(() {
+      selectedCampus = campus;
+    });
+  }
+
+  void handleLocationChanged(LatLng location) {
+    setState(() {
+      currentLocation = location;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
     _mapsApiClient = GoogleMapsApiClient(
-        apiKey: dotenv.env['GOOGLE_MAPS_API_KEY']!,
-        client: widget.httpService.client);
+      apiKey: dotenv.env['GOOGLE_MAPS_API_KEY']!,
+      client: widget.httpService.client,
+    );
     _buildingPopUps = BuildingPopUps(mapsApiClient: _mapsApiClient);
 
     //This initializes the location service and listens for updates
@@ -132,9 +146,9 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
   /// Updates the user's current location on the map.
   ///
   /// Called when the user selects a different campus location.
-  void _updateCampusLocation(LatLng newLocation) {
+  void updateCampusLocation(LatLng newLocation) {
     setState(() {
-      _currentLocation = newLocation;
+      currentLocation = newLocation;
     });
   }
 
@@ -147,13 +161,13 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
     final RouteResult selectedRouteData = await Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => WaypointSelectionScreen(
-                routeService: routeService,
-                geocodingService: buildingToCoordinatesService,
-                locationService: locationService,
-              )),
+        builder: (context) => WaypointSelectionScreen(
+          routeService: routeService,
+          geocodingService: buildingToCoordinatesService,
+          locationService: locationService,
+        ),
+      ),
     );
-    print("Received route data: $selectedRouteData");
     polylinePoints = selectedRouteData.routePoints;
     setState(() {
       polylinePoints = selectedRouteData.routePoints;
@@ -196,13 +210,20 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(30),
                           child: MapWidget(
-                              location: _currentLocation,
-                              userLocation: _userLiveLocation,
-                              routeService: widget.routeService,
-                              httpClient: widget.httpService.client,
-                              mapsApiClient: _mapsApiClient,
-                              buildingPopUps: _buildingPopUps,
-                              routePoints: polylinePoints),
+                            key: _mapWidgetKey,
+                            location: currentLocation,
+                            userLocation: _userLiveLocation,
+                            routeService: widget.routeService,
+                            httpClient: widget.httpService.client,
+                            mapsApiClient: _mapsApiClient,
+                            buildingPopUps: _buildingPopUps,
+                            routePoints: polylinePoints,
+                            onRouteSelected: (RouteResult result) {
+                              setState(() {
+                                polylinePoints = result.routePoints;
+                              });
+                            },
+                          ),
                         ),
                       ),
                     ),
@@ -213,15 +234,21 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                     right: 0,
                     child: Center(
                       child: CampusSwitch(
-                        onSelectionChanged: (selectedCampus) {},
-                        onLocationChanged: _updateCampusLocation,
+                        selectedCampus: selectedCampus,
+                        onSelectionChanged: handleCampusSelected,
+                        onLocationChanged: handleLocationChanged,
                       ),
                     ),
                   ),
                   Positioned(
                     bottom: -80,
                     left: 0,
-                    child: SearchBarWidget(controller: searchController),
+                    child: SearchBarWidget(
+                      controller: searchController,
+                      onCampusSelected: handleCampusSelected,
+                      onLocationFound: handleLocationChanged,
+                      onBuildingSelected: _handleBuildingSelected,
+                    ),
                   ),
                   const Positioned(
                     bottom: 10,

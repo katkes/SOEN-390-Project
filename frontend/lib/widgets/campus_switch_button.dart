@@ -6,16 +6,16 @@ import 'package:soen_390/utils/location_service.dart' as location_service;
 class CampusSwitch extends StatefulWidget {
   final Function(String) onSelectionChanged;
   final Function(LatLng) onLocationChanged;
-  final String initialSelection;
+  final String selectedCampus;
 
   const CampusSwitch({
     super.key,
     required this.onSelectionChanged,
     required this.onLocationChanged,
-    this.initialSelection = 'SGW',
+    required this.selectedCampus,
   }) : assert(
-          initialSelection == 'SGW' || initialSelection == 'Loyola',
-          'initialSelection must be either "SGW" or "Loyola"',
+          selectedCampus == 'SGW' || selectedCampus == 'Loyola',
+          'selectedCampus must be either "SGW" or "Loyola"',
         );
 
   @override
@@ -41,8 +41,18 @@ class CampusSwitchState extends State<CampusSwitch> {
   @override
   void initState() {
     super.initState();
-    selectedBuilding = widget.initialSelection;
+    selectedBuilding = widget.selectedCampus;
     _initClosestCampus();
+  }
+
+  @override
+  void didUpdateWidget(CampusSwitch oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.selectedCampus != oldWidget.selectedCampus) {
+      setState(() {
+        selectedBuilding = widget.selectedCampus;
+      });
+    }
   }
 
   // Initializes the closest campus based on the user's current location.
@@ -68,9 +78,7 @@ class CampusSwitchState extends State<CampusSwitch> {
       print('Error initializing closest campus: $e');
 
       // Determine if location services are enabled.
-      if (!await locationService.determinePermissions()) {
-        print('Location services are disabled.');
-      }
+      if (!await locationService.determinePermissions()) {}
     }
   }
 

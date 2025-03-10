@@ -105,7 +105,7 @@ void main() {
           home: CampusSwitch(
             onSelectionChanged: (_) {},
             onLocationChanged: (_) {},
-            initialSelection: 'SGW',
+            selectedCampus: 'SGW',
           ),
         ),
       );
@@ -124,7 +124,7 @@ void main() {
           home: CampusSwitch(
             onSelectionChanged: (campus) => selectedCampus = campus,
             onLocationChanged: (location) => selectedLocation = location,
-            initialSelection: 'SGW',
+            selectedCampus: 'SGW',
           ),
         ),
       );
@@ -161,7 +161,7 @@ void main() {
             home: CampusSwitch(
               onSelectionChanged: (_) {},
               onLocationChanged: (_) {},
-              initialSelection: 'SGW',
+              selectedCampus: 'SGW',
             ),
           ),
         );
@@ -193,7 +193,7 @@ void main() {
             home: CampusSwitch(
               onSelectionChanged: (_) {},
               onLocationChanged: (_) {},
-              initialSelection: 'SGW',
+              selectedCampus: 'SGW',
             ),
           ),
         );
@@ -238,7 +238,7 @@ void main() {
             home: CampusSwitch(
               onSelectionChanged: (_) {},
               onLocationChanged: (_) {},
-              initialSelection: 'SGW',
+              selectedCampus: 'SGW',
             ),
           ),
         );
@@ -268,7 +268,7 @@ void main() {
             home: CampusSwitch(
               onSelectionChanged: (_) {},
               onLocationChanged: (_) {},
-              initialSelection: 'SGW',
+              selectedCampus: 'SGW',
             ),
           ),
         );
@@ -301,7 +301,7 @@ void main() {
             home: CampusSwitch(
               onSelectionChanged: (_) {},
               onLocationChanged: (_) {},
-              initialSelection: 'SGW',
+              selectedCampus: 'SGW',
             ),
           ),
         );

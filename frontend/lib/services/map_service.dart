@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:async';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -22,19 +23,41 @@ import 'package:flutter/material.dart';
 class MapService {
   static const Color markerColor = Color(0xFF912338);
   static const Color polygonFillColor = Color(0x33FF0000);
+  static const Color secondaryMarkerColor = Color.fromARGB(255, 255, 39, 39);
   static const Color polygonBorderColor = Colors.red;
   static const double markerSize = 40.0;
   static const double borderStrokeWidth = 2.0;
+  static const String _buildingListPath =
+      'assets/geojson_files/building_list.geojson';
+  static const String _buildingLongName = 'Building Long Name';
+
+  LatLng? _selectedMarkerLocation;
+  Timer? _markerClearTimer;
+  Function? onMarkerCleared;
+
+  void selectMarker(LatLng location) {
+    _selectedMarkerLocation = location;
+    startClearTimer();
+  }
+
+  LatLng? get selectedMarkerLocation => _selectedMarkerLocation;
+
+  void startClearTimer() {
+    _markerClearTimer?.cancel();
+    _markerClearTimer = Timer(const Duration(seconds: 7), () {
+      _selectedMarkerLocation = null;
+      _markerClearTimer = null;
+      onMarkerCleared?.call();
+    });
+  }
 
   Future<List<Marker>> loadBuildingMarkers(Function onMarkerTapped) async {
     try {
-      final String data = await rootBundle
-          .loadString('assets/geojson_files/building_list.geojson');
+      final String data = await rootBundle.loadString(_buildingListPath);
       final Map<String, dynamic> jsonData = jsonDecode(data);
 
       return _parseMarkers(jsonData, onMarkerTapped);
     } catch (e) {
-      debugPrint('Error loading building markers: $e');
       return [];
     }
   }
@@ -51,12 +74,24 @@ class MapService {
         if (geometry?['type'] == 'Point' && geometry['coordinates'] is List) {
           double lon = geometry['coordinates'][0];
           double lat = geometry['coordinates'][1];
-          String name = properties?['Building Long Name'] ?? "Unknown";
+          String name = properties?[_buildingLongName] ?? "Unknown";
           String address = properties?['Address'] ?? "No address available";
+
+          final currentLocation = LatLng(lat, lon);
+
+          // Check if this marker is the selected one
+          bool isSelected = _selectedMarkerLocation != null &&
+              _selectedMarkerLocation!.latitude == lat &&
+              _selectedMarkerLocation!.longitude == lon;
+
+          // Use red for selected marker, default color otherwise
+          Color markerColor = isSelected
+              ? MapService.secondaryMarkerColor
+              : MapService.markerColor;
 
           markers.add(
             Marker(
-              point: LatLng(lat, lon),
+              point: currentLocation,
               width: markerSize,
               height: markerSize,
               child: GestureDetector(
@@ -64,7 +99,7 @@ class MapService {
                   onMarkerTapped(
                       lat, lon, name, address, details.globalPosition);
                 },
-                child: const Icon(Icons.location_pin,
+                child: Icon(Icons.location_pin,
                     color: markerColor, size: markerSize),
               ),
             ),
@@ -83,7 +118,6 @@ class MapService {
 
       return _parsePolygons(jsonData);
     } catch (e) {
-      debugPrint('Error loading building boundaries: $e');
       return [];
     }
   }
@@ -120,5 +154,81 @@ class MapService {
       }
     }
     return polygons;
+  }
+
+  Future<List<String>> getBuildingSuggestions(String query) async {
+    try {
+      if (query.isEmpty) return [];
+
+      final String data = await rootBundle.loadString(_buildingListPath);
+      final Map<String, dynamic> jsonData = jsonDecode(data);
+      List<String> suggestions = [];
+
+      for (var feature in jsonData['features']) {
+        var properties = feature['properties'];
+        String name = properties?[_buildingLongName] ?? "Unknown";
+
+        if (name.toLowerCase().contains(query.toLowerCase())) {
+          suggestions.add(name);
+        }
+      }
+      return suggestions.take(1).toList();
+    } catch (e) {
+      return [];
+    }
+  }
+
+  //searches building by name and returns its location and details
+  Future<Map<String, dynamic>?> searchBuildingWithDetails(
+      String buildingName) async {
+    try {
+      final String data = await rootBundle.loadString(_buildingListPath);
+      final Map<String, dynamic> jsonData = jsonDecode(data);
+
+      for (var feature in jsonData['features']) {
+        var properties = feature['properties'];
+        var geometry = feature['geometry'];
+
+        if (geometry?['type'] == 'Point' && geometry['coordinates'] is List) {
+          String name = properties?[_buildingLongName] ?? "Unknown";
+          if (name.toLowerCase().contains(buildingName.toLowerCase())) {
+            double lon = geometry['coordinates'][0];
+            double lat = geometry['coordinates'][1];
+            String address = properties?['Address'] ?? "No address available";
+
+            return {
+              'location': LatLng(lat, lon),
+              'name': name,
+              'address': address
+            };
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error searching for building with details: $e');
+    }
+    return null;
+  }
+
+  Future<String?> findCampusForBuilding(String buildingName) async {
+    try {
+      final String data = await rootBundle.loadString(_buildingListPath);
+      final Map<String, dynamic> jsonData = jsonDecode(data);
+
+      if (jsonData['features'] is List) {
+        for (var feature in jsonData['features']) {
+          var properties = feature['properties'];
+
+          // Check if the building name matches the one in the GeoJSON data
+          if (properties?[_buildingLongName] == buildingName) {
+            return properties?['Campus'] ??
+                "Unknown Campus"; // Return the campus name
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error loading campus data: $e');
+    }
+    return null; // Return null if no matching building is found
   }
 }
