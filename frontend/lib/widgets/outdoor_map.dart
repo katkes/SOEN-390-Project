@@ -42,7 +42,7 @@ class MapWidget extends StatefulWidget {
   /// - [location]: The initial `LatLng` location for the map.
   /// - [httpClient]: The HTTP client used for loading map tiles.
   /// - [routeService]: The service used to fetch navigation routes.
-  MapWidget({
+  const MapWidget({
     super.key,
     required this.location,
     required this.userLocation,
