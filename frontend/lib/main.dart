@@ -95,6 +95,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
   late GoogleMapsApiClient _mapsApiClient;
 
   late LocationService _locationService;
+  List<LatLng> polylinePoints = [];
 
   @override
   void initState() {
@@ -122,6 +123,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
   }
 
   void _onItemTapped(int index) {
+    polylinePoints = [];
     setState(() {
       _selectedIndex = index;
     });
@@ -136,13 +138,13 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
     });
   }
 
-  void _openWaypointSelection() {
+  void _openWaypointSelection() async {
     final buildingToCoordinatesService =
         ref.watch(buildingToCoordinatesProvider);
     final locationService = ref.watch(locationServiceProvider);
     final routeService = ref.watch(routeServiceProvider);
 
-    Navigator.push(
+    final RouteResult selectedRouteData = await Navigator.push(
       context,
       MaterialPageRoute(
           builder: (context) => WaypointSelectionScreen(
@@ -151,6 +153,11 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                 locationService: locationService,
               )),
     );
+    print("Received route data: $selectedRouteData");
+    polylinePoints = selectedRouteData.routePoints;
+    setState(() {
+      polylinePoints = selectedRouteData.routePoints;
+    });
   }
 
   @override
@@ -189,13 +196,13 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(30),
                           child: MapWidget(
-                            location: _currentLocation,
-                            userLocation: _userLiveLocation,
-                            routeService: widget.routeService,
-                            httpClient: widget.httpService.client,
-                            mapsApiClient: _mapsApiClient,
-                            buildingPopUps: _buildingPopUps,
-                          ),
+                              location: _currentLocation,
+                              userLocation: _userLiveLocation,
+                              routeService: widget.routeService,
+                              httpClient: widget.httpService.client,
+                              mapsApiClient: _mapsApiClient,
+                              buildingPopUps: _buildingPopUps,
+                              routePoints: polylinePoints),
                         ),
                       ),
                     ),

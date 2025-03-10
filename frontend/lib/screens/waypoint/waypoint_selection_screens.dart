@@ -230,8 +230,7 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
                   routeData: route["routeData"],
                   isCrossCampus: isCrossCampus,
                   onCardTapped: () {
-                    // When card is tapped, navigate back to the main screen (WaypointSelectionScreen)
-                    Navigator.pop(context);
+                    Navigator.pop(context, route["routeData"]);
                   },
                 );
               },
