@@ -81,9 +81,9 @@ class MapService {
           final currentLocation = LatLng(lat, lon);
 
           // Check if this marker is the selected one
-          bool isSelected = _selectedMarkerLocation!.latitude == lat &&
-              _selectedMarkerLocation!.longitude == lon &&
-              _selectedMarkerLocation != null;
+          bool isSelected = _selectedMarkerLocation != null &&
+              _selectedMarkerLocation!.latitude == lat &&
+              _selectedMarkerLocation!.longitude == lon;
 
           // Use red for selected marker, default color otherwise
           Color markerColor = isSelected
