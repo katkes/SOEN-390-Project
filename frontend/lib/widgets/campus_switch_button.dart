@@ -67,12 +67,6 @@ class CampusSwitchState extends State<CampusSwitch> {
               "LOY")
           ? "Loyola"
           : "SGW";
-
-      if (mounted) {
-        setState(() => selectedBuilding = newBuilding);
-        widget.onSelectionChanged(selectedBuilding);
-        widget.onLocationChanged(_campusLocations[selectedBuilding]!);
-      }
     } catch (e) {
       // For error handling (ex. location services disabled).
       print('Error initializing closest campus: $e');
