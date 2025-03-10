@@ -1,9 +1,11 @@
 //This test test the functionality of the building_information_popup.dart file
 //It tests upon clicking the marker, the building information is displayed
 
+import 'package:latlong2/latlong.dart';
 import 'package:mockito/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:soen_390/services/interfaces/route_service_interface.dart';
 import 'package:soen_390/widgets/building_information_popup.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'package:soen_390/services/google_route_service.dart';
@@ -236,5 +238,60 @@ void main() {
       await tester.tap(find.byIcon(Icons.arrow_forward));
       await tester.pumpAndSettle();
     });
+  });
+
+  testWidgets(
+      'calls onRouteSelected and pops when a non-null RouteResult is returned',
+      (WidgetTester tester) async {
+    bool onRouteSelectedCalled = false;
+    RouteResult? receivedResult;
+
+    // Create a mock RouteResult
+    final mockResult = RouteResult(
+      distance: 1000,
+      duration: 600,
+      routePoints: [const LatLng(45.5017, -73.5673)],
+      steps: [],
+    );
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          routeServiceProvider.overrideWithValue(MockGoogleRouteService()),
+          locationServiceProvider.overrideWithValue(MockLocationService()),
+          buildingToCoordinatesProvider
+              .overrideWithValue(MockGeocodingService()),
+        ],
+        child: MaterialApp(
+          home: Scaffold(
+            body: Builder(builder: (context) {
+              return BuildingInformationPopup(
+                buildingName: 'EV Building',
+                buildingAddress: '1515 St. Catherine St. W',
+                onRouteSelected: (result) {
+                  onRouteSelectedCalled = true;
+                  receivedResult = result;
+                },
+              );
+            }),
+          ),
+        ),
+      ),
+    );
+
+    // Tap the arrow_forward button to start navigation
+    await tester.tap(find.byIcon(Icons.arrow_forward));
+    await tester.pump(); // Let the navigation begin
+
+    // Simulate the new screen returning a non-null RouteResult
+    Navigator.of(tester.element(find.byType(BuildingInformationPopup)))
+        .pop(mockResult);
+
+    // Complete all pending animations/futures
+    await tester.pumpAndSettle();
+
+    // Verify that onRouteSelected was called and received the mockResult
+    expect(onRouteSelectedCalled, isTrue);
+    expect(receivedResult, equals(mockResult));
   });
 }
