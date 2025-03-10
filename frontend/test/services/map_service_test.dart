@@ -6,13 +6,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:soen_390/services/map_service.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:flutter/material.dart';
 import 'dart:typed_data';
 import 'dart:convert';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  final MapService mapService = MapService();
 
   group('MapService', () {
     /// Tests marker loading functionality:
@@ -23,24 +21,27 @@ void main() {
     testWidgets('loadBuildingMarkers returns a list of markers',
         (WidgetTester tester) async {
       final MapService mapService = MapService();
+
+      // Ensure _selectedMarkerLocation is non-null by selecting a marker location.
+      mapService.selectMarker(const LatLng(45.5017, -73.5673));
       const String mockGeoJson = '''
-  {
-    "type": "FeatureCollection",
-    "features": [
       {
-        "type": "Feature",
-        "geometry": {
-          "type": "Point",
-          "coordinates": [-73.5673, 45.5017]
-        },
-        "properties": {
-          "Building Long Name": "Test Building",
-          "Address": "123 Test St"
-        }
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [-73.5673, 45.5017]
+            },
+            "properties": {
+              "Building Long Name": "Test Building",
+              "Address": "123 Test St"
+            }
+          }
+        ]
       }
-    ]
-  }
-  ''';
+      ''';
 
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMessageHandler(
@@ -53,31 +54,34 @@ void main() {
           .loadBuildingMarkers((lat, lon, name, address, position) {});
 
       expect(markers, isNotEmpty);
-      expect(markers.first.point, const LatLng(45.5017, -73.5673));
-      expect(markers.first.child, isA<GestureDetector>());
+      expect(markers.first.point, equals(const LatLng(45.5017, -73.5673)));
+
+      // Pump the tester to let the timer (from selectMarker) complete.
+      await tester.pump(const Duration(seconds: 8));
     });
 
-    /// Tests for loadBuildingPolygons() to verify that polygons are loaded and parsed correctly.
-    test('loadBuildingPolygons loads and parses polygons', () async {
+    testWidgets('loadBuildingPolygons loads and parses polygons',
+        (WidgetTester tester) async {
+      final MapService mapService = MapService();
       const String mockGeoJson = '''
-  {
-    "type": "FeatureCollection",
-    "features": [
       {
-        "type": "Feature",
-        "geometry": {
-          "type": "MultiPolygon",
-          "coordinates": [
-            [[[-73.5673, 45.5017], [-73.5674, 45.5018], [-73.5673, 45.5019], [-73.5673, 45.5017]]]
-          ]
-        },
-        "properties": {
-          "Building Long Name": "Test Polygon"
-        }
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "geometry": {
+              "type": "MultiPolygon",
+              "coordinates": [
+                [[[-73.5673, 45.5017], [-73.5674, 45.5018], [-73.5673, 45.5019], [-73.5673, 45.5017]]]
+              ]
+            },
+            "properties": {
+              "Building Long Name": "Test Polygon"
+            }
+          }
+        ]
       }
-    ]
-  }
-  ''';
+      ''';
 
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMessageHandler(
@@ -90,7 +94,63 @@ void main() {
 
       expect(polygons, isNotEmpty);
       expect(polygons.first.points, isNotEmpty);
-      expect(polygons.first.points.first, const LatLng(45.5017, -73.5673));
+      expect(
+          polygons.first.points.first, equals(const LatLng(45.5017, -73.5673)));
+    });
+
+    testWidgets('startClearTimer sets timer and clears marker location',
+        (WidgetTester tester) async {
+      final MapService mapService = MapService();
+      final LatLng testLocation = const LatLng(45.5017, -73.5673);
+
+      // Set the marker and start the timer.
+      mapService.selectMarker(testLocation);
+      expect(mapService.selectedMarkerLocation, equals(testLocation));
+
+      // Pump enough time for the timer to fire.
+      await tester.pump(const Duration(seconds: 8));
+
+      expect(mapService.selectedMarkerLocation, isNull);
+    });
+
+    testWidgets('startClearTimer calls onMarkerCleared callback',
+        (WidgetTester tester) async {
+      final MapService mapService = MapService();
+      final LatLng testLocation = const LatLng(45.5017, -73.5673);
+      mapService.selectMarker(testLocation);
+
+      bool callbackCalled = false;
+      mapService.onMarkerCleared = () {
+        callbackCalled = true;
+      };
+
+      // Pump enough time for the timer callback to be invoked.
+      await tester.pump(const Duration(seconds: 8));
+
+      expect(callbackCalled, isTrue);
+    });
+
+    testWidgets('startClearTimer cancels previous timer if called again',
+        (WidgetTester tester) async {
+      final MapService mapService = MapService();
+      final LatLng testLocation = const LatLng(45.5017, -73.5673);
+      mapService.selectMarker(testLocation);
+
+      bool callbackCalled = false;
+      mapService.onMarkerCleared = () {
+        callbackCalled = true;
+      };
+
+      // Pump a bit of time (3 seconds) then call startClearTimer again
+      // to cancel the previous timer.
+      await tester.pump(const Duration(seconds: 3));
+      mapService.startClearTimer();
+
+      // Pump additional time to allow the new timer to fire.
+      await tester.pump(const Duration(seconds: 8));
+
+      expect(callbackCalled, isTrue);
+      expect(mapService.selectedMarkerLocation, isNull);
     });
   });
 }

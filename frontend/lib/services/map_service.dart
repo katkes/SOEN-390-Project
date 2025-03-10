@@ -27,6 +27,9 @@ class MapService {
   static const Color polygonBorderColor = Colors.red;
   static const double markerSize = 40.0;
   static const double borderStrokeWidth = 2.0;
+  static const String _buildingListPath =
+      'assets/geojson_files/building_list.geojson';
+  static const String _buildingLongName = 'Building Long Name';
 
   LatLng? _selectedMarkerLocation;
   Timer? _markerClearTimer;
@@ -34,26 +37,23 @@ class MapService {
 
   void selectMarker(LatLng location) {
     _selectedMarkerLocation = location;
-    _startClearTimer();
+    startClearTimer();
   }
 
   LatLng? get selectedMarkerLocation => _selectedMarkerLocation;
 
-  void _startClearTimer() {
+  void startClearTimer() {
     _markerClearTimer?.cancel();
     _markerClearTimer = Timer(const Duration(seconds: 7), () {
       _selectedMarkerLocation = null;
       _markerClearTimer = null;
-      if (onMarkerCleared != null) {
-        onMarkerCleared!();
-      }
+      onMarkerCleared?.call();
     });
   }
 
   Future<List<Marker>> loadBuildingMarkers(Function onMarkerTapped) async {
     try {
-      final String data = await rootBundle
-          .loadString('assets/geojson_files/building_list.geojson');
+      final String data = await rootBundle.loadString(_buildingListPath);
       final Map<String, dynamic> jsonData = jsonDecode(data);
 
       return _parseMarkers(jsonData, onMarkerTapped);
@@ -75,15 +75,15 @@ class MapService {
         if (geometry?['type'] == 'Point' && geometry['coordinates'] is List) {
           double lon = geometry['coordinates'][0];
           double lat = geometry['coordinates'][1];
-          String name = properties?['Building Long Name'] ?? "Unknown";
+          String name = properties?[_buildingLongName] ?? "Unknown";
           String address = properties?['Address'] ?? "No address available";
 
           final currentLocation = LatLng(lat, lon);
 
           // Check if this marker is the selected one
-          bool isSelected = _selectedMarkerLocation != null &&
-              _selectedMarkerLocation!.latitude == lat &&
-              _selectedMarkerLocation!.longitude == lon;
+          bool isSelected = _selectedMarkerLocation!.latitude == lat &&
+              _selectedMarkerLocation!.longitude == lon &&
+              _selectedMarkerLocation != null;
 
           // Use red for selected marker, default color otherwise
           Color markerColor = isSelected
@@ -162,14 +162,13 @@ class MapService {
     try {
       if (query.isEmpty) return [];
 
-      final String data = await rootBundle
-          .loadString('assets/geojson_files/building_list.geojson');
+      final String data = await rootBundle.loadString(_buildingListPath);
       final Map<String, dynamic> jsonData = jsonDecode(data);
       List<String> suggestions = [];
 
       for (var feature in jsonData['features']) {
         var properties = feature['properties'];
-        String name = properties?['Building Long Name'] ?? "Unknown";
+        String name = properties?[_buildingLongName] ?? "Unknown";
 
         if (name.toLowerCase().contains(query.toLowerCase())) {
           suggestions.add(name);
@@ -186,8 +185,7 @@ class MapService {
   Future<Map<String, dynamic>?> searchBuildingWithDetails(
       String buildingName) async {
     try {
-      final String data = await rootBundle
-          .loadString('assets/geojson_files/building_list.geojson');
+      final String data = await rootBundle.loadString(_buildingListPath);
       final Map<String, dynamic> jsonData = jsonDecode(data);
 
       for (var feature in jsonData['features']) {
@@ -195,7 +193,7 @@ class MapService {
         var geometry = feature['geometry'];
 
         if (geometry?['type'] == 'Point' && geometry['coordinates'] is List) {
-          String name = properties?['Building Long Name'] ?? "Unknown";
+          String name = properties?[_buildingLongName] ?? "Unknown";
           if (name.toLowerCase().contains(buildingName.toLowerCase())) {
             double lon = geometry['coordinates'][0];
             double lat = geometry['coordinates'][1];
@@ -217,8 +215,7 @@ class MapService {
 
   Future<String?> findCampusForBuilding(String buildingName) async {
     try {
-      final String data = await rootBundle
-          .loadString('assets/geojson_files/building_list.geojson');
+      final String data = await rootBundle.loadString(_buildingListPath);
       final Map<String, dynamic> jsonData = jsonDecode(data);
 
       if (jsonData['features'] is List) {
@@ -226,7 +223,7 @@ class MapService {
           var properties = feature['properties'];
 
           // Check if the building name matches the one in the GeoJSON data
-          if (properties?['Building Long Name'] == buildingName) {
+          if (properties?[_buildingLongName] == buildingName) {
             return properties?['Campus'] ??
                 "Unknown Campus"; // Return the campus name
           }

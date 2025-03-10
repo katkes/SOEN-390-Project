@@ -256,7 +256,7 @@ jobs:
     name: Cleanup Runner Disk Space
     runs-on: [our-runner]
     if: github.event_name == 'pull_request'  
-    needs: [setup_flutter, linting, testing, flutter_build, sonarqube]
+    needs: [setup_flutter, linting, testing, flutter_build, sonarqube] 
 
     steps:
       - name: Free Up Space - Remove Gradle Cache

@@ -34,15 +34,6 @@ class MapWidget extends StatefulWidget {
   final GoogleMapsApiClient mapsApiClient;
   final BuildingPopUps buildingPopUps;
 
-  void selectMarker(LatLng location) {
-    MapWidgetState? state = _mapWidgetKey.currentState;
-    if (state != null) {
-      state.selectMarker(location);
-    }
-  }
-
-  final GlobalKey<MapWidgetState> _mapWidgetKey = GlobalKey<MapWidgetState>();
-
   /// Creates an instance of `MapWidget` with required dependencies.
   ///
   /// - [location]: The initial `LatLng` location for the map.
@@ -225,7 +216,6 @@ class MapWidgetState extends State<MapWidget> {
             initialZoom: 17.0,
             minZoom: 11.0,
             maxZoom: 20.0,
-            onTap: _handleMapTap,
             interactionOptions: const InteractionOptions(
               flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
             ),
@@ -271,24 +261,6 @@ class MapWidgetState extends State<MapWidget> {
         ),
       ),
     );
-  }
-
-  /// Handles user taps on the map to set the `from` and `to` locations.
-  ///
-  /// - If `isPairly` is false, updates `from` location.
-  /// - Otherwise, updates `to` location.
-  /// - Toggles `isPairly` after every selection.
-  /// - Calls `_fetchRoute()` to update the route accordingly.
-  void _handleMapTap(TapPosition tapPosition, LatLng latLng) {
-    setState(() {
-      if (!isPairly) {
-        from = latLng;
-      } else {
-        to = latLng;
-      }
-      isPairly = !isPairly;
-      _fetchRoute();
-    });
   }
 } //end of _MapWidgetState class
 
