@@ -58,7 +58,6 @@ class MapService {
 
       return _parseMarkers(jsonData, onMarkerTapped);
     } catch (e) {
-      debugPrint('Error loading building markers: $e');
       return [];
     }
   }
@@ -119,7 +118,6 @@ class MapService {
 
       return _parsePolygons(jsonData);
     } catch (e) {
-      debugPrint('Error loading building boundaries: $e');
       return [];
     }
   }
@@ -176,7 +174,6 @@ class MapService {
       }
       return suggestions.take(1).toList();
     } catch (e) {
-      debugPrint('Error getting building suggestions: $e');
       return [];
     }
   }
