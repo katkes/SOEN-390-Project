@@ -94,7 +94,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
   List<LatLng> polylinePoints = [];
   final GlobalKey<MapWidgetState> _mapWidgetKey = GlobalKey<MapWidgetState>();
 
-  void _handleBuildingSelected(LatLng location) {
+  void _handleBuildingSelected(LatLng location) async {
     _mapWidgetKey.currentState?.selectMarker(location);
   }
 
@@ -212,14 +212,20 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(30),
                           child: MapWidget(
-                              key: _mapWidgetKey,
-                              location: currentLocation,
-                              userLocation: _userLiveLocation,
-                              routeService: widget.routeService,
-                              httpClient: widget.httpService.client,
-                              mapsApiClient: _mapsApiClient,
-                              buildingPopUps: _buildingPopUps,
-                              routePoints: polylinePoints),
+                            key: _mapWidgetKey,
+                            location: currentLocation,
+                            userLocation: _userLiveLocation,
+                            routeService: widget.routeService,
+                            httpClient: widget.httpService.client,
+                            mapsApiClient: _mapsApiClient,
+                            buildingPopUps: _buildingPopUps,
+                            routePoints: polylinePoints,
+                            onRouteSelected: (RouteResult result) {
+                              setState(() {
+                                polylinePoints = result.routePoints;
+                              });
+                            },
+                          ),
                         ),
                       ),
                     ),

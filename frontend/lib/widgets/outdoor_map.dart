@@ -35,22 +35,35 @@ class MapWidget extends StatefulWidget {
 
   /// A list of `LatLng` points representing the route path.
   final List<LatLng> routePoints;
+  final Function(RouteResult)? onRouteSelected;
 
   /// Creates an instance of `MapWidget` with required dependencies.
   ///
   /// - [location]: The initial `LatLng` location for the map.
   /// - [httpClient]: The HTTP client used for loading map tiles.
   /// - [routeService]: The service used to fetch navigation routes.
-  MapWidget(
-      {super.key,
-      required this.location,
-      required this.userLocation,
-      required this.httpClient,
-      required this.routeService,
-      required this.mapsApiClient,
-      required this.buildingPopUps,
-      required this.routePoints});
+  MapWidget({
+    super.key,
+    required this.location,
+    required this.userLocation,
+    required this.httpClient,
+    required this.routeService,
+    required this.mapsApiClient,
+    required this.buildingPopUps,
+    required this.routePoints,
+    this.onRouteSelected,
+  });
 
+  // void selectMarker(LatLng location){
+  //   MapWidgetState? state = _mapWidgetKey.currentState;
+
+  //   if (state!= null) {
+  //     state.selectMarker(location);
+  //   }
+
+  // }
+
+  // final GlobalKey<MapWidgetState>
   @override
   State<MapWidget> createState() => MapWidgetState();
 }
@@ -126,6 +139,7 @@ class MapWidgetState extends State<MapWidget> {
       },
       mapController: _mapController,
       buildingPopUps: widget.buildingPopUps,
+      onRouteSelected: widget.onRouteSelected,
     );
     _loadBuildingLocations();
     _loadBuildingBoundaries();
@@ -141,8 +155,6 @@ class MapWidgetState extends State<MapWidget> {
         _markerTapHandler.onMarkerTapped(
             lat, lon, name, address, tapPosition, context);
       });
-
-      // Position p = await locationService.getCurrentLocationAccurately();
 
       setState(() {
         _buildingMarkers = markers;

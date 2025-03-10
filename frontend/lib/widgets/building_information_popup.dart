@@ -2,17 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:soen_390/providers/service_providers.dart';
 import 'package:soen_390/screens/waypoint/waypoint_selection_screens.dart';
+import 'package:soen_390/services/interfaces/route_service_interface.dart';
 
 class BuildingInformationPopup extends StatelessWidget {
   final String buildingName;
   final String buildingAddress;
   final String? photoUrl;
 
+  final Function(RouteResult)? onRouteSelected;
   const BuildingInformationPopup({
     super.key,
     required this.buildingName,
     required this.buildingAddress,
     this.photoUrl,
+    this.onRouteSelected,
   });
 
   String _getAbbreviatedName(String name) {
@@ -23,7 +26,7 @@ class BuildingInformationPopup extends StatelessWidget {
     }
   }
 
-  void openWaypointSelection(BuildContext context) {
+  void openWaypointSelection(BuildContext context) async {
     final container = ProviderScope.containerOf(context);
     final routeService = container.read(routeServiceProvider);
     final locationService = container.read(locationServiceProvider);
@@ -33,7 +36,7 @@ class BuildingInformationPopup extends StatelessWidget {
     final sentDestination =
         "$buildingName, $buildingAddress, Montreal, Quebec, Canada";
 
-    Navigator.push(
+    final RouteResult? result = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => WaypointSelectionScreen(
@@ -44,6 +47,15 @@ class BuildingInformationPopup extends StatelessWidget {
         ),
       ),
     );
+
+    if (result != null) {
+      // Call the callback if provided
+      if (onRouteSelected != null) {
+        onRouteSelected!(result);
+      }
+      // Also pop as before
+      Navigator.pop(context, result);
+    }
   }
 
   @override
