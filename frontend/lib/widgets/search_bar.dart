@@ -66,7 +66,6 @@ class SearchBarWidgetState extends State<SearchBarWidget> {
         if (campus == "LOY") {
           campus = "Loyola";
         }
-        debugPrint("Building belongs to: ${campus ?? 'Unknown'}");
 
         // Pass the campus value to CampusSwitch via the callback
         if (campus != null) {
@@ -187,7 +186,6 @@ class SearchBarWidgetState extends State<SearchBarWidget> {
                     final suggestion = _suggestions[index];
                     return InkWell(
                       onTap: () {
-                        debugPrint("Tapped suggestion: $suggestion");
                         setState(() {
                           widget.controller.text = suggestion;
                           _suggestions.clear();

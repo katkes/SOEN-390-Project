@@ -78,9 +78,7 @@ class CampusSwitchState extends State<CampusSwitch> {
       print('Error initializing closest campus: $e');
 
       // Determine if location services are enabled.
-      if (!await locationService.determinePermissions()) {
-        print('Location services are disabled.');
-      }
+      if (!await locationService.determinePermissions()) {}
     }
   }
 

@@ -72,7 +72,9 @@ class MapWidgetState extends State<MapWidget> {
   late MapController _mapController;
   List<Marker> _buildingMarkers = [];
   List<Polygon> _buildingPolygons = [];
+  // ignore: unused_field
   String? _selectedBuildingName;
+  // ignore: unused_field
   String? _selectedBuildingAddress;
 
   /// The starting location for route calculation.
@@ -133,8 +135,6 @@ class MapWidgetState extends State<MapWidget> {
         setState(() {
           _selectedBuildingName = name;
           _selectedBuildingAddress = address;
-          print(
-              'Building selected: Name = $_selectedBuildingName, Address = $_selectedBuildingAddress');
         });
       },
       mapController: _mapController,

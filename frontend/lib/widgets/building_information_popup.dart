@@ -49,11 +49,8 @@ class BuildingInformationPopup extends StatelessWidget {
     );
 
     if (result != null) {
-      // Call the callback if provided
-      if (onRouteSelected != null) {
-        onRouteSelected!(result);
-      }
-      // Also pop as before
+      onRouteSelected?.call(result);
+
       Navigator.pop(context, result);
     }
   }

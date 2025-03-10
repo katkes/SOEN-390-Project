@@ -101,7 +101,6 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
   void handleCampusSelected(String campus) {
     setState(() {
       selectedCampus = campus;
-      print(selectedCampus);
     });
   }
 
@@ -169,7 +168,6 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
         ),
       ),
     );
-    print("Received route data: $selectedRouteData");
     polylinePoints = selectedRouteData.routePoints;
     setState(() {
       polylinePoints = selectedRouteData.routePoints;
