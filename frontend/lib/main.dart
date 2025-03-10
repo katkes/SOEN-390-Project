@@ -76,15 +76,15 @@ class MyHomePage extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<MyHomePage> createState() => _MyHomePageState();
+  ConsumerState<MyHomePage> createState() => MyHomePageState();
 }
 
-class _MyHomePageState extends ConsumerState<MyHomePage> {
+class MyHomePageState extends ConsumerState<MyHomePage> {
   // Set initial campus to SGW (default campus)
   String selectedCampus = 'SGW';
   TextEditingController searchController = TextEditingController();
   int _selectedIndex = 0;
-  LatLng _currentLocation = const LatLng(45.497856, -73.579588);
+  LatLng currentLocation = const LatLng(45.497856, -73.579588);
   LatLng _userLiveLocation = const LatLng(5.497856, -73.579588);
   late LocationService _locationService;
 
@@ -97,16 +97,16 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
     _mapWidgetKey.currentState?.selectMarker(location);
   }
 
-  void _handleCampusSelected(String campus) {
+  void handleCampusSelected(String campus) {
     setState(() {
       selectedCampus = campus;
       print(selectedCampus);
     });
   }
 
-  void _handleLocationChanged(LatLng location) {
+  void handleLocationChanged(LatLng location) {
     setState(() {
-      _currentLocation = location;
+      currentLocation = location;
     });
   }
 
@@ -197,7 +197,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                           borderRadius: BorderRadius.circular(30),
                           child: MapWidget(
                             key: _mapWidgetKey,
-                            location: _currentLocation,
+                            location: currentLocation,
                             userLocation: _userLiveLocation,
                             routeService: widget.routeService,
                             httpClient: widget.httpService.client,
@@ -215,8 +215,8 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                     child: Center(
                       child: CampusSwitch(
                         selectedCampus: selectedCampus,
-                        onSelectionChanged: _handleCampusSelected,
-                        onLocationChanged: _handleLocationChanged,
+                        onSelectionChanged: handleCampusSelected,
+                        onLocationChanged: handleLocationChanged,
                       ),
                     ),
                   ),
@@ -225,8 +225,8 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                     left: 0,
                     child: SearchBarWidget(
                       controller: searchController,
-                      onCampusSelected: _handleCampusSelected,
-                      onLocationFound: _handleLocationChanged,
+                      onCampusSelected: handleCampusSelected,
+                      onLocationFound: handleLocationChanged,
                       onBuildingSelected: _handleBuildingSelected,
                     ),
                   ),
