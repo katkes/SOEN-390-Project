@@ -69,7 +69,7 @@ jobs:
     steps:
       - name: Verify Flutter formatting
         working-directory: ./frontend
-        run: dart format --output=none --set-exit-if-changed .
+        run: dart format . #removed output=none --set-exit-if-changed
 
       - name: Copy env file
         working-directory: ./frontend

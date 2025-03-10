@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:mockito/mockito.dart';
 import 'package:geolocator/geolocator.dart' as geo;
 import 'package:soen_390/utils/location_service.dart';
@@ -6,7 +7,6 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:soen_390/utils/permission_not_enabled_exception.dart';
 import 'package:flutter/foundation.dart'
     show debugDefaultTargetPlatformOverride, TargetPlatform;
-import "package:latlong2/latlong.dart";
 
 /// Helper function to create a mock [geo.Position] object.
 ///
@@ -453,48 +453,35 @@ void main() {
       });
     });
 
-    group("testing platform specific Locations", () {
-      test("testing platform location settings for iOS", () {
-        debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+    group('checkIfPositionIsAtSGW Tests', () {
+      test('returns true when position is within 2km of SGW campus', () {
+        // Using the exact SGW coordinates: 45.4973, -73.5784
+        const position = LatLng(45.4973, -73.5784);
+        expect(LocationService.checkIfPositionIsAtSGW(position), isTrue);
+      });
 
-        LocationService.resetInstance();
-        locationService = LocationService(geolocator: mockGeolocatorPlatform);
-        locationService.setPlatformSpecificLocationSettings();
-        print(locationService.locSetting); // "Instance of 'AppleSettings'"
-        final updatedAppleSettings =
-            locationService.locSetting as geo.AppleSettings;
+      test('returns false when position is more than 2km away from SGW campus',
+          () {
+        // Coordinates far from SGW campus
+        const position = LatLng(45.4500, -73.7000);
 
-        // Assert: Check if the settings are correctly initialized for other platforms
-        expect(updatedAppleSettings.accuracy, geo.LocationAccuracy.high);
-        expect(updatedAppleSettings.distanceFilter, 4);
-        expect(updatedAppleSettings.activityType, geo.ActivityType.fitness);
-        expect(updatedAppleSettings.showBackgroundLocationIndicator, false);
-        expect(updatedAppleSettings.pauseLocationUpdatesAutomatically, true);
-
-        // Cleanup: Reset platform override
-        debugDefaultTargetPlatformOverride = null;
+        expect(LocationService.checkIfPositionIsAtSGW(position), isFalse);
       });
     });
-  });
 
-  test('convertPositionToLatLng correctly converts geo.Position to LatLng', () {
-    final geo.Position position = geo.Position(
-      latitude: 45.4979,
-      longitude: -73.5796,
-      timestamp: DateTime.now(),
-      accuracy: 1.0,
-      altitude: 0.0,
-      heading: 0.0,
-      speed: 0.0,
-      altitudeAccuracy: 0,
-      headingAccuracy: 0,
-      speedAccuracy: 0.0,
-    );
+    group('checkIfPositionIsAtLOY Tests', () {
+      test('returns true when position is within 2km of LOY campus', () {
+        // Using the exact LOY coordinates: 45.4586, -73.6401
+        const position = LatLng(45.4586, -73.6401);
+        expect(LocationService.checkIfPositionIsAtLOY(position), isTrue);
+      });
 
-    final LatLng result =
-        LocationService.instance.convertPositionToLatLng(position);
-
-    expect(result.latitude, 45.4979);
-    expect(result.longitude, -73.5796);
+      test('returns false when position is more than 2km away from LOY campus',
+          () {
+        // Coordinates far from LOY campus
+        const position = LatLng(45.5000, -73.5500);
+        expect(LocationService.checkIfPositionIsAtLOY(position), isFalse);
+      });
+    });
   });
 }

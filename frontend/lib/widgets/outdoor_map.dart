@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -34,6 +33,9 @@ class MapWidget extends StatefulWidget {
   final GoogleMapsApiClient mapsApiClient;
   final BuildingPopUps buildingPopUps;
 
+  /// A list of `LatLng` points representing the route path.
+  final List<LatLng> routePoints;
+
   /// Creates an instance of `MapWidget` with required dependencies.
   ///
   /// - [location]: The initial `LatLng` location for the map.
@@ -46,7 +48,8 @@ class MapWidget extends StatefulWidget {
       required this.httpClient,
       required this.routeService,
       required this.mapsApiClient,
-      required this.buildingPopUps});
+      required this.buildingPopUps,
+      required this.routePoints});
 
   @override
   State<MapWidget> createState() => MapWidgetState();
@@ -64,9 +67,6 @@ class MapWidgetState extends State<MapWidget> {
 
   /// The destination location for route calculation.
   late LatLng to;
-
-  /// A list of `LatLng` points representing the route path.
-  List<LatLng> routePoints = [];
 
   /// The total distance of the calculated route in meters.
   double distance = 0.0;
@@ -97,10 +97,15 @@ class MapWidgetState extends State<MapWidget> {
     _mapController.move(location, 17.0);
   }
 
-  ///Initializing the widget with _mapController, _mapService, _markerTapHandler, and loads initial functions
+  List<LatLng> animatedPoints = [];
+  int animationIndex = 0;
+  Timer? animationTimer;
+  double animationProgress = 0.0; // Track progress between points
+
   @override
   void initState() {
     super.initState();
+    //widget.onRoutePointsChanged(routePoints); // this line crashes the map
     _mapController = MapController();
     _mapService = MapService();
 
@@ -124,30 +129,11 @@ class MapWidgetState extends State<MapWidget> {
     );
     _loadBuildingLocations();
     _loadBuildingBoundaries();
-
     from = widget.location;
     to = LatLng(
         widget.location.latitude + 0.005, widget.location.longitude + 0.005);
-    _fetchRoute();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  /// Updates the widget when the location changes
-  @override
-  void didUpdateWidget(MapWidget oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.location != widget.location) {
-      _mapController.move(widget.location, 17.0);
-      from = widget.location;
-      _fetchRoute();
-    }
-  }
-
-  /// Loads the building locations from the map service
   Future<void> _loadBuildingLocations() async {
     try {
       final markers = await _mapService
@@ -178,27 +164,71 @@ class MapWidgetState extends State<MapWidget> {
     }
   }
 
-  /// Fetches a route from `from` to `to` using the injected `IRouteService`.
-  ///
-  /// The result updates the state with new distance, duration, and route points.
-  Future<void> _fetchRoute() async {
-    final routeResult = await widget.routeService.getRoute(from: from, to: to);
-
-    if (routeResult == null || routeResult.routePoints.isEmpty) {
-      // If no route is found or if the route points list is empty, we can either clear the polyline or handle accordingly
-      setState(() {
-        distance = 0.0;
-        duration = 0.0;
-        routePoints = []; // Clear the route points if no route is found
-      });
-      return;
+  /// Called when the widget's configuration changes. Manages starting or stopping the polyline animation based on changes to the routePoints
+  @override
+  void didUpdateWidget(MapWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.location != widget.location) {
+      _mapController.move(widget.location, 17.0);
+      from = widget.location;
     }
+    if (widget.routePoints != oldWidget.routePoints &&
+        widget.routePoints.isNotEmpty) {
+      _startPolylineAnimation();
+    } else if (widget.routePoints.isEmpty) {
+      _stopPolylineAnimation();
+      setState(() {
+        animatedPoints.clear();
+        animationIndex = 0;
+        animationProgress = 0.0;
+      });
+    }
+  }
 
-    setState(() {
-      distance = routeResult.distance;
-      duration = routeResult.duration;
-      routePoints = routeResult.routePoints;
+  /// Starts the polyline animation by initializing animation variables and setting up a timer to update the animatedPoints
+  void _startPolylineAnimation() {
+    _stopPolylineAnimation(); // Stop previous animation
+    animatedPoints.clear(); // Reset animation data
+    animationIndex = 0;
+    animationProgress = 0.0;
+    animationTimer = Timer.periodic(const Duration(milliseconds: 14), (timer) {
+      if (animationIndex < widget.routePoints.length - 1) {
+        animationProgress += 0.7; // Increment animation progress
+        if (animationProgress >= 1.0) {
+          animationProgress = 0.0;
+          animationIndex++;
+        }
+        setState(() {
+          animatedPoints.clear();
+          for (int i = 0; i < animationIndex; i++) {
+            animatedPoints.add(widget.routePoints[i]);
+          }
+          if (animationIndex < widget.routePoints.length - 1) {
+            final start = widget.routePoints[animationIndex];
+            final end = widget.routePoints[animationIndex + 1];
+            final lat = start.latitude +
+                (end.latitude - start.latitude) * animationProgress;
+            final lng = start.longitude +
+                (end.longitude - start.longitude) * animationProgress;
+            animatedPoints.add(LatLng(lat, lng));
+          }
+        });
+      } else {
+        _stopPolylineAnimation();
+      }
     });
+  }
+
+  /// Cancels the animation timer, stopping the polyline animation.
+  void _stopPolylineAnimation() {
+    animationTimer?.cancel();
+  }
+
+  /// Stops the polyline animation and disposes of the widget
+  @override
+  void dispose() {
+    _stopPolylineAnimation();
+    super.dispose();
   }
 
   /// Builds the map widget with the FlutterMap and its children
@@ -249,20 +279,40 @@ class MapWidgetState extends State<MapWidget> {
               rotateAnimationDuration: const Duration(milliseconds: 300),
               rotateAnimationCurve: Curves.easeInOut,
             ),
-            PolygonLayer(
-              polygons: _buildingPolygons,
-            ),
-            MarkerLayer(
-              markers: [
-                ..._buildingMarkers,
-              ],
-            ),
+            if (!widget.routePoints.isNotEmpty)
+              PolygonLayer(
+                polygons: _buildingPolygons,
+              ),
+            if (!widget.routePoints.isNotEmpty)
+              MarkerLayer(
+                markers: [
+                  ..._buildingMarkers,
+                ],
+              ),
+            if (animatedPoints.isNotEmpty)
+              PolylineLayer(
+                polylines: [
+                  Polyline(
+                    points: animatedPoints,
+                    strokeWidth: 10.0,
+                    color: const Color.fromARGB(
+                        100, 0, 0, 0), // Soft black shadow with transparency
+                  ),
+                  Polyline(
+                    points: animatedPoints,
+                    strokeWidth: 6.0,
+                    color: const Color.fromRGBO(
+                        54, 152, 244, 0.8), // Nice vivid blue with 80% opacity
+                  ),
+                ],
+              ),
           ],
         ),
       ),
     );
   }
-} //end of _MapWidgetState class
+}
+//end of _MapWidgetState class
 
 /// Example usage of `MapWidget` inside a `MyPage` scaffold.
 class MyPage extends StatelessWidget {
@@ -309,6 +359,7 @@ class MyPage extends StatelessWidget {
           routeService: routeService,
           mapsApiClient: mapsApiClient,
           buildingPopUps: buildingPopUps,
+          routePoints: [],
         ),
       ),
     );
