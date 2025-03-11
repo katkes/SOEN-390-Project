@@ -27,7 +27,7 @@ import 'package:mockito/src/dummies.dart' as _i6;
 
 class _FakeFuture_0<T1> extends _i1.SmartFake implements _i2.Future<T1> {
   _FakeFuture_0(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 /// A class which mocks [AssetBundle].
@@ -39,38 +39,34 @@ class MockAssetBundle extends _i1.Mock implements _i3.AssetBundle {
   }
 
   @override
-  _i2.Future<_i4.ByteData> load(String? key) =>
-      (super.noSuchMethod(
-            Invocation.method(#load, [key]),
-            returnValue: _i2.Future<_i4.ByteData>.value(_i4.ByteData(0)),
-          )
-          as _i2.Future<_i4.ByteData>);
+  _i2.Future<_i4.ByteData> load(String? key) => (super.noSuchMethod(
+        Invocation.method(#load, [key]),
+        returnValue: _i2.Future<_i4.ByteData>.value(_i4.ByteData(0)),
+      ) as _i2.Future<_i4.ByteData>);
 
   @override
   _i2.Future<_i5.ImmutableBuffer> loadBuffer(String? key) =>
       (super.noSuchMethod(
+        Invocation.method(#loadBuffer, [key]),
+        returnValue: _i2.Future<_i5.ImmutableBuffer>.value(
+          _i6.dummyValue<_i5.ImmutableBuffer>(
+            this,
             Invocation.method(#loadBuffer, [key]),
-            returnValue: _i2.Future<_i5.ImmutableBuffer>.value(
-              _i6.dummyValue<_i5.ImmutableBuffer>(
-                this,
-                Invocation.method(#loadBuffer, [key]),
-              ),
-            ),
-          )
-          as _i2.Future<_i5.ImmutableBuffer>);
+          ),
+        ),
+      ) as _i2.Future<_i5.ImmutableBuffer>);
 
   @override
   _i2.Future<String> loadString(String? key, {bool? cache = true}) =>
       (super.noSuchMethod(
+        Invocation.method(#loadString, [key], {#cache: cache}),
+        returnValue: _i2.Future<String>.value(
+          _i6.dummyValue<String>(
+            this,
             Invocation.method(#loadString, [key], {#cache: cache}),
-            returnValue: _i2.Future<String>.value(
-              _i6.dummyValue<String>(
-                this,
-                Invocation.method(#loadString, [key], {#cache: cache}),
-              ),
-            ),
-          )
-          as _i2.Future<String>);
+          ),
+        ),
+      ) as _i2.Future<String>);
 
   @override
   _i2.Future<T> loadStructuredData<T>(
@@ -78,21 +74,19 @@ class MockAssetBundle extends _i1.Mock implements _i3.AssetBundle {
     _i2.Future<T> Function(String)? parser,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#loadStructuredData, [key, parser]),
-            returnValue:
-                _i6.ifNotNull(
-                  _i6.dummyValueOrNull<T>(
-                    this,
-                    Invocation.method(#loadStructuredData, [key, parser]),
-                  ),
-                  (T v) => _i2.Future<T>.value(v),
-                ) ??
-                _FakeFuture_0<T>(
-                  this,
-                  Invocation.method(#loadStructuredData, [key, parser]),
-                ),
-          )
-          as _i2.Future<T>);
+        Invocation.method(#loadStructuredData, [key, parser]),
+        returnValue: _i6.ifNotNull(
+              _i6.dummyValueOrNull<T>(
+                this,
+                Invocation.method(#loadStructuredData, [key, parser]),
+              ),
+              (T v) => _i2.Future<T>.value(v),
+            ) ??
+            _FakeFuture_0<T>(
+              this,
+              Invocation.method(#loadStructuredData, [key, parser]),
+            ),
+      ) as _i2.Future<T>);
 
   @override
   _i2.Future<T> loadStructuredBinaryData<T>(
@@ -100,31 +94,29 @@ class MockAssetBundle extends _i1.Mock implements _i3.AssetBundle {
     _i2.FutureOr<T> Function(_i4.ByteData)? parser,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#loadStructuredBinaryData, [key, parser]),
-            returnValue:
-                _i6.ifNotNull(
-                  _i6.dummyValueOrNull<T>(
-                    this,
-                    Invocation.method(#loadStructuredBinaryData, [key, parser]),
-                  ),
-                  (T v) => _i2.Future<T>.value(v),
-                ) ??
-                _FakeFuture_0<T>(
-                  this,
-                  Invocation.method(#loadStructuredBinaryData, [key, parser]),
-                ),
-          )
-          as _i2.Future<T>);
+        Invocation.method(#loadStructuredBinaryData, [key, parser]),
+        returnValue: _i6.ifNotNull(
+              _i6.dummyValueOrNull<T>(
+                this,
+                Invocation.method(#loadStructuredBinaryData, [key, parser]),
+              ),
+              (T v) => _i2.Future<T>.value(v),
+            ) ??
+            _FakeFuture_0<T>(
+              this,
+              Invocation.method(#loadStructuredBinaryData, [key, parser]),
+            ),
+      ) as _i2.Future<T>);
 
   @override
   void evict(String? key) => super.noSuchMethod(
-    Invocation.method(#evict, [key]),
-    returnValueForMissingStub: null,
-  );
+        Invocation.method(#evict, [key]),
+        returnValueForMissingStub: null,
+      );
 
   @override
   void clear() => super.noSuchMethod(
-    Invocation.method(#clear, []),
-    returnValueForMissingStub: null,
-  );
+        Invocation.method(#clear, []),
+        returnValueForMissingStub: null,
+      );
 }

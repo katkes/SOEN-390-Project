@@ -52,7 +52,7 @@ class CalendarService {
   /// ```dart
   /// final events = await calendarService.fetchEvents();
   /// ```
-Future<List<Event>> fetchEvents() async {
+  Future<List<Event>> fetchEvents() async {
     final auth.AuthClient? authClient = await _authRepository.getAuthClient();
     if (authClient == null) return [];
 
@@ -61,7 +61,6 @@ Future<List<Event>> fetchEvents() async {
 
     return events.items ?? [];
   }
-
 
   /// Fetches a list of available calendars for the authenticated user.
   ///
@@ -73,7 +72,7 @@ Future<List<Event>> fetchEvents() async {
   /// ```dart
   /// final calendars = await calendarService.fetchCalendars();
   /// ```
-Future<List<CalendarListEntry>> fetchCalendars() async {
+  Future<List<CalendarListEntry>> fetchCalendars() async {
     final auth.AuthClient? authClient = await _authRepository.getAuthClient();
     if (authClient == null) return [];
 
@@ -138,6 +137,7 @@ Future<List<CalendarListEntry>> fetchCalendars() async {
     final calendar = _calendarApiProvider(authClient);
     return await calendar.events.update(updatedEvent, calendarId, eventId);
   }
+
   /// Deletes an event from the specified Google Calendar.
   ///
   /// ## Parameters:

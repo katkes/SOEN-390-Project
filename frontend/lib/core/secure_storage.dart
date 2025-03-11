@@ -34,4 +34,3 @@ class SecureStorage {
     await _storage.delete(key: key);
   }
 }
-

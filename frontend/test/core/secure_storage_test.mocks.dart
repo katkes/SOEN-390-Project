@@ -36,17 +36,16 @@ class MockFlutterSecureStorage extends _i1.Mock
     _i2.LinuxOptions? lOptions,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(#write, [], {
-              #key: key,
-              #value: value,
-              #iOptions: iOptions,
-              #aOptions: aOptions,
-              #lOptions: lOptions,
-            }),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
-          )
-          as _i3.Future<void>);
+        Invocation.method(#write, [], {
+          #key: key,
+          #value: value,
+          #iOptions: iOptions,
+          #aOptions: aOptions,
+          #lOptions: lOptions,
+        }),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
 
   @override
   _i3.Future<String?> read({
@@ -56,16 +55,15 @@ class MockFlutterSecureStorage extends _i1.Mock
     _i2.LinuxOptions? lOptions,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(#read, [], {
-              #key: key,
-              #iOptions: iOptions,
-              #aOptions: aOptions,
-              #lOptions: lOptions,
-            }),
-            returnValue: _i3.Future<String?>.value(),
-            returnValueForMissingStub: _i3.Future<String?>.value(),
-          )
-          as _i3.Future<String?>);
+        Invocation.method(#read, [], {
+          #key: key,
+          #iOptions: iOptions,
+          #aOptions: aOptions,
+          #lOptions: lOptions,
+        }),
+        returnValue: _i3.Future<String?>.value(),
+        returnValueForMissingStub: _i3.Future<String?>.value(),
+      ) as _i3.Future<String?>);
 
   @override
   _i3.Future<bool> containsKey({
@@ -75,16 +73,15 @@ class MockFlutterSecureStorage extends _i1.Mock
     _i2.LinuxOptions? lOptions,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(#containsKey, [], {
-              #key: key,
-              #iOptions: iOptions,
-              #aOptions: aOptions,
-              #lOptions: lOptions,
-            }),
-            returnValue: _i3.Future<bool>.value(false),
-            returnValueForMissingStub: _i3.Future<bool>.value(false),
-          )
-          as _i3.Future<bool>);
+        Invocation.method(#containsKey, [], {
+          #key: key,
+          #iOptions: iOptions,
+          #aOptions: aOptions,
+          #lOptions: lOptions,
+        }),
+        returnValue: _i3.Future<bool>.value(false),
+        returnValueForMissingStub: _i3.Future<bool>.value(false),
+      ) as _i3.Future<bool>);
 
   @override
   _i3.Future<void> delete({
@@ -94,16 +91,15 @@ class MockFlutterSecureStorage extends _i1.Mock
     _i2.LinuxOptions? lOptions,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(#delete, [], {
-              #key: key,
-              #iOptions: iOptions,
-              #aOptions: aOptions,
-              #lOptions: lOptions,
-            }),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
-          )
-          as _i3.Future<void>);
+        Invocation.method(#delete, [], {
+          #key: key,
+          #iOptions: iOptions,
+          #aOptions: aOptions,
+          #lOptions: lOptions,
+        }),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
 
   @override
   _i3.Future<Map<String, String>> readAll({
@@ -112,19 +108,18 @@ class MockFlutterSecureStorage extends _i1.Mock
     _i2.LinuxOptions? lOptions,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(#readAll, [], {
-              #iOptions: iOptions,
-              #aOptions: aOptions,
-              #lOptions: lOptions,
-            }),
-            returnValue: _i3.Future<Map<String, String>>.value(
-              <String, String>{},
-            ),
-            returnValueForMissingStub: _i3.Future<Map<String, String>>.value(
-              <String, String>{},
-            ),
-          )
-          as _i3.Future<Map<String, String>>);
+        Invocation.method(#readAll, [], {
+          #iOptions: iOptions,
+          #aOptions: aOptions,
+          #lOptions: lOptions,
+        }),
+        returnValue: _i3.Future<Map<String, String>>.value(
+          <String, String>{},
+        ),
+        returnValueForMissingStub: _i3.Future<Map<String, String>>.value(
+          <String, String>{},
+        ),
+      ) as _i3.Future<Map<String, String>>);
 
   @override
   _i3.Future<void> deleteAll({
@@ -133,13 +128,12 @@ class MockFlutterSecureStorage extends _i1.Mock
     _i2.LinuxOptions? lOptions,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(#deleteAll, [], {
-              #iOptions: iOptions,
-              #aOptions: aOptions,
-              #lOptions: lOptions,
-            }),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
-          )
-          as _i3.Future<void>);
+        Invocation.method(#deleteAll, [], {
+          #iOptions: iOptions,
+          #aOptions: aOptions,
+          #lOptions: lOptions,
+        }),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
 }
