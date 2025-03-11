@@ -52,6 +52,7 @@ dependencies:
   googleapis_auth: ^1.6.0
   googleapis: ^13.2.0
   shared_preferences: ^2.5.2
+  google_sign_in_mocks: ^0.3.0
 
 dev_dependencies:
   flutter_test:

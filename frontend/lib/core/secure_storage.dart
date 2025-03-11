@@ -18,16 +18,20 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 /// of sensitive data like authentication tokens.
 
 class SecureStorage {
-  static const _storage = FlutterSecureStorage();
-  static Future<void> storeToken(String key, String value) async {
+  final FlutterSecureStorage _storage;
+
+  SecureStorage(this._storage); // Inject dependency
+
+  Future<void> storeToken(String key, String value) async {
     await _storage.write(key: key, value: value);
   }
 
-  static Future<String?> getToken(String key) async {
+  Future<String?> getToken(String key) async {
     return await _storage.read(key: key);
   }
 
-  static Future<void> deleteToken(String key) async {
+  Future<void> deleteToken(String key) async {
     await _storage.delete(key: key);
   }
 }
+

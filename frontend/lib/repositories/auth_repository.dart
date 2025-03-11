@@ -19,12 +19,18 @@ import '../services/http_service.dart';
 class AuthRepository {
   final AuthService _authService;
   final HttpService _httpService;
+  final SecureStorage _secureStorage;
 
-  AuthRepository(this._authService, {HttpService? httpService})
-      : _httpService = httpService ?? HttpService();
+  AuthRepository({
+    required AuthService authService,
+    required HttpService httpService,
+    required SecureStorage secureStorage,
+  })  : _authService = authService,
+        _httpService = httpService,
+        _secureStorage = secureStorage;
 
   Future<auth.AuthClient?> getAuthClient() async {
-    final accessToken = await SecureStorage.getToken("access_token");
+    final accessToken = await _secureStorage.getToken("access_token");
 
     if (accessToken != null) {
       final credentials = auth.AccessCredentials(

@@ -9,31 +9,23 @@ import 'http_service.dart';
 /// operations. It also handles the storage of authentication tokens using secure storage.
 /// The class is configured to request read-only access to Google Calendar.
 ///
-/// The class uses [GoogleSignIn] for authentication and [HttpService] for making
-/// authenticated HTTP requests. It also integrates with [SecureStorage] for
-/// persisting authentication tokens.
-///
-/// Example usage:
-/// ```dart
-/// final authService = AuthService();
-/// final authClient = await authService.signIn();
-/// if (authClient != null) {
-///   // Successfully signed in
-/// }
-/// ```
-///
-/// The class provides methods to:
-/// * Sign in using Google authentication ([signIn])
-/// * Sign out and clear stored tokens ([signOut])
-/// * Clean up resources ([dispose])
+/// The class uses [GoogleSignIn] for authentication, [HttpService] for making
+/// authenticated HTTP requests, and [SecureStorage] for persisting authentication tokens.
 class AuthService {
-  final GoogleSignIn _googleSignIn = GoogleSignIn(
-    scopes: ['https://www.googleapis.com/auth/calendar.readonly'],
-  );
+  final GoogleSignIn _googleSignIn;
   final HttpService _httpService;
+  final SecureStorage _secureStorage;
+  final AuthClientFactory _authClientFactory;
 
-  AuthService({HttpService? httpService})
-      : _httpService = httpService ?? HttpService();
+  AuthService({
+    required GoogleSignIn googleSignIn,
+    required HttpService httpService,
+    required SecureStorage secureStorage,
+    required AuthClientFactory authClientFactory,
+  })  : _googleSignIn = googleSignIn,
+        _httpService = httpService,
+        _secureStorage = secureStorage,
+        _authClientFactory = authClientFactory;
 
   Future<auth.AuthClient?> signIn() async {
     try {
@@ -50,12 +42,12 @@ class AuthService {
         ['https://www.googleapis.com/auth/calendar.readonly'],
       );
 
-      final auth.AuthClient authClient = auth.authenticatedClient(
-        _httpService.client, // Use HttpService's client
+      final auth.AuthClient authClient = _authClientFactory.createAuthClient(
+        _httpService,
         credentials,
       );
 
-      await SecureStorage.storeToken('access_token', googleAuth.accessToken!);
+      await _secureStorage.storeToken('access_token', googleAuth.accessToken!);
 
       return authClient;
     } catch (e) {
@@ -66,10 +58,18 @@ class AuthService {
 
   Future<void> signOut() async {
     await _googleSignIn.signOut();
-    await SecureStorage.deleteToken('access_token');
+    await _secureStorage.deleteToken('access_token');
   }
 
   void dispose() {
     _httpService.dispose();
+  }
+}
+
+/// A factory class for creating authenticated clients using HttpService.
+class AuthClientFactory {
+  auth.AuthClient createAuthClient(
+      HttpService baseClient, auth.AccessCredentials credentials) {
+    return auth.authenticatedClient(baseClient.client, credentials);
   }
 }

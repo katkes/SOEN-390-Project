@@ -30,11 +30,15 @@ import '../repositories/auth_repository.dart';
 /// - Ensure the user is **authenticated** before calling any method.
 class CalendarService {
   final AuthRepository _authRepository;
+  final CalendarApi Function(auth.AuthClient) _calendarApiProvider;
 
   /// Constructor for [CalendarService].
   ///
   /// Requires an instance of [AuthRepository] to handle authentication.
-  CalendarService(this._authRepository);
+  CalendarService(this._authRepository,
+      {CalendarApi Function(auth.AuthClient)? calendarApiProvider})
+      : _calendarApiProvider =
+            calendarApiProvider ?? ((authClient) => CalendarApi(authClient));
 
   /// Fetches a list of events from the **primary calendar**.
   ///
@@ -48,15 +52,16 @@ class CalendarService {
   /// ```dart
   /// final events = await calendarService.fetchEvents();
   /// ```
-  Future<List<Event>> fetchEvents() async {
+Future<List<Event>> fetchEvents() async {
     final auth.AuthClient? authClient = await _authRepository.getAuthClient();
     if (authClient == null) return [];
 
-    final calendar = CalendarApi(authClient);
+    final calendar = _calendarApiProvider(authClient);
     final events = await calendar.events.list('primary');
 
     return events.items ?? [];
   }
+
 
   /// Fetches a list of available calendars for the authenticated user.
   ///
@@ -68,11 +73,11 @@ class CalendarService {
   /// ```dart
   /// final calendars = await calendarService.fetchCalendars();
   /// ```
-  Future<List<CalendarListEntry>> fetchCalendars() async {
+Future<List<CalendarListEntry>> fetchCalendars() async {
     final auth.AuthClient? authClient = await _authRepository.getAuthClient();
     if (authClient == null) return [];
 
-    final calendar = CalendarApi(authClient);
+    final calendar = _calendarApiProvider(authClient);
     final calendars = await calendar.calendarList.list();
 
     return calendars.items ?? [];
@@ -101,10 +106,8 @@ class CalendarService {
     final auth.AuthClient? authClient = await _authRepository.getAuthClient();
     if (authClient == null) return null;
 
-    final calendar = CalendarApi(authClient);
-    final createdEvent = await calendar.events.insert(event, calendarId);
-
-    return createdEvent;
+    final calendar = _calendarApiProvider(authClient);
+    return await calendar.events.insert(event, calendarId);
   }
 
   /// Updates an existing event in the specified Google Calendar.
@@ -132,13 +135,9 @@ class CalendarService {
     final auth.AuthClient? authClient = await _authRepository.getAuthClient();
     if (authClient == null) return null;
 
-    final calendar = CalendarApi(authClient);
-    final updated =
-        await calendar.events.update(updatedEvent, calendarId, eventId);
-
-    return updated;
+    final calendar = _calendarApiProvider(authClient);
+    return await calendar.events.update(updatedEvent, calendarId, eventId);
   }
-
   /// Deletes an event from the specified Google Calendar.
   ///
   /// ## Parameters:
@@ -153,7 +152,7 @@ class CalendarService {
     final auth.AuthClient? authClient = await _authRepository.getAuthClient();
     if (authClient == null) return;
 
-    final calendar = CalendarApi(authClient);
+    final calendar = _calendarApiProvider(authClient);
     await calendar.events.delete(calendarId, eventId);
   }
 }
