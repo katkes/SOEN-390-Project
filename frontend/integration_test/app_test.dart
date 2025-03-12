@@ -47,6 +47,51 @@ void main() {
     await Future.delayed(const Duration(seconds: 3));
   }
 
+  // Function to automate route planning flow depending on different transportation options
+  Future<void> routePlanning(WidgetTester tester, IconData icon) async {
+    await loadingApp(tester);
+    await navigatingToMapSection(tester);
+    expect(find.byType(MapWidget), findsOneWidget);
+
+    // Navigating to transportation screen
+    final findMyWayButton = find.text('Find My Way');
+    await tester.tap(findMyWayButton);
+    await tester.pumpAndSettle();
+    await Future.delayed(const Duration(seconds: 3));
+    expect(find.text('Start Location'), findsOneWidget);
+
+    // Selecting start location
+    String startLocation =
+        "Hall Building Auditorium, Boulevard De Maisonneuve Ouest, Montreal, QC, Canada";
+    await selectLocation(tester, "Start Location", startLocation);
+
+    // Selecting destination
+    String destinationLocation =
+        "Stinger Dome, Sherbrooke Street West, Montreal, QC, Canada";
+    await selectLocation(tester, "Destination", destinationLocation);
+
+    // Selecting car transportation option
+    final carButton = find.byIcon(icon);
+    await tester.tap(carButton);
+    await tester.pumpAndSettle();
+    await Future.delayed(const Duration(seconds: 3));
+
+    // Confirming route
+    final confirmRouteButton = find.text('Confirm Route');
+    await tester.tap(confirmRouteButton);
+    await tester.pumpAndSettle();
+    await Future.delayed(const Duration(seconds: 3));
+
+    // Checks for displaying of route
+    expect(find.byType(RouteCard), findsWidgets);
+    final routeCardFinder = find.byType(RouteCard).first;
+    await tester.tap(routeCardFinder);
+    await tester.pumpAndSettle();
+    await Future.delayed(const Duration(seconds: 5));
+
+    expect(find.byType(PolylineLayer), findsOneWidget);
+  }
+
   // Group containing all the test flows of the app
   group('App Test', () {
     testWidgets(
@@ -96,48 +141,20 @@ void main() {
       await Future.delayed(const Duration(seconds: 5));
     });
 
-    testWidgets('Testing transportation process', (tester) async {
-      await loadingApp(tester);
-      await navigatingToMapSection(tester);
-      expect(find.byType(MapWidget), findsOneWidget);
+    testWidgets('Route planning - car option', (tester) async {
+      await routePlanning(tester, Icons.directions_car);
+    });
 
-      // Navigating to transportation screen
-      final findMyWayButton = find.text('Find My Way');
-      await tester.tap(findMyWayButton);
-      await tester.pumpAndSettle();
-      await Future.delayed(const Duration(seconds: 3));
-      expect(find.text('Start Location'), findsOneWidget);
+    testWidgets('Route planning - bike option', (tester) async {
+      await routePlanning(tester, Icons.directions_bike);
+    });
 
-      // Selecting start location
-      String startLocation =
-          "Hall Building Auditorium, Boulevard De Maisonneuve Ouest, Montreal, QC, Canada";
-      await selectLocation(tester, "Start Location", startLocation);
+    testWidgets('Route planning - public transport option', (tester) async {
+      await routePlanning(tester, Icons.train);
+    });
 
-      // Selecting destination
-      String destinationLocation =
-          "Stinger Dome, Sherbrooke Street West, Montreal, QC, Canada";
-      await selectLocation(tester, "Destination", destinationLocation);
-
-      // Selecting car transportation option
-      final carButton = find.byIcon(Icons.directions_car);
-      await tester.tap(carButton);
-      await tester.pumpAndSettle();
-      await Future.delayed(const Duration(seconds: 3));
-
-      // Confirming route
-      final confirmRouteButton = find.text('Confirm Route');
-      await tester.tap(confirmRouteButton);
-      await tester.pumpAndSettle();
-      await Future.delayed(const Duration(seconds: 3));
-
-      // Checks for displaying of route
-      expect(find.byType(RouteCard), findsWidgets);
-      final routeCardFinder = find.byType(RouteCard).first;
-      await tester.tap(routeCardFinder);
-      await tester.pumpAndSettle();
-      await Future.delayed(const Duration(seconds: 5));
-
-      expect(find.byType(PolylineLayer), findsOneWidget);
+    testWidgets('Route planning - walk option', (tester) async {
+      await routePlanning(tester, Icons.directions_walk);
     });
   });
 }
