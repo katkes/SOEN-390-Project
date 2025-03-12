@@ -1,0 +1,1 @@
+ C:\\Users\\msano\\StudioProjects\\SOEN-390-Project\\frontend\\.dart_tool\\flutter_build\\6ba5bcb1a3e30d310e166a754027f3d9\\native_assets.json: 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:soen_390/main.dart' as app;
@@ -129,8 +130,14 @@ void main() {
       await tester.pumpAndSettle();
       await Future.delayed(const Duration(seconds: 3));
 
-      // Checks for displaying of routes
+      // Checks for displaying of route
       expect(find.byType(RouteCard), findsWidgets);
+      final routeCardFinder = find.byType(RouteCard).first;
+      await tester.tap(routeCardFinder);
+      await tester.pumpAndSettle();
+      await Future.delayed(const Duration(seconds: 5));
+
+      expect(find.byType(PolylineLayer), findsOneWidget);
     });
   });
 }
