@@ -7,7 +7,7 @@
 library;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+// import 'package:flutter_svg/flutter_svg.dart';
 
 class GoogleSignInButton extends StatelessWidget {
   final VoidCallback onPressed;
@@ -31,23 +31,23 @@ class GoogleSignInButton extends StatelessWidget {
           ),
           elevation: 1,
         ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12),
+        child: const Padding(
+          padding: EdgeInsets.symmetric(vertical: 12),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              SvgPicture.asset(
-                'frontend/assets/svg/Google__G__logo.svg',
-                height: 24,
-                width: 24,
-                placeholderBuilder: (context) => SvgPicture.network(
-                  'https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg',
-                  height: 24,
-                  width: 24,
-                ),
-              ),
-              const SizedBox(width: 16),
-              const Text(
+              // SvgPicture.asset(
+              //   'frontend/assets/svg/Google__G__logo.svg',
+              //   height: 24,
+              //   width: 24,
+              //   placeholderBuilder: (context) => SvgPicture.network(
+              //     'https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg',
+              //     height: 24,
+              //     width: 24,
+              //   ),
+              // ),
+              SizedBox(width: 16),
+              Text(
                 'Sign in with Google',
                 style: TextStyle(
                   fontSize: 16,
