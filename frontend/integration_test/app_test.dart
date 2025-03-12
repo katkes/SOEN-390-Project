@@ -141,20 +141,47 @@ void main() {
       await Future.delayed(const Duration(seconds: 5));
     });
 
-    testWidgets('Route planning - car option', (tester) async {
+    // Testing route planning with car transportation option
+    testWidgets('Test route planning - car option', (tester) async {
       await routePlanning(tester, Icons.directions_car);
     });
 
-    testWidgets('Route planning - bike option', (tester) async {
+    // Testing route planning with bike transportation option
+    testWidgets('Test route planning - bike option', (tester) async {
       await routePlanning(tester, Icons.directions_bike);
     });
 
-    testWidgets('Route planning - public transport option', (tester) async {
+    // Testing route planning with public transportation option
+    testWidgets('Test route planning - public transport option', (tester) async {
       await routePlanning(tester, Icons.train);
     });
 
-    testWidgets('Route planning - walk option', (tester) async {
+    // Testing route planning with walk transportation option
+    testWidgets('Test route planning - walk option', (tester) async {
       await routePlanning(tester, Icons.directions_walk);
+    });
+
+    // Testing the search bar functionality when searching for building through the map
+    testWidgets('Test search bar functionality', (tester) async {
+      await loadingApp(tester);
+      await navigatingToMapSection(tester);
+      expect(find.byType(MapWidget), findsOneWidget);
+
+      // Finding search bar
+      final searchBarFinder = find.byElementType(GestureDetector);
+      await tester.tap(searchBarFinder);
+      await tester.pumpAndSettle();
+
+      // Entering text into search bar
+      final textFieldFinder = find.text("Search for Building");
+      await tester.enterText(textFieldFinder, "Hall Building");
+      await tester.pumpAndSettle();
+      await Future.delayed(const Duration(seconds: 3));
+
+      // Clicking on suggestion
+      final buildingSuggestion = find.byKey(const Key("123"));
+      await tester.tap(buildingSuggestion);
+      await tester.pumpAndSettle();
     });
   });
 }
