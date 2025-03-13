@@ -1,3 +1,12 @@
+/// UserProfileScreen displays the user's profile information, including their
+/// display name, email, and profile picture. It also provides actions for
+/// signing out and viewing the user's calendar.
+///
+/// This widget handles loading states and error messages, providing a
+/// comprehensive profile display and management interface.
+
+library;
+
 import 'package:flutter/material.dart';
 
 class UserProfileScreen extends StatelessWidget {
