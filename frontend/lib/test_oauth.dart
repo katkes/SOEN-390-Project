@@ -11,6 +11,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // <-- ADD THIS LINE
   await dotenv.load();
+  
 final GoogleSignIn googleSignIn = GoogleSignIn(
     clientId: dotenv.env['IOS_CLIENT_ID'],
     serverClientId: dotenv.env['WEB_CLIENT_ID'],
