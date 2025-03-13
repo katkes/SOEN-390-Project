@@ -47,7 +47,7 @@ dependencies:
   plugin_platform_interface: ^2.1.8
   google_places_autocomplete_text_field: ^1.0.0
   flutter_map_location_marker: any
-  flutter_secure_storage: ^4.2.1
+  flutter_secure_storage: ^9.2.4
   google_sign_in: ^6.3.0
   googleapis_auth: ^1.6.0
   googleapis: ^13.2.0

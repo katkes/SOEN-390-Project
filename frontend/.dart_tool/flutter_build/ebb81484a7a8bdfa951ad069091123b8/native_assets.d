@@ -1,0 +1,1 @@
+ C:\\Users\\Roberto\\Documents\\GitHub\\SOEN-390-Project\\frontend\\.dart_tool\\flutter_build\\ebb81484a7a8bdfa951ad069091123b8\\native_assets.yaml: 

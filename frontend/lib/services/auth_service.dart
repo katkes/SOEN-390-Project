@@ -27,13 +27,21 @@ class AuthService {
         _secureStorage = secureStorage,
         _authClientFactory = authClientFactory;
 
-  Future<auth.AuthClient?> signIn() async {
+Future<auth.AuthClient?> signIn() async {
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) return null;
+      if (googleUser == null) {
+        print("Sign-in canceled by user");
+        return null;
+      }
+
+      print("User Signed In: ${googleUser.email}");
 
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
+
+      print("Access Token: ${googleAuth.accessToken}");
+      print("ID Token: ${googleAuth.idToken}");
 
       final auth.AccessCredentials credentials = auth.AccessCredentials(
         auth.AccessToken(
@@ -48,13 +56,14 @@ class AuthService {
       );
 
       await _secureStorage.storeToken('access_token', googleAuth.accessToken!);
+      print("Token stored successfully");
 
       return authClient;
     } catch (e) {
       print("Sign-in error: $e");
       return null;
     }
-  }
+}
 
   Future<void> signOut() async {
     await _googleSignIn.signOut();
