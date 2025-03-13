@@ -35,8 +35,7 @@ class LoginScreen extends StatelessWidget {
                 width: 80,
                 height: 80,
                 decoration: const BoxDecoration(
-                    color:
-                        Color.fromARGB(50, 145, 35, 55), //fix this for opacity
+                    color: Color.fromARGB(50, 145, 35, 55),
                     shape: BoxShape.circle),
                 child: Icon(
                   Icons.calendar_month_rounded,

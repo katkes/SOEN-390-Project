@@ -33,7 +33,6 @@ class UserProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // title: const Text('Your Profile'),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),

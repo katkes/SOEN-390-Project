@@ -99,7 +99,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
   bool isLoggedIn = false;
   bool isLoading = false;
   String? errorMessage;
-  //Dummy user information. replace with real user data.
+  //TODO: Replace with real user data for 4.1.1
   String? displayName = "John Doe";
   String? email = "john.doe@example.com";
   String? photoUrl;
@@ -153,7 +153,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
     });
   }
 
-  //Dummy sign in method. replace with real code.
+  //TODO: Replace with real sign in method for 4.1.1
   void signIn() {
     setState(() {
       isLoading = true;
@@ -167,7 +167,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
     });
   }
 
-  //Dummy sign out method. replace with real code.
+//TODO: Replace with real sign out method for 4.1.1
   void signOut() {
     setState(() {
       isLoggedIn = false;
@@ -304,6 +304,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
                   email: email,
                   photoUrl: photoUrl,
                   onSignOut: signOut,
+                  //TODO: Implement calendar view for 4.1.1
                   onViewCalendar: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
