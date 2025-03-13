@@ -5,17 +5,18 @@ import '../services/auth_service.dart';
 import '../core/secure_storage.dart';
 import '../services/http_service.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // <-- ADD THIS LINE
-
+  await dotenv.load();
 final GoogleSignIn googleSignIn = GoogleSignIn(
-    clientId:
-        "521610144578-4nhqk5c28m7jsmjefao9g742s7dh5bug.apps.googleusercontent.com", // iOS-specific Client ID
-    serverClientId:
-        "521610144578-qblu7gm9h319mm44vgk3ihluvg4tegd9.apps.googleusercontent.com", // Optional for backend
+    clientId: dotenv.env['IOS_CLIENT_ID'],
+    serverClientId: dotenv.env['WEB_CLIENT_ID'],
     scopes: ['https://www.googleapis.com/auth/calendar.readonly'],
   );
+
 
 
   final HttpService httpService = HttpService();
