@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:soen_390/screens/profile/profile_screen.dart'; // Replace 'your_file_name.dart' with your actual file name
+import 'package:soen_390/screens/profile/profile_screen.dart';
 
 void main() {
   testWidgets('UserProfileScreen displays initials when photoUrl is null',
       (WidgetTester tester) async {
+    // Test: UserProfileScreen is built with a null photoUrl.
+    // Expected: The user's initial is displayed in the CircleAvatar, and the CircleAvatar's backgroundImage is null.
     await tester.pumpWidget(
       MaterialApp(
         home: UserProfileScreen(
@@ -24,6 +26,8 @@ void main() {
 
   testWidgets('UserProfileScreen displays loading indicator',
       (WidgetTester tester) async {
+    // Test: UserProfileScreen is built with isLoading set to true.
+    // Expected: The CircularProgressIndicator is displayed.
     await tester.pumpWidget(
       MaterialApp(
         home: UserProfileScreen(
@@ -42,6 +46,8 @@ void main() {
 
   testWidgets('UserProfileScreen displays error message',
       (WidgetTester tester) async {
+    // Test: UserProfileScreen is built with an error message.
+    // Expected: The error message is displayed, and it is displayed with red color.
     await tester.pumpWidget(
       MaterialApp(
         home: UserProfileScreen(
@@ -64,6 +70,8 @@ void main() {
 
   testWidgets('UserProfileScreen calls onSignOut and onViewCalendar',
       (WidgetTester tester) async {
+    // Test: UserProfileScreen's logout and view calendar buttons are tapped.
+    // Expected: The onSignOut and onViewCalendar callbacks are called.
     bool signOutCalled = false;
     bool viewCalendarCalled = false;
 
@@ -95,6 +103,8 @@ void main() {
   testWidgets(
       'UserProfileScreen displays default User when displayName is null',
       (WidgetTester tester) async {
+    // Test: UserProfileScreen is built with a null displayName.
+    // Expected: The default display name "User" and the default initial "?" are shown.
     await tester.pumpWidget(
       MaterialApp(
         home: UserProfileScreen(
