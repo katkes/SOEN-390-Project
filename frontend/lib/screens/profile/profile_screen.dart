@@ -44,6 +44,13 @@ class UserProfileScreen extends StatelessWidget {
       circleAvatarChild = null;
     }
 
+    ImageProvider? backgroundImage;
+    if (photoUrl != null) {
+      backgroundImage = NetworkImage(photoUrl!);
+    } else {
+      backgroundImage = null;
+    }
+
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -65,8 +72,7 @@ class UserProfileScreen extends StatelessWidget {
                     // Profile image
                     CircleAvatar(
                       radius: 50,
-                      backgroundImage:
-                          photoUrl != null ? NetworkImage(photoUrl!) : null,
+                      backgroundImage: backgroundImage,
                       backgroundColor: const Color.fromARGB(50, 145, 35, 55),
                       child: circleAvatarChild,
                     ),
