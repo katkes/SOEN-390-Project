@@ -272,6 +272,11 @@ void main() {
       description: 'Profile navigation destination',
     );
     expect(profileDestination, findsOneWidget);
+
+    // await tester.tap(profileDestination);
+    // await tester.pumpAndSettle();
+
+    // expect(find.text('Profile Page'), findsOneWidget);
   });
 
   test('Providers return mocked instances in container', () {
@@ -373,5 +378,42 @@ void main() {
     await tester.pump();
 
     expect(myHomePageState.currentLocation, newLocation);
+  });
+  testWidgets('signIn sets isLoggedIn to true', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: MyHomePage(
+          title: 'Test App',
+          routeService: mockRouteService,
+          httpService: mockHttpService,
+        ),
+      ),
+    );
+
+    final myHomePageState =
+        tester.state<MyHomePageState>(find.byType(MyHomePage));
+    myHomePageState.signIn();
+    await tester.pumpAndSettle();
+    expect(myHomePageState.isLoggedIn, true);
+  });
+
+  testWidgets('signOut sets isLoggedIn to false', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: MyHomePage(
+          title: 'Test App',
+          routeService: mockRouteService,
+          httpService: mockHttpService,
+        ),
+      ),
+    );
+
+    final myHomePageState =
+        tester.state<MyHomePageState>(find.byType(MyHomePage));
+    myHomePageState.signIn();
+    await tester.pumpAndSettle();
+    myHomePageState.signOut();
+    await tester.pump();
+    expect(myHomePageState.isLoggedIn, false);
   });
 }

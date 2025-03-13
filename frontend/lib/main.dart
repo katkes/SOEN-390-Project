@@ -153,7 +153,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
     });
   }
 
-   //Dummy sign in method. replace with real code.
+  //Dummy sign in method. replace with real code.
   void signIn() {
     setState(() {
       isLoading = true;
@@ -313,7 +313,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
                 )
               : LoginScreen(
                   onGoogleSignIn: signIn,
-                  isLoading: isLoading, 
+                  isLoading: isLoading,
                   errorMessage: errorMessage,
                 ),
         ],
