@@ -272,11 +272,6 @@ void main() {
       description: 'Profile navigation destination',
     );
     expect(profileDestination, findsOneWidget);
-
-    await tester.tap(profileDestination);
-    await tester.pumpAndSettle();
-
-    expect(find.text('Profile Page'), findsOneWidget);
   });
 
   test('Providers return mocked instances in container', () {

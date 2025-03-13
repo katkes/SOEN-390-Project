@@ -23,6 +23,7 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(5, 145, 35, 55),
       body: SafeArea(
         child: Center(
             child: Padding(
@@ -33,8 +34,9 @@ class LoginScreen extends StatelessWidget {
               Container(
                 width: 80,
                 height: 80,
-                decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor.withValues(),
+                decoration: const BoxDecoration(
+                    color:
+                        Color.fromARGB(50, 145, 35, 55), //fix this for opacity
                     shape: BoxShape.circle),
                 child: Icon(
                   Icons.calendar_month_rounded,
@@ -54,10 +56,9 @@ class LoginScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
 
-              // Description text
               const Text(
                 'Sign in with Google to access your calendars and events',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
+                style: TextStyle(fontSize: 16, color: Colors.black54),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 48),

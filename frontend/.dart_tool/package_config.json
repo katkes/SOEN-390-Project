@@ -218,12 +218,6 @@
       "languageVersion": "3.2"
     },
     {
-      "name": "flutter_svg",
-      "rootUri": "file:///Users/tahsinislam/.pub-cache/hosted/pub.dev/flutter_svg-1.0.3",
-      "packageUri": "lib/",
-      "languageVersion": "2.12"
-    },
-    {
       "name": "flutter_test",
       "rootUri": "file:///Users/tahsinislam/Documents/Concordia/WINTER%202025/SOEN%20390/flutter/packages/flutter_test",
       "packageUri": "lib/",
@@ -474,18 +468,6 @@
       "rootUri": "file:///Users/tahsinislam/.pub-cache/hosted/pub.dev/path-1.9.0",
       "packageUri": "lib/",
       "languageVersion": "3.0"
-    },
-    {
-      "name": "path_drawing",
-      "rootUri": "file:///Users/tahsinislam/.pub-cache/hosted/pub.dev/path_drawing-1.0.1",
-      "packageUri": "lib/",
-      "languageVersion": "2.12"
-    },
-    {
-      "name": "path_parsing",
-      "rootUri": "file:///Users/tahsinislam/.pub-cache/hosted/pub.dev/path_parsing-1.1.0",
-      "packageUri": "lib/",
-      "languageVersion": "3.3"
     },
     {
       "name": "petitparser",
@@ -752,7 +734,7 @@
       "languageVersion": "3.6"
     }
   ],
-  "generated": "2025-03-12T04:15:02.051416Z",
+  "generated": "2025-03-13T00:18:35.120149Z",
   "generator": "pub",
   "generatorVersion": "3.6.0",
   "flutterRoot": "file:///Users/tahsinislam/Documents/Concordia/WINTER%202025/SOEN%20390/flutter",
