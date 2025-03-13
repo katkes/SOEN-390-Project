@@ -27,12 +27,12 @@ import 'package:soen_390/services/building_info_api.dart' as _i3;
 
 class _FakeMapCamera_0 extends _i1.SmartFake implements _i2.MapCamera {
   _FakeMapCamera_0(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 class _FakeMapsApiClient_1 extends _i1.SmartFake implements _i3.MapsApiClient {
   _FakeMapsApiClient_1(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 /// A class which mocks [MapController].
@@ -40,25 +40,21 @@ class _FakeMapsApiClient_1 extends _i1.SmartFake implements _i3.MapsApiClient {
 /// See the documentation for Mockito's code generation for more information.
 class MockMapController extends _i1.Mock implements _i2.MapController {
   @override
-  _i4.Stream<_i2.MapEvent> get mapEventStream =>
-      (super.noSuchMethod(
-            Invocation.getter(#mapEventStream),
-            returnValue: _i4.Stream<_i2.MapEvent>.empty(),
-            returnValueForMissingStub: _i4.Stream<_i2.MapEvent>.empty(),
-          )
-          as _i4.Stream<_i2.MapEvent>);
+  _i4.Stream<_i2.MapEvent> get mapEventStream => (super.noSuchMethod(
+        Invocation.getter(#mapEventStream),
+        returnValue: _i4.Stream<_i2.MapEvent>.empty(),
+        returnValueForMissingStub: _i4.Stream<_i2.MapEvent>.empty(),
+      ) as _i4.Stream<_i2.MapEvent>);
 
   @override
-  _i2.MapCamera get camera =>
-      (super.noSuchMethod(
-            Invocation.getter(#camera),
-            returnValue: _FakeMapCamera_0(this, Invocation.getter(#camera)),
-            returnValueForMissingStub: _FakeMapCamera_0(
-              this,
-              Invocation.getter(#camera),
-            ),
-          )
-          as _i2.MapCamera);
+  _i2.MapCamera get camera => (super.noSuchMethod(
+        Invocation.getter(#camera),
+        returnValue: _FakeMapCamera_0(this, Invocation.getter(#camera)),
+        returnValueForMissingStub: _FakeMapCamera_0(
+          this,
+          Invocation.getter(#camera),
+        ),
+      ) as _i2.MapCamera);
 
   @override
   bool move(
@@ -68,24 +64,21 @@ class MockMapController extends _i1.Mock implements _i2.MapController {
     String? id,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(
-              #move,
-              [center, zoom],
-              {#offset: offset, #id: id},
-            ),
-            returnValue: false,
-            returnValueForMissingStub: false,
-          )
-          as bool);
+        Invocation.method(
+          #move,
+          [center, zoom],
+          {#offset: offset, #id: id},
+        ),
+        returnValue: false,
+        returnValueForMissingStub: false,
+      ) as bool);
 
   @override
-  bool rotate(double? degree, {String? id}) =>
-      (super.noSuchMethod(
-            Invocation.method(#rotate, [degree], {#id: id}),
-            returnValue: false,
-            returnValueForMissingStub: false,
-          )
-          as bool);
+  bool rotate(double? degree, {String? id}) => (super.noSuchMethod(
+        Invocation.method(#rotate, [degree], {#id: id}),
+        returnValue: false,
+        returnValueForMissingStub: false,
+      ) as bool);
 
   @override
   ({bool moveSuccess, bool rotateSuccess}) rotateAroundPoint(
@@ -94,18 +87,17 @@ class MockMapController extends _i1.Mock implements _i2.MapController {
     String? id,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(
-              #rotateAroundPoint,
-              [degree],
-              {#offset: offset, #id: id},
-            ),
-            returnValue: (moveSuccess: false, rotateSuccess: false),
-            returnValueForMissingStub: (
-              moveSuccess: false,
-              rotateSuccess: false,
-            ),
-          )
-          as ({bool moveSuccess, bool rotateSuccess}));
+        Invocation.method(
+          #rotateAroundPoint,
+          [degree],
+          {#offset: offset, #id: id},
+        ),
+        returnValue: (moveSuccess: false, rotateSuccess: false),
+        returnValueForMissingStub: (
+          moveSuccess: false,
+          rotateSuccess: false,
+        ),
+      ) as ({bool moveSuccess, bool rotateSuccess}));
 
   @override
   ({bool moveSuccess, bool rotateSuccess}) moveAndRotate(
@@ -115,33 +107,30 @@ class MockMapController extends _i1.Mock implements _i2.MapController {
     String? id,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(
-              #moveAndRotate,
-              [center, zoom, degree],
-              {#id: id},
-            ),
-            returnValue: (moveSuccess: false, rotateSuccess: false),
-            returnValueForMissingStub: (
-              moveSuccess: false,
-              rotateSuccess: false,
-            ),
-          )
-          as ({bool moveSuccess, bool rotateSuccess}));
+        Invocation.method(
+          #moveAndRotate,
+          [center, zoom, degree],
+          {#id: id},
+        ),
+        returnValue: (moveSuccess: false, rotateSuccess: false),
+        returnValueForMissingStub: (
+          moveSuccess: false,
+          rotateSuccess: false,
+        ),
+      ) as ({bool moveSuccess, bool rotateSuccess}));
 
   @override
-  bool fitCamera(_i2.CameraFit? cameraFit) =>
-      (super.noSuchMethod(
-            Invocation.method(#fitCamera, [cameraFit]),
-            returnValue: false,
-            returnValueForMissingStub: false,
-          )
-          as bool);
+  bool fitCamera(_i2.CameraFit? cameraFit) => (super.noSuchMethod(
+        Invocation.method(#fitCamera, [cameraFit]),
+        returnValue: false,
+        returnValueForMissingStub: false,
+      ) as bool);
 
   @override
   void dispose() => super.noSuchMethod(
-    Invocation.method(#dispose, []),
-    returnValueForMissingStub: null,
-  );
+        Invocation.method(#dispose, []),
+        returnValueForMissingStub: null,
+      );
 }
 
 /// A class which mocks [BuildingPopUps].
@@ -149,19 +138,17 @@ class MockMapController extends _i1.Mock implements _i2.MapController {
 /// See the documentation for Mockito's code generation for more information.
 class MockBuildingPopUps extends _i1.Mock implements _i3.BuildingPopUps {
   @override
-  _i3.MapsApiClient get mapsApiClient =>
-      (super.noSuchMethod(
-            Invocation.getter(#mapsApiClient),
-            returnValue: _FakeMapsApiClient_1(
-              this,
-              Invocation.getter(#mapsApiClient),
-            ),
-            returnValueForMissingStub: _FakeMapsApiClient_1(
-              this,
-              Invocation.getter(#mapsApiClient),
-            ),
-          )
-          as _i3.MapsApiClient);
+  _i3.MapsApiClient get mapsApiClient => (super.noSuchMethod(
+        Invocation.getter(#mapsApiClient),
+        returnValue: _FakeMapsApiClient_1(
+          this,
+          Invocation.getter(#mapsApiClient),
+        ),
+        returnValueForMissingStub: _FakeMapsApiClient_1(
+          this,
+          Invocation.getter(#mapsApiClient),
+        ),
+      ) as _i3.MapsApiClient);
 
   @override
   _i4.Future<Map<String, dynamic>> fetchBuildingInformation(
@@ -170,17 +157,16 @@ class MockBuildingPopUps extends _i1.Mock implements _i3.BuildingPopUps {
     String? locationName,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#fetchBuildingInformation, [
-              latitude,
-              longitude,
-              locationName,
-            ]),
-            returnValue: _i4.Future<Map<String, dynamic>>.value(
-              <String, dynamic>{},
-            ),
-            returnValueForMissingStub: _i4.Future<Map<String, dynamic>>.value(
-              <String, dynamic>{},
-            ),
-          )
-          as _i4.Future<Map<String, dynamic>>);
+        Invocation.method(#fetchBuildingInformation, [
+          latitude,
+          longitude,
+          locationName,
+        ]),
+        returnValue: _i4.Future<Map<String, dynamic>>.value(
+          <String, dynamic>{},
+        ),
+        returnValueForMissingStub: _i4.Future<Map<String, dynamic>>.value(
+          <String, dynamic>{},
+        ),
+      ) as _i4.Future<Map<String, dynamic>>);
 }

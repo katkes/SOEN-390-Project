@@ -27,7 +27,7 @@ class AuthService {
         _secureStorage = secureStorage,
         _authClientFactory = authClientFactory;
 
-Future<auth.AuthClient?> signIn() async {
+  Future<auth.AuthClient?> signIn() async {
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
@@ -63,7 +63,7 @@ Future<auth.AuthClient?> signIn() async {
       print("Sign-in error: $e");
       return null;
     }
-}
+  }
 
   Future<void> signOut() async {
     await _googleSignIn.signOut();
