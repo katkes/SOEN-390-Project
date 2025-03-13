@@ -9,9 +9,14 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // <-- ADD THIS LINE
 
-  final GoogleSignIn googleSignIn = GoogleSignIn(
+final GoogleSignIn googleSignIn = GoogleSignIn(
+    clientId:
+        "521610144578-4nhqk5c28m7jsmjefao9g742s7dh5bug.apps.googleusercontent.com", // iOS-specific Client ID
+    serverClientId:
+        "521610144578-qblu7gm9h319mm44vgk3ihluvg4tegd9.apps.googleusercontent.com", // Optional for backend
     scopes: ['https://www.googleapis.com/auth/calendar.readonly'],
   );
+
 
   final HttpService httpService = HttpService();
   final SecureStorage secureStorage =
