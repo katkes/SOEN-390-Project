@@ -31,6 +31,19 @@ class UserProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Widget? circleAvatarChild;
+    if (photoUrl == null) {
+      circleAvatarChild = Text(
+        displayName?.substring(0, 1).toUpperCase() ?? '?',
+        style: TextStyle(
+          fontSize: 40,
+          color: Theme.of(context).primaryColor,
+        ),
+      );
+    } else {
+      circleAvatarChild = null;
+    }
+
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -55,14 +68,7 @@ class UserProfileScreen extends StatelessWidget {
                       backgroundImage:
                           photoUrl != null ? NetworkImage(photoUrl!) : null,
                       backgroundColor: const Color.fromARGB(50, 145, 35, 55),
-                      child: photoUrl == null
-                          ? Text(
-                              displayName?.substring(0, 1).toUpperCase() ?? '?',
-                              style: TextStyle(
-                                  fontSize: 40,
-                                  color: Theme.of(context).primaryColor),
-                            )
-                          : null,
+                      child: circleAvatarChild,
                     ),
                     const SizedBox(height: 24),
 
