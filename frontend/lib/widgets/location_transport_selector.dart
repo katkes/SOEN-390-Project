@@ -11,15 +11,13 @@ class LocationTransportSelector extends StatefulWidget {
   final Function(String)? onTransportModeChange;
   final Function()? onLocationChanged;
   final String? initialDestination;
-  final String? defaultOrigin;
 
   const LocationTransportSelector(
       {super.key,
       this.onLocationChanged,
       required this.onConfirmRoute,
       this.onTransportModeChange,
-      this.initialDestination,
-      this.defaultOrigin});
+      this.initialDestination});
 
   @override
   LocationTransportSelectorState createState() =>
@@ -88,7 +86,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   Widget _buildLocationInput() {
     return Column(
       children: [
-        _buildLocationField("Start Location", true),
+        _buildLocationField("Your location", true),
         const SizedBox(height: 10),
         _buildLocationField("Destination", false),
         const SizedBox(height: 10),
