@@ -6,6 +6,7 @@ import 'package:mockito/annotations.dart';
 import 'package:http/http.dart' as http;
 import 'dart:typed_data';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:soen_390/core/secure_storage.dart';
 import 'package:soen_390/main.dart';
 import 'package:soen_390/providers/service_providers.dart';
 import 'package:soen_390/services/http_service.dart';
@@ -14,6 +15,9 @@ import 'package:latlong2/latlong.dart';
 import 'package:soen_390/services/building_info_api.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'package:soen_390/services/building_to_coordinates.dart';
+import 'package:soen_390/services/auth_service.dart';
+import 'package:googleapis_auth/googleapis_auth.dart' as auth;
+import 'package:google_sign_in/google_sign_in.dart';
 
 /// Test suite for the main application and services in the SOEN-390 project.
 ///
@@ -37,6 +41,12 @@ import 'package:soen_390/services/building_to_coordinates.dart';
   MockSpec<GoogleMapsApiClient>(),
   MockSpec<GeocodingService>(),
   MockSpec<LocationService>(),
+  MockSpec<AuthService>(),
+  MockSpec<SecureStorage>(),
+  MockSpec<auth.AuthClient>(),
+  MockSpec<GoogleSignIn>(),
+  MockSpec<GoogleSignInAccount>(),
+  MockSpec<GoogleSignInAuthentication>(),
 ])
 import 'main_test.mocks.dart';
 
@@ -83,6 +93,11 @@ void main() {
   late MockBuildingPopUps mockBuildingPopUps;
   late MockGeocodingService mockGeocodingService;
   late MockLocationService mockLocationService;
+  late MockAuthService mockAuthService;
+  late MockGoogleSignIn mockGoogleSignIn;
+  late MockGoogleSignInAccount mockGoogleSignInAccount;
+  late MockGoogleSignInAuthentication mockGoogleSignInAuthentication;
+  late MockAuthClient mockAuthClient;
 
   setUpAll(() async {
     // Mock dotenv to avoid loading the actual ..env file in tests
@@ -99,6 +114,25 @@ void main() {
     mockBuildingPopUps = MockBuildingPopUps();
     mockGeocodingService = MockGeocodingService();
     mockLocationService = MockLocationService();
+    mockAuthService = MockAuthService();
+    mockGoogleSignIn = MockGoogleSignIn();
+    mockGoogleSignInAccount = MockGoogleSignInAccount();
+    mockGoogleSignInAuthentication = MockGoogleSignInAuthentication();
+    mockAuthClient = MockAuthClient();
+
+    // Stub the Google Sign-In behavior
+    when(mockAuthService.googleSignIn).thenReturn(mockGoogleSignIn);
+    when(mockGoogleSignIn.signIn())
+        .thenAnswer((_) async => mockGoogleSignInAccount);
+    when(mockGoogleSignInAccount.authentication)
+        .thenAnswer((_) async => mockGoogleSignInAuthentication);
+    when(mockGoogleSignInAuthentication.accessToken)
+        .thenReturn("mock_access_token");
+    when(mockGoogleSignInAuthentication.idToken).thenReturn("mock_id_token");
+    when(mockGoogleSignIn.currentUser).thenReturn(mockGoogleSignInAccount);
+
+    // Stub the signIn method in AuthService to return a mock AuthClient
+    when(mockAuthService.signIn()).thenAnswer((_) async => mockAuthClient);
 
     // Set up mock behavior for getRoute method
     when(mockRouteService.getRoute(
@@ -375,20 +409,31 @@ void main() {
     expect(myHomePageState.currentLocation, newLocation);
   });
   testWidgets('signIn sets isLoggedIn to true', (WidgetTester tester) async {
+    // Create a mock AuthClient to return
+    final mockAuthClient = MockAuthClient();
+
+    // Stub the signIn method to return the mocked AuthClient
+    when(mockAuthService.signIn()).thenAnswer((_) async => mockAuthClient);
+
     await tester.pumpWidget(
       MaterialApp(
         home: MyHomePage(
           title: 'Test App',
           routeService: mockRouteService,
           httpService: mockHttpService,
+          authService: mockAuthService,
         ),
       ),
     );
 
     final myHomePageState =
         tester.state<MyHomePageState>(find.byType(MyHomePage));
-    myHomePageState.signIn();
-    await tester.pumpAndSettle();
+
+    // Call the signIn method
+    await myHomePageState.signIn();
+    await tester.pumpAndSettle(); // Allow UI to update
+
+    // Check that isLoggedIn is set to true
     expect(myHomePageState.isLoggedIn, true);
   });
 
@@ -399,6 +444,7 @@ void main() {
           title: 'Test App',
           routeService: mockRouteService,
           httpService: mockHttpService,
+          authService: MockAuthService(),
         ),
       ),
     );

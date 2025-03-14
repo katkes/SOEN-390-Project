@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:geolocator/geolocator.dart' as geo;
+import 'package:soen_390/services/auth_service.dart';
 import 'package:soen_390/utils/location_service.dart';
 import "package:latlong2/latlong.dart";
 import 'package:flutter/material.dart';
@@ -18,6 +19,8 @@ class MockStreamSubscription<T> extends Mock implements StreamSubscription<T> {}
 class MockRouteService extends Mock implements IRouteService {}
 
 class MockHttp extends Mock implements HttpService {}
+
+class MockAuthService extends Mock implements AuthService {}
 
 class TestGeolocatorPlatform extends geo.GeolocatorPlatform {
   final Future<bool> Function() isLocationServiceEnabledFunc;
@@ -114,6 +117,7 @@ void main() {
             title: 'Campus Map',
             routeService: mockRouteService,
             httpService: mockHttp,
+            authService: MockAuthService(),
           ),
         ),
       );

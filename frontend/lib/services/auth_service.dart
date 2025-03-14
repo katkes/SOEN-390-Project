@@ -66,10 +66,13 @@ class AuthService {
   }
 
   Future<void> signOut() async {
+    print(_googleSignIn.currentUser?.email);
     await _googleSignIn.signOut();
     await _secureStorage.deleteToken('access_token');
+    print("User signed out");
   }
 
+  GoogleSignIn get googleSignIn => _googleSignIn;
   void dispose() {
     _httpService.dispose();
   }

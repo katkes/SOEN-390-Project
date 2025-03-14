@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:soen_390/screens/waypoint/waypoint_selection_screens.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:soen_390/services/auth_service.dart';
 import 'package:soen_390/widgets/nav_bar.dart';
 import 'package:soen_390/widgets/search_bar.dart';
 import 'package:soen_390/styles/theme.dart';
@@ -42,6 +43,7 @@ class MyApp extends ConsumerWidget {
     // Fetch dependencies using Riverpod providers.
     final routeService = ref.watch(routeServiceProvider);
     final httpService = ref.watch(httpServiceProvider);
+    final authService = ref.watch(authServiceProvider); // Inject AuthService
 
     return MaterialApp(
       title: 'Flutter Demo',
@@ -50,6 +52,7 @@ class MyApp extends ConsumerWidget {
         title: 'Campus Map',
         routeService: routeService,
         httpService: httpService,
+        authService: authService, // Inject AuthService
       ),
     );
   }
@@ -69,13 +72,16 @@ class MyHomePage extends ConsumerStatefulWidget {
   /// The service responsible for managing HTTP requests.
   final HttpService httpService;
 
+  // the service responsible for handling authentication
+  final AuthService authService; // Add AuthService
+
   /// Creates an instance of `MyHomePage`.
-  const MyHomePage({
-    super.key,
-    required this.title,
-    required this.routeService,
-    required this.httpService,
-  });
+  const MyHomePage(
+      {super.key,
+      required this.title,
+      required this.routeService,
+      required this.httpService,
+      required this.authService});
 
   @override
   ConsumerState<MyHomePage> createState() => MyHomePageState();
@@ -99,9 +105,8 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
   bool isLoggedIn = false;
   bool isLoading = false;
   String? errorMessage;
-  //TODO: Replace with real user data for 4.1.1
-  String? displayName = "John Doe";
-  String? email = "john.doe@example.com";
+  String? displayName;
+  String? email;
   String? photoUrl;
 
   void _handleBuildingSelected(LatLng location) async {
@@ -153,24 +158,37 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
     });
   }
 
-  //TODO: Replace with real sign in method for 4.1.1
-  void signIn() {
+  Future<void> signIn() async {
     setState(() {
       isLoading = true;
     });
 
-    Future.delayed(const Duration(seconds: 2), () {
+    final authClient = await widget.authService.signIn();
+    if (authClient != null) {
+      print("Sign-in successful");
+      final user = widget.authService.googleSignIn.currentUser;
       setState(() {
         isLoggedIn = true;
         isLoading = false;
+        displayName = user?.displayName ?? "User";
+        email = user?.email ?? "No Email";
+        photoUrl = user?.photoUrl;
       });
-    });
+    } else {
+      setState(() {
+        isLoading = false;
+        errorMessage = "Sign-in failed. Try again.";
+      });
+    }
   }
 
-//TODO: Replace with real sign out method for 4.1.1
-  void signOut() {
+  void signOut() async {
+    await widget.authService.signOut();
     setState(() {
       isLoggedIn = false;
+      displayName = null;
+      email = null;
+      photoUrl = null;
     });
   }
 
