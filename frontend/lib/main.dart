@@ -14,6 +14,8 @@ import 'package:soen_390/services/interfaces/route_service_interface.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:soen_390/services/building_info_api.dart';
 import 'package:soen_390/utils/location_service.dart';
+import 'package:soen_390/screens/login/login_screen.dart';
+import 'package:soen_390/screens/profile/profile_screen.dart';
 
 /// The entry point of the application.
 ///
@@ -94,6 +96,14 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
   List<LatLng> polylinePoints = [];
   final GlobalKey<MapWidgetState> _mapWidgetKey = GlobalKey<MapWidgetState>();
 
+  bool isLoggedIn = false;
+  bool isLoading = false;
+  String? errorMessage;
+  //TODO: Replace with real user data for 4.1.1
+  String? displayName = "John Doe";
+  String? email = "john.doe@example.com";
+  String? photoUrl;
+
   void _handleBuildingSelected(LatLng location) async {
     _mapWidgetKey.currentState?.selectMarker(location);
   }
@@ -140,6 +150,27 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
     polylinePoints = [];
     setState(() {
       _selectedIndex = index;
+    });
+  }
+
+  //TODO: Replace with real sign in method for 4.1.1
+  void signIn() {
+    setState(() {
+      isLoading = true;
+    });
+
+    Future.delayed(const Duration(seconds: 2), () {
+      setState(() {
+        isLoggedIn = true;
+        isLoading = false;
+      });
+    });
+  }
+
+//TODO: Replace with real sign out method for 4.1.1
+  void signOut() {
+    setState(() {
+      isLoggedIn = false;
     });
   }
 
@@ -267,7 +298,25 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
               );
             },
           ),
-          const Center(child: Text('Profile Page')),
+          isLoggedIn
+              ? UserProfileScreen(
+                  displayName: displayName,
+                  email: email,
+                  photoUrl: photoUrl,
+                  onSignOut: signOut,
+                  //TODO: Implement calendar view for 4.1.1
+                  onViewCalendar: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Calendar view would open here')),
+                    );
+                  },
+                )
+              : LoginScreen(
+                  onGoogleSignIn: signIn,
+                  isLoading: isLoading,
+                  errorMessage: errorMessage,
+                ),
         ],
       ),
       bottomNavigationBar: NavBar(
