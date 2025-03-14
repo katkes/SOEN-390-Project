@@ -58,6 +58,8 @@ final buildingToCoordinatesProvider = Provider<GeocodingService>((ref) {
 /// Provides an instance of [GoogleSignIn] with required scopes.
 final googleSignInProvider = Provider<GoogleSignIn>((ref) {
   return GoogleSignIn(
+    clientId: dotenv.env['IOS_CLIENT_ID'],
+    serverClientId: dotenv.env['WEB_CLIENT_ID'],
     scopes: ['https://www.googleapis.com/auth/calendar'],
   );
 });
