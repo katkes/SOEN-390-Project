@@ -9,6 +9,7 @@ import 'package:soen_390/services/http_service.dart';
 
 import 'auth_service_test.mocks.dart';
 
+/// Generates mock classes for dependencies used in `AuthService`.
 @GenerateNiceMocks([
   MockSpec<GoogleSignIn>(),
   MockSpec<GoogleSignInAccount>(),
@@ -18,6 +19,8 @@ import 'auth_service_test.mocks.dart';
   MockSpec<AuthClientFactory>(),
   MockSpec<auth.AuthClient>(),
 ])
+
+/// Main function for testing the `AuthService` class.
 void main() {
   late MockGoogleSignIn mockGoogleSignIn;
   late MockGoogleSignInAccount mockGoogleSignInAccount;
@@ -28,6 +31,7 @@ void main() {
   late MockAuthClient mockAuthClient;
   late AuthService authService;
 
+  /// Sets up the test environment before each test case.
   setUp(() {
     mockGoogleSignIn = MockGoogleSignIn();
     mockGoogleSignInAccount = MockGoogleSignInAccount();
@@ -37,6 +41,7 @@ void main() {
     mockAuthClientFactory = MockAuthClientFactory();
     mockAuthClient = MockAuthClient();
 
+    // Initializes the `AuthService` with mocked dependencies.
     authService = AuthService(
       googleSignIn: mockGoogleSignIn,
       httpService: mockHttpService,
@@ -45,16 +50,18 @@ void main() {
     );
   });
 
+  /// Group of tests for `AuthService`.
   group('AuthService', () {
+    /// Tests if `signIn` successfully stores the access token.
     test('should sign in successfully and store access token', () async {
-      // Mock Google Sign-In process
+      // Mock Google Sign-In process.
       when(mockGoogleSignIn.signIn())
           .thenAnswer((_) async => mockGoogleSignInAccount);
       when(mockGoogleSignInAccount.authentication)
           .thenAnswer((_) async => mockGoogleSignInAuth);
       when(mockGoogleSignInAuth.accessToken).thenReturn("mock_access_token");
 
-      // Mock auth client creation
+      // Mock auth client creation.
       when(mockAuthClientFactory.createAuthClient(any, any))
           .thenReturn(mockAuthClient);
       when(mockSecureStorage.storeToken('access_token', 'mock_access_token'))
@@ -68,6 +75,7 @@ void main() {
           .called(1);
     });
 
+    /// Tests if `signIn` returns `null` when sign-in is cancelled.
     test('should return null when sign-in is cancelled', () async {
       when(mockGoogleSignIn.signIn()).thenAnswer((_) async => null);
 
@@ -78,6 +86,7 @@ void main() {
       verifyNever(mockSecureStorage.storeToken(any, any));
     });
 
+    /// Tests if `signIn` returns `null` when an exception occurs during sign-in.
     test('should return null when sign-in throws an exception', () async {
       when(mockGoogleSignIn.signIn()).thenThrow(Exception('Sign-in error'));
 
@@ -87,6 +96,7 @@ void main() {
       verify(mockGoogleSignIn.signIn()).called(1);
     });
 
+    /// Tests if `signOut` successfully deletes the access token.
     test('should sign out and delete access token', () async {
       when(mockGoogleSignIn.signOut()).thenAnswer((_) async => Future.value());
       when(mockSecureStorage.deleteToken('access_token'))
@@ -98,6 +108,7 @@ void main() {
       verify(mockSecureStorage.deleteToken('access_token')).called(1);
     });
 
+    /// Tests if `dispose` properly disposes of `HttpService`.
     test('should dispose HttpService', () {
       authService.dispose();
 

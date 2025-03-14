@@ -10,6 +10,7 @@ import 'package:soen_390/services/calendar_service.dart';
 
 import 'calendar_service_test.mocks.dart';
 
+/// Generates mock classes for `AuthRepository`, `AuthClient`, `CalendarApi`, `EventsResource`, and `CalendarListResource`.
 @GenerateNiceMocks([
   MockSpec<AuthRepository>(),
   MockSpec<auth.AuthClient>(),
@@ -17,6 +18,8 @@ import 'calendar_service_test.mocks.dart';
   MockSpec<EventsResource>(),
   MockSpec<CalendarListResource>()
 ])
+
+/// Main function for testing the `CalendarService` class.
 void main() {
   late MockAuthRepository mockAuthRepository;
   late MockAuthClient mockAuthClient;
@@ -25,6 +28,7 @@ void main() {
   late MockCalendarListResource mockCalendarListResource;
   late CalendarService calendarService;
 
+  /// Sets up the test environment before each test case.
   setUp(() {
     mockAuthRepository = MockAuthRepository();
     mockAuthClient = MockAuthClient();
@@ -32,13 +36,15 @@ void main() {
     mockEventsResource = MockEventsResource();
     mockCalendarListResource = MockCalendarListResource();
 
+    // Mocks authentication repository to return a valid AuthClient.
     when(mockAuthRepository.getAuthClient())
         .thenAnswer((_) async => mockAuthClient);
 
+    // Mocks Calendar API resources.
     when(mockCalendarApi.events).thenReturn(mockEventsResource);
     when(mockCalendarApi.calendarList).thenReturn(mockCalendarListResource);
 
-    // Ensure the CalendarApi instance is returned when authenticated
+    // Simulates API responses for fetching events and calendars.
     when(mockAuthClient.send(any)).thenAnswer((invocation) async {
       final request = invocation.positionalArguments.first as http.BaseRequest;
 
@@ -77,11 +83,14 @@ void main() {
       return http.StreamedResponse(Stream.value([]), 404);
     });
 
+    // Initializes `CalendarService` with mocked dependencies.
     calendarService = CalendarService(mockAuthRepository,
         calendarApiProvider: (_) => mockCalendarApi);
   });
 
+  /// Group of tests for the `fetchEvents` method.
   group('fetchEvents', () {
+    /// Tests if `fetchEvents` returns a list of events when authentication succeeds.
     test('returns a list of events when authentication succeeds', () async {
       final mockEvent = Event(summary: 'Test Event');
       final eventsList = Events(items: [mockEvent]);
@@ -95,6 +104,7 @@ void main() {
       expect(events.first.summary, equals('Test Event'));
     });
 
+    /// Tests if `fetchEvents` returns an empty list when authentication fails.
     test('returns an empty list when authentication fails', () async {
       when(mockAuthRepository.getAuthClient()).thenAnswer((_) async => null);
 
@@ -104,7 +114,9 @@ void main() {
     });
   });
 
+  /// Group of tests for the `fetchCalendars` method.
   group('fetchCalendars', () {
+    /// Tests if `fetchCalendars` returns a list of calendars when authentication succeeds.
     test('returns a list of calendars when authentication succeeds', () async {
       final mockCalendar = CalendarListEntry(summary: 'Test Calendar');
       final calendarList = CalendarList(items: [mockCalendar]);
@@ -118,6 +130,7 @@ void main() {
       expect(calendars.first.summary, equals('Test Calendar'));
     });
 
+    /// Tests if `fetchCalendars` returns an empty list when authentication fails.
     test('returns an empty list when authentication fails', () async {
       when(mockAuthRepository.getAuthClient()).thenAnswer((_) async => null);
 
@@ -127,7 +140,9 @@ void main() {
     });
   });
 
+  /// Group of tests for the `createEvent` method.
   group('createEvent', () {
+    /// Tests if `createEvent` returns the created event when authentication succeeds.
     test('returns the created event when authentication succeeds', () async {
       final event = Event(summary: 'New Event');
 
@@ -139,6 +154,7 @@ void main() {
       expect(createdEvent?.summary, equals('New Event'));
     });
 
+    /// Tests if `createEvent` returns `null` when authentication fails.
     test('returns null when authentication fails', () async {
       when(mockAuthRepository.getAuthClient()).thenAnswer((_) async => null);
 
@@ -149,7 +165,9 @@ void main() {
     });
   });
 
+  /// Group of tests for the `updateEvent` method.
   group('updateEvent', () {
+    /// Tests if `updateEvent` returns the updated event when authentication succeeds.
     test('returns the updated event when authentication succeeds', () async {
       final updatedEvent = Event(summary: 'Updated Event');
 
@@ -163,6 +181,7 @@ void main() {
       expect(result?.summary, equals('Updated Event'));
     });
 
+    /// Tests if `updateEvent` returns `null` when authentication fails.
     test('returns null when authentication fails', () async {
       when(mockAuthRepository.getAuthClient()).thenAnswer((_) async => null);
 
@@ -173,7 +192,9 @@ void main() {
     });
   });
 
+  /// Group of tests for the `deleteEvent` method.
   group('deleteEvent', () {
+    /// Tests if `deleteEvent` calls delete on the events resource when authentication succeeds.
     test('calls delete on the events resource when authentication succeeds',
         () async {
       when(mockEventsResource.delete(any, any)).thenAnswer((_) async {});
@@ -183,6 +204,7 @@ void main() {
       verify(mockEventsResource.delete('primary', 'eventId')).called(1);
     });
 
+    /// Tests if `deleteEvent` does nothing when authentication fails.
     test('does nothing when authentication fails', () async {
       when(mockAuthRepository.getAuthClient()).thenAnswer((_) async => null);
 
