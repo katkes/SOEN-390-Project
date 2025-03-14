@@ -11,13 +11,15 @@ class LocationTransportSelector extends StatefulWidget {
   final Function(String)? onTransportModeChange;
   final Function()? onLocationChanged;
   final String? initialDestination;
+  final String? defaultOrigin;
 
   const LocationTransportSelector(
       {super.key,
       this.onLocationChanged,
       required this.onConfirmRoute,
       this.onTransportModeChange,
-      this.initialDestination});
+      this.initialDestination,
+      this.defaultOrigin});
 
   @override
   LocationTransportSelectorState createState() =>

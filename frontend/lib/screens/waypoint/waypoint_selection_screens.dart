@@ -14,12 +14,15 @@ import 'package:latlong2/latlong.dart';
 import 'package:soen_390/services/interfaces/route_service_interface.dart';
 import 'package:soen_390/utils/route_display.dart' as display;
 import 'package:soen_390/utils/route_utils.dart' as utils;
+import 'package:soen_390/utils/location_service.dart' as location_service;
+import 'package:geolocator/geolocator.dart' as geo;
 
 class WaypointSelectionScreen extends StatefulWidget {
   final IRouteService routeService;
   final GeocodingService geocodingService;
   final LocationService locationService;
   final String? initialDestination;
+  
 
   const WaypointSelectionScreen({
     super.key,
@@ -27,6 +30,7 @@ class WaypointSelectionScreen extends StatefulWidget {
     required this.geocodingService,
     required this.locationService,
     this.initialDestination,
+    
   });
 
   @override
@@ -41,6 +45,7 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
   bool isCrossCampus = false;
   String? errorMessage;
   String? selectedMode;
+  String? defaultOrigin;
   List<Map<String, dynamic>> confirmedRoutes = [];
   List<RouteResult> fetchedRoutes = [];
   bool _locationsChanged =
@@ -59,10 +64,11 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
     routeService = widget.routeService as GoogleRouteService;
     geocodingService = widget.geocodingService;
     locationService = widget.locationService;
+    defaultOrigin = 'Your Location';
+    
   }
 
-  void _handleRouteConfirmation(
-      List<String> waypoints, String transportMode) async {
+  void _handleRouteConfirmation( List<String> waypoints, String transportMode) async {
     if (waypoints.length < _minROutes) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -108,9 +114,16 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
     });
 
     try {
+      final locationService = location_service.LocationService.instance;
+      LatLng? pos;
+      try{
+        await locationService.startUp();
+        pos= locationService.convertPositionToLatLng(await locationService.getCurrentLocationAccurately());
+      } catch (e) {
+        print("Error starting location service: $e");
+      }
       // Convert location names to coordinates using geocoding service
-      final LatLng? startPoint =
-          await geocodingService.getCoordinates(waypoints.first);
+      final LatLng? startPoint = (defaultOrigin=='Your Location' &&pos!=null)?pos:await geocodingService.getCoordinates(waypoints.first);
       final LatLng? endPoint =
           await geocodingService.getCoordinates(waypoints.last);
 
@@ -213,6 +226,7 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
       body: Column(
         children: [
           LocationTransportSelector(
+            defaultOrigin: defaultOrigin,
             initialDestination: widget.initialDestination,
             onConfirmRoute: _handleRouteConfirmation,
             onLocationChanged: _setLocationChanged,
