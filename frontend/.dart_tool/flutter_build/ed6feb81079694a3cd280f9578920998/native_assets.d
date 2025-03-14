@@ -1,0 +1,1 @@
+ C:\\Users\\matda\\AndroidStudioProjects\\SOEN-390-Project\\frontend\\.dart_tool\\flutter_build\\ed6feb81079694a3cd280f9578920998\\native_assets.yaml: 

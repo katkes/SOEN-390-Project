@@ -1,0 +1,2 @@
+C:/Users/matda/AndroidStudioProjects/SOEN-390-Project/frontend/android/app/.cxx/Debug/3y2603j5/x86/CMakeFiles/edit_cache.dir
+C:/Users/matda/AndroidStudioProjects/SOEN-390-Project/frontend/android/app/.cxx/Debug/3y2603j5/x86/CMakeFiles/rebuild_cache.dir
