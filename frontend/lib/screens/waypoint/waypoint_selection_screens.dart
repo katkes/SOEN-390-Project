@@ -226,7 +226,6 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
       body: Column(
         children: [
           LocationTransportSelector(
-            defaultOrigin: defaultOrigin,
             initialDestination: widget.initialDestination,
             onConfirmRoute: _handleRouteConfirmation,
             onLocationChanged: _setLocationChanged,
