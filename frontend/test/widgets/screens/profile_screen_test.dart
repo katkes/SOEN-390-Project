@@ -29,7 +29,6 @@ void main() {
     // Test: UserProfileScreen is built with isLoading set to true.
     // Expected: The CircularProgressIndicator is displayed.
 
-    // TODO: This test might fail when actual API implementation happens
     // where specific error messages or loading states might be implemented
     // differently. Update the test accordingly when the real implementation
     // is in place. This is for task 4.1.1

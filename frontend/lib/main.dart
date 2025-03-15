@@ -322,7 +322,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
                   email: email,
                   photoUrl: photoUrl,
                   onSignOut: signOut,
-                  //TODO: Implement calendar view for 4.1.1
+                  //TODO: Implement calendar view for 4.1.3
                   onViewCalendar: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
