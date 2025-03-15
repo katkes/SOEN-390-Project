@@ -9,6 +9,8 @@ class IndoorAccessibilityPage extends StatefulWidget{
   State<IndoorAccessibilityPage> createState() => IndoorAccessibilityState();
 }//end of IndoorAccessibilityPage class
 
+
+
 class IndoorAccessibilityState extends State<IndoorAccessibilityPage>{
    bool isMobilityImpaired = false; //assume the user is not.
 
@@ -20,7 +22,7 @@ class IndoorAccessibilityState extends State<IndoorAccessibilityPage>{
      return Column(
        children: [
          const Text("PREFERENCES", style:TextStyle(
-           fontSize: 15
+             fontSize: 15
          )),
          const Divider(
            color: Colors.grey, // Line color
@@ -28,18 +30,26 @@ class IndoorAccessibilityState extends State<IndoorAccessibilityPage>{
            indent: 10,         // Left padding
            endIndent: 10,      // Right padding
          ),
-         Text('requires mobility considerations: $isMobilityImpaired'),
 
-         
-
-         Checkbox(
-           value: isMobilityImpaired,
-           onChanged: (bool? newValue) {
-             setState(() {
-               isMobilityImpaired = newValue ?? false;
-             });
-           },
+         const Row(
+           children:[
+             Text('requires mobility considerations: $isMobilityImpaired'),
+             Checkbox(
+               value: isMobilityImpaired,
+               onChanged: (bool? newValue) {
+                 setState(() {
+                   isMobilityImpaired = newValue ?? false;
+                 });
+               },
+             ),
+           ]
          ),
+
+
+
+
+
+
        ],
      );
    }
