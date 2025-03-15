@@ -87,7 +87,7 @@ void main() {
     final routeCardFinder = find.byType(RouteCard).first;
     await tester.tap(routeCardFinder);
     await tester.pumpAndSettle();
-    await Future.delayed(const Duration(seconds: 5));
+    await Future.delayed(const Duration(seconds: 8));
 
     expect(find.byType(PolylineLayer), findsOneWidget);
   }
@@ -166,14 +166,16 @@ void main() {
       await loadingApp(tester);
       await navigatingToMapSection(tester);
       expect(find.byType(MapWidget), findsOneWidget);
+      await Future.delayed(const Duration(seconds: 5));
 
-      // Finding search bar
-      final searchBarFinder = find.byElementType(GestureDetector);
+      // Finding search bar and tapping on it
+      final searchBarFinder = find.byIcon(Icons.search);
       await tester.tap(searchBarFinder);
       await tester.pumpAndSettle();
+      await Future.delayed(const Duration(seconds: 2));
 
       // Entering text into search bar
-      final textFieldFinder = find.text("Search for Building");
+      final textFieldFinder = find.byKey(const Key("searchBarTextField"));
       await tester.enterText(textFieldFinder, "Hall Building");
       await tester.pumpAndSettle();
       await Future.delayed(const Duration(seconds: 3));
@@ -182,6 +184,7 @@ void main() {
       final buildingSuggestion = find.byKey(const Key("123"));
       await tester.tap(buildingSuggestion);
       await tester.pumpAndSettle();
+      await Future.delayed(const Duration(seconds: 3));
     });
   });
 }
