@@ -265,7 +265,7 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    expect(find.text("Start Location"), findsOneWidget);
+    expect(find.text("Your Location"), findsOneWidget);
     expect(find.text("Destination"), findsOneWidget);
 
     expect(find.byIcon(Icons.directions_car), findsOneWidget);
@@ -336,7 +336,7 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    expect(find.text("Start Location"), findsOneWidget);
+    expect(find.text("Your Location"), findsOneWidget);
     expect(find.text("Destination"), findsOneWidget);
 
     expect(find.byIcon(Icons.directions_car), findsOneWidget);
@@ -358,7 +358,7 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text("Start Location"));
+    await tester.tap(find.text("Your Location"));
     await tester.pumpAndSettle();
 
     expect(find.byType(SuggestionsPopup), findsOneWidget);
@@ -447,6 +447,7 @@ void main() {
     final state = tester.state<LocationTransportSelectorState>(
         find.byType(LocationTransportSelector));
 
+    state.removeStopForTest(0);
     state.itinerary.add('Start Location');
     state.itinerary.add('Destination');
 
@@ -476,6 +477,7 @@ void main() {
         find.byType(LocationTransportSelector));
 
     // Setup the initial state (add stops, etc.)
+    
     state.itinerary.add('Start Location');
     state.itinerary.add('Destination Location');
 
@@ -499,7 +501,7 @@ void main() {
     final state = tester.state<LocationTransportSelectorState>(
       find.byType(LocationTransportSelector),
     );
-
+    state.removeStopForTest(0);
     state.itinerary.add('Start');
     state.setDestinationLocation('New Destination');
 
@@ -517,7 +519,7 @@ void main() {
     final state = tester.state<LocationTransportSelectorState>(
       find.byType(LocationTransportSelector),
     );
-
+    state.removeStopForTest(0);
     state.itinerary.add('Start');
     state.itinerary.add('Stop');
     state.setDestinationLocation('New Destination');
@@ -536,7 +538,7 @@ void main() {
     final state = tester.state<LocationTransportSelectorState>(
       find.byType(LocationTransportSelector),
     );
-
+    state.removeStopForTest(0);
     String longString = 'This is a very long start location string';
     state.setStartLocation(longString);
 
@@ -554,7 +556,7 @@ void main() {
     final state = tester.state<LocationTransportSelectorState>(
       find.byType(LocationTransportSelector),
     );
-
+    state.removeStopForTest(0);
     state.setStartLocation('');
 
     expect(state.startLocation, '');
@@ -571,7 +573,7 @@ void main() {
     final state = tester.state<LocationTransportSelectorState>(
       find.byType(LocationTransportSelector),
     );
-
+    state.removeStopForTest(0);
     state.itinerary.add('Old Item 1');
     state.itinerary.add('Old Item 2');
     state.setStartLocation('New Start');
