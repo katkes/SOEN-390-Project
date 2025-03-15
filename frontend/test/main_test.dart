@@ -6,6 +6,7 @@ import 'package:mockito/annotations.dart';
 import 'package:http/http.dart' as http;
 import 'dart:typed_data';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:soen_390/core/secure_storage.dart';
 import 'package:soen_390/main.dart';
 import 'package:soen_390/providers/service_providers.dart';
 import 'package:soen_390/services/http_service.dart';
@@ -14,6 +15,9 @@ import 'package:latlong2/latlong.dart';
 import 'package:soen_390/services/building_info_api.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'package:soen_390/services/building_to_coordinates.dart';
+import 'package:soen_390/services/auth_service.dart';
+import 'package:googleapis_auth/googleapis_auth.dart' as auth;
+import 'package:google_sign_in/google_sign_in.dart';
 
 /// Test suite for the main application and services in the SOEN-390 project.
 ///
@@ -37,6 +41,12 @@ import 'package:soen_390/services/building_to_coordinates.dart';
   MockSpec<GoogleMapsApiClient>(),
   MockSpec<GeocodingService>(),
   MockSpec<LocationService>(),
+  MockSpec<AuthService>(),
+  MockSpec<SecureStorage>(),
+  MockSpec<auth.AuthClient>(),
+  MockSpec<GoogleSignIn>(),
+  MockSpec<GoogleSignInAccount>(),
+  MockSpec<GoogleSignInAuthentication>(),
 ])
 import 'main_test.mocks.dart';
 
@@ -83,9 +93,14 @@ void main() {
   late MockBuildingPopUps mockBuildingPopUps;
   late MockGeocodingService mockGeocodingService;
   late MockLocationService mockLocationService;
+  late MockAuthService mockAuthService;
+  late MockGoogleSignIn mockGoogleSignIn;
+  late MockGoogleSignInAccount mockGoogleSignInAccount;
+  late MockGoogleSignInAuthentication mockGoogleSignInAuthentication;
+  late MockAuthClient mockAuthClient;
 
   setUpAll(() async {
-    // Mock dotenv to avoid loading the actual .env file in tests
+    // Mock dotenv to avoid loading the actual ..env file in tests
     dotenv.testLoad(fileInput: '''
       GOOGLE_MAPS_API_KEY=mocked_api_key
     ''');
@@ -99,6 +114,25 @@ void main() {
     mockBuildingPopUps = MockBuildingPopUps();
     mockGeocodingService = MockGeocodingService();
     mockLocationService = MockLocationService();
+    mockAuthService = MockAuthService();
+    mockGoogleSignIn = MockGoogleSignIn();
+    mockGoogleSignInAccount = MockGoogleSignInAccount();
+    mockGoogleSignInAuthentication = MockGoogleSignInAuthentication();
+    mockAuthClient = MockAuthClient();
+
+    // Stub the Google Sign-In behavior
+    when(mockAuthService.googleSignIn).thenReturn(mockGoogleSignIn);
+    when(mockGoogleSignIn.signIn())
+        .thenAnswer((_) async => mockGoogleSignInAccount);
+    when(mockGoogleSignInAccount.authentication)
+        .thenAnswer((_) async => mockGoogleSignInAuthentication);
+    when(mockGoogleSignInAuthentication.accessToken)
+        .thenReturn("mock_access_token");
+    when(mockGoogleSignInAuthentication.idToken).thenReturn("mock_id_token");
+    when(mockGoogleSignIn.currentUser).thenReturn(mockGoogleSignInAccount);
+
+    // Stub the signIn method in AuthService to return a mock AuthClient
+    when(mockAuthService.signIn()).thenAnswer((_) async => mockAuthClient);
 
     // Set up mock behavior for getRoute method
     when(mockRouteService.getRoute(
@@ -272,11 +306,6 @@ void main() {
       description: 'Profile navigation destination',
     );
     expect(profileDestination, findsOneWidget);
-
-    await tester.tap(profileDestination);
-    await tester.pumpAndSettle();
-
-    expect(find.text('Profile Page'), findsOneWidget);
   });
 
   test('Providers return mocked instances in container', () {
@@ -309,5 +338,123 @@ void main() {
       from: anyNamed('from'),
       to: anyNamed('to'),
     )).called(1);
+  });
+  testWidgets('Location updates on user movement', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      TestWrapper(
+        mockRouteService: mockRouteService,
+        mockHttpService: mockHttpService,
+        mockBuildingPopUps: mockBuildingPopUps,
+        mockMapsApiClient: mockMapsApiClient,
+        mockGeocodingService: mockGeocodingService,
+        mockLocationService: mockLocationService,
+        child: const MyApp(),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    expect(find.text('Home Page'), findsOneWidget);
+
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(find.text('Home Page'), findsOneWidget);
+  });
+
+  testWidgets('_handleCampusSelected updates selected campus',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(
+      TestWrapper(
+        mockRouteService: mockRouteService,
+        mockHttpService: mockHttpService,
+        mockBuildingPopUps: mockBuildingPopUps,
+        mockMapsApiClient: mockMapsApiClient,
+        mockGeocodingService: mockGeocodingService,
+        mockLocationService: mockLocationService,
+        child: const MyApp(),
+      ),
+    );
+
+    final myHomePageState =
+        tester.state<MyHomePageState>(find.byType(MyHomePage));
+    const testCampus = 'Loyola';
+
+    myHomePageState.handleCampusSelected(testCampus);
+    await tester.pump();
+
+    expect(myHomePageState.selectedCampus, testCampus);
+  });
+
+  testWidgets('_handleLocationChanged updates current location',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(
+      TestWrapper(
+        mockRouteService: mockRouteService,
+        mockHttpService: mockHttpService,
+        mockBuildingPopUps: mockBuildingPopUps,
+        mockMapsApiClient: mockMapsApiClient,
+        mockLocationService: mockLocationService,
+        mockGeocodingService: mockGeocodingService,
+        child: const MyApp(),
+      ),
+    );
+
+    final myHomePageState =
+        tester.state<MyHomePageState>(find.byType(MyHomePage));
+    final newLocation = const LatLng(45.5100, -73.5700);
+
+    myHomePageState.handleLocationChanged(newLocation);
+    await tester.pump();
+
+    expect(myHomePageState.currentLocation, newLocation);
+  });
+  testWidgets('signIn sets isLoggedIn to true', (WidgetTester tester) async {
+    // Create a mock AuthClient to return
+    final mockAuthClient = MockAuthClient();
+
+    // Stub the signIn method to return the mocked AuthClient
+    when(mockAuthService.signIn()).thenAnswer((_) async => mockAuthClient);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: MyHomePage(
+          title: 'Test App',
+          routeService: mockRouteService,
+          httpService: mockHttpService,
+          authService: mockAuthService,
+        ),
+      ),
+    );
+
+    final myHomePageState =
+        tester.state<MyHomePageState>(find.byType(MyHomePage));
+
+    // Call the signIn method
+    await myHomePageState.signIn();
+    await tester.pumpAndSettle(); // Allow UI to update
+
+    // Check that isLoggedIn is set to true
+    expect(myHomePageState.isLoggedIn, true);
+  });
+
+  testWidgets('signOut sets isLoggedIn to false', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: MyHomePage(
+          title: 'Test App',
+          routeService: mockRouteService,
+          httpService: mockHttpService,
+          authService: MockAuthService(),
+        ),
+      ),
+    );
+
+    final myHomePageState =
+        tester.state<MyHomePageState>(find.byType(MyHomePage));
+    myHomePageState.signIn();
+    await tester.pumpAndSettle();
+    myHomePageState.signOut();
+    await tester.pump();
+    expect(myHomePageState.isLoggedIn, false);
   });
 }

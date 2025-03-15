@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:soen_390/screens/mappedin_map_screen.dart';
 import 'package:soen_390/screens/waypoint/waypoint_selection_screens.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:soen_390/services/auth_service.dart';
 import 'package:soen_390/widgets/nav_bar.dart';
 import 'package:soen_390/widgets/search_bar.dart';
 import 'package:soen_390/styles/theme.dart';
@@ -9,11 +10,14 @@ import 'package:soen_390/widgets/campus_switch_button.dart';
 import 'package:soen_390/widgets/indoor_navigation_button.dart';
 import 'package:soen_390/widgets/outdoor_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:soen_390/providers/service_providers.dart'; // Import providers
-import 'package:soen_390/services/http_service.dart'; // Import HttpService
-import 'package:soen_390/services/interfaces/route_service_interface.dart'; // Import IRouteService
+import 'package:soen_390/providers/service_providers.dart';
+import 'package:soen_390/services/http_service.dart';
+import 'package:soen_390/services/interfaces/route_service_interface.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:soen_390/services/building_info_api.dart';
+import 'package:soen_390/utils/location_service.dart';
+import 'package:soen_390/screens/login/login_screen.dart';
+import 'package:soen_390/screens/profile/profile_screen.dart';
 
 /// The entry point of the application.
 ///
@@ -40,6 +44,7 @@ class MyApp extends ConsumerWidget {
     // Fetch dependencies using Riverpod providers.
     final routeService = ref.watch(routeServiceProvider);
     final httpService = ref.watch(httpServiceProvider);
+    final authService = ref.watch(authServiceProvider); // Inject AuthService
 
     return MaterialApp(
       title: 'Flutter Demo',
@@ -48,6 +53,7 @@ class MyApp extends ConsumerWidget {
         title: 'Campus Map',
         routeService: routeService,
         httpService: httpService,
+        authService: authService, // Inject AuthService
       ),
     );
   }
@@ -67,75 +73,155 @@ class MyHomePage extends ConsumerStatefulWidget {
   /// The service responsible for managing HTTP requests.
   final HttpService httpService;
 
+  // the service responsible for handling authentication
+  final AuthService authService; // Add AuthService
+
   /// Creates an instance of `MyHomePage`.
-  const MyHomePage({
-    super.key,
-    required this.title,
-    required this.routeService,
-    required this.httpService,
-  });
+  const MyHomePage(
+      {super.key,
+      required this.title,
+      required this.routeService,
+      required this.httpService,
+      required this.authService});
 
   @override
-  ConsumerState<MyHomePage> createState() => _MyHomePageState();
+  ConsumerState<MyHomePage> createState() => MyHomePageState();
 }
 
-class _MyHomePageState extends ConsumerState<MyHomePage> {
-  /// Controls the search bar input.
+class MyHomePageState extends ConsumerState<MyHomePage> {
+  // Set initial campus to SGW (default campus)
+  String selectedCampus = 'SGW';
   TextEditingController searchController = TextEditingController();
-
-  /// The currently selected index for the bottom navigation bar.
   int _selectedIndex = 0;
+  LatLng currentLocation = const LatLng(45.497856, -73.579588);
+  LatLng _userLiveLocation = const LatLng(5.497856, -73.579588);
+  late LocationService _locationService;
 
-  /// The user's current location on the map.
-  LatLng _currentLocation = const LatLng(45.497856, -73.579588);
-  // http.Client? _httpClient;
   late BuildingPopUps _buildingPopUps;
   late GoogleMapsApiClient _mapsApiClient;
+
+  List<LatLng> polylinePoints = [];
+  final GlobalKey<MapWidgetState> _mapWidgetKey = GlobalKey<MapWidgetState>();
+
+  bool isLoggedIn = false;
+  bool isLoading = false;
+  String? errorMessage;
+  String? displayName;
+  String? email;
+  String? photoUrl;
+
+  void _handleBuildingSelected(LatLng location) async {
+    _mapWidgetKey.currentState?.selectMarker(location);
+  }
+
+  void handleCampusSelected(String campus) {
+    setState(() {
+      selectedCampus = campus;
+    });
+  }
+
+  void handleLocationChanged(LatLng location) {
+    setState(() {
+      currentLocation = location;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
     _mapsApiClient = GoogleMapsApiClient(
-        apiKey: dotenv.env['GOOGLE_MAPS_API_KEY']!,
-        client: widget.httpService.client);
+      apiKey: dotenv.env['GOOGLE_MAPS_API_KEY']!,
+      client: widget.httpService.client,
+    );
     _buildingPopUps = BuildingPopUps(mapsApiClient: _mapsApiClient);
+
+    //This initializes the location service and listens for updates
+    _locationService = LocationService.instance;
+    _locationService.startUp().then((_) {
+      _locationService.getLatLngStream().listen((LatLng location) {
+        setState(() {
+          _userLiveLocation = location;
+        });
+      });
+    }).catchError((e) {});
   }
 
   @override
   void dispose() {
     super.dispose();
+    _locationService.stopListening();
   }
 
   void _onItemTapped(int index) {
+    polylinePoints = [];
     setState(() {
       _selectedIndex = index;
+    });
+  }
+
+  Future<void> signIn() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    final authClient = await widget.authService.signIn();
+    if (authClient != null) {
+      print("Sign-in successful");
+      final user = widget.authService.googleSignIn.currentUser;
+      setState(() {
+        isLoggedIn = true;
+        isLoading = false;
+        displayName = user?.displayName ?? "User";
+        email = user?.email ?? "No Email";
+        photoUrl = user?.photoUrl;
+      });
+    } else {
+      setState(() {
+        isLoading = false;
+        errorMessage = "Sign-in failed. Try again.";
+      });
+    }
+  }
+
+  void signOut() async {
+    await widget.authService.signOut();
+    setState(() {
+      isLoggedIn = false;
+      displayName = null;
+      email = null;
+      photoUrl = null;
     });
   }
 
   /// Updates the user's current location on the map.
   ///
   /// Called when the user selects a different campus location.
-  void _updateCampusLocation(LatLng newLocation) {
+  void updateCampusLocation(LatLng newLocation) {
     setState(() {
-      _currentLocation = newLocation;
+      currentLocation = newLocation;
     });
   }
 
-  void _openWaypointSelection() {
+  void _openWaypointSelection() async {
     final buildingToCoordinatesService =
         ref.watch(buildingToCoordinatesProvider);
     final locationService = ref.watch(locationServiceProvider);
     final routeService = ref.watch(routeServiceProvider);
 
-    Navigator.push(
+    final RouteResult selectedRouteData = await Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => WaypointSelectionScreen(
-                routeService: routeService,
-                geocodingService: buildingToCoordinatesService,
-                locationService: locationService,
-              )),
+        builder: (context) => WaypointSelectionScreen(
+          routeService: routeService,
+          geocodingService: buildingToCoordinatesService,
+          locationService: locationService,
+        ),
+      ),
     );
+    polylinePoints = selectedRouteData.routePoints;
+    setState(() {
+      polylinePoints = selectedRouteData.routePoints;
+    });
   }
 
   @override
@@ -174,11 +260,19 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(30),
                           child: MapWidget(
-                            location: _currentLocation,
+                            key: _mapWidgetKey,
+                            location: currentLocation,
+                            userLocation: _userLiveLocation,
                             routeService: widget.routeService,
                             httpClient: widget.httpService.client,
                             mapsApiClient: _mapsApiClient,
                             buildingPopUps: _buildingPopUps,
+                            routePoints: polylinePoints,
+                            onRouteSelected: (RouteResult result) {
+                              setState(() {
+                                polylinePoints = result.routePoints;
+                              });
+                            },
                           ),
                         ),
                       ),
@@ -190,15 +284,21 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                     right: 0,
                     child: Center(
                       child: CampusSwitch(
-                        onSelectionChanged: (selectedCampus) {},
-                        onLocationChanged: _updateCampusLocation,
+                        selectedCampus: selectedCampus,
+                        onSelectionChanged: handleCampusSelected,
+                        onLocationChanged: handleLocationChanged,
                       ),
                     ),
                   ),
                   Positioned(
                     bottom: -80,
                     left: 0,
-                    child: SearchBarWidget(controller: searchController),
+                    child: SearchBarWidget(
+                      controller: searchController,
+                      onCampusSelected: handleCampusSelected,
+                      onLocationFound: handleLocationChanged,
+                      onBuildingSelected: _handleBuildingSelected,
+                    ),
                   ),
                   const Positioned(
                     bottom: 10,
@@ -232,7 +332,25 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
               );
             },
           ),
-          const Center(child: Text('Profile Page')),
+          isLoggedIn
+              ? UserProfileScreen(
+                  displayName: displayName,
+                  email: email,
+                  photoUrl: photoUrl,
+                  onSignOut: signOut,
+                  //TODO: Implement calendar view for 4.1.3
+                  onViewCalendar: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Calendar view would open here')),
+                    );
+                  },
+                )
+              : LoginScreen(
+                  onGoogleSignIn: signIn,
+                  isLoading: isLoading,
+                  errorMessage: errorMessage,
+                ),
         ],
       ),
       bottomNavigationBar: NavBar(

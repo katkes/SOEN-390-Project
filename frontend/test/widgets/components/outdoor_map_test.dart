@@ -46,7 +46,6 @@ void main() {
           const LatLng(45.498000, -73.580000),
         ],
         steps: [
-          // ✅ Add this
           StepResult(
             distance: 500.0,
             duration: 300.0,
@@ -140,6 +139,7 @@ void main() {
     when(mockHttpClient.readBytes(any, headers: anyNamed('headers')))
         .thenAnswer((_) async => transparentPixelPng);
   });
+  final LatLng userLocation = const LatLng(45.495, -73.577);
 
   /// Test that the [MapWidget] initializes correctly with the provided location.
   testWidgets('MapWidget initializes with provided location',
@@ -149,10 +149,12 @@ void main() {
         home: Scaffold(
           body: MapWidget(
             location: testLocation,
+            userLocation: userLocation,
             httpClient: mockHttpClient,
             routeService: mockRouteService,
             mapsApiClient: mockMapsApiClient,
             buildingPopUps: mockBuildingPopUps,
+            routePoints: [],
           ),
         ),
       ),
@@ -160,81 +162,6 @@ void main() {
 
     await tester.pump();
     expect(find.byType(FlutterMap), findsOneWidget);
-  });
-
-  /// Test that the [MapWidget] fetches a route when initialized.
-  testWidgets('MapWidget fetches a route on init', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: MapWidget(
-            location: testLocation,
-            httpClient: mockHttpClient,
-            routeService: mockRouteService,
-            mapsApiClient: mockMapsApiClient,
-            buildingPopUps: mockBuildingPopUps,
-          ),
-        ),
-      ),
-    );
-
-    await tester.pump();
-    verify(mockRouteService.getRoute(
-            from: anyNamed('from'), to: anyNamed('to')))
-        .called(1);
-  });
-
-// Test that the [MapWidget] calls _fetchRoute when the location is updated.
-  testWidgets('MapWidget calls _fetchRoute when location is updated',
-      (WidgetTester tester) async {
-    // First, render with initial location
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: MapWidget(
-            location: testLocation,
-            httpClient: mockHttpClient,
-            routeService: mockRouteService,
-            mapsApiClient: mockMapsApiClient,
-            buildingPopUps: mockBuildingPopUps,
-          ),
-        ),
-      ),
-    );
-
-    await tester.pump();
-
-    // Verify initial route fetch
-    verify(mockRouteService.getRoute(
-            from: anyNamed('from'), to: anyNamed('to')))
-        .called(1);
-
-    // Reset mock to clearly verify next calls
-    clearInteractions(mockRouteService);
-
-    // Update with new location
-    final newLocation = const LatLng(45.505, -73.565);
-
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: MapWidget(
-            location: newLocation,
-            httpClient: mockHttpClient,
-            routeService: mockRouteService,
-            mapsApiClient: mockMapsApiClient,
-            buildingPopUps: mockBuildingPopUps,
-          ),
-        ),
-      ),
-    );
-
-    await tester.pump();
-
-    // Verify that getRoute was called again
-    verify(mockRouteService.getRoute(
-            from: anyNamed('from'), to: anyNamed('to')))
-        .called(1);
   });
 
   /// Test that the [MapWidget] handles null route result gracefully without crashing.
@@ -249,10 +176,12 @@ void main() {
         home: Scaffold(
           body: MapWidget(
             location: testLocation,
+            userLocation: userLocation,
             httpClient: mockHttpClient,
             routeService: mockRouteService,
             mapsApiClient: mockMapsApiClient,
             buildingPopUps: mockBuildingPopUps,
+            routePoints: [],
           ),
         ),
       ),
@@ -265,12 +194,15 @@ void main() {
   });
 
   group('MyPage Tests', () {
+    final LatLng userLocation = const LatLng(45.495, -73.577);
+
     testWidgets('MyPage renders MapWidget with correct props',
         (WidgetTester tester) async {
       await tester.pumpWidget(MaterialApp(
         home: MyPage(
           location: testLocation,
           httpClient: mockHttpClient,
+          userLocation: userLocation,
           routeService: mockRouteService,
           mapsApiClient: mockMapsApiClient,
           buildingPopUps: mockBuildingPopUps,
@@ -290,5 +222,336 @@ void main() {
       expect(mapWidget.httpClient, equals(mockHttpClient));
       expect(mapWidget.routeService, equals(mockRouteService));
     });
+    testWidgets('MapWidget updates when user location changes',
+        (WidgetTester tester) async {
+      // Initial location
+      final LatLng mapCenter = const LatLng(45.497, -73.579);
+      final LatLng initialUserLocation = const LatLng(45.495, -73.577);
+
+      // Create a key to find the widget
+      final mapWidgetKey = GlobalKey();
+
+      // Build widget with initial location
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: MapWidget(
+              key: mapWidgetKey,
+              location: mapCenter,
+              userLocation: initialUserLocation,
+              httpClient: mockHttpClient,
+              routeService: mockRouteService,
+              mapsApiClient: mockMapsApiClient,
+              buildingPopUps: mockBuildingPopUps,
+              routePoints: [],
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Create a new location
+      final LatLng newUserLocation = const LatLng(45.500, -73.570);
+
+      // Rebuild with new user location
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: MapWidget(
+              key: mapWidgetKey,
+              location: mapCenter,
+              userLocation: newUserLocation,
+              httpClient: mockHttpClient,
+              routeService: mockRouteService,
+              mapsApiClient: mockMapsApiClient,
+              buildingPopUps: mockBuildingPopUps,
+              routePoints: [],
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+    });
+
+    //test that the map widget is rendered with empty route points initially
+    testWidgets('MyPage renders MapWidget with empty routePoints initially',
+        (WidgetTester tester) async {
+      // Pump the MaterialApp with MyPage as the home widget.
+      // This simulates the app starting and displaying MyPage.
+      await tester.pumpWidget(MaterialApp(
+        home: MyPage(
+          location: testLocation,
+          httpClient: mockHttpClient,
+          routeService: mockRouteService,
+          mapsApiClient: mockMapsApiClient,
+          buildingPopUps: mockBuildingPopUps,
+          userLocation: userLocation,
+        ),
+      ));
+
+      // Find the MapWidget within the widget tree.
+      // This locates the MapWidget that MyPage is expected to render.
+      final mapWidget = tester.widget<MapWidget>(find.byType(MapWidget));
+
+      // Assert that the routePoints property of the MapWidget is initially empty.
+      // This verifies that MyPage initializes the MapWidget with no route points.
+      expect(mapWidget.routePoints, isEmpty);
+    });
+  });
+
+  testWidgets(
+      'MapWidget displays and animates route when route points provided',
+      (WidgetTester tester) async {
+    final routePoints = [
+      const LatLng(45.497856, -73.579588),
+      const LatLng(45.498000, -73.580000),
+      const LatLng(45.498500, -73.580500),
+    ];
+
+    // Create widget with empty route
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: MapWidget(
+            location: testLocation,
+            httpClient: mockHttpClient,
+            routeService: mockRouteService,
+            mapsApiClient: mockMapsApiClient,
+            buildingPopUps: mockBuildingPopUps,
+            routePoints: [],
+            userLocation: userLocation,
+          ),
+        ),
+      ),
+    );
+
+    // Initial state should not have PolylineLayer
+    expect(find.byType(PolylineLayer), findsNothing);
+
+    // Update with route points
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: MapWidget(
+            location: testLocation,
+            httpClient: mockHttpClient,
+            routeService: mockRouteService,
+            mapsApiClient: mockMapsApiClient,
+            buildingPopUps: mockBuildingPopUps,
+            routePoints: routePoints,
+            userLocation: userLocation,
+          ),
+        ),
+      ),
+    );
+
+    // Pump a frame to let animation start
+    await tester.pump(const Duration(milliseconds: 50));
+
+    // Animation should be running, PolylineLayer should exist
+    expect(find.byType(PolylineLayer), findsOneWidget);
+
+    // Simulate animation in progress
+    await tester.pump(const Duration(milliseconds: 200));
+
+    // Check animation is still running
+    expect(find.byType(PolylineLayer), findsOneWidget);
+
+    // Clear route to test animation stopping
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: MapWidget(
+            location: testLocation,
+            httpClient: mockHttpClient,
+            routeService: mockRouteService,
+            mapsApiClient: mockMapsApiClient,
+            buildingPopUps: mockBuildingPopUps,
+            routePoints: [],
+            userLocation: userLocation,
+          ),
+        ),
+      ),
+    );
+
+    // Animation should stop, PolylineLayer should disappear
+    await tester.pump(const Duration(milliseconds: 50));
+    expect(find.byType(PolylineLayer), findsNothing);
+  });
+
+  testWidgets('MapWidget toggles between building and route display modes',
+      (WidgetTester tester) async {
+    // First render with empty route (building display mode)
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: MapWidget(
+            location: testLocation,
+            httpClient: mockHttpClient,
+            routeService: mockRouteService,
+            mapsApiClient: mockMapsApiClient,
+            buildingPopUps: mockBuildingPopUps,
+            routePoints: [],
+            userLocation: userLocation,
+          ),
+        ),
+      ),
+    );
+
+    // Allow time for building data to load
+    await tester.pump(const Duration(seconds: 1));
+
+    // Verify TileLayer exists (base map)
+    expect(find.byType(TileLayer), findsOneWidget);
+
+    // Add route points to switch to route display mode
+    final routePoints = [
+      const LatLng(45.497856, -73.579588),
+      const LatLng(45.498000, -73.580000),
+    ];
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: MapWidget(
+            location: testLocation,
+            httpClient: mockHttpClient,
+            routeService: mockRouteService,
+            mapsApiClient: mockMapsApiClient,
+            buildingPopUps: mockBuildingPopUps,
+            routePoints: routePoints,
+            userLocation: userLocation,
+          ),
+        ),
+      ),
+    );
+
+    // Wait for animation to start
+    await tester.pump(const Duration(milliseconds: 50));
+
+    // PolylineLayer should be visible when we have route points
+    expect(find.byType(PolylineLayer), findsOneWidget);
+  });
+
+  testWidgets('MapWidget properly cleans up on dispose',
+      (WidgetTester tester) async {
+    final routePoints = [
+      const LatLng(45.497856, -73.579588),
+      const LatLng(45.498000, -73.580000),
+    ];
+
+    // Render widget with route points to start animation
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: MapWidget(
+            location: testLocation,
+            httpClient: mockHttpClient,
+            routeService: mockRouteService,
+            mapsApiClient: mockMapsApiClient,
+            buildingPopUps: mockBuildingPopUps,
+            routePoints: routePoints,
+            userLocation: userLocation,
+          ),
+        ),
+      ),
+    );
+
+    // Let animation start
+    await tester.pump(const Duration(milliseconds: 50));
+
+    // Now remove the widget completely, triggering dispose
+    await tester.pumpWidget(const MaterialApp(home: Scaffold()));
+
+    // If dispose properly cancels timers, no errors should be thrown
+    // This is an implicit test - it passes if no exceptions occur
+    expect(find.byType(MapWidget), findsNothing);
+  });
+
+  testWidgets('MapWidget handles route point updates during animation',
+      (WidgetTester tester) async {
+    // Initial route points
+    final routePointsA = [
+      const LatLng(45.497856, -73.579588),
+      const LatLng(45.498000, -73.580000),
+    ];
+
+    // Render with initial route
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: MapWidget(
+            location: testLocation,
+            httpClient: mockHttpClient,
+            routeService: mockRouteService,
+            mapsApiClient: mockMapsApiClient,
+            buildingPopUps: mockBuildingPopUps,
+            routePoints: routePointsA,
+            userLocation: userLocation,
+          ),
+        ),
+      ),
+    );
+
+    // Let animation start
+    await tester.pump(const Duration(milliseconds: 50));
+
+    // Update with different route points during animation
+    final routePointsB = [
+      const LatLng(45.497856, -73.579588),
+      const LatLng(45.499000, -73.581000),
+      const LatLng(45.500000, -73.582000),
+    ];
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: MapWidget(
+            location: testLocation,
+            httpClient: mockHttpClient,
+            routeService: mockRouteService,
+            mapsApiClient: mockMapsApiClient,
+            buildingPopUps: mockBuildingPopUps,
+            routePoints: routePointsB,
+            userLocation: userLocation,
+          ),
+        ),
+      ),
+    );
+
+    // Let new animation start
+    await tester.pump(const Duration(milliseconds: 50));
+
+    // PolylineLayer should still be present
+    expect(find.byType(PolylineLayer), findsOneWidget);
+  });
+
+  testWidgets('MapWidget UI appearance test', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: MapWidget(
+            location: testLocation,
+            httpClient: mockHttpClient,
+            routeService: mockRouteService,
+            mapsApiClient: mockMapsApiClient,
+            buildingPopUps: mockBuildingPopUps,
+            routePoints: [],
+            userLocation: userLocation,
+          ),
+        ),
+      ),
+    );
+
+    // Check for ClipRRect with correct border radius
+    final clipRRect = tester.widget<ClipRRect>(find.byType(ClipRRect));
+    expect(clipRRect.borderRadius, equals(BorderRadius.circular(30)));
+
+    // Check the SizedBox dimensions
+    final sizedBox = tester.widget<SizedBox>(find.byType(SizedBox));
+    expect(sizedBox.width, equals(double.infinity));
+    expect(sizedBox.height, equals(double.infinity));
   });
 }

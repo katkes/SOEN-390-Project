@@ -28,7 +28,7 @@ class GoogleRouteService implements IRouteService {
   ///
   /// - [locationService]: Manages location tracking.
   /// - [httpService]: Handles HTTP requests.
-  /// - [apiKey]: Optional API key for requests. Defaults to the value in `.env`.
+  /// - [apiKey]: Optional API key for requests. Defaults to the value in `..env`.
   ///
   /// Throws an exception if the API key is missing.
   GoogleRouteService({
@@ -38,7 +38,7 @@ class GoogleRouteService implements IRouteService {
   }) : apiKey = apiKey ?? dotenv.env['GOOGLE_MAPS_API_KEY'] ?? "" {
     if (this.apiKey.isEmpty) {
       throw Exception(
-          "ERROR: Missing Google Maps API Key! Provide one or check your .env file.");
+          "ERROR: Missing Google Maps API Key! Provide one or check your ..env file.");
     }
   }
 
@@ -98,6 +98,31 @@ class GoogleRouteService implements IRouteService {
     }
 
     return routes;
+  }
+
+  /// Checks if a route between two locations is inter-campus.
+  ///
+  /// A route is considered inter-campus if it starts at Loyola (LOY) and ends at St. George's West (SGW),
+  /// or vice versa, but not necessarily passing through both.
+  ///
+  /// - [from]: The starting location of the route.
+  /// - [to]: The ending location of the route.
+  ///
+  /// Returns True if the route is inter-campus, false otherwise.
+  static bool isRouteInterCampus({
+    required LatLng from,
+    required LatLng to,
+  }) {
+    final fromSGW = LocationService.checkIfPositionIsAtSGW(from);
+    final fromLOY = LocationService.checkIfPositionIsAtLOY(from);
+
+    final toSGW = LocationService.checkIfPositionIsAtSGW(to);
+    final toLOY = LocationService.checkIfPositionIsAtLOY(to);
+
+    if ((fromLOY && toSGW) || (fromSGW && toLOY)) {
+      return true;
+    }
+    return false;
   }
 
   /// Fetches routes from Google Maps API.

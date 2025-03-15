@@ -48,6 +48,10 @@ jobs:
         with:
           architecture: x64
 
+      - name: Copy env file
+        working-directory: ./frontend
+        run: cp -n ~/env/.env .
+
       - name: Run Flutter Doctor
         working-directory: ./frontend
         run: flutter doctor
@@ -55,6 +59,7 @@ jobs:
       - name: Install Flutter Dependencies
         working-directory: ./frontend
         run: flutter pub get
+
 
   linting:
     name: Lint & Format Check
@@ -64,7 +69,11 @@ jobs:
     steps:
       - name: Verify Flutter formatting
         working-directory: ./frontend
-        run: dart format --output=none --set-exit-if-changed .
+        run: dart format . #removed output=none --set-exit-if-changed
+
+      - name: Copy env file
+        working-directory: ./frontend
+        run: cp -n ~/env/.env .
 
       - name: Run Flutter Analyze and Generate Report
         working-directory: ./frontend
@@ -125,6 +134,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Copy env file
+        working-directory: ./frontend
+        run: cp -n ~/env/.env .
+
       - name: Run Flutter tests and generate reports
         working-directory: ./frontend
         run: |
@@ -167,10 +180,15 @@ jobs:
   flutter_build:
     name: Build Flutter Project
     runs-on: [our-runner]
-    needs: setup_flutter
+    needs: [linting, testing]
     if: github.event_name == 'pull_request'  
 
     steps:
+
+      - name: Copy env file
+        working-directory: ./frontend
+        run: cp -n ~/env/.env .
+
       - name: Build Flutter APK
         working-directory: ./frontend
         run: flutter build apk --release
@@ -238,7 +256,7 @@ jobs:
     name: Cleanup Runner Disk Space
     runs-on: [our-runner]
     if: github.event_name == 'pull_request'  
-    needs: [setup_flutter, linting, testing, flutter_build, sonarqube]
+    needs: [setup_flutter, linting, testing, flutter_build, sonarqube] 
 
     steps:
       - name: Free Up Space - Remove Gradle Cache

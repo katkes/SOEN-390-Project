@@ -1,12 +1,15 @@
 import 'dart:async';
+import 'package:latlong2/latlong.dart';
 import 'package:soen_390/utils/permission_not_enabled_exception.dart';
 import 'package:geolocator/geolocator.dart' as geo;
+import "package:flutter/foundation.dart";
 
 /// Service for managing location-related functionality.
 ///
 /// This class provides methods for determining permissions, retrieving the
 /// current location, updating the location, and creating a location stream.
 /// It uses the singleton pattern to ensure only one instance exists.
+
 class LocationService {
   // Private static instance variable
   static LocationService? _instance;
@@ -21,6 +24,7 @@ class LocationService {
   // Factory constructor that returns the singleton instance
   factory LocationService({required geo.GeolocatorPlatform geolocator}) {
     _instance ??= LocationService._internal(geolocator: geolocator);
+
     return _instance!;
   }
 
@@ -119,12 +123,34 @@ class LocationService {
   /// Initializes platform-specific location settings.
   void setPlatformSpecificLocationSettings() {
     if (_isLocSettingInitialized) return;
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      locSetting = geo.AndroidSettings(
+          accuracy: geo.LocationAccuracy.high,
+          distanceFilter: 4,
+          forceLocationManager: true,
+          intervalDuration: const Duration(seconds: 10),
+          foregroundNotificationConfig: const geo.ForegroundNotificationConfig(
+            notificationText:
+                "Concordia navigation app will continue to receive your location even when you aren't using it",
+            notificationTitle: "Running in Background",
+            enableWakeLock: true,
+          ));
+    } else if (defaultTargetPlatform == TargetPlatform.iOS ||
+        defaultTargetPlatform == TargetPlatform.macOS) {
+      locSetting = geo.AppleSettings(
+        accuracy: geo.LocationAccuracy.high,
+        activityType: geo.ActivityType.fitness,
+        distanceFilter: 4,
+        pauseLocationUpdatesAutomatically: true,
+        showBackgroundLocationIndicator: false,
+      );
+    } else {
+      locSetting = const geo.LocationSettings(
+        accuracy: geo.LocationAccuracy.high,
+        distanceFilter: 4,
+      );
+    }
     _isLocSettingInitialized = true;
-
-    locSetting = const geo.LocationSettings(
-      accuracy: geo.LocationAccuracy.high,
-      distanceFilter: 4,
-    );
   }
 
   /// Creates a location stream for continuous updates.
@@ -140,7 +166,7 @@ class LocationService {
   Future<void> startUp() async {
     bool locationEnabled = await determinePermissions();
     if (locationEnabled) {
-      setPlatformSpecificLocationSettings();
+      setPlatformSpecificLocationSettings(); // Initializes platform-specific settings
       createLocationStream();
     } else {
       throw PermissionNotEnabledException();
@@ -176,7 +202,41 @@ class LocationService {
     return (distanceToSGW <= distanceToLOY) ? "SGW" : "LOY";
   }
 
-  // Reset the instance for testing purposes
+  /// Returns true if less than 2km to SGW campus
+  static bool checkIfPositionIsAtSGW(LatLng coordinates) {
+    var sgwCoordinates = [45.4973, -73.5784];
+
+    double distanceToSGW = geo.Geolocator.distanceBetween(
+      coordinates.latitude,
+      coordinates.longitude,
+      sgwCoordinates[0],
+      sgwCoordinates[1],
+    );
+
+    if (distanceToSGW <= 2000) {
+      return true;
+    }
+    return false;
+  }
+
+  /// Returns true if less than 2km to LOY campus
+  static bool checkIfPositionIsAtLOY(LatLng coordinates) {
+    var loyCoordinates = [45.4586, -73.6401];
+
+    double distanceToLOY = geo.Geolocator.distanceBetween(
+      coordinates.latitude,
+      coordinates.longitude,
+      loyCoordinates[0],
+      loyCoordinates[1],
+    );
+
+    if (distanceToLOY <= 2000) {
+      return true;
+    }
+    return false;
+  }
+
+  /// Reset the instance for testing purposes
   static void resetInstance() {
     _instance = null;
   }
@@ -188,5 +248,16 @@ class LocationService {
       setPlatformSpecificLocationSettings();
     }
     return geolocator.getPositionStream(locationSettings: locSetting);
+  }
+
+  LatLng convertPositionToLatLng(geo.Position p) {
+    return LatLng(p.latitude, p.longitude);
+  }
+
+  //Provides stream of latlong positions
+  Stream<LatLng> getLatLngStream() {
+    return getPositionStream().map((geo.Position position) {
+      return LatLng(position.latitude, position.longitude);
+    });
   }
 }
