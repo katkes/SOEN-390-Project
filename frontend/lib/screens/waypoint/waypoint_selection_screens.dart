@@ -15,7 +15,6 @@ import 'package:soen_390/services/interfaces/route_service_interface.dart';
 import 'package:soen_390/utils/route_display.dart' as display;
 import 'package:soen_390/utils/route_utils.dart' as utils;
 import 'package:soen_390/utils/location_service.dart' as location_service;
-import 'package:geolocator/geolocator.dart' as geo;
 
 class WaypointSelectionScreen extends StatefulWidget {
   final IRouteService routeService;
@@ -229,6 +228,7 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
             initialDestination: widget.initialDestination,
             onConfirmRoute: _handleRouteConfirmation,
             onLocationChanged: _setLocationChanged,
+            defaultOrigin: defaultOrigin,
           ),
           const SizedBox(height: 10),
           Expanded(
