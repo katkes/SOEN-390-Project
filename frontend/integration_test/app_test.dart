@@ -152,7 +152,8 @@ void main() {
     });
 
     // Testing route planning with public transportation option
-    testWidgets('Test route planning - public transport option', (tester) async {
+    testWidgets('Test route planning - public transport option',
+        (tester) async {
       await routePlanning(tester, Icons.train);
     });
 

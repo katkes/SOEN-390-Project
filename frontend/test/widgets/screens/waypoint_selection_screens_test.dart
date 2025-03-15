@@ -446,8 +446,8 @@ void main() {
         findsOneWidget);
   });
 
-  testWidgets('Shuttle Bus button updates mode and shows snackbar', (WidgetTester tester) async {
-
+  testWidgets('Shuttle Bus button updates mode and shows snackbar',
+      (WidgetTester tester) async {
     await tester.pumpWidget(MaterialApp(
       home: WaypointSelectionScreen(
         routeService: mockGoogleRouteService,
@@ -463,5 +463,4 @@ void main() {
 
     expect(find.text('Shuttle Bus selected!'), findsOneWidget);
   });
-
 }
