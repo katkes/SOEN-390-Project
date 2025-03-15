@@ -119,7 +119,7 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
         print("Error starting location service: $e");
       }
       // Convert location names to coordinates using geocoding service
-      final LatLng? startPoint = (pos!=null)?pos:await geocodingService.getCoordinates(waypoints.first);
+      final LatLng? startPoint = (pos!=null && waypoints[0] == 'Your Location')?pos:await geocodingService.getCoordinates(waypoints.first);
       final LatLng? endPoint =
           await geocodingService.getCoordinates(waypoints.last);
 

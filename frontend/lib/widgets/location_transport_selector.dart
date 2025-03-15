@@ -31,8 +31,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   String selectedTimeOption = "Leave Now"; // Default time selection
   String selectedLocation = ''; //variable to store selected location address
   String startLocation = ''; // variable to store start location address
-  String destinationLocation =''; // variable to store destination location address
-  String defaultOrigin = 'Your Location'; // default origin location
+  String destinationLocation ='Your Location'; // variable to store destination location address
 
   @override
   void initState() {
@@ -47,10 +46,6 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
       } else {
         itinerary.add(widget.initialDestination!);
       }
-    }
-    if (itinerary.isEmpty) {
-      itinerary.add(defaultOrigin);
-      startLocation = defaultOrigin;
     }
 
   }
