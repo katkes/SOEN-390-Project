@@ -44,9 +44,7 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
   bool isCrossCampus = false;
   String? errorMessage;
   String? selectedMode;
-  String? defaultOrigin;
   List<Map<String, dynamic>> confirmedRoutes = [];
-  List<RouteResult> fetchedRoutes = [];
   bool _locationsChanged =
       false; //adding boolean flag to track whether the locations have been updated.
   final Map<String, Map<String, List<RouteResult>>> _routeCache =
@@ -63,7 +61,7 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
     routeService = widget.routeService as GoogleRouteService;
     geocodingService = widget.geocodingService;
     locationService = widget.locationService;
-    defaultOrigin = 'Your Location';
+    
     
   }
 
@@ -90,7 +88,6 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
       final cachedRoutes = _routeCache[googleTransportMode]![waypointKey]!;
       display.displayRoutes(
         context: context,
-        confirmedRoutes: confirmedRoutes,
         updateRoutes: (routes) => setState(() => confirmedRoutes = routes),
         waypoints: waypoints,
         routes: cachedRoutes,
@@ -122,7 +119,7 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
         print("Error starting location service: $e");
       }
       // Convert location names to coordinates using geocoding service
-      final LatLng? startPoint = (defaultOrigin=='Your Location' &&pos!=null)?pos:await geocodingService.getCoordinates(waypoints.first);
+      final LatLng? startPoint = (pos!=null)?pos:await geocodingService.getCoordinates(waypoints.first);
       final LatLng? endPoint =
           await geocodingService.getCoordinates(waypoints.last);
 
@@ -165,7 +162,6 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
       // Display the routes
       display.displayRoutes(
         context: context,
-        confirmedRoutes: confirmedRoutes,
         updateRoutes: (routes) => setState(() => confirmedRoutes = routes),
         waypoints: waypoints,
         routes: topRoutes,
@@ -228,7 +224,6 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
             initialDestination: widget.initialDestination,
             onConfirmRoute: _handleRouteConfirmation,
             onLocationChanged: _setLocationChanged,
-            defaultOrigin: defaultOrigin,
           ),
           const SizedBox(height: 10),
           Expanded(

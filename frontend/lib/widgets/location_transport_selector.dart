@@ -11,15 +11,14 @@ class LocationTransportSelector extends StatefulWidget {
   final Function(String)? onTransportModeChange;
   final Function()? onLocationChanged;
   final String? initialDestination;
-  final String? defaultOrigin;
+  
 
   const LocationTransportSelector(
       {super.key,
       this.onLocationChanged,
       required this.onConfirmRoute,
       this.onTransportModeChange,
-      this.initialDestination,
-      this.defaultOrigin});
+      this.initialDestination,});
 
   @override
   LocationTransportSelectorState createState() =>
@@ -32,8 +31,8 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   String selectedTimeOption = "Leave Now"; // Default time selection
   String selectedLocation = ''; //variable to store selected location address
   String startLocation = ''; // variable to store start location address
-  String destinationLocation =
-      ''; // variable to store destination location address
+  String destinationLocation =''; // variable to store destination location address
+  String defaultOrigin = 'Your Location'; // default origin location
 
   @override
   void initState() {
@@ -49,13 +48,9 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
         itinerary.add(widget.initialDestination!);
       }
     }
-    if (widget.defaultOrigin != null) {
-      startLocation = widget.defaultOrigin!;
-      if (itinerary.isEmpty) {
-        itinerary.add(widget.defaultOrigin!);
-      } else {
-        itinerary.insert(0, widget.defaultOrigin!);
-      }
+    if (itinerary.isEmpty) {
+      itinerary.add(defaultOrigin);
+      startLocation = defaultOrigin;
     }
 
   }
@@ -97,7 +92,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   Widget _buildLocationInput() {
     return Column(
       children: [
-        _buildLocationField(widget.defaultOrigin == 'Your Location' ? 'Your Location' : 'Origin', true),
+        _buildLocationField(startLocation == 'Your Location' ? 'Your Location' : 'Origin', true),
         const SizedBox(height: 10),
         _buildLocationField("Destination", false),
         const SizedBox(height: 10),
@@ -260,6 +255,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
       itinerary.add(selectedLocation);
     } else {
       itinerary.insert(0, selectedLocation);
+      itinerary.removeAt(1);
     }
   }
 
