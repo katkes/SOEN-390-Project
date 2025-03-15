@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
+// This page is a widget which contains the ability to mention any disabilities by the user which requires additional help/considerations.
+
+//for the purpose of indoor navigation, there only needs to be the consideration for if the user has impaired mobility since that is the factor which will determine if
+//the user will either use the escelators/stairs or the elevators.
 // Walking, escalator, elevator, stairs.
-//
+
 class IndoorAccessibilityPage extends StatefulWidget {
   const IndoorAccessibilityPage({super.key});
 

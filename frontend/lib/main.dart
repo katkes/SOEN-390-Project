@@ -24,7 +24,7 @@ import 'package:soen_390/screens/profile/profile_screen.dart';
 void main() async {
   try {
     await dotenv.load(fileName: ".env");
-  } catch (e){
+  } catch (e) {
     print("problem with loading .env file");
   }
   runApp(
