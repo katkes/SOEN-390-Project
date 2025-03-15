@@ -180,7 +180,7 @@ jobs:
   flutter_build:
     name: Build Flutter Project
     runs-on: [our-runner]
-    needs: setup_flutter
+    needs: [linting, testing]
     if: github.event_name == 'pull_request'  
 
     steps:

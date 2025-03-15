@@ -47,6 +47,12 @@ dependencies:
   plugin_platform_interface: ^2.1.8
   google_places_autocomplete_text_field: ^1.0.0
   flutter_map_location_marker: any
+  flutter_secure_storage: ^9.2.4
+  google_sign_in: ^6.3.0
+  googleapis_auth: ^1.6.0
+  googleapis: ^13.2.0
+  shared_preferences: ^2.5.2
+  google_sign_in_mocks: ^0.3.0
 
 dev_dependencies:
   flutter_test:
@@ -80,6 +86,7 @@ flutter:
     - assets/geojson_files/building_list.geojson
     - assets/geojson_files/building_boundaries.geojson
     - assets/images/buildings/hall.png
+    - assets/images/Google_G_logo.png
     - .env
 
   # To add assets to your application, add an assets section, like this:

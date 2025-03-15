@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:soen_390/screens/waypoint/waypoint_selection_screens.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:soen_390/services/auth_service.dart';
 import 'package:soen_390/widgets/nav_bar.dart';
 import 'package:soen_390/widgets/search_bar.dart';
 import 'package:soen_390/styles/theme.dart';
@@ -14,6 +15,8 @@ import 'package:soen_390/services/interfaces/route_service_interface.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:soen_390/services/building_info_api.dart';
 import 'package:soen_390/utils/location_service.dart';
+import 'package:soen_390/screens/login/login_screen.dart';
+import 'package:soen_390/screens/profile/profile_screen.dart';
 
 /// The entry point of the application.
 ///
@@ -40,6 +43,7 @@ class MyApp extends ConsumerWidget {
     // Fetch dependencies using Riverpod providers.
     final routeService = ref.watch(routeServiceProvider);
     final httpService = ref.watch(httpServiceProvider);
+    final authService = ref.watch(authServiceProvider); // Inject AuthService
 
     return MaterialApp(
       title: 'Flutter Demo',
@@ -48,6 +52,7 @@ class MyApp extends ConsumerWidget {
         title: 'Campus Map',
         routeService: routeService,
         httpService: httpService,
+        authService: authService, // Inject AuthService
       ),
     );
   }
@@ -67,13 +72,16 @@ class MyHomePage extends ConsumerStatefulWidget {
   /// The service responsible for managing HTTP requests.
   final HttpService httpService;
 
+  // the service responsible for handling authentication
+  final AuthService authService; // Add AuthService
+
   /// Creates an instance of `MyHomePage`.
-  const MyHomePage({
-    super.key,
-    required this.title,
-    required this.routeService,
-    required this.httpService,
-  });
+  const MyHomePage(
+      {super.key,
+      required this.title,
+      required this.routeService,
+      required this.httpService,
+      required this.authService});
 
   @override
   ConsumerState<MyHomePage> createState() => MyHomePageState();
@@ -93,6 +101,13 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
 
   List<LatLng> polylinePoints = [];
   final GlobalKey<MapWidgetState> _mapWidgetKey = GlobalKey<MapWidgetState>();
+
+  bool isLoggedIn = false;
+  bool isLoading = false;
+  String? errorMessage;
+  String? displayName;
+  String? email;
+  String? photoUrl;
 
   void _handleBuildingSelected(LatLng location) async {
     _mapWidgetKey.currentState?.selectMarker(location);
@@ -140,6 +155,40 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
     polylinePoints = [];
     setState(() {
       _selectedIndex = index;
+    });
+  }
+
+  Future<void> signIn() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    final authClient = await widget.authService.signIn();
+    if (authClient != null) {
+      print("Sign-in successful");
+      final user = widget.authService.googleSignIn.currentUser;
+      setState(() {
+        isLoggedIn = true;
+        isLoading = false;
+        displayName = user?.displayName ?? "User";
+        email = user?.email ?? "No Email";
+        photoUrl = user?.photoUrl;
+      });
+    } else {
+      setState(() {
+        isLoading = false;
+        errorMessage = "Sign-in failed. Try again.";
+      });
+    }
+  }
+
+  void signOut() async {
+    await widget.authService.signOut();
+    setState(() {
+      isLoggedIn = false;
+      displayName = null;
+      email = null;
+      photoUrl = null;
     });
   }
 
@@ -267,7 +316,25 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
               );
             },
           ),
-          const Center(child: Text('Profile Page')),
+          isLoggedIn
+              ? UserProfileScreen(
+                  displayName: displayName,
+                  email: email,
+                  photoUrl: photoUrl,
+                  onSignOut: signOut,
+                  //TODO: Implement calendar view for 4.1.3
+                  onViewCalendar: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Calendar view would open here')),
+                    );
+                  },
+                )
+              : LoginScreen(
+                  onGoogleSignIn: signIn,
+                  isLoading: isLoading,
+                  errorMessage: errorMessage,
+                ),
         ],
       ),
       bottomNavigationBar: NavBar(
