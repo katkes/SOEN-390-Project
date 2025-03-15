@@ -22,6 +22,7 @@ frontend/android/local.properties
 frontend/linux/flutter
 frontend/macos/flutter
 frontend/windows/flutter
+frontend/android/.gradle
 
 
 #Android studio
