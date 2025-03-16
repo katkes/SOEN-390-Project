@@ -254,6 +254,11 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.2.1"
+  flutter_driver:
+    dependency: transitive
+    description: flutter
+    source: sdk
+    version: "0.0.0"
   flutter_inappwebview:
     dependency: "direct main"
     description:
@@ -318,19 +323,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.0"
-  flutter_js:
-    dependency: "direct main"
-    description:
-      name: flutter_js
-      sha256: "6b777cd4e468546f046a2f114d078a4596143269f6fa6bad5c29611d5b896369"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.8.2"
-  flutter_driver:
-    dependency: transitive
-    description: flutter
-    source: sdk
-    version: "0.0.0"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -1228,6 +1220,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.2"
+  webdriver:
+    dependency: transitive
+    description:
+      name: webdriver
+      sha256: "3d773670966f02a646319410766d3b5e1037efb7f07cc68f844d5e06cd4d61c8"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.4"
   webview_flutter:
     dependency: "direct main"
     description:
@@ -1260,14 +1260,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.18.4"
-  webdriver:
-    dependency: transitive
-    description:
-      name: webdriver
-      sha256: "3d773670966f02a646319410766d3b5e1037efb7f07cc68f844d5e06cd4d61c8"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.0.4"
   win32:
     dependency: transitive
     description:

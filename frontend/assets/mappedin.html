@@ -8,33 +8,62 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Mappedin Map Embed</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/@mappedin/mappedin-js@beta/lib/index.css"
+      rel="stylesheet"
+    />
     <style>
-      html,
-      body {
+      * {
         margin: 0;
         padding: 0;
+      }
+      html,
+      body {
         width: 100%;
         height: 100%;
       }
-      iframe {
-        width: 100%;
+      #mappedin-map {
         height: 100%;
-        border: none;
+        width: 100%;
+        position: relative;
       }
     </style>
+    <title>Mappedin Map</title>
   </head>
   <body>
-    <iframe
-      title="Mappedin Map"
-      name="Mappedin Map"
-      allow="clipboard-write 'self' https://app.mappedin.com; web-share 'self' https://app.mappedin.com"
-      scrolling="no"
-      frameborder="0"
-      style="border: 0"
-      src="https://app.mappedin.com/map/67ba2570a39568000bc4b334?embedded=true"
-    >
-    </iframe>
+    <div id="mappedin-map"></div>
+    <script type="module">
+      import { getMapData, show3dMap } from "https://cdn.jsdelivr.net/npm/@mappedin/mappedin-js@beta/lib/esm/index.js";
+
+      // Replace with your actual Mappedin API credentials and map ID
+      const options = {
+        key: "MAPPEDIN_API_KEY",
+        secret: "MAPPEDIN_API_SECRET",
+        mapId: "MAPPEDIN_API_MAP_ID",
+      };
+
+      const mapData = await getMapData(options);
+
+      const mapView = await show3dMap(document.getElementById("mappedin-map"), mapData);
+
+      mapView.Labels.all();
+
+      const firstSpace = mapData.getByType('space').find((s) => s.name === '198');
+      const secondSpace = mapData.getByType('space').find((s) => s.name === '126');
+
+      if (firstSpace && secondSpace) {
+        const directions = mapData.getDirections(firstSpace, secondSpace);
+
+        if (directions) {
+          // Add a path from the first space to the second space.
+          mapView.Navigation.draw(directions);
+        }
+      }
+
+    </script>
   </body>
 </html>
+
+
+
