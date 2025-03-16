@@ -2,7 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
     <link
       href="https://cdn.jsdelivr.net/npm/@mappedin/mappedin-js@beta/lib/index.css"
       rel="stylesheet"
@@ -11,40 +14,159 @@
       * {
         margin: 0;
         padding: 0;
+        font-family: Arial, sans-serif;
+        overscroll-behavior: contain;
       }
       html,
       body {
         width: 100%;
         height: 100%;
-      }
-      #controls {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        z-index: 1000;
-        background: white;
-        padding: 10px;
-        border-radius: 5px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+        position: fixed;
+        touch-action: none;
       }
       #mappedin-map {
         height: 100%;
         width: 100%;
-        position: relative;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+      /* Smaller Input Panel */
+      #route-panel {
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 260px; /* Smaller width */
+        background: white;
+        padding: 10px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+      }
+      #route-panel label {
+        font-size: 12px; /* Smaller text */
+        font-weight: bold;
+        display: block;
+        margin-top: 5px;
+      }
+      select {
+        width: 100%;
+        padding: 6px;
+        margin: 3px 0;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 12px;
+        height: 30px; /* Smaller height */
+        line-height: 1.2;
+      }
+      button {
+        background: blue;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 5px;
+        width: 100%;
+        padding: 8px;
+        border: none;
+        border-radius: 5px;
+        font-size: 14px;
+      }
+      button:hover {
+        background: darkblue;
+      }
+      /* Steps UI */
+      #directions-panel {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: white;
+        padding: 10px;
+        border-radius: 15px 15px 0 0;
+        box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease-out;
+        text-align: center;
+      }
+      #drag-handle {
+        width: 50px;
+        height: 5px;
+        background: gray;
+        border-radius: 5px;
+        margin: 5px auto;
+        cursor: grab;
+      }
+      #directions-list {
+        max-height: 250px;
+        overflow-y: auto;
+      }
+      .direction-step {
+        padding: 8px;
+        border-bottom: 1px solid #ddd;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+      }
+      .direction-step img {
+        width: 18px;
+        height: 18px;
+        margin-right: 8px;
+      }
+      /* Centered "Show Steps" Button */
+      #toggle-steps {
+        background: #007aff;
+        color: white;
+        padding: 10px;
+        width: 90%; /* Ensure it's centered */
+        max-width: 300px; /* Limit max width */
+        text-align: center;
+        border-radius: 5px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        margin: 10px auto;
+        display: block; /* Ensure centering */
+      }
+      /* Route Info */
+      #route-info {
+        text-align: center;
+        padding: 8px;
+        font-size: 12px;
+        font-weight: bold;
       }
     </style>
-    <title>Mappedin Map</title>
+    <title>Mappedin Navigation</title>
   </head>
   <body>
-    <div id="controls">
-      <label for="map-selector">Select Map:</label>
-      <select id="map-selector">
-        <option value="67ba2570a39568000bc4b334">Building 1</option>
-        <option value="67968294965a13000bcdfe74">Building 2</option>
-      </select>
-      <button id="load-map">Load Map</button>
-    </div>
     <div id="mappedin-map"></div>
+
+    <!-- Floating Panel for Selecting Start/Destination -->
+    <div id="route-panel">
+      <label for="start">Start:</label>
+      <select id="start">
+        <option value="">Select start point</option>
+      </select>
+
+      <label for="destination">Destination:</label>
+      <select id="destination">
+        <option value="">Select destination</option>
+      </select>
+
+      <button id="get-directions">Get Directions</button>
+    </div>
+
+    <!-- Step-by-Step Directions -->
+    <div id="directions-panel">
+      <div id="drag-handle"></div>
+      <button id="toggle-steps">Show Steps</button>
+      <div id="route-info">
+        <p id="estimated-time">Estimated Time: N/A</p>
+        <p id="total-distance">Total Distance: N/A</p>
+      </div>
+      <div id="directions-list" style="display: none"></div>
+    </div>
+
     <script type="module">
       import {
         getMapData,
@@ -54,30 +176,91 @@
       const options = {
         key: "MAPPEDIN_API_KEY",
         secret: "MAPPEDIN_API_SECRET",
+        mapId: "MAPPEDIN_API_MAP_ID",
       };
 
-      let mapView;
+      // Initialize Map
+      const mapData = await getMapData(options);
+      const mapView = await show3dMap(
+        document.getElementById("mappedin-map"),
+        mapData
+      );
 
-      async function loadMap(mapId) {
-        options.mapId = mapId;
-        const mapData = await getMapData(options);
+      mapView.Labels.all();
 
-        // If a map already exists, destroy it before loading a new one
-        if (mapView) {
-          mapView.destroy();
+      // UI Elements
+      const startSelect = document.getElementById("start");
+      const destinationSelect = document.getElementById("destination");
+      const getDirectionsButton = document.getElementById("get-directions");
+      const directionsPanel = document.getElementById("directions-panel");
+      const directionsList = document.getElementById("directions-list");
+      const toggleSteps = document.getElementById("toggle-steps");
+
+      const spaces = mapData.getByType("space");
+      spaces.forEach((space) => {
+        const option = document.createElement("option");
+        option.value = space.id;
+        option.textContent = space.name;
+        startSelect.appendChild(option.cloneNode(true));
+        destinationSelect.appendChild(option);
+      });
+
+      // Camera focuses on selected start location
+      startSelect.addEventListener("change", () => {
+        const selectedSpaceId = startSelect.value;
+        const selectedSpace = spaces.find((s) => s.id === selectedSpaceId);
+
+        if (selectedSpace) {
+          mapView.Camera.animateTo({
+            center: selectedSpace.geometry.center,
+            zoomLevel: 20,
+            pitch: 45,
+            bearing: 0,
+          });
         }
+      });
 
-        mapView = await show3dMap(
-          document.getElementById("mappedin-map"),
-          mapData
-        );
+      // Calculate Walking Time
+      const avg_walking_speed = 85; // meters per minute
 
-        mapView.Labels.all();
+      function calculateWalkingTime(distanceInMeters) {
+        return Math.ceil(distanceInMeters / avg_walking_speed);
       }
 
-      document.getElementById("load-map").addEventListener("click", () => {
-        const selectedMap = document.getElementById("map-selector").value;
-        loadMap(selectedMap);
+      // Get Directions and Display Estimated Time
+      getDirectionsButton.addEventListener("click", async () => {
+        const startId = startSelect.value;
+        const destinationId = destinationSelect.value;
+
+        if (startId && destinationId) {
+          const startSpace = spaces.find((s) => s.id === startId);
+          const destinationSpace = spaces.find((s) => s.id === destinationId);
+
+          if (startSpace && destinationSpace) {
+            const directions = await mapData.getDirections(
+              startSpace,
+              destinationSpace
+            );
+
+            if (directions && directions.path) {
+              mapView.Navigation.clear();
+              mapView.Navigation.draw(directions);
+
+              const totalDistance = directions.distance;
+              const estimatedTime = calculateWalkingTime(totalDistance);
+
+              // Update UI
+              document.getElementById(
+                "estimated-time"
+              ).textContent = `Estimated Time: ${estimatedTime} min`;
+              document.getElementById(
+                "total-distance"
+              ).textContent = `Total Distance: ${Math.round(
+                totalDistance
+              )} meters`;
+            }
+          }
+        }
       });
     </script>
   </body>
