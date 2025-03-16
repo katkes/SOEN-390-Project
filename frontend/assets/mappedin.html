@@ -101,7 +101,7 @@
         line-height: 1.2;
       }
       button {
-        background: blue;
+        background-color: #912338;
         color: white;
         font-weight: bold;
         cursor: pointer;
@@ -113,7 +113,7 @@
         font-size: 14px;
       }
       button:hover {
-        background: darkblue;
+        background: #912338;
       }
 
       #directions-panel {
@@ -157,7 +157,7 @@
       }
 
       #toggle-steps {
-        background: #007aff;
+        background: #912338;
         color: white;
         padding: 10px;
         width: 90%;
@@ -177,6 +177,23 @@
         font-size: 12px;
         font-weight: bold;
         background: white;
+      }
+
+      select {
+        color: #912338 !important;
+      }
+
+      select::-ms-expand {
+        display: none;
+      }
+
+      select:focus {
+        outline: none !important;
+        border-color: #781c2c !important;
+      }
+
+      option {
+        color: #912338 !important;
       }
     </style>
     <title>Mappedin Navigation</title>
@@ -274,7 +291,7 @@
       });
 
       // Calculate Walking Time
-      const avg_walking_speed = 85; // meters per minute
+      const avg_walking_speed = 85;
 
       function calculateWalkingTime(distanceInMeters) {
         return Math.ceil(distanceInMeters / avg_walking_speed);
@@ -335,7 +352,6 @@
         }
       });
 
-      // Fix "Show Steps" Button Not Working
       toggleSteps.addEventListener("click", () => {
         if (
           directionsList.style.display === "none" ||
