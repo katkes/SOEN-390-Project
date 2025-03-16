@@ -7,11 +7,13 @@ class PoiDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // TODO: Replace with actual data fetching from a service or API for task 6.1.2
     // Weinstein and Gavino's restaurant POI data
     final weinsteinAndGavinos = const PointOfInterest(
       id: 'w1',
       name: 'Weinstein & Gavino\'s',
-      description: 'Housemade pasta, pizza & Italian standards in a 3-level place with a grand staircase & open kitchen.',
+      description:
+          'Housemade pasta, pizza & Italian standards in a 3-level place with a grand staircase & open kitchen.',
       imageUrl: 'https://514eats.com/img/spots/wienstein_gavinos_exterior.jpg',
       address: '1434 Crescent St, Montreal, QC H3G 2B6, Canada',
       contactPhone: '(514) 288-2231',

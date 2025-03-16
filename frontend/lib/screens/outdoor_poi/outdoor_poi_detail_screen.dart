@@ -1,3 +1,16 @@
+/// This file defines the `PoiDetailScreen` widget, which displays detailed information about a Point of Interest (POI).
+///
+/// It includes sections for:
+///   - Displaying the POI's image and name in the app bar
+///   - Showing category and cuisine information using chip widgets
+///   - Presenting rating stars and price range
+///   - Displaying an expandable description with "Read more/Show less" functionality
+///   - Showing contact information (address, phone, website)
+///   - Displaying opening hours
+///   - Listing amenities
+
+library;
+
 import 'package:flutter/material.dart';
 import 'package:soen_390/models/outdoor_poi.dart';
 import 'package:soen_390/screens/outdoor_poi/widgets/outdoor_poi_detail_widgets.dart';
@@ -79,28 +92,32 @@ class _PoiDetailScreenState extends State<PoiDetailScreen> {
               onPressed: widget.onBack ?? () => Navigator.of(context).pop(),
             ),
           ),
-          
+
           // Content
           SliverList(
             delegate: SliverChildListDelegate([
               // Category and cuisine
-              if (widget.poi.category != null || (widget.poi.cuisine != null && widget.poi.cuisine!.isNotEmpty))
+              if (widget.poi.category != null ||
+                  (widget.poi.cuisine != null &&
+                      widget.poi.cuisine!.isNotEmpty))
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                   child: Row(
                     children: [
                       if (widget.poi.category != null)
-                        buildChip(widget.poi.category!, const Color(0xFFCCE3E4 )),
+                        buildChip(
+                            widget.poi.category!, const Color(0xFFCCE3E4)),
                       const SizedBox(width: 8),
-                      if (widget.poi.cuisine != null && widget.poi.cuisine!.isNotEmpty)
+                      if (widget.poi.cuisine != null &&
+                          widget.poi.cuisine!.isNotEmpty)
                         ...widget.poi.cuisine!.map((c) => Padding(
-                          padding: const EdgeInsets.only(right: 8),
-                          child: buildChip(c, const Color(0xFFe9e3d3 )),
-                        )),
+                              padding: const EdgeInsets.only(right: 8),
+                              child: buildChip(c, const Color(0xFFe9e3d3)),
+                            )),
                     ],
                   ),
                 ),
-              
+
               // Rating and price range
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
@@ -129,7 +146,7 @@ class _PoiDetailScreenState extends State<PoiDetailScreen> {
                   ],
                 ),
               ),
-              
+
               // Description
               Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -157,7 +174,7 @@ class _PoiDetailScreenState extends State<PoiDetailScreen> {
                   ],
                 ),
               ),
-              
+
               // Contact info and address
               buildInfoSection(
                 widget.poi.address,
@@ -165,13 +182,15 @@ class _PoiDetailScreenState extends State<PoiDetailScreen> {
                 widget.poi.website,
                 context,
               ),
-              
-              // Opening hours 
-              if (widget.poi.openingHours != null && widget.poi.openingHours!.isNotEmpty)
+
+              // Opening hours
+              if (widget.poi.openingHours != null &&
+                  widget.poi.openingHours!.isNotEmpty)
                 buildOpeningHoursSection(widget.poi.openingHours!),
-              
-              // Amenities 
-              if (widget.poi.amenities != null && widget.poi.amenities!.isNotEmpty)
+
+              // Amenities
+              if (widget.poi.amenities != null &&
+                  widget.poi.amenities!.isNotEmpty)
                 buildAmenitiesSection(widget.poi.amenities!),
               const SizedBox(height: 24),
             ]),
@@ -199,7 +218,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(
           seedColor: Theme.of(context).primaryColor,
         ).copyWith(
-          primary: const Color(0xFF912338), 
+          primary: const Color(0xFF912338),
         ),
         useMaterial3: true,
         visualDensity: VisualDensity.adaptivePlatformDensity,

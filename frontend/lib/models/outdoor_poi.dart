@@ -1,3 +1,4 @@
+// TODO: Add fromJson/toJson methods for API integration for task 6.1.2
 class PointOfInterest {
   final String id;
   final String name;
