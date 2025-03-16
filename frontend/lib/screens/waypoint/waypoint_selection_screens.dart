@@ -14,7 +14,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:soen_390/services/interfaces/route_service_interface.dart';
 import 'package:soen_390/utils/route_display.dart' as display;
 import 'package:soen_390/utils/route_utils.dart' as utils;
-import 'package:soen_390/utils/location_service.dart' as location_service;
+import 'package:soen_390/utils/location_service.dart' ;
 
 class WaypointSelectionScreen extends StatefulWidget {
   final IRouteService routeService;
@@ -110,7 +110,7 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
     });
 
     try {
-      final locationService = location_service.LocationService.instance;
+      
       LatLng? pos;
       try{
         await locationService.startUp();
