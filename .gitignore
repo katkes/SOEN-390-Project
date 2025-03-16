@@ -23,3 +23,5 @@ frontend/Documentation
 
 .flutter-plugins-dependencies
 
+/frontend/.dart_tool/
+/frontend/android/app/.cxx/
