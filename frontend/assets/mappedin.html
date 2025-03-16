@@ -32,13 +32,13 @@
         top: 0;
         left: 0;
       }
-      /* Smaller Input Panel */
+
       #route-panel {
         position: absolute;
         top: 10px;
         left: 50%;
         transform: translateX(-50%);
-        width: 260px; /* Smaller width */
+        width: 260px;
         background: white;
         padding: 10px;
         border-radius: 10px;
@@ -46,7 +46,7 @@
         z-index: 1000;
       }
       #route-panel label {
-        font-size: 12px; /* Smaller text */
+        font-size: 12px;
         font-weight: bold;
         display: block;
         margin-top: 5px;
@@ -58,7 +58,7 @@
         border: 1px solid #ddd;
         border-radius: 5px;
         font-size: 12px;
-        height: 30px; /* Smaller height */
+        height: 30px;
         line-height: 1.2;
       }
       button {
@@ -76,7 +76,7 @@
       button:hover {
         background: darkblue;
       }
-      /* Steps UI */
+
       #directions-panel {
         position: absolute;
         bottom: 0;
@@ -92,7 +92,7 @@
       #drag-handle {
         width: 50px;
         height: 5px;
-        background: gray;
+
         border-radius: 5px;
         margin: 5px auto;
         cursor: grab;
@@ -113,20 +113,20 @@
         height: 18px;
         margin-right: 8px;
       }
-      /* Centered "Show Steps" Button */
+
       #toggle-steps {
         background: #007aff;
         color: white;
         padding: 10px;
-        width: 90%; /* Ensure it's centered */
-        max-width: 300px; /* Limit max width */
+        width: 90%;
+        max-width: 300px;
         text-align: center;
         border-radius: 5px;
         font-size: 14px;
         font-weight: bold;
         cursor: pointer;
         margin: 10px auto;
-        display: block; /* Ensure centering */
+        display: block;
       }
       /* Route Info */
       #route-info {
@@ -141,7 +141,7 @@
   <body>
     <div id="mappedin-map"></div>
 
-    <!-- Floating Panel for Selecting Start/Destination -->
+    <!-- Modal for Selecting Start/Destination -->
     <div id="route-panel">
       <label for="start">Start:</label>
       <select id="start">
@@ -258,8 +258,41 @@
               ).textContent = `Total Distance: ${Math.round(
                 totalDistance
               )} meters`;
+
+              // Populate Directions List
+              directionsList.innerHTML = "";
+              directions.instructions.forEach((step, index) => {
+                const stepDiv = document.createElement("div");
+                stepDiv.className = "direction-step";
+                stepDiv.innerHTML = `
+                  <img src="https://img.icons8.com/ios-filled/50/right.png" />
+                  <strong>Step ${index + 1}:</strong> ${
+                  step.text || "No instruction"
+                } (${Math.round(step.distance * 100) / 100 || "0"} meters)
+                `;
+                directionsList.appendChild(stepDiv);
+              });
+
+              // Ensure panel is visible when directions are shown
+              directionsPanel.style.display = "block";
+              directionsList.style.display = "none";
+              toggleSteps.textContent = "Show Steps";
             }
           }
+        }
+      });
+
+      // Fix "Show Steps" Button Not Working
+      toggleSteps.addEventListener("click", () => {
+        if (
+          directionsList.style.display === "none" ||
+          directionsList.style.display === ""
+        ) {
+          directionsList.style.display = "block";
+          toggleSteps.textContent = "Hide Steps";
+        } else {
+          directionsList.style.display = "none";
+          toggleSteps.textContent = "Show Steps";
         }
       });
     </script>

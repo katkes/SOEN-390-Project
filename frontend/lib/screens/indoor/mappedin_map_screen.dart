@@ -42,7 +42,7 @@ class MappedinMapScreenState extends State<MappedinMapScreen> {
     List<String> apiKeys = [
       dotenv.env['MAPPEDIN_API_KEY'] ?? "",
       dotenv.env['MAPPEDIN_API_SECRET'] ?? "",
-      "67968294965a13000bcdfe74",
+      "67ba2570a39568000bc4b334", //Libraray building for testing purpose, we need to make it so that we choose the building we want and it takes the building code for that specific building
     ];
 
     Map<String, String> keymap = Map.fromIterables(apiLabels, apiKeys);
