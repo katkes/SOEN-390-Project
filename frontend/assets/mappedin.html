@@ -1,9 +1,3 @@
-<!-- 
-  Mappedin Map Embed:
-  - Full viewport display.
-  - Loads map via iframe from Mappedin's hosted URL.
--->
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -23,6 +17,16 @@
         width: 100%;
         height: 100%;
       }
+      #controls {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        z-index: 1000;
+        background: white;
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
       #mappedin-map {
         height: 100%;
         width: 100%;
@@ -32,38 +36,49 @@
     <title>Mappedin Map</title>
   </head>
   <body>
+    <div id="controls">
+      <label for="map-selector">Select Map:</label>
+      <select id="map-selector">
+        <option value="67ba2570a39568000bc4b334">Building 1</option>
+        <option value="67968294965a13000bcdfe74">Building 2</option>
+      </select>
+      <button id="load-map">Load Map</button>
+    </div>
     <div id="mappedin-map"></div>
     <script type="module">
-      import { getMapData, show3dMap } from "https://cdn.jsdelivr.net/npm/@mappedin/mappedin-js@beta/lib/esm/index.js";
+      import {
+        getMapData,
+        show3dMap,
+      } from "https://cdn.jsdelivr.net/npm/@mappedin/mappedin-js@beta/lib/esm/index.js";
 
-      // Replace with your actual Mappedin API credentials and map ID
       const options = {
         key: "MAPPEDIN_API_KEY",
         secret: "MAPPEDIN_API_SECRET",
-        mapId: "MAPPEDIN_API_MAP_ID",
       };
 
-      const mapData = await getMapData(options);
+      let mapView;
 
-      const mapView = await show3dMap(document.getElementById("mappedin-map"), mapData);
+      async function loadMap(mapId) {
+        options.mapId = mapId;
+        const mapData = await getMapData(options);
 
-      mapView.Labels.all();
-
-      const firstSpace = mapData.getByType('space').find((s) => s.name === '198');
-      const secondSpace = mapData.getByType('space').find((s) => s.name === '126');
-
-      if (firstSpace && secondSpace) {
-        const directions = mapData.getDirections(firstSpace, secondSpace);
-
-        if (directions) {
-          // Add a path from the first space to the second space.
-          mapView.Navigation.draw(directions);
+        // If a map already exists, destroy it before loading a new one
+        if (mapView) {
+          mapView.destroy();
         }
+
+        mapView = await show3dMap(
+          document.getElementById("mappedin-map"),
+          mapData
+        );
+
+        mapView.Labels.all();
       }
 
+      document.getElementById("load-map").addEventListener("click", () => {
+        const selectedMap = document.getElementById("map-selector").value;
+        loadMap(selectedMap);
+      });
     </script>
   </body>
 </html>
-
-
-
