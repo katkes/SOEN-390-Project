@@ -36,15 +36,54 @@
       #route-panel {
         position: absolute;
         top: 10px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 260px;
+        transform: none;
+        width: 240px;
         background: white;
         padding: 10px;
         border-radius: 10px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         z-index: 1000;
       }
+
+      .panel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .panel-header h2 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: bold;
+      }
+
+      #level-panel {
+        position: static;
+        width: auto;
+        background: transparent;
+        padding: 0;
+        box-shadow: none;
+        z-index: auto;
+        text-align: right;
+      }
+
+      #level-panel label {
+        font-size: 10px;
+        font-weight: bold;
+        display: inline;
+        margin-right: 5px;
+      }
+
+      #floor-select {
+        width: 80px;
+        padding: 3px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 10px;
+        height: 22px;
+      }
+
       #route-panel label {
         font-size: 12px;
         font-weight: bold;
@@ -86,13 +125,14 @@
         padding: 10px;
         border-radius: 15px 15px 0 0;
         box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
-        transition: transform 0.3s ease-out;
+        transition: transform 0.3s ease-out, height 0.3s ease-out;
         text-align: center;
+        z-index: 900;
       }
       #drag-handle {
         width: 50px;
         height: 5px;
-
+        background: #ddd;
         border-radius: 5px;
         margin: 5px auto;
         cursor: grab;
@@ -100,6 +140,7 @@
       #directions-list {
         max-height: 250px;
         overflow-y: auto;
+        background: white;
       }
       .direction-step {
         padding: 8px;
@@ -107,6 +148,7 @@
         font-size: 12px;
         display: flex;
         align-items: center;
+        background: white;
       }
       .direction-step img {
         width: 18px;
@@ -134,6 +176,7 @@
         padding: 8px;
         font-size: 12px;
         font-weight: bold;
+        background: white;
       }
     </style>
     <title>Mappedin Navigation</title>
@@ -141,8 +184,18 @@
   <body>
     <div id="mappedin-map"></div>
 
-    <!-- Modal for Selecting Start/Destination -->
+    <!-- Updated Modal for Selecting Start/Destination with Floor Selector -->
     <div id="route-panel">
+      <div class="panel-header">
+        <h2>Mappedin Map</h2>
+        <div id="level-panel">
+          <label for="floor-select">Floor:</label>
+          <select id="floor-select">
+            <option value="">Select floor</option>
+          </select>
+        </div>
+      </div>
+
       <label for="start">Start:</label>
       <select id="start">
         <option value="">Select start point</option>
@@ -290,9 +343,32 @@
         ) {
           directionsList.style.display = "block";
           toggleSteps.textContent = "Hide Steps";
+
+          // Add this to ensure proper rendering
+          directionsPanel.style.background = "white";
         } else {
           directionsList.style.display = "none";
           toggleSteps.textContent = "Show Steps";
+        }
+      });
+
+      // Populate Floor Selector
+      const floorSelect = document.getElementById("floor-select");
+      const floors = mapData.getByType("floor");
+
+      floors.sort((a, b) => a.elevation - b.elevation);
+      floors.forEach((floor) => {
+        const option = document.createElement("option");
+        option.value = floor.id;
+        option.textContent = floor.name;
+        floorSelect.appendChild(option);
+      });
+
+      // Handle Floor Selection
+      floorSelect.addEventListener("change", () => {
+        const selectedFloorId = floorSelect.value;
+        if (selectedFloorId) {
+          mapView.setFloor(selectedFloorId);
         }
       });
     </script>
