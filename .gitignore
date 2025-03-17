@@ -15,6 +15,7 @@ frontend/test_report.xml
 frontend/build
 frontend/pubspec.lock
 frontend/Documentation
+frontend/.dart_tool
 
 #Android studio
 *.iml
