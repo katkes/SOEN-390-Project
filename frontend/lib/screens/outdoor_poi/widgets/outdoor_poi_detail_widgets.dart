@@ -105,6 +105,12 @@ Widget buildInfoSection(
             Icons.location_on,
             address,
             context: context,
+            onTap: () {
+              // TODO: Open address in waypoint selection, task for 6.1.2
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Opening address in maps...')),
+              );
+            },
           ),
 
         // Phone number
