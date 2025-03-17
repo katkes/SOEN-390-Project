@@ -1,4 +1,3 @@
-
 .env
 backend
 .idea
@@ -15,6 +14,16 @@ frontend/test_report.xml
 frontend/build
 frontend/pubspec.lock
 frontend/Documentation
+pupspec.lock
+frontend/.dart_tool
+/frontend/.dart_tool
+frontend/.flutter-plugins
+frontend/android/local.properties
+frontend/linux/flutter
+frontend/macos/flutter
+frontend/windows/flutter
+frontend/android/.gradle
+
 
 #Android studio
 *.iml
@@ -22,6 +31,8 @@ frontend/Documentation
 *.ipr
 
 .flutter-plugins-dependencies
+
+frontend/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java
 
 /frontend/.dart_tool/
 /frontend/android/app/.cxx/
