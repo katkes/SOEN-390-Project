@@ -1,29 +1,32 @@
-// test/google_poi_service_test.dart
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'dart:convert';
 import 'package:soen_390/services/http_service.dart';
 import 'package:soen_390/services/google_poi_service.dart';
-import 'package:soen_390/models/places.dart';
+import 'package:http/http.dart' as http;
 
 import 'google_poi_service_test.mocks.dart';
 
-// Generate a mock class for HttpService
-@GenerateNiceMocks([MockSpec<HttpService>()])
+// Generate mock classes
+@GenerateNiceMocks([MockSpec<HttpService>(), MockSpec<http.Client>()])
 void main() {
-  group('GooglePOIService Full Mock Test', () {
-    late MockHttpService mockHttpService;
-    late GooglePOIService poiService;
+  // Mocks and service instance
+  late MockHttpService mockHttpService;
+  late MockClient mockHttpClient;
+  late GooglePOIService poiService;
+  const mockApiKey = 'test-api-key';
 
-    const mockApiKey = 'test-api-key';
+  // Set up mocks for all tests
+  setUp(() {
+    mockHttpService = MockHttpService();
+    mockHttpClient = MockClient();
+    when(mockHttpService.client).thenReturn(mockHttpClient);
+    poiService =
+        GooglePOIService(apiKey: mockApiKey, httpService: mockHttpService);
+  });
 
-    setUp(() {
-      mockHttpService = MockHttpService();
-      poiService =
-          GooglePOIService(apiKey: mockApiKey, httpService: mockHttpService);
-    });
-
+  group('GooglePOIService Tests', () {
     test('should parse all fields from full API response accurately', () async {
       final mockJsonResponse = {
         "html_attributions": [],
@@ -124,10 +127,9 @@ void main() {
         "status": "OK"
       };
 
-      final mockHttpResponse =
-          http.Response(json.encode(mockJsonResponse), 200);
-      when(mockHttpService.client.get(any))
-          .thenAnswer((_) async => mockHttpResponse);
+      when(mockHttpClient.get(any)).thenAnswer(
+        (_) async => http.Response(jsonEncode(mockJsonResponse), 200),
+      );
 
       final places = await poiService.getNearbyPlaces(
         latitude: 43.6383,
@@ -136,7 +138,6 @@ void main() {
         radius: 500,
       );
 
-      // Assertions
       expect(places.length, 2);
 
       final firstPlace = places[0];
@@ -160,6 +161,82 @@ void main() {
       expect(secondPlace.photoReference, 'PHOTO_REF_2');
       expect(secondPlace.address, '#150, 207 Queens Quay West, Toronto');
       expect(secondPlace.types, contains('store'));
+    });
+
+    test('should throw Exception when HTTP status code is not 200', () async {
+      when(mockHttpClient.get(any)).thenAnswer(
+        (_) async => http.Response('Server Error', 500),
+      );
+
+      expect(
+        () => poiService.getNearbyPlaces(
+          latitude: 43.6383,
+          longitude: -79.3801,
+          type: 'restaurant',
+          radius: 500,
+        ),
+        throwsA(predicate((e) =>
+            e is Exception &&
+            e.toString().contains('Failed to fetch nearby places: 500'))),
+      );
+    });
+
+    test('should throw Exception when Google Places API status is not OK',
+        () async {
+      final mockErrorResponse = {
+        "status": "REQUEST_DENIED",
+        "error_message": "Invalid API key"
+      };
+
+      when(mockHttpClient.get(any)).thenAnswer(
+        (_) async => http.Response(jsonEncode(mockErrorResponse), 200),
+      );
+
+      expect(
+        () => poiService.getNearbyPlaces(
+          latitude: 43.6383,
+          longitude: -79.3801,
+          type: 'restaurant',
+          radius: 500,
+        ),
+        throwsA(predicate((e) =>
+            e is Exception &&
+            e.toString().contains('Google Places API Error: REQUEST_DENIED'))),
+      );
+    });
+
+    test('should throw Exception on network failure', () async {
+      when(mockHttpClient.get(any)).thenThrow(Exception('Network Error'));
+
+      expect(
+        () => poiService.getNearbyPlaces(
+          latitude: 43.6383,
+          longitude: -79.3801,
+          type: 'restaurant',
+          radius: 500,
+        ),
+        throwsA(predicate((e) =>
+            e is Exception &&
+            e.toString().contains('Error fetching nearby places:'))),
+      );
+    });
+
+    test('should throw Exception on invalid JSON response', () async {
+      when(mockHttpClient.get(any)).thenAnswer(
+        (_) async => http.Response('INVALID_JSON', 200),
+      );
+
+      expect(
+        () => poiService.getNearbyPlaces(
+          latitude: 43.6383,
+          longitude: -79.3801,
+          type: 'restaurant',
+          radius: 500,
+        ),
+        throwsA(predicate((e) =>
+            e is Exception &&
+            e.toString().contains('Error fetching nearby places:'))),
+      );
     });
   });
 }
