@@ -15,7 +15,6 @@ class IndoorAccessibilityPage extends StatefulWidget {
 class IndoorAccessibilityState extends State<IndoorAccessibilityPage> {
   bool _isMobilityImpaired = false;
 
-  //Function for other modules to obtain the session variable
   bool getMobilityStatus() {
     return _isMobilityImpaired;
   }
@@ -33,11 +32,12 @@ class IndoorAccessibilityState extends State<IndoorAccessibilityPage> {
           children: [
             const Text("PREFERENCES", style: TextStyle(fontSize: 15)),
             const Divider(
-              color: Colors.grey, // Line color
-              thickness: 2, // Line thickness
-              indent: 10, // Left padding
-              endIndent: 10, // Right padding
+              color: Colors.grey,
+              thickness: 2,
+              indent: 10,
+              endIndent: 10,
             ),
+            //if you wish to add more specifications for disabilities, add another row() widget as a child of the column() widget.
             Row(
               children: [
                 Text('Requires mobility considerations: $_isMobilityImpaired'),
