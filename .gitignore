@@ -34,3 +34,5 @@ frontend/android/.gradle
 
 frontend/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java
 
+/frontend/.dart_tool/
+/frontend/android/app/.cxx/

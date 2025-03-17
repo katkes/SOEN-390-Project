@@ -10,6 +10,10 @@
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" android:label="ACCESS_BACKGROUND_LOCATION" android:permission="android.permission.ACCESS_FINE_LOCATION"/>
     <!--    Necessary to fetch location updates continuously-->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <!--    Necessary to fetch location updates continuously-->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    <!--    Keeping the device's CPU active even if user not using it-->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
 
     <application
