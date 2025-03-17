@@ -88,7 +88,9 @@ void main() {
     final routeCardFinder = find.byType(RouteCard).first;
     await tester.tap(routeCardFinder);
     await tester.pumpAndSettle();
-    await Future.delayed(const Duration(seconds: 8)); // Reason why the elapsed time is longer is because the route is being rendered
+    await Future.delayed(const Duration(
+        seconds:
+            8)); // Reason why the elapsed time is longer is because the route is being rendered
 
     expect(find.byType(PolylineLayer), findsOneWidget);
   }
