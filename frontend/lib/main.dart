@@ -23,7 +23,11 @@ import 'package:soen_390/screens/profile/profile_screen.dart';
 ///
 /// This function initializes the Riverpod provider scope and starts the app.
 void main() async {
-  await dotenv.load(fileName: ".env");
+  try {
+    await dotenv.load(fileName: ".env");
+  } catch (e) {
+    print("problem with loading .env file");
+  }
   runApp(
     const ProviderScope(
       child: MyApp(),
