@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:soen_390/widgets/outdoor_poi_detail_widgets.dart';
+import 'package:soen_390/screens/outdoor_poi/widgets/outdoor_poi_detail_widgets.dart';
 
 void main() {
   testWidgets('buildChip widget test', (WidgetTester tester) async {
