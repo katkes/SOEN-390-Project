@@ -8,16 +8,16 @@ import 'package:http/http.dart' as http;
 
 import 'google_poi_service_test.mocks.dart';
 
-// Generate mock classes
+/// Generates mock classes for [HttpService] and [http.Client] using Mockito
 @GenerateNiceMocks([MockSpec<HttpService>(), MockSpec<http.Client>()])
 void main() {
-  // Mocks and service instance
+  // Declare variables for mock dependencies and service instance
   late MockHttpService mockHttpService;
   late MockClient mockHttpClient;
   late GooglePOIService poiService;
   const mockApiKey = 'test-api-key';
 
-  // Set up mocks for all tests
+  /// Set up fresh mocks and service instance before each test
   setUp(() {
     mockHttpService = MockHttpService();
     mockHttpClient = MockClient();
@@ -26,8 +26,11 @@ void main() {
         GooglePOIService(apiKey: mockApiKey, httpService: mockHttpService);
   });
 
+  /// Group containing all tests for [GooglePOIService]
   group('GooglePOIService Tests', () {
+    /// Test case to verify correct parsing of all fields from a complete and valid API response
     test('should parse all fields from full API response accurately', () async {
+      // Mock JSON response simulating a valid Google Places API response with two POIs
       final mockJsonResponse = {
         "html_attributions": [],
         "results": [
@@ -127,10 +130,12 @@ void main() {
         "status": "OK"
       };
 
+      // Simulate successful HTTP response with mock data
       when(mockHttpClient.get(any)).thenAnswer(
         (_) async => http.Response(jsonEncode(mockJsonResponse), 200),
       );
 
+      // Call the method under test
       final places = await poiService.getNearbyPlaces(
         latitude: 43.6383,
         longitude: -79.3801,
@@ -138,6 +143,7 @@ void main() {
         radius: 500,
       );
 
+      // Assert that two places were returned and all fields are correctly parsed
       expect(places.length, 2);
 
       final firstPlace = places[0];
@@ -163,11 +169,14 @@ void main() {
       expect(secondPlace.types, contains('store'));
     });
 
+    /// Test case to verify exception is thrown when the HTTP response code is not 200
     test('should throw Exception when HTTP status code is not 200', () async {
+      // Simulate failed HTTP response with status 500
       when(mockHttpClient.get(any)).thenAnswer(
         (_) async => http.Response('Server Error', 500),
       );
 
+      // Expect an exception to be thrown due to non-200 status
       expect(
         () => poiService.getNearbyPlaces(
           latitude: 43.6383,
@@ -181,8 +190,10 @@ void main() {
       );
     });
 
+    /// Test case to verify exception is thrown when Google Places API returns a non-OK status
     test('should throw Exception when Google Places API status is not OK',
         () async {
+      // Simulate valid HTTP response with Google API error
       final mockErrorResponse = {
         "status": "REQUEST_DENIED",
         "error_message": "Invalid API key"
@@ -192,6 +203,7 @@ void main() {
         (_) async => http.Response(jsonEncode(mockErrorResponse), 200),
       );
 
+      // Expect an exception with the correct API error status
       expect(
         () => poiService.getNearbyPlaces(
           latitude: 43.6383,
@@ -205,9 +217,12 @@ void main() {
       );
     });
 
+    /// Test case to verify exception is thrown on network failure
     test('should throw Exception on network failure', () async {
+      // Simulate network failure (e.g., no internet, server unreachable)
       when(mockHttpClient.get(any)).thenThrow(Exception('Network Error'));
 
+      // Expect a generic exception related to fetching data
       expect(
         () => poiService.getNearbyPlaces(
           latitude: 43.6383,
@@ -221,11 +236,14 @@ void main() {
       );
     });
 
+    /// Test case to verify exception is thrown when the response contains invalid JSON
     test('should throw Exception on invalid JSON response', () async {
+      // Simulate HTTP response with invalid JSON content
       when(mockHttpClient.get(any)).thenAnswer(
         (_) async => http.Response('INVALID_JSON', 200),
       );
 
+      // Expect an exception due to JSON parsing failure
       expect(
         () => poiService.getNearbyPlaces(
           latitude: 43.6383,
