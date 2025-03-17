@@ -232,7 +232,8 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
               onPressed: _handleShuttleBusSelection,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               ),
               child: const Text("Use Shuttle Bus?",
                   style: TextStyle(color: Colors.white, fontSize: 16)),
@@ -240,7 +241,8 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
             const SizedBox(height: 10),
             ListView.builder(
               shrinkWrap: true, // Ensures it only takes needed space
-              physics: const NeverScrollableScrollPhysics(), // Prevents nested scrolling issues
+              physics:
+                  const NeverScrollableScrollPhysics(), // Prevents nested scrolling issues
               itemCount: confirmedRoutes.length > _maxRoutes
                   ? _maxRoutes
                   : confirmedRoutes.length,
