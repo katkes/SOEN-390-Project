@@ -32,6 +32,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   String selectedLocation = ''; //variable to store selected location address
   String startLocation =
       'Your Location'; // variable to store start location address
+  String defaultYourLocationString = 'Your Location';
   String destinationLocation =
       ''; // variable to store destination location address
 
@@ -50,7 +51,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
       }
     }
     if (itinerary.isEmpty) {
-      itinerary.add('Your Location');
+      itinerary.add(defaultYourLocationString);
     }
   }
 
@@ -92,7 +93,9 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
     return Column(
       children: [
         _buildLocationField(
-            startLocation == 'Your Location' ? 'Your Location' : 'Origin',
+            startLocation == defaultYourLocationString
+                ? defaultYourLocationString
+                : 'Origin',
             true),
         const SizedBox(height: 10),
         _buildLocationField("Destination", false),

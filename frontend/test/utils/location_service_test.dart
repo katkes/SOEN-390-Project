@@ -7,8 +7,6 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:soen_390/utils/permission_not_enabled_exception.dart';
 import 'package:flutter/foundation.dart'
     show debugDefaultTargetPlatformOverride, TargetPlatform;
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:soen_390/providers/service_providers.dart';
 
 /// Helper function to create a mock [geo.Position] object.
 ///
