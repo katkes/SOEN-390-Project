@@ -36,13 +36,12 @@ class WaypointSelectionScreen extends StatefulWidget {
 class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
   final int _selectedIndex = 1;
   static const int _maxRoutes = 4;
-  static const int _minROutes = 2;
+  static const int _minRoutes = 2;
   bool isLoading = false;
   bool isCrossCampus = false;
   String? errorMessage;
   String? selectedMode;
   List<Map<String, dynamic>> confirmedRoutes = [];
-  List<RouteResult> fetchedRoutes = [];
   bool _locationsChanged =
       false; //adding boolean flag to track whether the locations have been updated.
   final Map<String, Map<String, List<RouteResult>>> _routeCache =
@@ -70,9 +69,56 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
     );
   }
 
+  Future<LatLng?> _getCurrentPosition() async {
+    try {
+      await locationService.startUp();
+      return locationService.convertPositionToLatLng(
+          await locationService.getCurrentLocationAccurately());
+    } catch (e) {
+      print("Error starting location service: $e");
+      return null;
+    }
+  }
+
+  Future<Map<String, LatLng>> _resolveWaypoints(
+      List<String> waypoints, LatLng? pos) async {
+    final LatLng? startPoint = (pos != null && waypoints[0] == 'Your Location')
+        ? pos
+        : await geocodingService.getCoordinates(waypoints.first);
+    final LatLng? endPoint =
+        await geocodingService.getCoordinates(waypoints.last);
+
+    if (startPoint == null || endPoint == null) {
+      throw Exception("Could not find coordinates for one or more locations");
+    }
+    return {'start': startPoint, 'end': endPoint};
+  }
+
+  bool _tryDisplayFromCache(String googleTransportMode, String waypointKey,
+      List<String> waypoints, String transportMode) {
+    if (!_locationsChanged &&
+        _routeCache.containsKey(googleTransportMode) &&
+        _routeCache[googleTransportMode]!.containsKey(waypointKey)) {
+      print("Cache hit for $waypointKey using $googleTransportMode mode");
+      final cachedRoutes = _routeCache[googleTransportMode]![waypointKey]!;
+
+      // Routes are cached, filter and display
+      print("Routes are cached for $googleTransportMode, filtering...");
+      display.displayRoutes(
+        context: context,
+        updateRoutes: (routes) => setState(() => confirmedRoutes = routes),
+        waypoints: waypoints,
+        routes: cachedRoutes,
+        transportMode: transportMode,
+      );
+      return true;
+    }
+    return false;
+  }
+
   void _handleRouteConfirmation(
       List<String> waypoints, String transportMode) async {
-    if (waypoints.length < _minROutes) {
+    if (waypoints.length < _minRoutes) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
             content: Text("You must have at least a start and destination.")),
@@ -85,21 +131,8 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
     String waypointKey = "${waypoints.first}-${waypoints.last}";
 
     // Check cache with consistent keys
-    if (!_locationsChanged &&
-        _routeCache.containsKey(googleTransportMode) &&
-        _routeCache[googleTransportMode]!.containsKey(waypointKey)) {
-      print("Cache hit for $waypointKey using $googleTransportMode mode");
-      // Routes are cached, filter and display
-      print("Routes are cached for $googleTransportMode, filtering...");
-      final cachedRoutes = _routeCache[googleTransportMode]![waypointKey]!;
-      display.displayRoutes(
-        context: context,
-        confirmedRoutes: confirmedRoutes,
-        updateRoutes: (routes) => setState(() => confirmedRoutes = routes),
-        waypoints: waypoints,
-        routes: cachedRoutes,
-        transportMode: transportMode,
-      ); // Display cached routes
+    if (_tryDisplayFromCache(
+        googleTransportMode, waypointKey, waypoints, transportMode)) {
       return;
     }
 
@@ -117,22 +150,22 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
     });
 
     try {
-      // Convert location names to coordinates using geocoding service
-      final LatLng? startPoint =
-          await geocodingService.getCoordinates(waypoints.first);
-      final LatLng? endPoint =
-          await geocodingService.getCoordinates(waypoints.last);
+      final pos = await _getCurrentPosition();
+      assert(pos != null,
+          "Position should not be null after starting the location service.");
 
-      if (startPoint == null || endPoint == null) {
-        throw Exception("Could not find coordinates for one or more locations");
-      }
+      final resolvedWaypoints = await _resolveWaypoints(waypoints, pos);
+      final startPoint = resolvedWaypoints['start'];
+      final endPoint = resolvedWaypoints['end'];
+
+      assert(startPoint != null && endPoint != null,
+          "Start and end points should not be null after resolving waypoints.");
 
       // Fetch routes for the selected transport mode
       final routes = await routeService.getRoutes(
-        from: startPoint,
-        to: endPoint,
+        from: startPoint!,
+        to: endPoint!,
       );
-
       isCrossCampus =
           GoogleRouteService.isRouteInterCampus(from: startPoint, to: endPoint);
       print("Route involves campus switch: $isCrossCampus");
@@ -162,7 +195,6 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
       // Display the routes
       display.displayRoutes(
         context: context,
-        confirmedRoutes: confirmedRoutes,
         updateRoutes: (routes) => setState(() => confirmedRoutes = routes),
         waypoints: waypoints,
         routes: topRoutes,
