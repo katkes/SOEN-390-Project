@@ -14,8 +14,7 @@ final geolocatorProvider = Provider<GeolocatorPlatform>((ref) {
 
 /// Provides an instance of [LocationService].
 final locationServiceProvider = Provider<LocationService>((ref) {
-  final geolocator = ref.read(geolocatorProvider);
-  return LocationService(geolocator: geolocator); //
+  return LocationService.instance;
 });
 
 /// Provides an instance of [HttpService] to manage HTTP requests.

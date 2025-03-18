@@ -102,6 +102,14 @@ void main() {
   });
 
   group('LocationService Tests', () {
+    test('locationServiceProvider returns the singleton instance', () {
+      final container = ProviderContainer();
+
+      final instance1 = container.read(locationServiceProvider);
+      final instance2 = container.read(locationServiceProvider);
+
+      expect(instance1, same(instance2)); // Both should be the same instance
+    });
     test('determinePermissions should return true when permission is granted',
         () async {
       mockGeolocatorPlatform.setLocationServiceEnabled(true);
@@ -129,13 +137,6 @@ void main() {
 
       expect(locationService.currentPosition.latitude, mockPosition.latitude);
       expect(locationService.currentPosition.longitude, mockPosition.longitude);
-    });
-
-    test('locationServiceProvider provides a LocationService instance', () {
-      final container = ProviderContainer();
-      final locationService = container.read(locationServiceProvider);
-
-      expect(locationService, isA<LocationService>());
     });
 
     test('getLastKnownPosition is not null even when location service disabled',

@@ -106,7 +106,6 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
     });
 
     try {
-      final locationService = LocationService.instance;
       LatLng? pos;
 
       try {
