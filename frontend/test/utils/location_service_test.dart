@@ -7,6 +7,8 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:soen_390/utils/permission_not_enabled_exception.dart';
 import 'package:flutter/foundation.dart'
     show debugDefaultTargetPlatformOverride, TargetPlatform;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:soen_390/providers/service_providers.dart';
 
 /// Helper function to create a mock [geo.Position] object.
 ///
@@ -127,6 +129,13 @@ void main() {
 
       expect(locationService.currentPosition.latitude, mockPosition.latitude);
       expect(locationService.currentPosition.longitude, mockPosition.longitude);
+    });
+
+    test('locationServiceProvider provides a LocationService instance', () {
+      final container = ProviderContainer();
+      final locationService = container.read(locationServiceProvider);
+
+      expect(locationService, isA<LocationService>());
     });
 
     test('getLastKnownPosition is not null even when location service disabled',
