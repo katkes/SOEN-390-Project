@@ -54,7 +54,9 @@ Widget buildExpandableDescription(
   VoidCallback onToggle,
   BuildContext context,
 ) {
-  final maxLines = showFullDescription ? null : 3;
+  const int defaultDescriptionLines = 3;
+  const int descriptionLimit = 150;
+  final maxLines = showFullDescription ? null : defaultDescriptionLines;
 
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,7 +68,7 @@ Widget buildExpandableDescription(
             showFullDescription ? TextOverflow.visible : TextOverflow.ellipsis,
         style: const TextStyle(fontSize: 16),
       ),
-      if (description.length > 150)
+      if (description.length > descriptionLimit)
         TextButton(
           onPressed: onToggle,
           child: Text(

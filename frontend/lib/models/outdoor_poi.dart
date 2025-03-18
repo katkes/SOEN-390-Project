@@ -1,3 +1,5 @@
+/// This class stores information about a location that may be of interest to users,
+/// including identification, description, contact details, and categorical information.
 // TODO: Add fromJson/toJson methods for API integration for task 6.1.2
 class PointOfInterest {
   final String id;
