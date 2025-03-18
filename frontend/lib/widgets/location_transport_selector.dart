@@ -259,12 +259,12 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
     }
   }
 
-void _removeStop(int index) {
+  void _removeStop(int index) {
     setState(() {
       itinerary.removeAt(index);
       widget.onLocationChanged?.call();
     });
-  
+
     if (index == 0 || itinerary.length < 2) {
       // Let the parent know to clear cached routes
       widget.onTransportModeChange?.call("clear_cache");

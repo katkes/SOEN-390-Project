@@ -125,7 +125,7 @@ class GoogleRouteService implements IRouteService {
     return false;
   }
 
-/// Fetches routes from Google Maps API.
+  /// Fetches routes from Google Maps API.
   ///
   /// - [from]: The starting location as `LatLng`.
   /// - [to]: The destination location as `LatLng`.
@@ -213,12 +213,12 @@ class GoogleRouteService implements IRouteService {
   /// Logs detailed error information when route retrieval fails.
   List<RouteResult>? _processApiResponse(String responseBody) {
     final data = jsonDecode(responseBody);
-  
+
     if (!data.containsKey('routes') || data['routes'].isEmpty) {
       print(" No routes found. Full API Response: ${jsonEncode(data)}");
       return null;
     }
-  
+
     if (data['status'] != 'OK') {
       print(
           "API Error: ${data['status']} - Full Response: ${jsonEncode(data)}");
@@ -244,7 +244,7 @@ class GoogleRouteService implements IRouteService {
   /// Returns a list of RouteResult objects representing each possible route.
   List<RouteResult> _extractRouteResults(Map<String, dynamic> data) {
     List<RouteResult> results = [];
-  
+
     for (var route in data['routes']) {
       for (var leg in route['legs']) {
         final distance = leg['distance']['value'].toDouble();
@@ -263,7 +263,7 @@ class GoogleRouteService implements IRouteService {
         ));
       }
     }
-  
+
     return results;
   }
 

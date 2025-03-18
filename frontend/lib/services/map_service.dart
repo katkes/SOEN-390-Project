@@ -122,7 +122,7 @@ class MapService {
     }
   }
 
-/// Parses GeoJSON data and converts it into a list of Flutter map Polygon objects.
+  /// Parses GeoJSON data and converts it into a list of Flutter map Polygon objects.
   ///
   /// Takes a GeoJSON structure containing MultiPolygon features and converts them into
   /// Flutter map Polygon objects for rendering on a map.
@@ -130,7 +130,7 @@ class MapService {
   /// - [jsonData]: The GeoJSON data as a Map, expected to contain 'features' with 'geometry' objects.
   ///
   /// Returns a list of Polygon objects ready to be added to a Flutter map.
-List<Polygon> _parsePolygons(Map<String, dynamic> jsonData) {
+  List<Polygon> _parsePolygons(Map<String, dynamic> jsonData) {
     List<Polygon> polygons = [];
 
     if (jsonData['features'] is List) {
@@ -179,18 +179,18 @@ List<Polygon> _parsePolygons(Map<String, dynamic> jsonData) {
     return coordinates
         .map<LatLng>((coord) => LatLng(coord[1], coord[0]))
         .toList();
-}
+  }
 
-/// Ensures a polygon is closed by adding the first point to the end if necessary.
+  /// Ensures a polygon is closed by adding the first point to the end if necessary.
   ///
   /// - [polygonPoints]: The list of points representing the polygon.
   void _ensureClosedPolygon(List<LatLng> polygonPoints) {
     if (polygonPoints.isNotEmpty && polygonPoints.first != polygonPoints.last) {
       polygonPoints.add(polygonPoints.first);
     }
-}
+  }
 
-/// Creates a Flutter map Polygon object with the specified points and styling.
+  /// Creates a Flutter map Polygon object with the specified points and styling.
   ///
   /// - [points]: The list of LatLng points defining the polygon's vertices.
   ///
