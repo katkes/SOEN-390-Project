@@ -69,6 +69,17 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
     );
   }
 
+  Future<LatLng?> _getCurrentPosition() async {
+    try {
+      await locationService.startUp();
+      return locationService.convertPositionToLatLng(
+          await locationService.getCurrentLocationAccurately());
+    } catch (e) {
+      print("Error starting location service: $e");
+      return null;
+    }
+  }
+
   void _handleRouteConfirmation(
       List<String> waypoints, String transportMode) async {
     if (waypoints.length < _minROutes) {
@@ -115,15 +126,7 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
     });
 
     try {
-      LatLng? pos;
-
-      try {
-        await locationService.startUp();
-        pos = locationService.convertPositionToLatLng(
-            await locationService.getCurrentLocationAccurately());
-      } catch (e) {
-        print("Error starting location service: $e");
-      }
+      final pos = await _getCurrentPosition();
       assert(pos != null,
           "Position should not be null after starting the location service.");
 
