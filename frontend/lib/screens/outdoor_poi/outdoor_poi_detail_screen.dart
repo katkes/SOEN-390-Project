@@ -68,7 +68,7 @@ class _PoiDetailScreenState extends State<PoiDetailScreen> {
                           color: Theme.of(context).primaryColor,
                           child: const Center(
                             child: Icon(
-                              Icons.restaurant,
+                              Icons.location_pin,
                               size: 64,
                               color: Color(0xFF912338),
                             ),
@@ -80,7 +80,7 @@ class _PoiDetailScreenState extends State<PoiDetailScreen> {
                       color: Theme.of(context).primaryColor,
                       child: const Center(
                         child: Icon(
-                          Icons.restaurant,
+                          Icons.location_pin,
                           size: 64,
                           color: Colors.white70,
                         ),
