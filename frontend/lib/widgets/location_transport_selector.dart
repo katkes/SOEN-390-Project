@@ -95,7 +95,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
         _buildLocationField(
             startLocation == defaultYourLocationString
                 ? defaultYourLocationString
-                : 'Origin',
+                : 'Start Location',
             true),
         const SizedBox(height: 10),
         _buildLocationField("Destination", false),
