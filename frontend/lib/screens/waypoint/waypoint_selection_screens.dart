@@ -87,10 +87,33 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
         : await geocodingService.getCoordinates(waypoints.first);
     final LatLng? endPoint =
         await geocodingService.getCoordinates(waypoints.last);
+
     if (startPoint == null || endPoint == null) {
       throw Exception("Could not find coordinates for one or more locations");
     }
     return {'start': startPoint, 'end': endPoint};
+  }
+
+  bool _tryDisplayFromCache(String googleTransportMode, String waypointKey,
+      List<String> waypoints, String transportMode) {
+    if (!_locationsChanged &&
+        _routeCache.containsKey(googleTransportMode) &&
+        _routeCache[googleTransportMode]!.containsKey(waypointKey)) {
+      print("Cache hit for $waypointKey using $googleTransportMode mode");
+      final cachedRoutes = _routeCache[googleTransportMode]![waypointKey]!;
+
+      // Routes are cached, filter and display
+      print("Routes are cached for $googleTransportMode, filtering...");
+      display.displayRoutes(
+        context: context,
+        updateRoutes: (routes) => setState(() => confirmedRoutes = routes),
+        waypoints: waypoints,
+        routes: cachedRoutes,
+        transportMode: transportMode,
+      );
+      return true;
+    }
+    return false;
   }
 
   void _handleRouteConfirmation(
@@ -108,20 +131,8 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
     String waypointKey = "${waypoints.first}-${waypoints.last}";
 
     // Check cache with consistent keys
-    if (!_locationsChanged &&
-        _routeCache.containsKey(googleTransportMode) &&
-        _routeCache[googleTransportMode]!.containsKey(waypointKey)) {
-      print("Cache hit for $waypointKey using $googleTransportMode mode");
-      // Routes are cached, filter and display
-      print("Routes are cached for $googleTransportMode, filtering...");
-      final cachedRoutes = _routeCache[googleTransportMode]![waypointKey]!;
-      display.displayRoutes(
-        context: context,
-        updateRoutes: (routes) => setState(() => confirmedRoutes = routes),
-        waypoints: waypoints,
-        routes: cachedRoutes,
-        transportMode: transportMode,
-      ); // Display cached routes
+    if (_tryDisplayFromCache(
+        googleTransportMode, waypointKey, waypoints, transportMode)) {
       return;
     }
 
