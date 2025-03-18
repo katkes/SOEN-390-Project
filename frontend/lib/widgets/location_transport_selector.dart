@@ -259,17 +259,15 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
     }
   }
 
-  void _removeStop(int index) {
+void _removeStop(int index) {
     setState(() {
       itinerary.removeAt(index);
-      if (widget.onLocationChanged != null) {
-        widget.onLocationChanged!();
-      }
+      widget.onLocationChanged?.call();
     });
-    if (widget.onTransportModeChange != null &&
-        (index == 0 || itinerary.length < 2)) {
+  
+    if (index == 0 || itinerary.length < 2) {
       // Let the parent know to clear cached routes
-      widget.onTransportModeChange!("clear_cache");
+      widget.onTransportModeChange?.call("clear_cache");
     }
   }
 
