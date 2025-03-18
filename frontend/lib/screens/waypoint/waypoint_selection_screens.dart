@@ -36,7 +36,7 @@ class WaypointSelectionScreen extends StatefulWidget {
 class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
   final int _selectedIndex = 1;
   static const int _maxRoutes = 4;
-  static const int _minROutes = 2;
+  static const int _minRoutes = 2;
   bool isLoading = false;
   bool isCrossCampus = false;
   String? errorMessage;
@@ -95,7 +95,7 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
 
   void _handleRouteConfirmation(
       List<String> waypoints, String transportMode) async {
-    if (waypoints.length < _minROutes) {
+    if (waypoints.length < _minRoutes) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
             content: Text("You must have at least a start and destination.")),
@@ -152,7 +152,6 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
         from: startPoint,
         to: endPoint,
       );
-
       isCrossCampus =
           GoogleRouteService.isRouteInterCampus(from: startPoint, to: endPoint);
       print("Route involves campus switch: $isCrossCampus");
