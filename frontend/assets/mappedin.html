@@ -1,0 +1,403 @@
+<!-- 
+  This HTML file is used to embed a Mappedin map for indoor navigation. 
+  It includes a 3D map rendered using the Mappedin JavaScript SDK. 
+  The file dynamically loads API keys and map data, and provides UI elements 
+  for selecting start and destination points, as well as displaying directions.
+-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/@mappedin/mappedin-js@beta/lib/index.css"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        overscroll-behavior: contain;
+      }
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        position: fixed;
+        touch-action: none;
+      }
+      #mappedin-map {
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+
+      #route-panel {
+        position: absolute;
+        top: 10px;
+        transform: none;
+        width: 240px;
+        background: white;
+        padding: 10px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        left: 10px;
+      }
+
+      .panel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .panel-header h2 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: bold;
+      }
+
+      #level-panel {
+        position: static;
+        width: auto;
+        background: transparent;
+        padding: 0;
+        box-shadow: none;
+        z-index: auto;
+        text-align: right;
+      }
+
+      #level-panel label {
+        font-size: 10px;
+        font-weight: bold;
+        display: inline;
+        margin-right: 5px;
+      }
+
+      #floor-select {
+        width: 80px;
+        padding: 3px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 10px;
+        height: 22px;
+      }
+
+      #route-panel label {
+        font-size: 12px;
+        font-weight: bold;
+        display: block;
+        margin-top: 5px;
+      }
+      select {
+        width: 100%;
+        padding: 6px;
+        margin: 3px 0;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 12px;
+        height: 30px;
+        line-height: 1.2;
+      }
+      button {
+        background-color: #912338;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 5px;
+        width: 100%;
+        padding: 8px;
+        border: none;
+        border-radius: 5px;
+        font-size: 14px;
+        outline: none;
+        -webkit-tap-highlight-color: transparent;
+        user-select: none;
+      }
+
+      button:hover {
+        background: #912338;
+      }
+
+      #directions-panel {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: white;
+        padding: 10px;
+        border-radius: 15px 15px 0 0;
+        box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease-out, height 0.3s ease-out;
+        text-align: center;
+        z-index: 900;
+      }
+      #drag-handle {
+        width: 50px;
+        height: 5px;
+        background: #ddd;
+        border-radius: 5px;
+        margin: 5px auto;
+        cursor: grab;
+      }
+      #directions-list {
+        max-height: 250px;
+        overflow-y: auto;
+        background: white;
+      }
+      .direction-step {
+        padding: 8px;
+        border-bottom: 1px solid #ddd;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        background: white;
+      }
+      .direction-step img {
+        width: 18px;
+        height: 18px;
+        margin-right: 8px;
+      }
+
+      #toggle-steps {
+        background: #912338;
+        color: white;
+        padding: 10px;
+        width: 90%;
+        max-width: 300px;
+        text-align: center;
+        border-radius: 5px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        margin: 10px auto;
+        display: block;
+      }
+      /* Route Info */
+      #route-info {
+        text-align: center;
+        padding: 8px;
+        font-size: 12px;
+        font-weight: bold;
+        background: white;
+      }
+
+      select {
+        color: #912338 !important;
+      }
+
+      select::-ms-expand {
+        display: none;
+      }
+
+      select:focus {
+        outline: none !important;
+        border-color: #781c2c !important;
+      }
+
+      option {
+        color: #912338 !important;
+      }
+    </style>
+    <title>Mappedin Navigation</title>
+  </head>
+  <body>
+    <div id="mappedin-map"></div>
+
+    <!-- Updated Modal for Selecting Start/Destination with Floor Selector -->
+    <div id="route-panel">
+      <div class="panel-header">
+        <h2>Mappedin Map</h2>
+        <div id="level-panel">
+          <label for="floor-select">Floor:</label>
+          <select id="floor-select">
+            <option value="">Select floor</option>
+          </select>
+        </div>
+      </div>
+
+      <label for="start">Start:</label>
+      <select id="start">
+        <option value="">Select start point</option>
+      </select>
+
+      <label for="destination">Destination:</label>
+      <select id="destination">
+        <option value="">Select destination</option>
+      </select>
+
+      <button id="get-directions">Get Directions</button>
+    </div>
+
+    <!-- Step-by-Step Directions -->
+    <div id="directions-panel">
+      <div id="drag-handle"></div>
+      <button id="toggle-steps">Show Steps</button>
+      <div id="route-info">
+        <p id="estimated-time">Estimated Time: N/A</p>
+        <p id="total-distance">Total Distance: N/A</p>
+      </div>
+      <div id="directions-list" style="display: none"></div>
+    </div>
+
+    <script type="module">
+      import {
+        getMapData,
+        show3dMap,
+      } from "https://cdn.jsdelivr.net/npm/@mappedin/mappedin-js@beta/lib/esm/index.js";
+
+      const options = {
+        key: "MAPPEDIN_API_KEY",
+        secret: "MAPPEDIN_API_SECRET",
+        mapId: "MAPPEDIN_API_MAP_ID",
+      };
+
+      // Initialize Map
+      const mapData = await getMapData(options);
+      const mapView = await show3dMap(
+        document.getElementById("mappedin-map"),
+        mapData
+      );
+
+      mapView.Labels.all();
+
+      // UI Elements
+      const startSelect = document.getElementById("start");
+      const destinationSelect = document.getElementById("destination");
+      const getDirectionsButton = document.getElementById("get-directions");
+      const directionsPanel = document.getElementById("directions-panel");
+      const directionsList = document.getElementById("directions-list");
+      const toggleSteps = document.getElementById("toggle-steps");
+
+      const spaces = mapData.getByType("space");
+      spaces.forEach((space) => {
+        const option = document.createElement("option");
+        option.value = space.id;
+        option.textContent = space.name;
+        startSelect.appendChild(option.cloneNode(true));
+        destinationSelect.appendChild(option);
+      });
+
+      // Camera focuses on selected start location
+      startSelect.addEventListener("change", () => {
+        const selectedSpaceId = startSelect.value;
+        const selectedSpace = spaces.find((s) => s.id === selectedSpaceId);
+
+        if (selectedSpace) {
+          mapView.Camera.animateTo({
+            center: selectedSpace.geometry.center,
+            zoomLevel: 20,
+            pitch: 45,
+            bearing: 0,
+          });
+        }
+      });
+
+      // Calculate Walking Time
+      const avg_walking_speed = 85;
+
+      function calculateWalkingTime(distanceInMeters) {
+        return Math.ceil(distanceInMeters / avg_walking_speed);
+      }
+
+      // Get Directions and Display Estimated Time
+      getDirectionsButton.addEventListener("click", async () => {
+        const startId = startSelect.value;
+        const destinationId = destinationSelect.value;
+
+        if (startId && destinationId) {
+          const startSpace = spaces.find((s) => s.id === startId);
+          const destinationSpace = spaces.find((s) => s.id === destinationId);
+
+          if (startSpace && destinationSpace) {
+            const directions = await mapData.getDirections(
+              startSpace,
+              destinationSpace
+            );
+
+            if (directions && directions.path) {
+              mapView.Navigation.clear();
+              mapView.Navigation.draw(directions);
+
+              const totalDistance = directions.distance;
+              const estimatedTime = calculateWalkingTime(totalDistance);
+
+              // Update UI
+              document.getElementById(
+                "estimated-time"
+              ).textContent = `Estimated Time: ${estimatedTime} min`;
+              document.getElementById(
+                "total-distance"
+              ).textContent = `Total Distance: ${Math.round(
+                totalDistance
+              )} meters`;
+
+              // Populate Directions List
+              directionsList.innerHTML = "";
+              directions.instructions.forEach((step, index) => {
+                const stepDiv = document.createElement("div");
+                stepDiv.className = "direction-step";
+                stepDiv.innerHTML = `
+                  <img src="https://img.icons8.com/ios-filled/50/right.png" />
+                  <strong>Step ${index + 1}:</strong> ${
+                  step.text || "No instruction"
+                } (${Math.round(step.distance * 100) / 100 || "0"} meters)
+                `;
+                directionsList.appendChild(stepDiv);
+              });
+
+              // Ensure panel is visible when directions are shown
+              directionsPanel.style.display = "block";
+              directionsList.style.display = "none";
+              toggleSteps.textContent = "Show Steps";
+            }
+          }
+        }
+      });
+
+      toggleSteps.addEventListener("click", () => {
+        if (
+          directionsList.style.display === "none" ||
+          directionsList.style.display === ""
+        ) {
+          directionsList.style.display = "block";
+          toggleSteps.textContent = "Hide Steps";
+
+          // Add this to ensure proper rendering
+          directionsPanel.style.background = "white";
+        } else {
+          directionsList.style.display = "none";
+          toggleSteps.textContent = "Show Steps";
+        }
+      });
+
+      // Populate Floor Selector
+      const floorSelect = document.getElementById("floor-select");
+      const floors = mapData.getByType("floor");
+
+      floors.sort((a, b) => a.elevation - b.elevation);
+      floors.forEach((floor) => {
+        const option = document.createElement("option");
+        option.value = floor.id;
+        option.textContent = floor.name;
+        floorSelect.appendChild(option);
+      });
+
+      // Handle Floor Selection
+      floorSelect.addEventListener("change", () => {
+        const selectedFloorId = floorSelect.value;
+        if (selectedFloorId) {
+          mapView.setFloor(selectedFloorId);
+        }
+      });
+    </script>
+  </body>
+</html>

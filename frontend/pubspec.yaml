@@ -46,6 +46,8 @@ dependencies:
   http: ^1.3.0
   plugin_platform_interface: ^2.1.8
   google_places_autocomplete_text_field: ^1.0.0
+  flutter_inappwebview: ^6.0.0
+  webview_flutter: ^4.10.0
   flutter_map_location_marker: any
   flutter_secure_storage: ^9.2.4
   google_sign_in: ^6.3.0
@@ -88,6 +90,7 @@ flutter:
     - assets/geojson_files/building_list.geojson
     - assets/geojson_files/building_boundaries.geojson
     - assets/images/buildings/hall.png
+    - assets/mappedin.html
     - assets/images/Google_G_logo.png
     - .env
 

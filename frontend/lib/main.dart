@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:soen_390/screens/indoor/mappedin_map_screen.dart';
 import 'package:soen_390/screens/waypoint/waypoint_selection_screens.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:soen_390/services/auth_service.dart';
@@ -314,6 +315,21 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
                     child: ElevatedButton(
                       onPressed: _openWaypointSelection,
                       child: const Text("Find My Way"),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 150,
+                    right: 21,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const MappedinMapScreen(),
+                          ),
+                        );
+                      },
+                      child: const Text("Open Mappedin Map"),
                     ),
                   ),
                 ],

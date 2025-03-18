@@ -16,14 +16,12 @@ frontend/pubspec.lock
 frontend/Documentation
 pupspec.lock
 frontend/.dart_tool
-/frontend/.dart_tool
 frontend/.flutter-plugins
 frontend/android/local.properties
 frontend/linux/flutter
 frontend/macos/flutter
 frontend/windows/flutter
 frontend/android/.gradle
-
 
 #Android studio
 *.iml
