@@ -124,6 +124,9 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
       } catch (e) {
         print("Error starting location service: $e");
       }
+      assert(pos != null,
+          "Position should not be null after starting the location service.");
+
       // Convert location names to coordinates using geocoding service
       final LatLng? startPoint =
           (pos != null && waypoints[0] == 'Your Location')
