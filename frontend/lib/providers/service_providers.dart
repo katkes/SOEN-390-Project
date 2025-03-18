@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:soen_390/services/http_service.dart';
 import 'package:soen_390/services/google_route_service.dart';
 import '../services/interfaces/route_service_interface.dart';
@@ -10,11 +9,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:soen_390/services/auth_service.dart';
 import 'package:soen_390/core/secure_storage.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
-/// Provides an instance of [GeolocatorPlatform].
-final geolocatorProvider = Provider<GeolocatorPlatform>((ref) {
-  return GeolocatorPlatform.instance;
-});
 
 final flutterSecureStorage = Provider<FlutterSecureStorage>((ref) {
   return const FlutterSecureStorage();
