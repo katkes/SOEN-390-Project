@@ -102,14 +102,6 @@ void main() {
   });
 
   group('LocationService Tests', () {
-    test('locationServiceProvider returns the singleton instance', () {
-      final container = ProviderContainer();
-
-      final instance1 = container.read(locationServiceProvider);
-      final instance2 = container.read(locationServiceProvider);
-
-      expect(instance1, same(instance2)); // Both should be the same instance
-    });
     test('determinePermissions should return true when permission is granted',
         () async {
       mockGeolocatorPlatform.setLocationServiceEnabled(true);

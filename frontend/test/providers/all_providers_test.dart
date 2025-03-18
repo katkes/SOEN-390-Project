@@ -20,6 +20,16 @@ void main() {
     final locationService = container.read(locationServiceProvider);
     expect(locationService, isA<LocationService>());
   });
+
+  test('locationServiceProvider returns the singleton instance', () {
+    final container = ProviderContainer();
+
+    final instance1 = container.read(locationServiceProvider);
+    final instance2 = container.read(locationServiceProvider);
+
+    expect(instance1, same(instance2)); // Both should be the same instance
+  });
+
   test('geolocatorProvider returns the same GeolocatorPlatform instance', () {
     final container = ProviderContainer();
     addTearDown(container.dispose);
