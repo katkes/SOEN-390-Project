@@ -56,7 +56,16 @@ class MappedinMapScreenState extends State<MappedinMapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Inddor Navigation')),
+      appBar: AppBar(
+        title: const Text(
+          'Inddor Navigation',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: const Color(0xff912338),
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
       body: WebViewWidget(controller: _controller),
     );
   }
