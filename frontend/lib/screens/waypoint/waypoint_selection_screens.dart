@@ -158,10 +158,13 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
       final startPoint = resolvedWaypoints['start'];
       final endPoint = resolvedWaypoints['end'];
 
+      assert(startPoint != null && endPoint != null,
+          "Start and end points should not be null after resolving waypoints.");
+
       // Fetch routes for the selected transport mode
       final routes = await routeService.getRoutes(
-        from: startPoint,
-        to: endPoint,
+        from: startPoint!,
+        to: endPoint!,
       );
       isCrossCampus =
           GoogleRouteService.isRouteInterCampus(from: startPoint, to: endPoint);
