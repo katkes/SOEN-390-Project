@@ -477,7 +477,7 @@ void main() {
         find.byType(LocationTransportSelector));
 
     // Setup the initial state (add stops, etc.)
-    
+
     state.itinerary.add('Start Location');
     state.itinerary.add('Destination Location');
 

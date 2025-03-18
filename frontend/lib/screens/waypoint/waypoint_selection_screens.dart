@@ -14,14 +14,12 @@ import 'package:latlong2/latlong.dart';
 import 'package:soen_390/services/interfaces/route_service_interface.dart';
 import 'package:soen_390/utils/route_display.dart' as display;
 import 'package:soen_390/utils/route_utils.dart' as utils;
-import 'package:soen_390/utils/location_service.dart' ;
 
 class WaypointSelectionScreen extends StatefulWidget {
   final IRouteService routeService;
   final GeocodingService geocodingService;
   final LocationService locationService;
   final String? initialDestination;
-  
 
   const WaypointSelectionScreen({
     super.key,
@@ -29,7 +27,6 @@ class WaypointSelectionScreen extends StatefulWidget {
     required this.geocodingService,
     required this.locationService,
     this.initialDestination,
-    
   });
 
   @override
@@ -61,11 +58,10 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
     routeService = widget.routeService as GoogleRouteService;
     geocodingService = widget.geocodingService;
     locationService = widget.locationService;
-    
-    
   }
 
-  void _handleRouteConfirmation( List<String> waypoints, String transportMode) async {
+  void _handleRouteConfirmation(
+      List<String> waypoints, String transportMode) async {
     if (waypoints.length < _minROutes) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -110,16 +106,21 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
     });
 
     try {
-      
+      final locationService = LocationService.instance;
       LatLng? pos;
-      try{
+
+      try {
         await locationService.startUp();
-        pos= locationService.convertPositionToLatLng(await locationService.getCurrentLocationAccurately());
+        pos = locationService.convertPositionToLatLng(
+            await locationService.getCurrentLocationAccurately());
       } catch (e) {
         print("Error starting location service: $e");
       }
       // Convert location names to coordinates using geocoding service
-      final LatLng? startPoint = (pos!=null && waypoints[0] == 'Your Location')?pos:await geocodingService.getCoordinates(waypoints.first);
+      final LatLng? startPoint =
+          (pos != null && waypoints[0] == 'Your Location')
+              ? pos
+              : await geocodingService.getCoordinates(waypoints.first);
       final LatLng? endPoint =
           await geocodingService.getCoordinates(waypoints.last);
 

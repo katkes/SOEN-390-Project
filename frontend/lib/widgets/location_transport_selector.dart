@@ -11,14 +11,14 @@ class LocationTransportSelector extends StatefulWidget {
   final Function(String)? onTransportModeChange;
   final Function()? onLocationChanged;
   final String? initialDestination;
-  
 
-  const LocationTransportSelector(
-      {super.key,
-      this.onLocationChanged,
-      required this.onConfirmRoute,
-      this.onTransportModeChange,
-      this.initialDestination,});
+  const LocationTransportSelector({
+    super.key,
+    this.onLocationChanged,
+    required this.onConfirmRoute,
+    this.onTransportModeChange,
+    this.initialDestination,
+  });
 
   @override
   LocationTransportSelectorState createState() =>
@@ -30,8 +30,10 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   String selectedMode = "Train or Bus";
   String selectedTimeOption = "Leave Now"; // Default time selection
   String selectedLocation = ''; //variable to store selected location address
-  String startLocation = 'Your Location'; // variable to store start location address
-  String destinationLocation =''; // variable to store destination location address
+  String startLocation =
+      'Your Location'; // variable to store start location address
+  String destinationLocation =
+      ''; // variable to store destination location address
 
   @override
   void initState() {
@@ -47,10 +49,9 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
         itinerary.add(widget.initialDestination!);
       }
     }
-    if(itinerary.isEmpty){
+    if (itinerary.isEmpty) {
       itinerary.add('Your Location');
     }
-
   }
 
   @override
@@ -90,7 +91,9 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   Widget _buildLocationInput() {
     return Column(
       children: [
-        _buildLocationField(startLocation == 'Your Location' ? 'Your Location' : 'Origin', true),
+        _buildLocationField(
+            startLocation == 'Your Location' ? 'Your Location' : 'Origin',
+            true),
         const SizedBox(height: 10),
         _buildLocationField("Destination", false),
         const SizedBox(height: 10),
