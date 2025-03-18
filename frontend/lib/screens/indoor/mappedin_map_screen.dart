@@ -42,7 +42,7 @@ class MappedinMapScreenState extends State<MappedinMapScreen> {
     List<String> apiKeys = [
       dotenv.env['MAPPEDIN_API_KEY'] ?? "",
       dotenv.env['MAPPEDIN_API_SECRET'] ?? "",
-      "67ba2570a39568000bc4b334", //Library building for testing purpose, we need to make it so that we choose the building we want and it takes the building code for that specific building
+      "67968294965a13000bcdfe74", //Library building for testing purpose, we need to make it so that we choose the building we want and it takes the building code for that specific building
     ];
 
     Map<String, String> keymap = Map.fromIterables(apiLabels, apiKeys);
@@ -56,7 +56,7 @@ class MappedinMapScreenState extends State<MappedinMapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Mappedin Map')),
+      appBar: AppBar(title: const Text('Inddor Navigation')),
       body: WebViewWidget(controller: _controller),
     );
   }
