@@ -58,7 +58,7 @@ class MappedinMapScreenState extends State<MappedinMapScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Inddor Navigation',
+          'Indoor Navigation',
           style: TextStyle(
             color: Colors.white,
           ),
