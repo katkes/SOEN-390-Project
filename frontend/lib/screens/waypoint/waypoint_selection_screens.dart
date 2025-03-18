@@ -80,6 +80,19 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
     }
   }
 
+  Future<Map<String, LatLng>> _resolveWaypoints(
+      List<String> waypoints, LatLng? pos) async {
+    final LatLng? startPoint = (pos != null && waypoints[0] == 'Your Location')
+        ? pos
+        : await geocodingService.getCoordinates(waypoints.first);
+    final LatLng? endPoint =
+        await geocodingService.getCoordinates(waypoints.last);
+    if (startPoint == null || endPoint == null) {
+      throw Exception("Could not find coordinates for one or more locations");
+    }
+    return {'start': startPoint, 'end': endPoint};
+  }
+
   void _handleRouteConfirmation(
       List<String> waypoints, String transportMode) async {
     if (waypoints.length < _minROutes) {
@@ -130,17 +143,9 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
       assert(pos != null,
           "Position should not be null after starting the location service.");
 
-      // Convert location names to coordinates using geocoding service
-      final LatLng? startPoint =
-          (pos != null && waypoints[0] == 'Your Location')
-              ? pos
-              : await geocodingService.getCoordinates(waypoints.first);
-      final LatLng? endPoint =
-          await geocodingService.getCoordinates(waypoints.last);
-
-      if (startPoint == null || endPoint == null) {
-        throw Exception("Could not find coordinates for one or more locations");
-      }
+      final resolvedWaypoints = await _resolveWaypoints(waypoints, pos);
+      final startPoint = resolvedWaypoints['start'];
+      final endPoint = resolvedWaypoints['end'];
 
       // Fetch routes for the selected transport mode
       final routes = await routeService.getRoutes(
