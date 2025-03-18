@@ -176,7 +176,7 @@ void main() {
 
       expect(find.byType(Container), findsWidgets);
 
-      final iconFinder = find.byIcon(Icons.restaurant);
+      final iconFinder = find.byIcon(Icons.location_pin);
       expect(iconFinder, findsOneWidget);
 
       final Icon icon = tester.widget(iconFinder);
