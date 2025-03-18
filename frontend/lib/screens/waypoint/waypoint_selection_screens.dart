@@ -60,6 +60,15 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
     locationService = widget.locationService;
   }
 
+  void _handleShuttleBusSelection() {
+    setState(() {
+      selectedMode = "Shuttle Bus";
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Shuttle Bus selected!")),
+    );
+  }
+
   void _handleRouteConfirmation(
       List<String> waypoints, String transportMode) async {
     if (waypoints.length < _minROutes) {
@@ -218,16 +227,30 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
         ),
         actions: const [Icon(Icons.more_vert, color: Colors.white)],
       ),
-      body: Column(
-        children: [
-          LocationTransportSelector(
-            initialDestination: widget.initialDestination,
-            onConfirmRoute: _handleRouteConfirmation,
-            onLocationChanged: _setLocationChanged,
-          ),
-          const SizedBox(height: 10),
-          Expanded(
-            child: ListView.builder(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            LocationTransportSelector(
+              initialDestination: widget.initialDestination,
+              onConfirmRoute: _handleRouteConfirmation,
+              onLocationChanged: _setLocationChanged,
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: _handleShuttleBusSelection,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              ),
+              child: const Text("Use Shuttle Bus?",
+                  style: TextStyle(color: Colors.white, fontSize: 16)),
+            ),
+            const SizedBox(height: 10),
+            ListView.builder(
+              shrinkWrap: true, // Ensures it only takes needed space
+              physics:
+                  const NeverScrollableScrollPhysics(), // Prevents nested scrolling issues
               itemCount: confirmedRoutes.length > _maxRoutes
                   ? _maxRoutes
                   : confirmedRoutes.length,
@@ -247,8 +270,8 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
                 );
               },
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       bottomNavigationBar: NavBar(
         selectedIndex: _selectedIndex,

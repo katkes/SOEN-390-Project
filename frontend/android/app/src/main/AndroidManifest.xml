@@ -1,4 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package = "com.example.soen_390">
 
 
     <!-- These are all the permission we will (probably) need for the location services. -->
@@ -10,6 +10,10 @@
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" android:label="ACCESS_BACKGROUND_LOCATION" android:permission="android.permission.ACCESS_FINE_LOCATION"/>
     <!--    Necessary to fetch location updates continuously-->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <!--    Necessary to fetch location updates continuously-->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    <!--    Keeping the device's CPU active even if user not using it-->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
 
     <application
@@ -35,6 +39,10 @@
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
               />
+              <meta-data
+    android:name="com.google.android.gms.auth.api.signin"
+    android:value="@string/default_web_client_id"/>
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

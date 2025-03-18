@@ -19,6 +19,15 @@
 
 
 
+	<key>CFBundleURLTypes</key>
+<array>
+    <dict>
+        <key>CFBundleURLSchemes</key>
+        <array>
+            <string>com.googleusercontent.apps.521610144578-4nhqk5c28m7jsmjefao9g742s7dh5bug</string>
+        </array>
+    </dict>
+</array>
 
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>

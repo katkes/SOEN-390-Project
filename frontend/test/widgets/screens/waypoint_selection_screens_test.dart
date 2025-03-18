@@ -414,4 +414,22 @@ void main() {
     expect(find.textContaining("$shortStartAddress → $shortEndAddress"),
         findsOneWidget);
   });
+
+  testWidgets('Shuttle Bus button updates mode and shows snackbar',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(MaterialApp(
+      home: WaypointSelectionScreen(
+        routeService: mockGoogleRouteService,
+        geocodingService: mockGeocodingService,
+        locationService: mockLocationService,
+      ),
+    ));
+
+    expect(find.text('Use Shuttle Bus?'), findsOneWidget);
+
+    await tester.tap(find.text('Use Shuttle Bus?'));
+    await tester.pump();
+
+    expect(find.text('Shuttle Bus selected!'), findsOneWidget);
+  });
 }
