@@ -12,12 +12,13 @@ class LocationTransportSelector extends StatefulWidget {
   final Function()? onLocationChanged;
   final String? initialDestination;
 
-  const LocationTransportSelector(
-      {super.key,
-      this.onLocationChanged,
-      required this.onConfirmRoute,
-      this.onTransportModeChange,
-      this.initialDestination});
+  const LocationTransportSelector({
+    super.key,
+    this.onLocationChanged,
+    required this.onConfirmRoute,
+    this.onTransportModeChange,
+    this.initialDestination,
+  });
 
   @override
   LocationTransportSelectorState createState() =>
@@ -29,7 +30,9 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   String selectedMode = "Train or Bus";
   String selectedTimeOption = "Leave Now"; // Default time selection
   String selectedLocation = ''; //variable to store selected location address
-  String startLocation = ''; // variable to store start location address
+  String startLocation =
+      'Your Location'; // variable to store start location address
+  String defaultYourLocationString = 'Your Location';
   String destinationLocation =
       ''; // variable to store destination location address
 
@@ -46,6 +49,9 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
       } else {
         itinerary.add(widget.initialDestination!);
       }
+    }
+    if (itinerary.isEmpty) {
+      itinerary.add(defaultYourLocationString);
     }
   }
 
@@ -86,7 +92,11 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   Widget _buildLocationInput() {
     return Column(
       children: [
-        _buildLocationField("Start Location", true),
+        _buildLocationField(
+            startLocation == defaultYourLocationString
+                ? defaultYourLocationString
+                : 'Start Location',
+            true),
         const SizedBox(height: 10),
         _buildLocationField("Destination", false),
         const SizedBox(height: 10),
@@ -249,6 +259,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
       itinerary.add(selectedLocation);
     } else {
       itinerary.insert(0, selectedLocation);
+      itinerary.removeAt(1);
     }
   }
 
@@ -259,17 +270,17 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
     }
   }
 
-  void _removeStop(int index) {
+  static const int _startLocationIndex = 0;
+  static const int _minimumWaypoints = 2;
+
+void _removeStop(int index) {
     setState(() {
       itinerary.removeAt(index);
-      if (widget.onLocationChanged != null) {
-        widget.onLocationChanged!();
-      }
+      widget.onLocationChanged?.call();
     });
-    if (widget.onTransportModeChange != null &&
-        (index == 0 || itinerary.length < 2)) {
-      // Let the parent know to clear cached routes
-      widget.onTransportModeChange!("clear_cache");
+
+    if (index == _startLocationIndex || itinerary.length < _minimumWaypoints) {
+      widget.onTransportModeChange?.call("clear_cache");
     }
   }
 

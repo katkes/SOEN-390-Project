@@ -112,37 +112,6 @@ void main() {
             'Error finding route: Exception: No routes found for the selected transport mode'),
         findsOneWidget);
   });
-  testWidgets('WaypointSelectionScreen displays error on invalid route input',
-      (WidgetTester tester) async {
-    // Arrange
-    when(mockGeocodingService.getCoordinates(any))
-        .thenAnswer((_) async => const LatLng(45.5017, -73.5673));
-
-    when(mockGoogleRouteService.getRoutes(
-            from: anyNamed('from'), to: anyNamed('to')))
-        .thenAnswer((_) async => {});
-
-    await tester.pumpWidget(MaterialApp(
-      home: WaypointSelectionScreen(
-        routeService: mockGoogleRouteService,
-        geocodingService: mockGeocodingService,
-        locationService: mockLocationService,
-      ),
-    ));
-
-    // Act
-    final finder = find.byType(LocationTransportSelector);
-    final locationTransportSelector =
-        tester.widget<LocationTransportSelector>(finder);
-    locationTransportSelector.onConfirmRoute(['Start', 'End'], 'Car');
-    await tester.pumpAndSettle();
-
-    // Assert
-    expect(
-        find.text(
-            'Error finding route: Exception: No routes found for the selected transport mode'),
-        findsOneWidget);
-  });
   testWidgets('WaypointSelectionScreen displays error on empty route response',
       (WidgetTester tester) async {
     // Arrange
