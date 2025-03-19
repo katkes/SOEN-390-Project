@@ -122,38 +122,89 @@ class MapService {
     }
   }
 
+  /// Parses GeoJSON data and converts it into a list of Flutter map Polygon objects.
+  ///
+  /// Takes a GeoJSON structure containing MultiPolygon features and converts them into
+  /// Flutter map Polygon objects for rendering on a map.
+  ///
+  /// - [jsonData]: The GeoJSON data as a Map, expected to contain 'features' with 'geometry' objects.
+  ///
+  /// Returns a list of Polygon objects ready to be added to a Flutter map.
   List<Polygon> _parsePolygons(Map<String, dynamic> jsonData) {
     List<Polygon> polygons = [];
 
     if (jsonData['features'] is List) {
       for (var feature in jsonData['features']) {
-        var geometry = feature['geometry'];
-
-        if (geometry?['type'] == 'MultiPolygon' &&
-            geometry['coordinates'] is List) {
-          for (var polygonRings in geometry['coordinates']) {
-            List<LatLng> polygonPoints = polygonRings[0]
-                .map<LatLng>((coord) => LatLng(coord[1], coord[0]))
-                .toList();
-
-            if (polygonPoints.isNotEmpty &&
-                polygonPoints.first != polygonPoints.last) {
-              polygonPoints.add(polygonPoints.first);
-            }
-
-            polygons.add(
-              Polygon(
-                points: polygonPoints,
-                color: polygonFillColor,
-                borderColor: polygonBorderColor,
-                borderStrokeWidth: borderStrokeWidth,
-              ),
-            );
-          }
-        }
+        _processFeature(feature, polygons);
       }
     }
     return polygons;
+  }
+
+  /// Processes a single GeoJSON feature and extracts polygon data.
+  ///
+  /// - [feature]: A single feature from the GeoJSON 'features' array.
+  /// - [polygons]: The list of polygons to add extracted polygons to.
+  void _processFeature(Map<String, dynamic> feature, List<Polygon> polygons) {
+    var geometry = feature['geometry'];
+
+    if (geometry?['type'] == 'MultiPolygon' &&
+        geometry['coordinates'] is List) {
+      _processMultiPolygon(geometry['coordinates'], polygons);
+    } else {
+      debugPrint(
+          'Unexpected geometry type or format: ${geometry?['type']}, coordinates type: ${geometry?['coordinates']?.runtimeType}');
+    }
+  }
+
+  /// Processes a MultiPolygon geometry and converts its coordinates to Polygon objects.
+  ///
+  /// - [multiPolygonCoordinates]: The coordinates array from a MultiPolygon geometry.
+  /// - [polygons]: The list of polygons to add extracted polygons to.
+  void _processMultiPolygon(
+      List multiPolygonCoordinates, List<Polygon> polygons) {
+    for (var polygonRings in multiPolygonCoordinates) {
+      List<LatLng> polygonPoints = _extractPolygonPoints(polygonRings[0]);
+      _ensureClosedPolygon(polygonPoints);
+
+      polygons.add(_createPolygon(polygonPoints));
+    }
+  }
+
+  /// Extracts polygon points from GeoJSON coordinates, converting them to LatLng objects.
+  ///
+  /// Note: GeoJSON format uses [longitude, latitude] order, while LatLng uses [latitude, longitude].
+  ///
+  /// - [coordinates]: List of coordinate pairs from the GeoJSON data.
+  ///
+  /// Returns a list of LatLng objects representing the polygon's points.
+  List<LatLng> _extractPolygonPoints(List coordinates) {
+    return coordinates
+        .map<LatLng>((coord) => LatLng(coord[1], coord[0]))
+        .toList();
+  }
+
+  /// Ensures a polygon is closed by adding the first point to the end if necessary.
+  ///
+  /// - [polygonPoints]: The list of points representing the polygon.
+  void _ensureClosedPolygon(List<LatLng> polygonPoints) {
+    if (polygonPoints.isNotEmpty && polygonPoints.first != polygonPoints.last) {
+      polygonPoints.add(polygonPoints.first);
+    }
+  }
+
+  /// Creates a Flutter map Polygon object with the specified points and styling.
+  ///
+  /// - [points]: The list of LatLng points defining the polygon's vertices.
+  ///
+  /// Returns a styled Polygon object ready to be added to a map.
+  Polygon _createPolygon(List<LatLng> points) {
+    return Polygon(
+      points: points,
+      color: polygonFillColor,
+      borderColor: polygonBorderColor,
+      borderStrokeWidth: borderStrokeWidth,
+    );
   }
 
   Future<List<String>> getBuildingSuggestions(String query) async {
