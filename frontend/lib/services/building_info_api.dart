@@ -88,6 +88,82 @@ class GoogleMapsApiClient implements MapsApiClient {
 
     return locationInfo;
   }
+/// Fetches detailed information about a place using its [placeId] from 
+/// the Google Places API.
+  ///
+  /// This function constructs a request to the Google Places Details API
+  /// using the provided [placeId] and retrieves specific fields of interest
+  /// such as address, phone number, website, rating, opening hours, types,
+  /// reviews, and more.
+  ///
+  /// The API response is parsed, and the result is returned as a
+  /// `Map<String, dynamic>`, which includes the requested place details.
+  ///
+  /// Throws an [Exception] if the API request fails (non-200 HTTP status)
+  /// or if the API returns an error status.
+  ///
+  /// Example usage:
+  /// ```dart
+  /// final placeDetails = await fetchPlaceDetailsById("ChIJN1t_tDeuEmsRUsoyG83frY4");
+  /// print(placeDetails["name"]);
+  /// ```
+  ///
+  /// Parameters:
+  /// - [placeId]: A unique identifier for the place you want details about,
+  ///   as provided by the Google Places API.
+  ///
+  /// Returns:
+  /// - A `Future<Map<String, dynamic>>` containing the place details if
+  ///   the request is successful.
+  ///
+  /// Exceptions:
+  /// - Throws an [Exception] with an error message if the request fails or
+  ///   the API status is not "OK".
+  Future<Map<String, dynamic>> fetchPlaceDetailsById(String placeId) async {
+    const String placeDetailsUrl =
+        "https://maps.googleapis.com/maps/api/place/details/json";
+
+    // Fields you want from the API
+    const fields = [
+      "formatted_address",
+      "formatted_phone_number",
+      "website",
+      "rating",
+      "opening_hours",
+      "types",
+      "reviews",
+      "editorial_summary",
+      "price_level",
+      "name"
+    ];
+
+    final uri = Uri.parse(
+      "$placeDetailsUrl?place_id=$placeId&fields=${fields.join(',')}&key=$apiKey",
+    );
+
+    print("Fetching place details for placeId: $placeId");
+    print("Request URL: $uri");
+
+    final response = await client.get(uri);
+
+    print("Response status code: ${response.statusCode}");
+    print("Response body: ${response.body}");
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to fetch place details: ${response.statusCode}');
+    }
+
+    final detailsData = jsonDecode(response.body);
+
+    if (detailsData["status"] != "OK") {
+      throw Exception('API Error: ${detailsData["status"]}');
+    }
+
+    print("Fetched place details successfully");
+
+    return detailsData["result"] ?? {};
+  }
+
 }
 
 class BuildingPopUps {
