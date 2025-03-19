@@ -151,6 +151,9 @@ class MapService {
     if (geometry?['type'] == 'MultiPolygon' &&
         geometry['coordinates'] is List) {
       _processMultiPolygon(geometry['coordinates'], polygons);
+    } else {
+      debugPrint(
+          'Unexpected geometry type or format: ${geometry?['type']}, coordinates type: ${geometry?['coordinates']?.runtimeType}');
     }
   }
 
