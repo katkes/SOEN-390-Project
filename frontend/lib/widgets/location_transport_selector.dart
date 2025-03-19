@@ -259,14 +259,16 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
     }
   }
 
-  void _removeStop(int index) {
+  static const int _startLocationIndex = 0;
+  static const int _minimumWaypoints = 2;
+
+void _removeStop(int index) {
     setState(() {
       itinerary.removeAt(index);
       widget.onLocationChanged?.call();
     });
 
-    if (index == 0 || itinerary.length < 2) {
-      // Let the parent know to clear cached routes
+    if (index == _startLocationIndex || itinerary.length < _minimumWaypoints) {
       widget.onTransportModeChange?.call("clear_cache");
     }
   }
