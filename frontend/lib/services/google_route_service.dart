@@ -154,9 +154,12 @@ class GoogleRouteService implements IRouteService {
 
     final response = await httpService.client.get(Uri.parse(url));
 
-    if (response.statusCode == 200) {
+if (response.statusCode == 200) {
       return _processApiResponse(response.body);
-    }
+} else {
+      print("HTTP Error: ${response.statusCode} - ${response.reasonPhrase}");
+      // Optionally throw or handle specific errors;
+}
     return null;
   }
 
