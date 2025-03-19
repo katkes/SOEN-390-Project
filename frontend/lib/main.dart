@@ -18,6 +18,7 @@ import 'package:soen_390/services/building_info_api.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'package:soen_390/screens/login/login_screen.dart';
 import 'package:soen_390/screens/profile/profile_screen.dart';
+import 'package:soen_390/screens/calendar/google_calendar_screen.dart';
 
 /// The entry point of the application.
 ///
@@ -344,9 +345,13 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
                   onSignOut: signOut,
                   //TODO: Implement calendar view for 4.1.3
                   onViewCalendar: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Calendar view would open here')),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CalendarScreen(
+                          authService: widget.authService,
+                        ),
+                      ),
                     );
                   },
                 )
