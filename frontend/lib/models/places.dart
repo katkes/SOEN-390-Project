@@ -177,5 +177,5 @@ extension StringCasingExtension on String {
   ///
   /// Example: `"museum".capitalize()` → `"Museum"`.
   String capitalize() =>
-      this.isNotEmpty ? '${this[0].toUpperCase()}${substring(1)}' : '';
+      isNotEmpty ? '${this[0].toUpperCase()}${substring(1)}' : '';
 }
