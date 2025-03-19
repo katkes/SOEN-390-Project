@@ -8,18 +8,35 @@
 ///   - Showing contact information (address, phone, website)
 ///   - Displaying opening hours
 ///   - Listing amenities
+///   - Displaying user reviews
+///
+/// This screen provides an interactive and informative view for users to explore the details of a POI,
+/// including visual, textual, and user-generated content.
 
 library;
 
 import 'package:flutter/material.dart';
 import 'package:soen_390/models/outdoor_poi.dart';
+import 'package:soen_390/widgets/review_card.dart';
 import 'package:soen_390/screens/outdoor_poi/widgets/outdoor_poi_detail_widgets.dart';
-import 'package:soen_390/screens/outdoor_poi/widgets/sample_data.dart';
 
+/// A stateful widget that displays detailed information about a specific
+/// [PointOfInterest] object.
+///
+/// The screen includes a scrollable layout with an image header (SliverAppBar),
+/// chips for category/cuisine, rating stars, price range, description with expand/collapse,
+/// contact information, opening hours, amenities, and user reviews.
+///
+/// The screen can also execute an optional callback [onBack] when the back button is pressed.
 class PoiDetailScreen extends StatefulWidget {
+  /// The Point of Interest (POI) whose details are being displayed.
   final PointOfInterest poi;
+
+  /// An optional callback to be invoked when the user presses the back button.
+  /// If null, it will default to popping the navigation stack.
   final VoidCallback? onBack;
 
+  /// Constructs a [PoiDetailScreen] with the required [poi] and optional [onBack] callback.
   const PoiDetailScreen({
     super.key,
     required this.poi,
@@ -27,11 +44,13 @@ class PoiDetailScreen extends StatefulWidget {
   });
 
   @override
-  // ignore: library_private_types_in_public_api
   _PoiDetailScreenState createState() => _PoiDetailScreenState();
 }
 
+/// State class for [PoiDetailScreen] which manages the UI and internal state,
+/// such as toggling between full/short descriptions.
 class _PoiDetailScreenState extends State<PoiDetailScreen> {
+  /// Tracks whether the full description text is being shown.
   bool _showFullDescription = false;
 
   @override
@@ -39,7 +58,7 @@ class _PoiDetailScreenState extends State<PoiDetailScreen> {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          // App Bar with image
+          /// Displays a collapsible AppBar with the POI's name and image.
           SliverAppBar(
             backgroundColor: Theme.of(context).primaryColor,
             expandedHeight: 200.0,
@@ -93,32 +112,18 @@ class _PoiDetailScreenState extends State<PoiDetailScreen> {
             ),
           ),
 
-          // Content
+          /// Main content list: includes chips, rating, description, contact, hours, amenities, and reviews.
           SliverList(
             delegate: SliverChildListDelegate([
-              // Category and cuisine
-              if (widget.poi.category != null ||
-                  (widget.poi.cuisine != null &&
-                      widget.poi.cuisine!.isNotEmpty))
+              // Category and cuisine chips
+              if (widget.poi.category != null)
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                  child: Row(
-                    children: [
-                      if (widget.poi.category != null)
-                        buildChip(
-                            widget.poi.category!, const Color(0xFFCCE3E4)),
-                      const SizedBox(width: 8),
-                      if (widget.poi.cuisine != null &&
-                          widget.poi.cuisine!.isNotEmpty)
-                        ...widget.poi.cuisine!.map((c) => Padding(
-                              padding: const EdgeInsets.only(right: 8),
-                              child: buildChip(c, const Color(0xFFe9e3d3)),
-                            )),
-                    ],
-                  ),
+                  child:
+                      buildChip(widget.poi.category!, const Color(0xFFCCE3E4)),
                 ),
 
-              // Rating and price range
+              // Rating stars and price range
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                 child: Row(
@@ -137,7 +142,7 @@ class _PoiDetailScreenState extends State<PoiDetailScreen> {
                     ],
                     if (widget.poi.priceRange != null)
                       Text(
-                        getPriceRangeString(widget.poi.priceRange!),
+                        widget.poi.priceRange!,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
@@ -147,7 +152,7 @@ class _PoiDetailScreenState extends State<PoiDetailScreen> {
                 ),
               ),
 
-              // Description
+              // Expandable Description
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -175,7 +180,7 @@ class _PoiDetailScreenState extends State<PoiDetailScreen> {
                 ),
               ),
 
-              // Contact info and address
+              // Contact Info: Address, Phone, Website
               buildInfoSection(
                 widget.poi.address,
                 widget.poi.contactPhone,
@@ -183,7 +188,7 @@ class _PoiDetailScreenState extends State<PoiDetailScreen> {
                 context,
               ),
 
-              // Opening hours
+              // Opening Hours
               if (widget.poi.openingHours != null &&
                   widget.poi.openingHours!.isNotEmpty)
                 buildOpeningHoursSection(widget.poi.openingHours!),
@@ -192,38 +197,34 @@ class _PoiDetailScreenState extends State<PoiDetailScreen> {
               if (widget.poi.amenities != null &&
                   widget.poi.amenities!.isNotEmpty)
                 buildAmenitiesSection(widget.poi.amenities!),
+
               const SizedBox(height: 24),
+
+              // Reviews
+              if (widget.poi.reviews != null && widget.poi.reviews!.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Reviews',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      ...widget.poi.reviews!
+                          .map((review) => ReviewCard(review: review)),
+                      const SizedBox(height: 24),
+                    ],
+                  ),
+                ),
             ]),
           ),
         ],
       ),
-    );
-  }
-}
-
-//TODO: This is for to see how the screen how it will look visually, this will be removed in the final version
-// For testing purposes only, task 6.1.2
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'POI Detail Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Theme.of(context).primaryColor,
-        ).copyWith(
-          primary: const Color(0xFF912338),
-        ),
-        useMaterial3: true,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: const PoiDetailPage(),
     );
   }
 }
