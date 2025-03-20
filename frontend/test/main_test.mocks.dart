@@ -460,6 +460,18 @@ class MockGoogleMapsApiClient extends _i1.Mock
           <String, dynamic>{},
         ),
       ) as _i10.Future<Map<String, dynamic>>);
+
+  @override
+  _i10.Future<Map<String, dynamic>> fetchPlaceDetailsById(String? placeId) =>
+      (super.noSuchMethod(
+        Invocation.method(#fetchPlaceDetailsById, [placeId]),
+        returnValue: _i10.Future<Map<String, dynamic>>.value(
+          <String, dynamic>{},
+        ),
+        returnValueForMissingStub: _i10.Future<Map<String, dynamic>>.value(
+          <String, dynamic>{},
+        ),
+      ) as _i10.Future<Map<String, dynamic>>);
 }
 
 /// A class which mocks [GeocodingService].
@@ -1118,6 +1130,7 @@ class MockGoogleSignIn extends _i1.Mock implements _i7.GoogleSignIn {
 /// A class which mocks [GoogleSignInAccount].
 ///
 /// See the documentation for Mockito's code generation for more information.
+
 class MockGoogleSignInAccount extends _i1.Mock
     implements _i7.GoogleSignInAccount {
   @override

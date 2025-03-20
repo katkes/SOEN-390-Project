@@ -178,6 +178,7 @@ void main() {
           throwsA(isA<Exception>()));
     });
   });
+
   /// **Tests for fetchPlaceDetailsById**
   group('fetchPlaceDetailsById Tests', () {
     late MockClient client;
@@ -205,12 +206,15 @@ void main() {
           "reviews": [],
           "editorial_summary": {"overview": "Great place"},
           "price_level": 2,
-          "name": "Test Cafe"
+          "name": "Test Cafe",
+          "geometry": {
+            "location": {"lat": 40.7128, "lng": -74.0060}
+          }
         }
       };
 
       final uri = Uri.parse(
-          "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&fields=formatted_address,formatted_phone_number,website,rating,opening_hours,types,reviews,editorial_summary,price_level,name&key=$apiKey");
+          "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&fields=formatted_address,formatted_phone_number,website,rating,opening_hours,types,reviews,editorial_summary,price_level,name,geometry&key=$apiKey");
 
       when(client.get(uri)).thenAnswer(
           (_) async => http.Response(jsonEncode(testResponse), 200));
@@ -221,6 +225,8 @@ void main() {
       expect(result["name"], "Test Cafe");
       expect(result["rating"], 4.5);
       expect(result["formatted_address"], "123 Test St");
+      expect(result["geometry"], isNotNull);
+      expect(result["geometry"]["location"]["lat"], 40.7128);
     });
 
     test(
@@ -228,7 +234,7 @@ void main() {
         () async {
       const placeId = 'test_place_id';
       final uri = Uri.parse(
-          "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&fields=formatted_address,formatted_phone_number,website,rating,opening_hours,types,reviews,editorial_summary,price_level,name&key=$apiKey");
+          "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&fields=formatted_address,formatted_phone_number,website,rating,opening_hours,types,reviews,editorial_summary,price_level,name,geometry&key=$apiKey");
 
       when(client.get(uri))
           .thenAnswer((_) async => http.Response('Server Error', 500));
@@ -247,7 +253,7 @@ void main() {
       };
 
       final uri = Uri.parse(
-          "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&fields=formatted_address,formatted_phone_number,website,rating,opening_hours,types,reviews,editorial_summary,price_level,name&key=$apiKey");
+          "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&fields=formatted_address,formatted_phone_number,website,rating,opening_hours,types,reviews,editorial_summary,price_level,name,geometry&key=$apiKey");
 
       when(client.get(uri)).thenAnswer(
           (_) async => http.Response(jsonEncode(errorResponse), 200));

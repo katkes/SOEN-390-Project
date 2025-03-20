@@ -1,15 +1,15 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:soen_390/models/outdoor_poi.dart';
-import 'package:soen_390/models/review.dart';
-import 'package:soen_390/models/outdoor_poi.dart';
 
 void main() {
   group('PointOfInterest', () {
     test('Constructor assigns values correctly', () {
-      final poi = PointOfInterest(
+      final poi = const PointOfInterest(
         id: 'poi_001',
         name: 'Sample Place',
         description: 'A nice place to visit.',
+        latitude: 45.5017,
+        longitude: -73.5673,
         imageUrl: 'https://example.com/image.jpg',
         address: '123 Street',
         contactPhone: '555-1234',
@@ -25,6 +25,8 @@ void main() {
       expect(poi.id, 'poi_001');
       expect(poi.name, 'Sample Place');
       expect(poi.description, 'A nice place to visit.');
+      expect(poi.latitude, 45.5017);
+      expect(poi.longitude, -73.5673);
       expect(poi.imageUrl, 'https://example.com/image.jpg');
       expect(poi.address, '123 Street');
       expect(poi.contactPhone, '555-1234');
@@ -45,6 +47,9 @@ void main() {
         'formatted_phone_number': '555-5678',
         'website': 'https://cafe.com',
         'types': ['restaurant', 'food'],
+        'geometry': {
+          'location': {'lat': 37.7749, 'lng': -122.4194},
+        },
         'opening_hours': {
           'weekday_text': [
             'Monday: 9 AM – 9 PM',
@@ -84,6 +89,8 @@ void main() {
       expect(poi.rating, 4.2);
       expect(poi.reviews, isNotEmpty);
       expect(poi.reviews!.first.authorName, 'John Doe');
+      expect(poi.latitude, 37.7749);
+      expect(poi.longitude, -122.4194);
     });
 
     test('fromJson parses image URL from photos', () {
@@ -98,6 +105,9 @@ void main() {
           'formatted_address': '789 Street',
           'price_level': 1,
           'rating': 3.8,
+          'geometry': {
+            'location': {'lat': 35.6895, 'lng': 139.6917},
+          },
         },
       };
 
@@ -107,6 +117,8 @@ void main() {
       expect(poi.category, 'Store');
       expect(poi.imageUrl, contains('photoreference=abc123'));
       expect(poi.priceRange, '\$');
+      expect(poi.latitude, 35.6895);
+      expect(poi.longitude, 139.6917);
     });
 
     test('prettifyCategory formats correctly', () {

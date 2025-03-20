@@ -88,8 +88,9 @@ class GoogleMapsApiClient implements MapsApiClient {
 
     return locationInfo;
   }
-/// Fetches detailed information about a place using its [placeId] from 
-/// the Google Places API.
+
+  /// Fetches detailed information about a place using its [placeId] from
+  /// the Google Places API.
   ///
   /// This function constructs a request to the Google Places Details API
   /// using the provided [placeId] and retrieves specific fields of interest
@@ -134,7 +135,8 @@ class GoogleMapsApiClient implements MapsApiClient {
       "reviews",
       "editorial_summary",
       "price_level",
-      "name"
+      "name",
+      'geometry',
     ];
 
     final uri = Uri.parse(
@@ -163,7 +165,6 @@ class GoogleMapsApiClient implements MapsApiClient {
 
     return detailsData["result"] ?? {};
   }
-
 }
 
 class BuildingPopUps {

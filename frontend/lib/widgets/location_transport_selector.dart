@@ -4,6 +4,10 @@
 // The confirmed waypoints and transport mode are sent to the routing system for processing.
 
 import 'package:flutter/material.dart';
+import 'package:soen_390/screens/outdoor_poi/place_search_screen.dart';
+import 'package:soen_390/services/google_poi_service.dart';
+import 'package:soen_390/services/poi_factory.dart';
+import 'package:soen_390/utils/location_service.dart';
 import 'package:soen_390/widgets/suggestions.dart';
 
 class LocationTransportSelector extends StatefulWidget {
@@ -12,12 +16,20 @@ class LocationTransportSelector extends StatefulWidget {
   final Function()? onLocationChanged;
   final String? initialDestination;
 
-  const LocationTransportSelector(
-      {super.key,
-      this.onLocationChanged,
-      required this.onConfirmRoute,
-      this.onTransportModeChange,
-      this.initialDestination});
+  final LocationService locationService;
+  final GooglePOIService poiService;
+  final PointOfInterestFactory poiFactory;
+
+  const LocationTransportSelector({
+    super.key,
+    required this.locationService,
+    required this.poiService,
+    required this.poiFactory,
+    this.onLocationChanged,
+    required this.onConfirmRoute,
+    this.onTransportModeChange,
+    this.initialDestination,
+  });
 
   @override
   LocationTransportSelectorState createState() =>
@@ -96,18 +108,32 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             ElevatedButton(
-              onPressed: () {
-                if (itinerary.length < 2) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text(
-                            "Select both start and destination before adding!")),
-                  );
-                } else {
-                  setState(() {
-                    itinerary.add("New Stop ${itinerary.length + 1}");
-                  });
-                }
+              onPressed: () async {
+                final locationService = widget.locationService;
+                final poiService = widget.poiService;
+                final poiFactory = widget.poiFactory;
+
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PlaceSearchScreen(
+                      locationService: locationService,
+                      poiService: poiService,
+                      poiFactory: poiFactory,
+                      onSetDestination: (name, lat, lng) {
+                        setState(() {
+                          destinationLocation = name;
+                          if (itinerary.length < 2) {
+                            itinerary.add(name);
+                          } else if (itinerary.length >= 2) {
+                            itinerary[1] = name;
+                          }
+                        });
+                        widget.onLocationChanged?.call();
+                      },
+                    ),
+                  ),
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
@@ -117,7 +143,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
                   side: const BorderSide(color: Color(0xff912338)),
                 ),
               ),
-              child: const Text("Add Stop to Itinerary"),
+              child: const Text("Search POIS"),
             ),
             Container(
               decoration: BoxDecoration(

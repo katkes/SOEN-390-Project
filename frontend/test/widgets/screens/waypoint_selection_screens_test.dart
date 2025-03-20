@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:soen_390/services/google_route_service.dart';
 import 'package:soen_390/services/building_to_coordinates.dart';
@@ -35,7 +36,11 @@ void main() {
   late MockGoogleRouteService mockGoogleRouteService;
   late MockGeocodingService mockGeocodingService;
   late MockLocationService mockLocationService;
-
+  TestWidgetsFlutterBinding.ensureInitialized();
+  
+  dotenv.testLoad(fileInput: '''
+GOOGLE_PLACES_API_KEY=FAKE_API_KEY
+''');
   setUp(() {
     // Initialize mocks before each test
     mockGoogleRouteService = MockGoogleRouteService();

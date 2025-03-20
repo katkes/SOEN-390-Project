@@ -43,11 +43,19 @@ class PointOfInterest {
   /// Optional list of user reviews.
   final List<Review>? reviews;
 
+  /// Latitude of the point of interest.
+  final double latitude;
+
+  /// Longitude of the point of interest.
+  final double longitude;
+
   /// Constructs a [PointOfInterest] with the given required and optional fields.
   const PointOfInterest({
     required this.id,
     required this.name,
     required this.description,
+    required this.latitude,
+    required this.longitude,
     this.imageUrl,
     this.address,
     this.contactPhone,
@@ -180,6 +188,10 @@ class PointOfInterest {
           break;
       }
     }
+    // Extract latitude and longitude
+    final location = result['geometry']?['location'];
+    final latitude = (location?['lat'] as num?)?.toDouble() ?? 0.0;
+    final longitude = (location?['lng'] as num?)?.toDouble() ?? 0.0;
 
     return PointOfInterest(
       id: result['place_id'] ?? '',
@@ -195,6 +207,8 @@ class PointOfInterest {
       category: formattedCategory,
       priceRange: priceRange,
       reviews: parsedReviews,
+      latitude: latitude,
+      longitude: longitude,
     );
   }
 }

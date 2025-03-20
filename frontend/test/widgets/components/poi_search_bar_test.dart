@@ -63,10 +63,7 @@ void main() {
       await tester.pumpWidget(createTestWidget());
 
       // Simulate suggestion click manually
-      final context =
-          tester.element(find.byType(GooglePlacesAutoCompleteTextFormField));
-      final state = context.findAncestorStateOfType<
-          State<GooglePlacesAutoCompleteTextFormField>>();
+
       final poiSearchBar =
           tester.widget<POISearchBar>(find.byType(POISearchBar));
 
@@ -87,8 +84,6 @@ void main() {
         (WidgetTester tester) async {
       await tester.pumpWidget(createTestWidget());
 
-      final context =
-          tester.element(find.byType(GooglePlacesAutoCompleteTextFormField));
       final poiSearchBar =
           tester.widget<POISearchBar>(find.byType(POISearchBar));
 

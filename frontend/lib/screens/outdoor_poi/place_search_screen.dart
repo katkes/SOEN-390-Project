@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:soen_390/models/places.dart';
 import 'package:soen_390/screens/outdoor_poi/outdoor_poi_detail_screen.dart';
-import 'package:soen_390/services/building_info_api.dart';
 import 'package:soen_390/services/google_poi_service.dart';
-import 'package:soen_390/services/http_service.dart';
 import 'package:soen_390/services/poi_factory.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'package:soen_390/widgets/poi_list_view.dart';
 import 'package:soen_390/widgets/poi_search_bar.dart';
 import 'package:soen_390/widgets/poi_type_selector.dart';
-import 'package:http/http.dart' as http;
 
 /// A screen widget that allows users to search for nearby points of interest (POIs)
 /// either by using their current location or by searching an address manually.
@@ -29,15 +25,19 @@ class PlaceSearchScreen extends StatefulWidget {
   //
   final PointOfInterestFactory poiFactory;
 
+  final void Function(String name, double lat, double lng)? onSetDestination;
+
   /// Constructs a [PlaceSearchScreen] with required [locationService] and [poiService].
   ///
   /// These are injected for better testability and separation of concerns.
   const PlaceSearchScreen({
     required this.locationService,
     required this.poiService,
-    required this.poiFactory, // <--- ADD THIS
+    required this.poiFactory,
+    this.onSetDestination,
     super.key,
   });
+
   @override
   _PlaceSearchScreenState createState() => _PlaceSearchScreenState();
 }
@@ -160,47 +160,50 @@ class _PlaceSearchScreenState extends State<PlaceSearchScreen> {
 
   void _handlePlaceTap(Place place) async {
     print('--- _handlePlaceTap started ---');
-    print('Place ID: ${place.placeId}');
 
     setState(() {
       _isLoading = true;
     });
 
     try {
-      print('Fetching image URL...');
       final imageUrl =
           place.thumbnailPhotoUrl(dotenv.env['GOOGLE_PLACES_API_KEY'] ?? '') ??
               '';
-      print('Image URL: $imageUrl');
 
-      print('Creating POI object...');
       final poi = await widget.poiFactory.createPointOfInterest(
         placeId: place.placeId,
         imageUrl: imageUrl,
       );
-      print('POI created successfully: ${poi.toString()}');
 
-      if (!mounted) {
-        print('Widget no longer mounted, returning');
-        return;
-      }
+      if (!mounted) return;
 
-      print('Navigating to detail screen...');
-      Navigator.push(
+      // 👉 Await result from POIDetailScreen
+      final result = await Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => PoiDetailScreen(poi: poi),
         ),
       );
+
+      if (result != null && result is Map<String, dynamic>) {
+        widget.onSetDestination?.call(
+          result['name'] as String,
+          result['lat'] as double,
+          result['lng'] as double,
+        );
+
+        Navigator.pop(
+            context); // Close PlaceSearchScreen and send result back up
+      }
     } catch (e) {
       print('Error creating POI: $e');
       _showSnackBar("Failed to load place details.");
     } finally {
-      print('Setting loading state to false');
       setState(() {
         _isLoading = false;
       });
     }
+
     print('--- _handlePlaceTap completed ---');
   }
 
@@ -237,42 +240,6 @@ class _PlaceSearchScreenState extends State<PlaceSearchScreen> {
                   ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-Future<void> main() async {
-  // Load .env variables before running the app
-  await dotenv.load(fileName: ".env");
-
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  MyApp({super.key});
-
-  // Instantiate your services here for testing
-  final LocationService locationService =
-      LocationService(geolocator: GeolocatorPlatform.instance);
-  final GooglePOIService poiService = GooglePOIService(
-    apiKey: dotenv.env['GOOGLE_PLACES_API_KEY'] ?? '',
-    httpService: HttpService(),
-  );
-  final PointOfInterestFactory poiFactory = PointOfInterestFactory(
-      apiClient: GoogleMapsApiClient(
-          apiKey: dotenv.env['GOOGLE_PLACES_API_KEY'] ?? '',
-          client: http.Client()));
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'POI Test App',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: PlaceSearchScreen(
-        locationService: locationService,
-        poiService: poiService,
-        poiFactory: poiFactory,
       ),
     );
   }

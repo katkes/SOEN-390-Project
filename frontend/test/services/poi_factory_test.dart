@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:soen_390/models/outdoor_poi.dart';
 import 'package:soen_390/services/building_info_api.dart';
 import 'package:soen_390/services/poi_factory.dart';
 

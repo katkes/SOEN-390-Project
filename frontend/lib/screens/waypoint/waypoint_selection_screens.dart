@@ -4,6 +4,11 @@
 // The screen also integrates with the bottom navigation bar for seamless app navigation.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:soen_390/services/building_info_api.dart';
+import 'package:soen_390/services/google_poi_service.dart';
+import 'package:soen_390/services/http_service.dart';
+import 'package:soen_390/services/poi_factory.dart';
 import 'package:soen_390/widgets/location_transport_selector.dart';
 import 'package:soen_390/widgets/nav_bar.dart';
 import 'package:soen_390/widgets/route_card.dart';
@@ -14,12 +19,15 @@ import 'package:latlong2/latlong.dart';
 import 'package:soen_390/services/interfaces/route_service_interface.dart';
 import 'package:soen_390/utils/route_display.dart' as display;
 import 'package:soen_390/utils/route_utils.dart' as utils;
+import 'package:http/http.dart' as http;
 
 class WaypointSelectionScreen extends StatefulWidget {
   final IRouteService routeService;
   final GeocodingService geocodingService;
   final LocationService locationService;
   final String? initialDestination;
+  final double? destinationLat;
+  final double? destinationLng;
 
   const WaypointSelectionScreen({
     super.key,
@@ -27,6 +35,8 @@ class WaypointSelectionScreen extends StatefulWidget {
     required this.geocodingService,
     required this.locationService,
     this.initialDestination,
+    this.destinationLat,
+    this.destinationLng,
   });
 
   @override
@@ -120,8 +130,13 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
       // Convert location names to coordinates using geocoding service
       final LatLng? startPoint =
           await geocodingService.getCoordinates(waypoints.first);
-      final LatLng? endPoint =
-          await geocodingService.getCoordinates(waypoints.last);
+      LatLng? endPoint;
+
+      if (widget.destinationLat != null && widget.destinationLng != null) {
+        endPoint = LatLng(widget.destinationLat!, widget.destinationLng!);
+      } else {
+        endPoint = await geocodingService.getCoordinates(waypoints.last);
+      }
 
       if (startPoint == null || endPoint == null) {
         throw Exception("Could not find coordinates for one or more locations");
@@ -223,6 +238,17 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
         child: Column(
           children: [
             LocationTransportSelector(
+              locationService: widget.locationService,
+              poiService: GooglePOIService(
+                apiKey: dotenv.env['GOOGLE_PLACES_API_KEY'] ?? '',
+                httpService: HttpService(),
+              ),
+              poiFactory: PointOfInterestFactory(
+                apiClient: GoogleMapsApiClient(
+                  apiKey: dotenv.env['GOOGLE_PLACES_API_KEY'] ?? '',
+                  client: http.Client(),
+                ),
+              ),
               initialDestination: widget.initialDestination,
               onConfirmRoute: _handleRouteConfirmation,
               onLocationChanged: _setLocationChanged,

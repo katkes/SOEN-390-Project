@@ -37,10 +37,13 @@ class PoiDetailScreen extends StatefulWidget {
   final VoidCallback? onBack;
 
   /// Constructs a [PoiDetailScreen] with the required [poi] and optional [onBack] callback.
+  final void Function(String name, double lat, double lng)? onSetDestination;
+
   const PoiDetailScreen({
     super.key,
     required this.poi,
     this.onBack,
+    this.onSetDestination, // add this
   });
 
   @override
@@ -149,6 +152,30 @@ class _PoiDetailScreenState extends State<PoiDetailScreen> {
                         ),
                       ),
                   ],
+                ),
+              ),
+              // Navigate to Waypoint Selection
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                child: ElevatedButton.icon(
+                  icon: const Icon(Icons.directions),
+                  label: const Text("Set Destination"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).primaryColor,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context, {
+                      'name': widget.poi.name,
+                      'lat': widget.poi.latitude,
+                      'lng': widget.poi.longitude,
+                    });
+                    // Pop back to OutdoorMap
+                  },
                 ),
               ),
 
