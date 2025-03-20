@@ -6,7 +6,9 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class MappedinWebView extends StatefulWidget {
-  const MappedinWebView({super.key});
+  /// Optional controller override for testing.
+  final WebViewController? controllerOverride;
+  const MappedinWebView({super.key, this.controllerOverride});
 
   @override
   MappedinWebViewState createState() => MappedinWebViewState();
@@ -14,7 +16,7 @@ class MappedinWebView extends StatefulWidget {
 
 class MappedinWebViewState extends State<MappedinWebView> {
   late final WebViewController _controller;
-  Map<String, dynamic> _directions = {};
+  String statusMessage = "Nothing";
 
   @override
   void initState() {
@@ -22,37 +24,44 @@ class MappedinWebViewState extends State<MappedinWebView> {
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted);
 
+    // Directions Channel
     _controller.addJavaScriptChannel(
       "Directions",
       onMessageReceived: (JavaScriptMessage message) {
         try {
           final Map<String, dynamic> msg = jsonDecode(message.message);
           if (msg['type'] == 'error') {
-            // TODO Error handling with some ui element
-            print(msg);
+            setState(() {
+              statusMessage = "Directions Error: ${msg['payload']['message']}";
+            });
           } else {
-            _directions = jsonDecode(message.message);
+            setState(() {
+              statusMessage = "Directions: ${msg['payload']}";
+            });
           }
         } catch (e) {
-          debugPrint("Error parsing message: $e");
+          debugPrint("Error parsing Directions message: $e");
         }
       },
     );
 
+    // Floor selection Channel
     _controller.addJavaScriptChannel(
       "Floors",
       onMessageReceived: (JavaScriptMessage message) {
         try {
           final Map<String, dynamic> msg = jsonDecode(message.message);
           if (msg['type'] == 'error') {
-            // TODO Error handling with some ui element
-            print(msg);
+            setState(() {
+              statusMessage = "Floor Error: ${msg['payload']['message']}";
+            });
           } else {
-            print(msg);
-
+            setState(() {
+              statusMessage = "Floor changed to ${msg['payload']['floorName']}";
+            });
           }
         } catch (e) {
-          debugPrint("Error parsing message: $e");
+          debugPrint("Error parsing Floors message: $e");
         }
       },
     );
@@ -61,8 +70,13 @@ class MappedinWebViewState extends State<MappedinWebView> {
   }
 
   Future<void> _loadHtmlFromAssets() async {
-    final String fileHtmlContents =
+    final fileHtmlContents =
         await rootBundle.loadString('assets/mappedin.html');
+    final fileJsContents = await rootBundle.loadString('assets/mappedin.js');
+    final combinedHtml = fileHtmlContents.replaceFirst(
+      'JAVASCRIPTCODE',
+      fileJsContents,
+    );
     List<String> apiLabels = [
       "MAPPEDIN_API_KEY",
       "MAPPEDIN_API_SECRET",
@@ -75,21 +89,25 @@ class MappedinWebViewState extends State<MappedinWebView> {
     ];
     Map<String, String> keymap = Map.fromIterables(apiLabels, apiKeys);
     final fileHtmlWithKeys = keymap.entries.fold(
-      fileHtmlContents,
+      combinedHtml,
       (prev, e) => prev.replaceAll(e.key, e.value),
     );
-    _controller.loadHtmlString(fileHtmlWithKeys);
-  }
 
-  // Expose a method to run JavaScript.
-  runJS(String jsCode) async {
-    await _controller.runJavaScript(jsCode);
+    void printLargeString(String text, {int chunkSize = 1000}) {
+      for (int i = 0; i < text.length; i += chunkSize) {
+        print(text.substring(
+            i, i + chunkSize > text.length ? text.length : i + chunkSize));
+      }
+    }
+
+    printLargeString(fileHtmlWithKeys);
+
+    _controller.loadHtmlString(fileHtmlWithKeys);
   }
 
   showDirections(String departure, String destination) async {
     await _controller
         .runJavaScript("getDirections('$departure', '$destination')");
-    print(_directions);
   }
 
   setFloor(String floorName) async {
@@ -98,6 +116,15 @@ class MappedinWebViewState extends State<MappedinWebView> {
 
   @override
   Widget build(BuildContext context) {
-    return WebViewWidget(controller: _controller);
+    return Column(
+      children: [
+        Expanded(child: WebViewWidget(controller: _controller)),
+        // Display the current status message
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(statusMessage, key: const Key('statusText')),
+        ),
+      ],
+    );
   }
 }
