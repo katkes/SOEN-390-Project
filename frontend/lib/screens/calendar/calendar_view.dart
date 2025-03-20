@@ -132,14 +132,15 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
       final allEventsByDay = await _calendarEventService.fetchCalendarEvents();
 
       // If a calendar is selected, filter events for that calendar
+
       if (_selectedCalendarId != null) {
-        // Filter events by the selected calendar ID
         final filteredEventsByDay = <DateTime, List<gcal.Event>>{};
 
         allEventsByDay.forEach((date, events) {
           final filteredEvents = events.where((event) {
-            // Check if the event belongs to the selected calendar
+            // Filter events based on the selected calendar ID
             return event.organizer?.email == _selectedCalendarId ||
+                event.creator?.email == _selectedCalendarId ||
                 event.id?.contains(_selectedCalendarId!) == true;
           }).toList();
 
