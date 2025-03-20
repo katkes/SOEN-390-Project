@@ -16,6 +16,9 @@ import 'table_calendar_widget.dart';
 import 'event_list_widget.dart';
 import 'calendar_app_bar.dart';
 import 'calendar_dropdown.dart';
+import 'event_creation_widget.dart';
+import 'package:intl/intl.dart';
+
 
 /// A screen that displays the user's Google Calendar events.
 /// Show upcoming classes and events in a structured format (list, calendar, or timeline view).
@@ -250,15 +253,23 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // TODO: Implement creating a new event
-          print("Create a new event");
+  onPressed: () {
+    showDialog(
+      context: context,
+      builder: (context) => EventCreationPopup(
+        onSave: (name, building, classroom, time, day) {
+          final snackBar = SnackBar(
+            content: Text('Event "$name" saved on ${DateFormat.yMd().format(day)} at ${time.format(context)}'),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
         },
-        backgroundColor: const Color(0xFF004085),
-        child: const Icon(Icons.add),
-        //make it smaller than current size
-        mini: true,
       ),
+    );
+  },
+  backgroundColor: const Color(0xFF004085),
+  child: const Icon(Icons.add),
+  mini: true,
+),
       bottomNavigationBar:
           NavBar(selectedIndex: selectedIndex, onItemTapped: onItemTapped),
     );
