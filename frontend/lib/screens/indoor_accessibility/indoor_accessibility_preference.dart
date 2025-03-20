@@ -1,9 +1,10 @@
-import 'package:flutter/material.dart';
-
 //This page is a widget which contains the ability to mention any disabilities by the user which requires additional help/considerations.
 //for the purpose of indoor navigation, there only needs to be the consideration for if the user has impaired mobility since that is the factor which will determine if
 //the user will either use the escelators/stairs or the elevators.
 //Walking, escalator, elevator, stairs.
+
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class IndoorAccessibilityPage extends StatefulWidget {
   const IndoorAccessibilityPage({super.key});
@@ -14,10 +15,38 @@ class IndoorAccessibilityPage extends StatefulWidget {
 
 class IndoorAccessibilityState extends State<IndoorAccessibilityPage> {
   bool _isMobilityImpaired = false;
+  //the key itself should be private for security reasons and data consistency (avoiding data corruption)
+  //however, the value will be made accessible globally.
+  static const String _mobilityKey = 'mobility_impaired';
 
-  bool getMobilityStatus() {
+  bool getMobilityStatus() { //necessary for UI and UI testing
     return _isMobilityImpaired;
   }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPreferences();
+  }
+
+  // Load, save and get the mobility preference from shared_preferences API
+  Future<void> _loadPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _isMobilityImpaired = prefs.getBool(_mobilityKey) ?? false;
+    });
+  }
+
+  Future<void> _savePreference(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_mobilityKey, value);
+  }
+
+  static Future<bool> getMobilityStatusPreference() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_mobilityKey) ?? false;
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +76,7 @@ class IndoorAccessibilityState extends State<IndoorAccessibilityPage> {
                     setState(() {
                       _isMobilityImpaired = newValue ?? false;
                     });
+                    _savePreference(_isMobilityImpaired);
                   },
                 ),
               ],

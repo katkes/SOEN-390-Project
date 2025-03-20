@@ -11,6 +11,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import "package:soen_390/screens/indoor_accessibility/indoor_accessibility_preference.dart";
 
+
 class MappedinMapScreen extends StatefulWidget {
   const MappedinMapScreen({super.key});
 
