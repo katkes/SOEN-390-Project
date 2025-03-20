@@ -34,6 +34,7 @@ class IndoorAccessibilityState extends State<IndoorAccessibilityPage> {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       _isMobilityImpaired = prefs.getBool(_mobilityKey) ?? false;
+      print(_isMobilityImpaired);
     });
   }
 
