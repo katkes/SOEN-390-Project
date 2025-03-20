@@ -6,67 +6,40 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
-import 'package:webview_flutter/webview_flutter.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:soen_390/widgets/mappedin_webview.dart';
 
-class MappedinMapScreen extends StatefulWidget {
-  const MappedinMapScreen({super.key});
+class MappedinMapScreen extends StatelessWidget {
+  MappedinMapScreen({super.key});
 
-  @override
-  MappedinMapScreenState createState() => MappedinMapScreenState();
-}
-
-class MappedinMapScreenState extends State<MappedinMapScreen> {
-  late final WebViewController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    // Create and configure the WebView controller
-    _controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted);
-    _loadHtmlFromAssets();
-  }
-
-  Future<void> _loadHtmlFromAssets() async {
-    final String fileHtmlContents =
-        await rootBundle.loadString('assets/mappedin.html');
-
-    List<String> apiLabels = [
-      "MAPPEDIN_API_KEY",
-      "MAPPEDIN_API_SECRET",
-      "MAPPEDIN_API_MAP_ID",
-    ];
-
-    List<String> apiKeys = [
-      dotenv.env['MAPPEDIN_API_KEY'] ?? "",
-      dotenv.env['MAPPEDIN_API_SECRET'] ?? "",
-      "67968294965a13000bcdfe74", //Library building for testing purpose, we need to make it so that we choose the building we want and it takes the building code for that specific building
-    ];
-
-    Map<String, String> keymap = Map.fromIterables(apiLabels, apiKeys);
-
-    final fileHtmlWithKeys = keymap.entries
-        .fold(fileHtmlContents, (prev, e) => prev.replaceAll(e.key, e.value));
-
-    _controller.loadHtmlString(fileHtmlWithKeys);
-  }
+  final GlobalKey<MappedinWebViewState> _webViewKey =
+      GlobalKey<MappedinWebViewState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Indoor Navigation',
-          style: TextStyle(
-            color: Colors.white,
-          ),
-        ),
+        title: const Text('Indoor Navigation'),
         backgroundColor: const Color(0xff912338),
-        iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: WebViewWidget(controller: _controller),
+      body: MappedinWebView(key: _webViewKey),
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ElevatedButton(
+            onPressed: () async {
+              await _webViewKey.currentState?.showDirections("124", "817");
+            },
+            child: const Text("Get Directions"),
+          ),
+          const SizedBox(height: 8),
+          ElevatedButton(
+            onPressed: () async {
+              await _webViewKey.currentState?.setFloor("Level 9");
+            },
+            child: const Text("Set Floor"),
+          ),
+        ],
+      ),
     );
   }
 }
