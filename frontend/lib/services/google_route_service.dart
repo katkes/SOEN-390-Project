@@ -143,6 +143,46 @@ class GoogleRouteService implements IRouteService {
     DateTime? arrivalTime,
     bool alternatives = false,
   }) async {
+    final url = _buildRequestUrl(
+      from: from,
+      to: to,
+      mode: mode,
+      departureTime: departureTime,
+      arrivalTime: arrivalTime,
+      alternatives: alternatives,
+    );
+
+    final response = await httpService.client.get(Uri.parse(url));
+
+if (response.statusCode == 200) {
+      return _processApiResponse(response.body);
+} else {
+      print("HTTP Error: ${response.statusCode} - ${response.reasonPhrase}");
+      // Optionally throw or handle specific errors;
+}
+    return null;
+  }
+
+  /// Builds a Google Maps Directions API request URL with the specified parameters.
+  ///
+  /// - [from]: Starting location coordinates.
+  /// - [to]: Destination location coordinates.
+  /// - [mode]: Transportation mode such as `driving`, `walking`, `bicycling`, or `transit`.
+  /// - [departureTime]: Optional departure time for transit directions.
+  ///   Only applied for non-walking modes.
+  /// - [arrivalTime]: Optional arrival time for transit directions.
+  ///   Only applied for transit mode.
+  /// - [alternatives]: Whether to request alternative routes.
+  ///
+  /// Returns a properly formatted URL string for the Google Maps Directions API.
+  String _buildRequestUrl({
+    required LatLng from,
+    required LatLng to,
+    required String mode,
+    DateTime? departureTime,
+    DateTime? arrivalTime,
+    bool alternatives = false,
+  }) {
     String url = "https://maps.googleapis.com/maps/api/directions/json?"
         "origin=${from.latitude},${from.longitude}"
         "&destination=${to.latitude},${to.longitude}"
@@ -159,43 +199,75 @@ class GoogleRouteService implements IRouteService {
       url += "&arrival_time=${arrivalTime.millisecondsSinceEpoch ~/ 1000}";
     }
 
-    final response = await httpService.client.get(Uri.parse(url));
+    return url;
+  }
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      if (!data.containsKey('routes') || data['routes'].isEmpty) {
-        print(" No routes found. Full API Response: ${jsonEncode(data)}");
-        return null;
-      }
-      if (data['status'] != 'OK') {
-        print(
-            "API Error: ${data['status']} - Full Response: ${jsonEncode(data)}");
-        return null;
-      }
+  /// Processes the Google Maps Directions API response JSON.
+  ///
+  /// This function handles parsing the response body, validating it contains
+  /// expected data, and transforming it into RouteResult objects.
+  ///
+  /// - [responseBody]: The raw JSON response string from the Directions API.
+  ///
+  /// Returns a list of RouteResult objects if successful, or null if:
+  /// - The response contains no routes
+  /// - The API returned a non-OK status
+  ///
+  /// Logs detailed error information when route retrieval fails.
+  List<RouteResult>? _processApiResponse(String responseBody) {
+    final data = jsonDecode(responseBody);
 
-      List<RouteResult> results = [];
-      for (var route in data['routes']) {
-        for (var leg in route['legs']) {
-          final distance = leg['distance']['value'].toDouble();
-          final duration = leg['duration']['value'].toDouble();
-          final polylinePoints = route.containsKey('overview_polyline')
-              ? _decodePolyline(route['overview_polyline']['points'])
-              : <LatLng>[];
-
-          // 🔹 Extract step-by-step navigation
-          List<StepResult> steps = _extractSteps(leg['steps']);
-
-          results.add(RouteResult(
-            distance: distance,
-            duration: duration,
-            routePoints: polylinePoints,
-            steps: steps,
-          ));
-        }
-      }
-      return results;
+    if (!data.containsKey('routes') || data['routes'].isEmpty) {
+      print(" No routes found. Full API Response: ${jsonEncode(data)}");
+      return null;
     }
-    return null;
+
+    if (data['status'] != 'OK') {
+      print(
+          "API Error: ${data['status']} - Full Response: ${jsonEncode(data)}");
+      return null;
+    }
+
+    return _extractRouteResults(data);
+  }
+
+  /// Extracts and transforms route data from parsed API response.
+  ///
+  /// This function takes the parsed JSON data from the Google Maps Directions API
+  /// and transforms it into a list of RouteResult objects containing information about
+  /// each possible route.
+  ///
+  /// - [data]: The parsed JSON data from the Directions API response.
+  ///
+  /// For each route in the response:
+  /// - Extracts distance and duration values
+  /// - Decodes polyline points for map display
+  /// - Processes navigation steps using _extractSteps
+  ///
+  /// Returns a list of RouteResult objects representing each possible route.
+  List<RouteResult> _extractRouteResults(Map<String, dynamic> data) {
+    List<RouteResult> results = [];
+
+    for (var route in data['routes']) {
+      for (var leg in route['legs']) {
+        final distance = leg['distance']['value'].toDouble();
+        final duration = leg['duration']['value'].toDouble();
+        final polylinePoints = route.containsKey('overview_polyline')
+            ? _decodePolyline(route['overview_polyline']['points'])
+            : <LatLng>[];
+
+        List<StepResult> steps = _extractSteps(leg['steps']);
+
+        results.add(RouteResult(
+          distance: distance,
+          duration: duration,
+          routePoints: polylinePoints,
+          steps: steps,
+        ));
+      }
+    }
+
+    return results;
   }
 
   /// Allows the UI to select a route from the retrieved options.

@@ -11,11 +11,11 @@ import 'package:soen_390/utils/location_service.dart';
 import 'package:mockito/mockito.dart';
 import 'package:soen_390/widgets/suggestions.dart';
 
-
 @GenerateMocks([LocationService, GooglePOIService, PointOfInterestFactory])
 import 'location_transport_selector_test.mocks.dart';
 
 class MockNavigatorObserver extends Mock implements NavigatorObserver {}
+
 void main() {
   late MockLocationService mockLocationService;
   late MockGooglePOIService mockPoiService;
@@ -140,8 +140,7 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
     expect(state.selectedTimeOption, equals('Depart At'));
   });
 
-
-testWidgets('_showLocationSuggestions displays SuggestionsPopup',
+  testWidgets('_showLocationSuggestions displays SuggestionsPopup',
       (WidgetTester tester) async {
     await tester.pumpWidget(createWidgetUnderTest());
 
@@ -152,7 +151,7 @@ testWidgets('_showLocationSuggestions displays SuggestionsPopup',
     expect(find.byType(SuggestionsPopup), findsOneWidget);
   });
 
-testWidgets('_handleLocationSelection updates itinerary for start location',
+  testWidgets('_handleLocationSelection updates itinerary for start location',
       (WidgetTester tester) async {
     await tester.pumpWidget(createWidgetUnderTest());
 
@@ -172,7 +171,6 @@ testWidgets('_handleLocationSelection updates itinerary for start location',
     expect(state.itinerary.first, equals('Restaurant'));
   });
 
-
   testWidgets(
       '_setStartLocation inserts at position 0 when itinerary not empty',
       (WidgetTester tester) async {
@@ -190,8 +188,7 @@ testWidgets('_handleLocationSelection updates itinerary for start location',
     expect(state.itinerary, ['Start', 'Destination']);
   });
 
-
-testWidgets(
+  testWidgets(
       'Transport mode fallback triggers onConfirmRoute when onTransportModeChange is null',
       (WidgetTester tester) async {
     List<String>? confirmedRoute;
@@ -215,7 +212,7 @@ testWidgets(
     expect(confirmedRoute, containsAll(['Start', 'Destination']));
     expect(confirmedMode, equals('Bike'));
   });
-testWidgets(
+  testWidgets(
       '_setDestinationLocation replaces second itinerary entry when length == 2',
       (WidgetTester tester) async {
     await tester.pumpWidget(createWidgetUnderTest());
@@ -230,7 +227,7 @@ testWidgets(
     expect(state.itinerary[1], equals('New Destination'));
   });
 
-testWidgets('"Search POIS" button navigates and updates destinationLocation',
+  testWidgets('"Search POIS" button navigates and updates destinationLocation',
       (WidgetTester tester) async {
     bool locationChangedCalled = false;
     final navigatorObserver = MockNavigatorObserver();
@@ -273,6 +270,4 @@ testWidgets('"Search POIS" button navigates and updates destinationLocation',
     expect(state.itinerary.contains('Selected Destination'), isTrue);
     expect(locationChangedCalled, isTrue);
   });
-
-
 }

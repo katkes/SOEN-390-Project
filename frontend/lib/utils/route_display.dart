@@ -5,7 +5,6 @@ import 'package:soen_390/services/interfaces/route_service_interface.dart';
 //helper function for displaying route information
 void displayRoutes({
   required BuildContext context,
-  required List<Map<String, dynamic>> confirmedRoutes,
   required Function(List<Map<String, dynamic>>) updateRoutes,
   required List<String> waypoints,
   required List<RouteResult> routes,
