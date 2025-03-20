@@ -9,7 +9,8 @@ import 'building_search.dart';
 /// The user can select the date and time using the date and time pickers.
 /// The user can save the event by clicking the save button.
 class EventCreationPopup extends StatefulWidget {
-  final void Function(String name, String building, String classroom, TimeOfDay time, DateTime day) onSave;
+  final void Function(String name, String building, String classroom,
+      TimeOfDay time, DateTime day) onSave;
   const EventCreationPopup({super.key, required this.onSave});
 
   @override
@@ -25,7 +26,8 @@ class _EventCreationPopupState extends State<EventCreationPopup> {
   DateTime? _selectedDate;
 
   Future<void> _pickTime() async {
-    final time = await showTimePicker(context: context, initialTime: TimeOfDay.now());
+    final time =
+        await showTimePicker(context: context, initialTime: TimeOfDay.now());
     if (time != null) setState(() => _selectedTime = time);
   }
 
@@ -46,7 +48,7 @@ class _EventCreationPopupState extends State<EventCreationPopup> {
         _selectedDate != null) {
       widget.onSave(
         _eventNameController.text.trim(),
-         _selectedBuilding ?? "Unknown",
+        _selectedBuilding ?? "Unknown",
         _classroomController.text.trim(),
         _selectedTime!,
         _selectedDate!,
@@ -86,21 +88,26 @@ class _EventCreationPopupState extends State<EventCreationPopup> {
                       children: [
                         TextFormField(
                           controller: _eventNameController,
-                          decoration: const InputDecoration(labelText: "Event Name"),
-                          validator: (value) => value?.isEmpty ?? true ? "Required" : null,
-
+                          decoration:
+                              const InputDecoration(labelText: "Event Name"),
+                          validator: (value) =>
+                              value?.isEmpty ?? true ? "Required" : null,
                         ),
                         const SizedBox(height: 16),
                         // Building search field
                         BuildingSearchField(
                           initialValue: _selectedBuilding,
-                          onSelected: (building) => setState(() => _selectedBuilding = building),
+                          onSelected: (building) =>
+                              setState(() => _selectedBuilding = building),
                         ),
                         const SizedBox(height: 16),
                         TextFormField(
                           controller: _classroomController,
-                          decoration: const InputDecoration(labelText: "Classroom"),
-                          validator: (value) => value == null || value.isEmpty ? "Required" : null,
+                          decoration:
+                              const InputDecoration(labelText: "Classroom"),
+                          validator: (value) => value == null || value.isEmpty
+                              ? "Required"
+                              : null,
                         ),
                         const SizedBox(height: 16),
                         ElevatedButton.icon(

@@ -41,25 +41,23 @@ class _BuildingSearchFieldState extends State<BuildingSearchField> {
     });
 
     try {
- 
       final results = await _mapService.getBuildingSuggestions(input);
-      
+
       if (!mounted) return;
-      
+
       setState(() {
         _suggestions = results;
         _isLoading = false;
       });
     } catch (e) {
       if (!mounted) return;
-      
+
       setState(() {
         _isLoading = false;
 
         _suggestions = ["Error loading suggestions"];
       });
-      
-  
+
       print("Error fetching building suggestions: $e");
     }
   }
@@ -75,7 +73,6 @@ class _BuildingSearchFieldState extends State<BuildingSearchField> {
   @override
   Widget build(BuildContext context) {
     return Material(
-   
       color: Colors.transparent,
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -85,13 +82,12 @@ class _BuildingSearchFieldState extends State<BuildingSearchField> {
             controller: _controller,
             decoration: InputDecoration(
               labelText: "Building",
-              suffixIcon: _isLoading 
-                ? const SizedBox(
-                    width: 20, 
-                    height: 20, 
-                    child: CircularProgressIndicator(strokeWidth: 2)
-                  ) 
-                : null,
+              suffixIcon: _isLoading
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2))
+                  : null,
             ),
             onChanged: (value) {
               // Debounce the API call
@@ -113,7 +109,6 @@ class _BuildingSearchFieldState extends State<BuildingSearchField> {
                   BoxShadow(
                     blurRadius: 5,
                     color: Colors.black.withValues(alpha: 0.1),
-
                   ),
                 ],
               ),
