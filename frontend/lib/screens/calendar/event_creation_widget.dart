@@ -46,7 +46,7 @@ class _EventCreationPopupState extends State<EventCreationPopup> {
         _selectedDate != null) {
       widget.onSave(
         _eventNameController.text.trim(),
-        _selectedBuilding!,
+         _selectedBuilding ?? "Unknown",
         _classroomController.text.trim(),
         _selectedTime!,
         _selectedDate!,
@@ -87,7 +87,8 @@ class _EventCreationPopupState extends State<EventCreationPopup> {
                         TextFormField(
                           controller: _eventNameController,
                           decoration: const InputDecoration(labelText: "Event Name"),
-                          validator: (value) => value == null || value.isEmpty ? "Required" : null,
+                          validator: (value) => value?.isEmpty ?? true ? "Required" : null,
+
                         ),
                         const SizedBox(height: 16),
                         // Building search field

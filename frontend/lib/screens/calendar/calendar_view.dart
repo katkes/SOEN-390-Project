@@ -252,16 +252,57 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
+   floatingActionButton: FloatingActionButton(
   onPressed: () {
     showDialog(
       context: context,
       builder: (context) => EventCreationPopup(
-        onSave: (name, building, classroom, time, day) {
-          final snackBar = SnackBar(
-            content: Text('Event "$name" saved on ${DateFormat.yMd().format(day)} at ${time.format(context)}'),
-          );
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        onSave: (name, building, classroom, time, day) async {
+          final event = gcal.Event()
+            ..summary = name
+            ..location = "$building, $classroom"
+            ..start = gcal.EventDateTime(dateTime: DateTime(
+              day.year, day.month, day.day, time.hour, time.minute))
+            ..end = gcal.EventDateTime(dateTime: DateTime(
+              day.year, day.month, day.day, time.hour + 1, time.minute));
+
+          try {
+            final calendarService = CalendarService(AuthRepository(
+              authService: widget.authService,
+              httpService: widget.authService.httpService,
+              secureStorage: widget.authService.secureStorage,
+            ));
+await calendarService.createEvent(
+                _selectedCalendarId ?? 'primary', event);
+
+            // Reload events after successfully creating the event
+            await fetchCalendarEvents();
+           
+            Future.delayed(const Duration(milliseconds: 300), () {
+              if (mounted) { 
+                final BuildContext currentContext = context;
+                if (currentContext.mounted) {
+                  final snackBar = SnackBar(
+                    content: Text('Event "$name" saved on ${DateFormat.yMd().format(day)} at ${time.format(currentContext)}'),
+                  );
+                  ScaffoldMessenger.of(currentContext).showSnackBar(snackBar);
+                }
+              }
+            });
+          } catch (e) {
+         
+            Future.delayed(const Duration(milliseconds: 300), () {
+              if (mounted) { 
+                final BuildContext currentContext = context;
+                if (currentContext.mounted) {
+                  final snackBar = SnackBar(
+                    content: Text('Failed to save event: $e'),
+                  );
+                  ScaffoldMessenger.of(currentContext).showSnackBar(snackBar);
+                }
+              }
+            });
+          }
         },
       ),
     );
@@ -270,6 +311,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   child: const Icon(Icons.add),
   mini: true,
 ),
+
+
       bottomNavigationBar:
           NavBar(selectedIndex: selectedIndex, onItemTapped: onItemTapped),
     );
