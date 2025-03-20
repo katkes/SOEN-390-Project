@@ -18,7 +18,7 @@ import 'package:soen_390/services/building_info_api.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'package:soen_390/screens/login/login_screen.dart';
 import 'package:soen_390/screens/profile/profile_screen.dart';
-import 'package:soen_390/screens/calendar/google_calendar_screen.dart';
+import 'package:soen_390/screens/calendar/calendar_view.dart';
 import 'package:soen_390/providers/navigation_provider.dart';
 
 /// The entry point of the application.
@@ -50,8 +50,7 @@ class MyApp extends ConsumerWidget {
     // Fetch dependencies using Riverpod providers.
     final routeService = ref.watch(routeServiceProvider);
     final httpService = ref.watch(httpServiceProvider);
-    final authService = ref.watch(authServiceProvider); 
-
+    final authService = ref.watch(authServiceProvider);
 
     return MaterialApp(
       title: 'Flutter Demo',
@@ -351,7 +350,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => CalendarScreen(
-                          authService: widget.authService,  
+                          authService: widget.authService,
                         ),
                       ),
                     );

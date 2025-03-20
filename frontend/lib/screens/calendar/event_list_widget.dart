@@ -17,7 +17,8 @@ class EventListWidget extends StatelessWidget {
               final event = events[index];
               String timeString = '';
               if (event.start?.dateTime != null) {
-                timeString = DateFormat('h:mm a').format(event.start!.dateTime!);
+                timeString =
+                    DateFormat('h:mm a').format(event.start!.dateTime!);
               }
               return Card(
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),

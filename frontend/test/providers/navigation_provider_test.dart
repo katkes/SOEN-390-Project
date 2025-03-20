@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-
 import 'package:soen_390/providers/navigation_provider.dart';
 
 /// Test the NavigationProvider
@@ -10,7 +9,7 @@ import 'package:soen_390/providers/navigation_provider.dart';
 /// The NavigationProvider consists of a NavigationState and a NavigationNotifier.
 /// This test file tests the NavigationProvider by checking that the initial selectedIndex is 0
 /// and that the selectedIndex is updated correctly when calling setSelectedIndex.
-/// 
+///
 void main() {
   test('Initial NavigationState has selectedIndex 0', () {
     // Create a container for testing the provider

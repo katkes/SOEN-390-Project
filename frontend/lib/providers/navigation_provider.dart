@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 ///This provider is used to manage the navigation state of the app.
 ///It is used to keep track of the current selected index of the navigation bar.
 

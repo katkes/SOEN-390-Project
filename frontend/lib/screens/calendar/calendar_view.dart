@@ -15,6 +15,7 @@ import 'calendar_event_service.dart';
 import 'table_calendar_widget.dart';
 import 'event_list_widget.dart';
 import 'calendar_app_bar.dart';
+import 'calendar_dropdown.dart';
 
 /// A screen that displays the user's Google Calendar events.
 /// Show upcoming classes and events in a structured format (list, calendar, or timeline view).
@@ -45,9 +46,11 @@ class CalendarScreen extends ConsumerStatefulWidget {
 class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   bool _isLoading = true;
   String? _error;
-  
-  late CalendarEventService _calendarEventService;
+  String? _selectedCalendarId;
 
+  List<gcal.CalendarListEntry> _calendars = []; // List of user's calendars
+
+  late CalendarEventService _calendarEventService;
 
   // Calendar controller
   CalendarFormat _calendarFormat = CalendarFormat.month;
@@ -64,39 +67,99 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     _initialize();
   }
 
-Future<void> _initialize() async {
-  final httpService = widget.authService.httpService;
-  final secureStorage = widget.authService.secureStorage;
+  Future<void> _initialize() async {
+    final httpService = widget.authService.httpService;
+    final secureStorage = widget.authService.secureStorage;
 
-  // Initialize AuthRepository with the required services
-  final authRepository = AuthRepository(
-    authService: widget.authService,
-    httpService: httpService,
-    secureStorage: secureStorage,
-  );
+    // Initialize AuthRepository with the required services
+    final authRepository = AuthRepository(
+      authService: widget.authService,
+      httpService: httpService,
+      secureStorage: secureStorage,
+    );
 
-  // Initialize CalendarService with AuthRepository
-  final calendarService = CalendarService(authRepository);
+    // Initialize CalendarService with AuthRepository
+    final calendarService = CalendarService(authRepository);
 
-  // Initialize CalendarApi using the http client from httpService
-  final calendarApi = gcal.CalendarApi(httpService.client);
+    // Initialize CalendarApi using the http client from httpService
+    final calendarApi = gcal.CalendarApi(httpService.client);
 
-  _calendarEventService = CalendarEventService(calendarRepository: CalendarRepository(calendarService, CacheService(await SharedPreferences.getInstance(), calendarApi)));
+    _calendarEventService = CalendarEventService(
+        calendarRepository: CalendarRepository(calendarService,
+            CacheService(await SharedPreferences.getInstance(), calendarApi)));
 
-  // Fetch the user's calendar events once initialized
-  fetchCalendarEvents();
-}
-  Future<void> fetchCalendarEvents() async {
-     try {
-      final eventsByDay = await _calendarEventService.fetchCalendarEvents();
+    await fetchCalendars();
+  }
+
+  Future<void> fetchCalendars() async {
+    try {
+      setState(() {
+        _isLoading = true;
+        _error = null;
+      });
+
+      // Fetch calendars using CalendarEventService
+      final calendars = await _calendarEventService.fetchCalendars();
 
       setState(() {
-        _eventsByDay = eventsByDay;
+        _calendars = calendars;
+        // Set default selected calendar to the first one if not already set
+        _selectedCalendarId ??=
+            calendars.isNotEmpty ? calendars.first.id : null;
         _isLoading = false;
       });
+
+      // Fetch events for the selected calendar
+      await fetchCalendarEvents();
     } catch (e) {
       setState(() {
-        _error = "An error occurred: $e";
+        _error = "Failed to load calendars: $e";
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> fetchCalendarEvents() async {
+    try {
+      setState(() {
+        _isLoading = true;
+        _error = null;
+      });
+
+      // Fetch all events using the service
+      final allEventsByDay = await _calendarEventService.fetchCalendarEvents();
+
+      // If a calendar is selected, filter events for that calendar
+      if (_selectedCalendarId != null) {
+        // Filter events by the selected calendar ID
+        final filteredEventsByDay = <DateTime, List<gcal.Event>>{};
+
+        allEventsByDay.forEach((date, events) {
+          final filteredEvents = events.where((event) {
+            // Check if the event belongs to the selected calendar
+            return event.organizer?.email == _selectedCalendarId ||
+                event.id?.contains(_selectedCalendarId!) == true;
+          }).toList();
+
+          if (filteredEvents.isNotEmpty) {
+            filteredEventsByDay[date] = filteredEvents;
+          }
+        });
+
+        setState(() {
+          _eventsByDay = filteredEventsByDay;
+          _isLoading = false;
+        });
+      } else {
+        // If no calendar is selected, show all events
+        setState(() {
+          _eventsByDay = allEventsByDay;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _error = "Failed to load events: $e";
         _isLoading = false;
       });
     }
@@ -128,7 +191,8 @@ Future<void> _initialize() async {
           iconTheme: const IconThemeData(color: Colors.white),
         ),
         body: const Center(child: CircularProgressIndicator()),
-        bottomNavigationBar: NavBar(selectedIndex: selectedIndex, onItemTapped: onItemTapped),
+        bottomNavigationBar:
+            NavBar(selectedIndex: selectedIndex, onItemTapped: onItemTapped),
       );
     }
 
@@ -136,7 +200,8 @@ Future<void> _initialize() async {
       return Scaffold(
         appBar: const CustomAppBar(),
         body: Center(child: Text(_error!)),
-        bottomNavigationBar: NavBar(selectedIndex: selectedIndex, onItemTapped: onItemTapped),
+        bottomNavigationBar:
+            NavBar(selectedIndex: selectedIndex, onItemTapped: onItemTapped),
       );
     }
 
@@ -144,6 +209,20 @@ Future<void> _initialize() async {
       appBar: const CustomAppBar(),
       body: Column(
         children: [
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: CalendarDropdown(
+              calendars: _calendars,
+              selectedCalendarId: _selectedCalendarId,
+              onCalendarSelected: (calendarId) {
+                setState(() {
+                  _selectedCalendarId = calendarId;
+                });
+                fetchCalendarEvents(); // Fetch events for the selected calendar
+              },
+            ),
+          ),
           TableCalendarWidget(
             focusedDay: _focusedDay,
             selectedDay: _selectedDay,
@@ -177,8 +256,11 @@ Future<void> _initialize() async {
         },
         backgroundColor: const Color(0xFF004085),
         child: const Icon(Icons.add),
+        //make it smaller than current size
+        mini: true,
       ),
-      bottomNavigationBar: NavBar(selectedIndex: selectedIndex, onItemTapped: onItemTapped),
+      bottomNavigationBar:
+          NavBar(selectedIndex: selectedIndex, onItemTapped: onItemTapped),
     );
   }
 }

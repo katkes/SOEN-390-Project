@@ -1,9 +1,9 @@
-
 /// A service class that handles calendar event operations.
 /// This class provides methods to fetch and group calendar events by date.
 /// The class uses a [CalendarRepository] to fetch calendar events.
 /// The class is used by the [CalendarScreen] to fetch and display calendar events.
 library;
+
 import 'package:googleapis/calendar/v3.dart' as gcal;
 import 'package:soen_390/repositories/calendar_repository.dart';
 
@@ -27,7 +27,8 @@ class CalendarEventService {
                 : null);
 
         if (startTime != null) {
-          final dateOnly = DateTime(startTime.year, startTime.month, startTime.day);
+          final dateOnly =
+              DateTime(startTime.year, startTime.month, startTime.day);
           if (eventsByDay[dateOnly] == null) {
             eventsByDay[dateOnly] = [];
           }
@@ -42,8 +43,18 @@ class CalendarEventService {
   }
 
   // Function to get events for a specific day
-  List<gcal.Event> getEventsForDay(DateTime day, Map<DateTime, List<gcal.Event>> eventsByDay) {
+  List<gcal.Event> getEventsForDay(
+      DateTime day, Map<DateTime, List<gcal.Event>> eventsByDay) {
     final normalizedDay = DateTime(day.year, day.month, day.day);
     return eventsByDay[normalizedDay] ?? [];
+  }
+
+  //Function to get calendars using the CalendarRepository
+  Future<List<gcal.CalendarListEntry>> fetchCalendars() async {
+    try {
+      return await calendarRepository.getCalendars();
+    } catch (e) {
+      throw Exception("An error occurred while fetching calendars: $e");
+    }
   }
 }
