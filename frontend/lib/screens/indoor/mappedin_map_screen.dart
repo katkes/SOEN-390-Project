@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import "package:soen_390/screens/indoor_accessibility/indoor_accessibility_preference.dart";
 
 class MappedinMapScreen extends StatefulWidget {
   const MappedinMapScreen({super.key});
@@ -66,7 +67,38 @@ class MappedinMapScreenState extends State<MappedinMapScreen> {
         backgroundColor: const Color(0xff912338),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: WebViewWidget(controller: _controller),
+      body: Column(
+          children: [
+            Expanded(
+              child: WebViewWidget(controller: _controller),
+            ),
+            Container(
+              width: double.infinity, //these are container specific styles
+              padding: const EdgeInsets.all(16),
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const IndoorAccessibilityPage(),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xff912338), //0xff912338
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+                child: const Text(
+                  'specify disability',
+                  style: TextStyle(fontSize: 18, color: Colors.white),
+                ),
+              ),
+            ),
+          ])
+      // WebViewWidget(controller: _controller),
     );
   }
-}
+
+
+
+}//end of state class

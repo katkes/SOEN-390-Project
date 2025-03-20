@@ -22,15 +22,14 @@ frontend/linux/flutter
 frontend/macos/flutter
 frontend/windows/flutter
 frontend/android/.gradle
+.flutter-plugins-dependencies
+frontend/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java
+frontend/.dart_tool/
+/frontend/android/app/.cxx/
 
 #Android studio
 *.iml
 *.iws
 *.ipr
 
-.flutter-plugins-dependencies
 
-frontend/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java
-
-/frontend/.dart_tool/
-/frontend/android/app/.cxx/
