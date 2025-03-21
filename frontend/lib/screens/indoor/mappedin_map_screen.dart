@@ -67,15 +67,11 @@ class MappedinMapScreenState extends State<MappedinMapScreen> {
         ),
         backgroundColor: const Color(0xff912338),
         iconTheme: const IconThemeData(color: Colors.white),
-      ),
-      body: Column(
-          children: [
-            Expanded(
-              child: WebViewWidget(controller: _controller),
-            ),
-            Container(
-              width: double.infinity, //these are container specific styles
-              padding: const EdgeInsets.all(16),
+        actions:[
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8), // Adjust padding as needed
+            child: SizedBox(
+              height: 40, // Control button height
               child: ElevatedButton(
                 onPressed: () {
                   Navigator.push(
@@ -86,15 +82,52 @@ class MappedinMapScreenState extends State<MappedinMapScreen> {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xff912338), //0xff912338
-                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  backgroundColor: Colors.white, // White button for contrast
+                  foregroundColor: const Color(0xff912338), // Text color
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8), // Rounded edges
+                  ),
                 ),
                 child: const Text(
-                  'specify disability',
-                  style: TextStyle(fontSize: 18, color: Colors.white),
+                  'Specify Disability',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
+          ),
+        ],
+
+
+
+      ),
+      body: Column(
+          children: [
+            Expanded(
+              child: WebViewWidget(controller: _controller),
+            ),
+            // Container(
+            //   width: double.infinity, //these are container specific styles
+            //   padding: const EdgeInsets.all(16),
+            //   child: ElevatedButton(
+            //     onPressed: () {
+            //       Navigator.push(
+            //         context,
+            //         MaterialPageRoute(
+            //           builder: (context) => const IndoorAccessibilityPage(),
+            //         ),
+            //       );
+            //     },
+            //     style: ElevatedButton.styleFrom(
+            //       backgroundColor: const Color(0xff912338), //0xff912338
+            //       padding: const EdgeInsets.symmetric(vertical: 12),
+            //     ),
+            //     child: const Text(
+            //       'specify disability',
+            //       style: TextStyle(fontSize: 18, color: Colors.white),
+            //     ),
+            //   ),
+            // ),
           ])
       // WebViewWidget(controller: _controller),
     );
