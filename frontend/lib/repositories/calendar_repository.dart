@@ -49,7 +49,7 @@ class CalendarRepository {
   /// - A `List<Event>` from the calendar, either from cache or freshly fetched.
   ///
   /// Cached data is stored per calendar using the calendar ID as a key.
-  Future<List<Event>> getEvents(calendarid,
+Future<List<Event>> getEvents(
       {String calendarId = 'primary', bool useCache = true}) async {
     if (useCache) {
       final cachedEvents =
@@ -63,6 +63,7 @@ class CalendarRepository {
     }
     return events;
   }
+
 
   /// Fetches the list of calendars available for the authenticated user.
   ///
