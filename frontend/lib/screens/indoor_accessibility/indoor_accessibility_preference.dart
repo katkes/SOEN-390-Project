@@ -1,7 +1,13 @@
-//This page is a widget which contains the ability to mention any disabilities by the user which requires additional help/considerations.
-//for the purpose of indoor navigation, there only needs to be the consideration for if the user has impaired mobility since that is the factor which will determine if
-//the user will either use the escelators/stairs or the elevators.
-//Walking, escalator, elevator, stairs.
+//This page is a widget which contains the ability to mention any disabilities
+//by the user which requires additional help/considerations when forming indoor
+//navigation routes
+//for the purpose of indoor navigation, there only needs to be the consideration
+//for if the user has impaired mobility since that is the factor which will
+//determine if the user will either use the escelators/stairs or the elevators.
+//Additionally, the state is persisted by using the sharedPreferences package
+//Functions were set in place to setting, loading and retrieving the state
+//other files should call the getMobilityStatusPreference() function to access
+//the state variable. This is the API
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -42,7 +48,7 @@ class IndoorAccessibilityState extends State<IndoorAccessibilityPage> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_mobilityKey, value);
   }
-
+  //this is the function other files should call to obtain the mobility preference state
   static Future<bool> getMobilityStatusPreference() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool(_mobilityKey) ?? false;
