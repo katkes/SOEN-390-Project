@@ -97,39 +97,13 @@ class MappedinMapScreenState extends State<MappedinMapScreen> {
             ),
           ),
         ],
-
-
-
       ),
       body: Column(
           children: [
             Expanded(
               child: WebViewWidget(controller: _controller),
             ),
-            // Container(
-            //   width: double.infinity, //these are container specific styles
-            //   padding: const EdgeInsets.all(16),
-            //   child: ElevatedButton(
-            //     onPressed: () {
-            //       Navigator.push(
-            //         context,
-            //         MaterialPageRoute(
-            //           builder: (context) => const IndoorAccessibilityPage(),
-            //         ),
-            //       );
-            //     },
-            //     style: ElevatedButton.styleFrom(
-            //       backgroundColor: const Color(0xff912338), //0xff912338
-            //       padding: const EdgeInsets.symmetric(vertical: 12),
-            //     ),
-            //     child: const Text(
-            //       'specify disability',
-            //       style: TextStyle(fontSize: 18, color: Colors.white),
-            //     ),
-            //   ),
-            // ),
           ])
-      // WebViewWidget(controller: _controller),
     );
   }
 
