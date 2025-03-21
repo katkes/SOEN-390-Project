@@ -12,10 +12,14 @@ class CalendarEventService {
 
   CalendarEventService({required this.calendarRepository});
 
-  Future<Map<DateTime, List<gcal.Event>>> fetchCalendarEvents() async {
+  Future<Map<DateTime, List<gcal.Event>>> fetchCalendarEvents(
+    String calendarId, {
+    bool useCache = true,
+  }) async {
     try {
       // Fetch events using the CalendarRepository
-      final events = await calendarRepository.getEvents(useCache: true);
+      final events =
+          await calendarRepository.getEvents(calendarId, useCache: useCache);
 
       // Group events by date
       final eventsByDay = <DateTime, List<gcal.Event>>{};

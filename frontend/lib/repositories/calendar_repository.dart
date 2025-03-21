@@ -38,6 +38,7 @@ class CalendarRepository {
   final CacheService _cacheService;
 
   CalendarRepository(this._calendarService, this._cacheService);
+
   /// Fetches a list of events from a specified calendar, with optional caching.
   ///
   /// ## Parameters:
@@ -48,7 +49,7 @@ class CalendarRepository {
   /// - A `List<Event>` from the calendar, either from cache or freshly fetched.
   ///
   /// Cached data is stored per calendar using the calendar ID as a key.
-  Future<List<Event>> getEvents(
+  Future<List<Event>> getEvents(calendarid,
       {String calendarId = 'primary', bool useCache = true}) async {
     if (useCache) {
       final cachedEvents =

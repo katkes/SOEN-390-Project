@@ -40,21 +40,21 @@ class CalendarService {
       : _calendarApiProvider =
             calendarApiProvider ?? ((authClient) => CalendarApi(authClient));
 
-/// Fetches a list of events from a specified calendar or the **primary calendar** by default.
+  /// Fetches a list of events from a specified calendar or the **primary calendar** by default.
   ///
-/// ## Parameters:
+  /// ## Parameters:
   /// - [calendarId] *(optional)*: The ID of the calendar to fetch events from. Defaults to `'primary'`.
   ///
   /// ## Returns:
-/// - A `List<Event>` containing the calendar's events.
+  /// - A `List<Event>` containing the calendar's events.
   /// - Returns an **empty list** if authentication fails or no events are found.
   ///
   /// ## Example:
   /// ```dart
-/// final events = await calendarService.fetchEvents(); // Fetches from primary
+  /// final events = await calendarService.fetchEvents(); // Fetches from primary
   /// final events = await calendarService.fetchEvents('custom_calendar_id'); // Fetches from specific calendar
   /// ```
-Future<List<Event>> fetchEvents([String calendarId = 'primary']) async {
+  Future<List<Event>> fetchEvents([String calendarId = 'primary']) async {
     final auth.AuthClient? authClient = await _authRepository.getAuthClient();
     if (authClient == null) return [];
 
@@ -63,7 +63,6 @@ Future<List<Event>> fetchEvents([String calendarId = 'primary']) async {
 
     return events.items ?? [];
   }
-
 
   /// Fetches a list of available calendars for the authenticated user.
   ///

@@ -121,7 +121,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     }
   }
 
-  Future<void> fetchCalendarEvents() async {
+  Future<void> fetchCalendarEvents({bool useCashe = true}) async {
     try {
       setState(() {
         _isLoading = true;
@@ -129,14 +129,21 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
       });
 
       // Fetch all events using the service
-      final allEventsByDay = await _calendarEventService.fetchCalendarEvents();
+      final allEventsByDay = await _calendarEventService.fetchCalendarEvents(
+          _selectedCalendarId ?? 'primary',
+          useCache: useCashe);
 
       // If a calendar is selected, filter events for that calendar
-
+      print("Fetched all events: $allEventsByDay");
       if (_selectedCalendarId != null) {
         final filteredEventsByDay = <DateTime, List<gcal.Event>>{};
 
         allEventsByDay.forEach((date, events) {
+          for (var event in events) {
+            print("Event ID: ${event.id}");
+            print("Event Organizer Email: ${event.organizer?.email}");
+            print("Event Creator Email: ${event.creator?.email}");
+          }
           final filteredEvents = events.where((event) {
             // Filter events based on the selected calendar ID
             return event.organizer?.email == _selectedCalendarId ||
@@ -151,6 +158,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
         setState(() {
           _eventsByDay = filteredEventsByDay;
+          print(_eventsByDay);
           _isLoading = false;
         });
       } else {
@@ -215,15 +223,44 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
           Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: CalendarDropdown(
-              calendars: _calendars,
-              selectedCalendarId: _selectedCalendarId,
-              onCalendarSelected: (calendarId) {
-                setState(() {
-                  _selectedCalendarId = calendarId;
-                });
-                fetchCalendarEvents(); // Fetch events for the selected calendar
-              },
+            child: Row(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.refresh),
+                  onPressed: () async {
+                    setState(() {
+                      _isLoading = true;
+                    });
+
+                    try {
+                      // Fetch events without using cache
+                      await fetchCalendarEvents(useCashe: false);
+                      print(_selectedCalendarId);
+                      setState(() {
+                        _isLoading = false;
+                      });
+                    } catch (e) {
+                      setState(() {
+                        _error = "Failed to refresh events: $e";
+                        _isLoading = false;
+                      });
+                    }
+                  },
+                  tooltip: "Refresh Calendars",
+                ),
+                Expanded(
+                  child: CalendarDropdown(
+                    calendars: _calendars,
+                    selectedCalendarId: _selectedCalendarId,
+                    onCalendarSelected: (calendarId) {
+                      setState(() {
+                        _selectedCalendarId = calendarId;
+                      });
+                      fetchCalendarEvents(); // Fetch events for the selected calendar
+                    },
+                  ),
+                ),
+              ],
             ),
           ),
           TableCalendarWidget(
