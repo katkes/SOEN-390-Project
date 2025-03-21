@@ -19,7 +19,8 @@ class CalendarEventService {
     try {
       // Fetch events using the CalendarRepository
       final events =
-          await calendarRepository.getEvents(calendarId, useCache: useCache);
+          await calendarRepository.getEvents(
+          calendarId: calendarId, useCache: useCache);
 
       // Group events by date
       final eventsByDay = <DateTime, List<gcal.Event>>{};
@@ -27,7 +28,7 @@ class CalendarEventService {
       for (final event in events) {
         final startTime = event.start?.dateTime ??
             (event.start?.date != null
-                ? DateTime.parse(event.start!.date! as String)
+                ? DateTime.parse(event.start!.date!.toString())
                 : null);
 
         if (startTime != null) {
