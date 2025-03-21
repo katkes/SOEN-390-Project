@@ -54,12 +54,24 @@ class CalendarService {
   /// final events = await calendarService.fetchEvents(); // Fetches from primary
   /// final events = await calendarService.fetchEvents('custom_calendar_id'); // Fetches from specific calendar
   /// ```
-  Future<List<Event>> fetchEvents([String calendarId = 'primary']) async {
+Future<List<Event>> fetchEvents([String calendarId = 'primary']) async {
     final auth.AuthClient? authClient = await _authRepository.getAuthClient();
     if (authClient == null) return [];
 
     final calendar = _calendarApiProvider(authClient);
-    final events = await calendar.events.list(calendarId);
+
+    final events = await calendar.events.list(
+      calendarId,
+      singleEvents: true, // Expand recurring events
+      orderBy: 'startTime', // Order for consistency
+      timeMin: DateTime.now().toUtc(),
+    );
+    for (var event in events.items ?? []) {
+      print("Event ID: ${event.id}");
+      print("Summary: ${event.summary}");
+      print("Is Recurrence Instance: ${event.recurringEventId != null}");
+    }
+
 
     return events.items ?? [];
   }
