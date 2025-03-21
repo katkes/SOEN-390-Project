@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import "package:soen_390/screens/indoor_accessibility/indoor_accessibility_preference.dart";
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   group("Testing indoor accessibility checkbox functionality/UI", () {
@@ -66,5 +67,26 @@ void main() {
           find.byType(IndoorAccessibilityPage));
       expect(state.getMobilityStatus(), false);
     }); //end of test
-  }); //end of group
+  });//end of group
+
+  group("Testing data persistence from the shared preferences package implementation", (){
+    setUp(() async {
+      //mock shared preferences
+      SharedPreferences.setMockInitialValues({});
+    });
+
+    test('Initial value should be false', () async {
+      bool result = await IndoorAccessibilityState.getMobilityStatusPreference();
+      expect(result, false);
+    });
+
+    test('Saved preference should be retrievable', () async {
+      // Mock saving a value
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('mobility_impaired', true);
+
+      bool result = await IndoorAccessibilityState.getMobilityStatusPreference();
+      expect(result, true);
+    });
+  });
 } //end of main function
