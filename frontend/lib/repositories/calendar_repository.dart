@@ -64,17 +64,17 @@ class CalendarRepository {
     return events;
   }
 
-/// Removes an event from the cache for a given calendar.
-///
-/// ## Parameters:
-/// - [eventId]: The ID of the event to remove from cache.
-/// - [calendarId]: The ID of the calendar associated with the event.
-///
-/// This method is used to update the cache when an event is deleted.
-/// If the event is not found in the cache, no action is taken.
-///
-/// ## Returns:
-/// - A `Future<void>` indicating the completion of the operation.
+  /// Removes an event from the cache for a given calendar.
+  ///
+  /// ## Parameters:
+  /// - [eventId]: The ID of the event to remove from cache.
+  /// - [calendarId]: The ID of the calendar associated with the event.
+  ///
+  /// This method is used to update the cache when an event is deleted.
+  /// If the event is not found in the cache, no action is taken.
+  ///
+  /// ## Returns:
+  /// - A `Future<void>` indicating the completion of the operation.
   Future<void> removeEventFromCache(String eventId, String calendarId) async {
     await _cacheService.removeEventFromCache(eventId, calendarId: calendarId);
   }

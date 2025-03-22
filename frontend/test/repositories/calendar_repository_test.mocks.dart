@@ -130,4 +130,19 @@ class MockCacheService extends _i1.Mock implements _i5.CacheService {
           <_i2.Event>[],
         ),
       ) as _i4.Future<List<_i2.Event>>);
+
+  @override
+  _i4.Future<void> removeEventFromCache(
+    String? eventId, {
+    required String? calendarId,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #removeEventFromCache,
+          [eventId],
+          {#calendarId: calendarId},
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 }
