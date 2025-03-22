@@ -34,13 +34,13 @@ class MappedinWebView extends StatefulWidget {
 }
 
 class MappedinWebViewState extends State<MappedinWebView> {
-  late final WebViewController _controller;
+  late final WebViewController controller;
   String statusMessage = "Nothing";
 
   @override
   void initState() {
     super.initState();
-    _controller = WebViewController()
+    controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted);
 
     /// Registers a JavaScript channel to receive direction updates from the WebView.
@@ -52,7 +52,7 @@ class MappedinWebViewState extends State<MappedinWebView> {
     ///     "payload": String | { "message": String }
     ///   }
     /// - Updates the [statusMessage] based on success or error.
-    _controller.addJavaScriptChannel(
+    controller.addJavaScriptChannel(
       "DirectionsChannel",
       onMessageReceived: (JavaScriptMessage message) {
         try {
@@ -81,7 +81,7 @@ class MappedinWebViewState extends State<MappedinWebView> {
     ///     "payload": { "floorName": String } | { "message": String }
     ///   }
     /// - Updates the [statusMessage] to reflect the current floor or error.
-    _controller.addJavaScriptChannel(
+    controller.addJavaScriptChannel(
       "FloorsChannel",
       onMessageReceived: (JavaScriptMessage message) {
         try {
@@ -101,12 +101,12 @@ class MappedinWebViewState extends State<MappedinWebView> {
       },
     );
 
-    _loadHtmlFromAssets();
+    loadHtmlFromAssets();
   }
 
   /// Loads the html file into the weview. It also inserts the js file into html and replaces the
   /// labels with secrets from the .env file
-  Future<void> _loadHtmlFromAssets() async {
+  Future<void> loadHtmlFromAssets() async {
     final fileHtmlContents =
         await rootBundle.loadString('assets/mappedin.html');
     final fileJsContents = await rootBundle.loadString('assets/mappedin.js');
@@ -130,7 +130,7 @@ class MappedinWebViewState extends State<MappedinWebView> {
       (prev, e) => prev.replaceAll(e.key, e.value),
     );
 
-    _controller.loadHtmlString(fileHtmlWithKeys);
+    controller.loadHtmlString(fileHtmlWithKeys);
   }
 
   /// Sends a request to the embedded JavaScript to generate directions.
@@ -138,7 +138,7 @@ class MappedinWebViewState extends State<MappedinWebView> {
   /// - [departure]: The starting location name.
   /// - [destination]: The destination location name.
   showDirections(String departure, String destination) async {
-    await _controller
+    await controller
         .runJavaScript("getDirections('$departure', '$destination')");
   }
 
@@ -146,11 +146,11 @@ class MappedinWebViewState extends State<MappedinWebView> {
   ///
   /// - [floorName]: The name of the floor to switch to.
   setFloor(String floorName) async {
-    await _controller.runJavaScript("setFloor('$floorName')");
+    await controller.runJavaScript("setFloor('$floorName')");
   }
 
   @override
   Widget build(BuildContext context) {
-    return WebViewWidget(controller: _controller);
+    return WebViewWidget(controller: controller);
   }
 }
