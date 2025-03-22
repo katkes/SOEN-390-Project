@@ -254,6 +254,12 @@
         show3dMap,
       } from "https://cdn.jsdelivr.net/npm/@mappedin/mappedin-js@beta/lib/esm/index.js";
 
+      let mobileImpairment = false;
+      function receiveSharedPreferenceForMobilityImpairment(isImpaired) {
+        mobileImpairment = isImpaired;
+       }
+
+
       const options = {
         key: "MAPPEDIN_API_KEY",
         secret: "MAPPEDIN_API_SECRET",
@@ -308,11 +314,6 @@
         return Math.ceil(distanceInMeters / avg_walking_speed);
       }
 
-      //getting the mobility preference of the user from flutter.
-      let mobileImpairment = false;
-      function receiveSharedPreferenceForMobilityImpairment(bool) {
-        mobileImpairment = bool;
-      }
 
       // Get Directions and Display Estimated Time
       getDirectionsButton.addEventListener("click", async () => {
@@ -324,20 +325,9 @@
           const destinationSpace = spaces.find((s) => s.id === destinationId);
 
           if (startSpace && destinationSpace) {
-            // original piece of code incase i fuck this up somehow. idk im tired.
             // const directions = await mapData.getDirections(startSpace,destinationSpace);
 
-
             const directions = await mapData.getDirections(startSpace,destinationSpace, {accessible: mobileImpairment});
-
-            //bogus code, remove.
-            //function receiveSharedPreferenceForMobilityImpairment(bool) {
-            //  const directions = await mapData.getDirections(startSpace,destinationSpace, {accessible: bool});
-            //}
-
-
-
-
 
 
             if (directions && directions.path) {
