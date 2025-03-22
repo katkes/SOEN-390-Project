@@ -95,5 +95,24 @@ void main() {
       // Verifies that `getStringList` was called once.
       verify(mockPreferences.getStringList(expectedCacheKey)).called(1);
     });
+
+    /// Tests removeEventFromCache method
+    test('should handle event not found in cache', () async {
+      final storedData = [
+        jsonEncode({"summary": "Meeting", "id": "1"}),
+        jsonEncode({"summary": "Conference", "id": "2"}),
+      ];
+
+      when(mockPreferences.getStringList(expectedCacheKey))
+          .thenReturn(storedData);
+
+      when(mockPreferences.setStringList(expectedCacheKey, any))
+          .thenAnswer((_) async => true);
+
+      await cacheService.removeEventFromCache('3', calendarId: testCalendarId);
+
+      verify(mockPreferences.setStringList(expectedCacheKey, storedData))
+          .called(1);
+    });
   });
 }

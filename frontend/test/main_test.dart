@@ -18,6 +18,8 @@ import 'package:soen_390/services/building_to_coordinates.dart';
 import 'package:soen_390/services/auth_service.dart';
 import 'package:googleapis_auth/googleapis_auth.dart' as auth;
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:soen_390/screens/calendar/calendar_view.dart';
+import 'package:soen_390/screens/profile/profile_screen.dart';
 
 /// Test suite for the main application and services in the SOEN-390 project.
 ///

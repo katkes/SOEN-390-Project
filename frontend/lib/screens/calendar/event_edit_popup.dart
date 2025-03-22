@@ -92,7 +92,7 @@ class EventEditPopupState extends State<EventEditPopup> {
                     IconButton(
                       icon: const Icon(Icons.delete, color: Colors.red),
                       onPressed:
-                          _isDeleting ? null : () => _confirmDelete(context),
+                          _isDeleting ? null : () => confirmDelete(context),
                     ),
                   ],
                 ),
@@ -237,7 +237,7 @@ class EventEditPopupState extends State<EventEditPopup> {
     }
   }
 
-  void _confirmDelete(BuildContext context) {
+  void confirmDelete(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(

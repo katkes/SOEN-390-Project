@@ -27,7 +27,7 @@ class _BuildingSearchFieldState extends State<BuildingSearchField> {
     }
   }
 
-  Future<void> _updateSuggestions(String input) async {
+  Future<void> updateSuggestions(String input) async {
     if (input.isEmpty) {
       setState(() {
         _suggestions = [];
@@ -62,7 +62,7 @@ class _BuildingSearchFieldState extends State<BuildingSearchField> {
     }
   }
 
-  void _selectBuilding(String building) {
+  void selectBuilding(String building) {
     _controller.text = building;
     setState(() {
       _suggestions = [];
@@ -93,7 +93,7 @@ class _BuildingSearchFieldState extends State<BuildingSearchField> {
               // Debounce the API call
               Future.delayed(const Duration(milliseconds: 300), () {
                 if (_controller.text == value) {
-                  _updateSuggestions(value);
+                  updateSuggestions(value);
                 }
               });
             },
@@ -121,7 +121,7 @@ class _BuildingSearchFieldState extends State<BuildingSearchField> {
                   return ListTile(
                     dense: true,
                     title: Text(_suggestions[index]),
-                    onTap: () => _selectBuilding(_suggestions[index]),
+                    onTap: () => selectBuilding(_suggestions[index]),
                   );
                 },
               ),

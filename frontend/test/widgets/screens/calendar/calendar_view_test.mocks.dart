@@ -3,17 +3,24 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i6;
+import 'dart:async' as _i8;
 
-import 'package:google_sign_in/google_sign_in.dart' as _i4;
+import 'package:google_sign_in/google_sign_in.dart' as _i6;
 import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart'
-    as _i5;
+    as _i7;
+import 'package:googleapis/calendar/v3.dart' as _i4;
 import 'package:googleapis_auth/googleapis_auth.dart' as _i3;
 import 'package:http/http.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:soen_390/core/secure_storage.dart' as _i8;
-import 'package:soen_390/services/auth_service.dart' as _i9;
-import 'package:soen_390/services/http_service.dart' as _i7;
+import 'package:shared_preferences/shared_preferences.dart' as _i16;
+import 'package:soen_390/core/secure_storage.dart' as _i10;
+import 'package:soen_390/repositories/auth_repository.dart' as _i12;
+import 'package:soen_390/repositories/calendar_repository.dart' as _i5;
+import 'package:soen_390/screens/calendar/calendar_event_service.dart' as _i15;
+import 'package:soen_390/services/auth_service.dart' as _i11;
+import 'package:soen_390/services/cache_service.dart' as _i14;
+import 'package:soen_390/services/calendar_service.dart' as _i13;
+import 'package:soen_390/services/http_service.dart' as _i9;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -39,19 +46,30 @@ class _FakeAuthClient_1 extends _i1.SmartFake implements _i3.AuthClient {
       : super(parent, parentInvocation);
 }
 
+class _FakeCalendarApi_2 extends _i1.SmartFake implements _i4.CalendarApi {
+  _FakeCalendarApi_2(Object parent, Invocation parentInvocation)
+      : super(parent, parentInvocation);
+}
+
+class _FakeCalendarRepository_3 extends _i1.SmartFake
+    implements _i5.CalendarRepository {
+  _FakeCalendarRepository_3(Object parent, Invocation parentInvocation)
+      : super(parent, parentInvocation);
+}
+
 /// A class which mocks [GoogleSignIn].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockGoogleSignIn extends _i1.Mock implements _i4.GoogleSignIn {
+class MockGoogleSignIn extends _i1.Mock implements _i6.GoogleSignIn {
   MockGoogleSignIn() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i5.SignInOption get signInOption => (super.noSuchMethod(
+  _i7.SignInOption get signInOption => (super.noSuchMethod(
         Invocation.getter(#signInOption),
-        returnValue: _i5.SignInOption.standard,
-      ) as _i5.SignInOption);
+        returnValue: _i7.SignInOption.standard,
+      ) as _i7.SignInOption);
 
   @override
   List<String> get scopes =>
@@ -65,14 +83,14 @@ class MockGoogleSignIn extends _i1.Mock implements _i4.GoogleSignIn {
       ) as bool);
 
   @override
-  _i6.Stream<_i4.GoogleSignInAccount?> get onCurrentUserChanged =>
+  _i8.Stream<_i6.GoogleSignInAccount?> get onCurrentUserChanged =>
       (super.noSuchMethod(
         Invocation.getter(#onCurrentUserChanged),
-        returnValue: _i6.Stream<_i4.GoogleSignInAccount?>.empty(),
-      ) as _i6.Stream<_i4.GoogleSignInAccount?>);
+        returnValue: _i8.Stream<_i6.GoogleSignInAccount?>.empty(),
+      ) as _i8.Stream<_i6.GoogleSignInAccount?>);
 
   @override
-  _i6.Future<_i4.GoogleSignInAccount?> signInSilently({
+  _i8.Future<_i6.GoogleSignInAccount?> signInSilently({
     bool? suppressErrors = true,
     bool? reAuthenticate = false,
   }) =>
@@ -81,41 +99,41 @@ class MockGoogleSignIn extends _i1.Mock implements _i4.GoogleSignIn {
           #suppressErrors: suppressErrors,
           #reAuthenticate: reAuthenticate,
         }),
-        returnValue: _i6.Future<_i4.GoogleSignInAccount?>.value(),
-      ) as _i6.Future<_i4.GoogleSignInAccount?>);
+        returnValue: _i8.Future<_i6.GoogleSignInAccount?>.value(),
+      ) as _i8.Future<_i6.GoogleSignInAccount?>);
 
   @override
-  _i6.Future<bool> isSignedIn() => (super.noSuchMethod(
+  _i8.Future<bool> isSignedIn() => (super.noSuchMethod(
         Invocation.method(#isSignedIn, []),
-        returnValue: _i6.Future<bool>.value(false),
-      ) as _i6.Future<bool>);
+        returnValue: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
 
   @override
-  _i6.Future<_i4.GoogleSignInAccount?> signIn() => (super.noSuchMethod(
+  _i8.Future<_i6.GoogleSignInAccount?> signIn() => (super.noSuchMethod(
         Invocation.method(#signIn, []),
-        returnValue: _i6.Future<_i4.GoogleSignInAccount?>.value(),
-      ) as _i6.Future<_i4.GoogleSignInAccount?>);
+        returnValue: _i8.Future<_i6.GoogleSignInAccount?>.value(),
+      ) as _i8.Future<_i6.GoogleSignInAccount?>);
 
   @override
-  _i6.Future<_i4.GoogleSignInAccount?> signOut() => (super.noSuchMethod(
+  _i8.Future<_i6.GoogleSignInAccount?> signOut() => (super.noSuchMethod(
         Invocation.method(#signOut, []),
-        returnValue: _i6.Future<_i4.GoogleSignInAccount?>.value(),
-      ) as _i6.Future<_i4.GoogleSignInAccount?>);
+        returnValue: _i8.Future<_i6.GoogleSignInAccount?>.value(),
+      ) as _i8.Future<_i6.GoogleSignInAccount?>);
 
   @override
-  _i6.Future<_i4.GoogleSignInAccount?> disconnect() => (super.noSuchMethod(
+  _i8.Future<_i6.GoogleSignInAccount?> disconnect() => (super.noSuchMethod(
         Invocation.method(#disconnect, []),
-        returnValue: _i6.Future<_i4.GoogleSignInAccount?>.value(),
-      ) as _i6.Future<_i4.GoogleSignInAccount?>);
+        returnValue: _i8.Future<_i6.GoogleSignInAccount?>.value(),
+      ) as _i8.Future<_i6.GoogleSignInAccount?>);
 
   @override
-  _i6.Future<bool> requestScopes(List<String>? scopes) => (super.noSuchMethod(
+  _i8.Future<bool> requestScopes(List<String>? scopes) => (super.noSuchMethod(
         Invocation.method(#requestScopes, [scopes]),
-        returnValue: _i6.Future<bool>.value(false),
-      ) as _i6.Future<bool>);
+        returnValue: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
 
   @override
-  _i6.Future<bool> canAccessScopes(
+  _i8.Future<bool> canAccessScopes(
     List<String>? scopes, {
     String? accessToken,
   }) =>
@@ -125,14 +143,14 @@ class MockGoogleSignIn extends _i1.Mock implements _i4.GoogleSignIn {
           [scopes],
           {#accessToken: accessToken},
         ),
-        returnValue: _i6.Future<bool>.value(false),
-      ) as _i6.Future<bool>);
+        returnValue: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
 }
 
 /// A class which mocks [HttpService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockHttpService extends _i1.Mock implements _i7.HttpService {
+class MockHttpService extends _i1.Mock implements _i9.HttpService {
   MockHttpService() {
     _i1.throwOnMissingStub(this);
   }
@@ -153,44 +171,44 @@ class MockHttpService extends _i1.Mock implements _i7.HttpService {
 /// A class which mocks [SecureStorage].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockSecureStorage extends _i1.Mock implements _i8.SecureStorage {
+class MockSecureStorage extends _i1.Mock implements _i10.SecureStorage {
   MockSecureStorage() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i6.Future<void> storeToken(String? key, String? value) =>
+  _i8.Future<void> storeToken(String? key, String? value) =>
       (super.noSuchMethod(
         Invocation.method(#storeToken, [key, value]),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
 
   @override
-  _i6.Future<String?> getToken(String? key) => (super.noSuchMethod(
+  _i8.Future<String?> getToken(String? key) => (super.noSuchMethod(
         Invocation.method(#getToken, [key]),
-        returnValue: _i6.Future<String?>.value(),
-      ) as _i6.Future<String?>);
+        returnValue: _i8.Future<String?>.value(),
+      ) as _i8.Future<String?>);
 
   @override
-  _i6.Future<void> deleteToken(String? key) => (super.noSuchMethod(
+  _i8.Future<void> deleteToken(String? key) => (super.noSuchMethod(
         Invocation.method(#deleteToken, [key]),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
 }
 
 /// A class which mocks [AuthClientFactory].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAuthClientFactory extends _i1.Mock implements _i9.AuthClientFactory {
+class MockAuthClientFactory extends _i1.Mock implements _i11.AuthClientFactory {
   MockAuthClientFactory() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
   _i3.AuthClient createAuthClient(
-    _i7.HttpService? baseClient,
+    _i9.HttpService? baseClient,
     _i3.AccessCredentials? credentials,
   ) =>
       (super.noSuchMethod(
@@ -200,4 +218,339 @@ class MockAuthClientFactory extends _i1.Mock implements _i9.AuthClientFactory {
           Invocation.method(#createAuthClient, [baseClient, credentials]),
         ),
       ) as _i3.AuthClient);
+}
+
+/// A class which mocks [AuthRepository].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockAuthRepository extends _i1.Mock implements _i12.AuthRepository {
+  MockAuthRepository() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i8.Future<_i3.AuthClient?> getAuthClient() => (super.noSuchMethod(
+        Invocation.method(#getAuthClient, []),
+        returnValue: _i8.Future<_i3.AuthClient?>.value(),
+      ) as _i8.Future<_i3.AuthClient?>);
+
+  @override
+  _i8.Future<void> signOut() => (super.noSuchMethod(
+        Invocation.method(#signOut, []),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
+}
+
+/// A class which mocks [CalendarService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockCalendarService extends _i1.Mock implements _i13.CalendarService {
+  MockCalendarService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i8.Future<List<_i4.Event>> fetchEvents([String? calendarId = 'primary']) =>
+      (super.noSuchMethod(
+        Invocation.method(#fetchEvents, [calendarId]),
+        returnValue: _i8.Future<List<_i4.Event>>.value(<_i4.Event>[]),
+      ) as _i8.Future<List<_i4.Event>>);
+
+  @override
+  _i8.Future<List<_i4.CalendarListEntry>> fetchCalendars() =>
+      (super.noSuchMethod(
+        Invocation.method(#fetchCalendars, []),
+        returnValue: _i8.Future<List<_i4.CalendarListEntry>>.value(
+          <_i4.CalendarListEntry>[],
+        ),
+      ) as _i8.Future<List<_i4.CalendarListEntry>>);
+
+  @override
+  _i8.Future<_i4.Event?> createEvent(String? calendarId, _i4.Event? event) =>
+      (super.noSuchMethod(
+        Invocation.method(#createEvent, [calendarId, event]),
+        returnValue: _i8.Future<_i4.Event?>.value(),
+      ) as _i8.Future<_i4.Event?>);
+
+  @override
+  _i8.Future<_i4.Event?> updateEvent(
+    String? calendarId,
+    String? eventId,
+    _i4.Event? updatedEvent,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(#updateEvent, [
+          calendarId,
+          eventId,
+          updatedEvent,
+        ]),
+        returnValue: _i8.Future<_i4.Event?>.value(),
+      ) as _i8.Future<_i4.Event?>);
+
+  @override
+  _i8.Future<void> deleteEvent(String? calendarId, String? eventId) =>
+      (super.noSuchMethod(
+        Invocation.method(#deleteEvent, [calendarId, eventId]),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
+}
+
+/// A class which mocks [CalendarRepository].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockCalendarRepository extends _i1.Mock
+    implements _i5.CalendarRepository {
+  MockCalendarRepository() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i8.Future<List<_i4.Event>> getEvents({
+    String? calendarId = 'primary',
+    bool? useCache = true,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(#getEvents, [], {
+          #calendarId: calendarId,
+          #useCache: useCache,
+        }),
+        returnValue: _i8.Future<List<_i4.Event>>.value(<_i4.Event>[]),
+      ) as _i8.Future<List<_i4.Event>>);
+
+  @override
+  _i8.Future<void> removeEventFromCache(String? eventId, String? calendarId) =>
+      (super.noSuchMethod(
+        Invocation.method(#removeEventFromCache, [eventId, calendarId]),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
+
+  @override
+  _i8.Future<List<_i4.CalendarListEntry>> getCalendars() => (super.noSuchMethod(
+        Invocation.method(#getCalendars, []),
+        returnValue: _i8.Future<List<_i4.CalendarListEntry>>.value(
+          <_i4.CalendarListEntry>[],
+        ),
+      ) as _i8.Future<List<_i4.CalendarListEntry>>);
+}
+
+/// A class which mocks [CacheService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockCacheService extends _i1.Mock implements _i14.CacheService {
+  MockCacheService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i4.CalendarApi get calendarApi => (super.noSuchMethod(
+        Invocation.getter(#calendarApi),
+        returnValue: _FakeCalendarApi_2(
+          this,
+          Invocation.getter(#calendarApi),
+        ),
+      ) as _i4.CalendarApi);
+
+  @override
+  _i8.Future<void> storeEvents(
+    List<_i4.Event>? events, {
+    required String? calendarId,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #storeEvents,
+          [events],
+          {#calendarId: calendarId},
+        ),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
+
+  @override
+  _i8.Future<List<_i4.Event>> getStoredEvents({required String? calendarId}) =>
+      (super.noSuchMethod(
+        Invocation.method(#getStoredEvents, [], {#calendarId: calendarId}),
+        returnValue: _i8.Future<List<_i4.Event>>.value(<_i4.Event>[]),
+      ) as _i8.Future<List<_i4.Event>>);
+
+  @override
+  _i8.Future<void> removeEventFromCache(
+    String? eventId, {
+    required String? calendarId,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #removeEventFromCache,
+          [eventId],
+          {#calendarId: calendarId},
+        ),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
+}
+
+/// A class which mocks [CalendarEventService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockCalendarEventService extends _i1.Mock
+    implements _i15.CalendarEventService {
+  MockCalendarEventService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i5.CalendarRepository get calendarRepository => (super.noSuchMethod(
+        Invocation.getter(#calendarRepository),
+        returnValue: _FakeCalendarRepository_3(
+          this,
+          Invocation.getter(#calendarRepository),
+        ),
+      ) as _i5.CalendarRepository);
+
+  @override
+  _i8.Future<Map<DateTime, List<_i4.Event>>> fetchCalendarEvents(
+    String? calendarId, {
+    bool? useCache = true,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchCalendarEvents,
+          [calendarId],
+          {#useCache: useCache},
+        ),
+        returnValue: _i8.Future<Map<DateTime, List<_i4.Event>>>.value(
+          <DateTime, List<_i4.Event>>{},
+        ),
+      ) as _i8.Future<Map<DateTime, List<_i4.Event>>>);
+
+  @override
+  List<_i4.Event> getEventsForDay(
+    DateTime? day,
+    Map<DateTime, List<_i4.Event>>? eventsByDay,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(#getEventsForDay, [day, eventsByDay]),
+        returnValue: <_i4.Event>[],
+      ) as List<_i4.Event>);
+
+  @override
+  _i8.Future<List<_i4.CalendarListEntry>> fetchCalendars() =>
+      (super.noSuchMethod(
+        Invocation.method(#fetchCalendars, []),
+        returnValue: _i8.Future<List<_i4.CalendarListEntry>>.value(
+          <_i4.CalendarListEntry>[],
+        ),
+      ) as _i8.Future<List<_i4.CalendarListEntry>>);
+
+  @override
+  _i8.Future<void> deleteEventFromCache(String? eventId, String? calendarId) =>
+      (super.noSuchMethod(
+        Invocation.method(#deleteEventFromCache, [eventId, calendarId]),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
+}
+
+/// A class which mocks [SharedPreferences].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockSharedPreferences extends _i1.Mock implements _i16.SharedPreferences {
+  MockSharedPreferences() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  Set<String> getKeys() => (super.noSuchMethod(
+        Invocation.method(#getKeys, []),
+        returnValue: <String>{},
+      ) as Set<String>);
+
+  @override
+  Object? get(String? key) =>
+      (super.noSuchMethod(Invocation.method(#get, [key])) as Object?);
+
+  @override
+  bool? getBool(String? key) =>
+      (super.noSuchMethod(Invocation.method(#getBool, [key])) as bool?);
+
+  @override
+  int? getInt(String? key) =>
+      (super.noSuchMethod(Invocation.method(#getInt, [key])) as int?);
+
+  @override
+  double? getDouble(String? key) =>
+      (super.noSuchMethod(Invocation.method(#getDouble, [key])) as double?);
+
+  @override
+  String? getString(String? key) =>
+      (super.noSuchMethod(Invocation.method(#getString, [key])) as String?);
+
+  @override
+  bool containsKey(String? key) => (super.noSuchMethod(
+        Invocation.method(#containsKey, [key]),
+        returnValue: false,
+      ) as bool);
+
+  @override
+  List<String>? getStringList(String? key) =>
+      (super.noSuchMethod(Invocation.method(#getStringList, [key]))
+          as List<String>?);
+
+  @override
+  _i8.Future<bool> setBool(String? key, bool? value) => (super.noSuchMethod(
+        Invocation.method(#setBool, [key, value]),
+        returnValue: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
+
+  @override
+  _i8.Future<bool> setInt(String? key, int? value) => (super.noSuchMethod(
+        Invocation.method(#setInt, [key, value]),
+        returnValue: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
+
+  @override
+  _i8.Future<bool> setDouble(String? key, double? value) => (super.noSuchMethod(
+        Invocation.method(#setDouble, [key, value]),
+        returnValue: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
+
+  @override
+  _i8.Future<bool> setString(String? key, String? value) => (super.noSuchMethod(
+        Invocation.method(#setString, [key, value]),
+        returnValue: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
+
+  @override
+  _i8.Future<bool> setStringList(String? key, List<String>? value) =>
+      (super.noSuchMethod(
+        Invocation.method(#setStringList, [key, value]),
+        returnValue: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
+
+  @override
+  _i8.Future<bool> remove(String? key) => (super.noSuchMethod(
+        Invocation.method(#remove, [key]),
+        returnValue: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
+
+  @override
+  _i8.Future<bool> commit() => (super.noSuchMethod(
+        Invocation.method(#commit, []),
+        returnValue: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
+
+  @override
+  _i8.Future<bool> clear() => (super.noSuchMethod(
+        Invocation.method(#clear, []),
+        returnValue: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
+
+  @override
+  _i8.Future<void> reload() => (super.noSuchMethod(
+        Invocation.method(#reload, []),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
 }

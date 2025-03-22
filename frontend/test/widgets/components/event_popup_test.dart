@@ -11,11 +11,6 @@ class MockCalendarService extends Mock implements CalendarService {}
 
 class MockCalendarEventService extends Mock implements CalendarEventService {}
 
-/// This test file tests the EventEditPopup class
-/// The EventEditPopup is a popup dialog that allows the user to edit an event
-/// The tests in this file test the EventEditPopup by checking that the popup displays the event details and updates the date and time
-/// The tests use the flutter_test package to test the widget
-/// The tests use the testWidgets function to test the widget
 void main() {
   late MockCalendarService mockCalendarService;
   late MockCalendarEventService mockCalendarEventService;

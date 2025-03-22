@@ -158,7 +158,7 @@ class CalendarService {
   /// - [eventId]: The ID of the event to be removed.
   ///
   /// ## Example:
-  /// ```dart
+  /// ```dartX
   /// await calendarService.deleteEvent('primary', 'eventId123');
   /// ```
   Future<void> deleteEvent(String calendarId, String eventId) async {

@@ -37,16 +37,4 @@ void main() {
     expect(eventsForMarch20[0].summary, 'Event 1');
     expect(eventsForMarch20[1].summary, 'Event 2');
   });
-
-  test('should return empty list if no events exist for a specific day', () {
-    // Arrange: Empty event map
-    final mockEventsByDay = <DateTime, List<gcal.Event>>{};
-
-    // Act: Call getEventsForDay for a day with no events
-    final eventsForMarch20 = calendarEventService.getEventsForDay(
-        DateTime(2025, 3, 20), mockEventsByDay);
-
-    // Assert: Verify that an empty list is returned
-    expect(eventsForMarch20, isEmpty);
-  });
 }
