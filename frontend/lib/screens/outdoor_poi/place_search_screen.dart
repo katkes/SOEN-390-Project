@@ -69,12 +69,23 @@ class _PlaceSearchScreenState extends State<PlaceSearchScreen> {
   /// Controller for the search bar input.
   final TextEditingController _searchController = TextEditingController();
 
+  
+  /// Controls the visibility of the POITypeSelector widget.
+  bool _isPOISelectorVisible = false;
+
+
   @override
   void initState() {
     super.initState();
     // Initialize services from the widget for dependency injection.
     locationService = widget.locationService;
     poiService = widget.poiService;
+  }
+
+  void _togglePOISelectorVisibility() {
+    setState(() {
+      _isPOISelectorVisible = !_isPOISelectorVisible;
+    });
   }
 
   /// Displays a [SnackBar] with the provided [message].
@@ -217,7 +228,7 @@ class _PlaceSearchScreenState extends State<PlaceSearchScreen> {
   /// - A search bar for manual location input or using current location.
   /// - A POI type selector to filter places.
   /// - A list view displaying nearby places or a loading indicator.
-  @override
+ @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Explore Nearby')),
@@ -229,14 +240,26 @@ class _PlaceSearchScreenState extends State<PlaceSearchScreen> {
             onUseCurrentLocation: _useCurrentLocation,
             googleApiKey: dotenv.env['GOOGLE_PLACES_API_KEY'] ?? '',
           ),
-          POITypeSelector(onTypeSelected: _onTypeSelected),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: ElevatedButton(
+              onPressed: _togglePOISelectorVisibility,
+              child: Text(_isPOISelectorVisible
+                  ? 'Hide POI Type Selector'
+                  : 'Show POI Type Selector'),
+            ),
+          ),
+          Visibility(
+            visible: _isPOISelectorVisible,
+            child: POITypeSelector(onTypeSelected: _onTypeSelected),
+          ),
           Expanded(
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : POIListView(
                     places: _places,
                     apiKey: dotenv.env['GOOGLE_PLACES_API_KEY'] ?? '',
-                    onPlaceTap: _handlePlaceTap, // <-- ADD THIS
+                    onPlaceTap: _handlePlaceTap,
                   ),
           ),
         ],
