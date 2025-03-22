@@ -1,4 +1,22 @@
+/// A Flutter widget that embeds a custom WebView for displaying and interacting
+/// with Mappedin indoor maps using local HTML/JS assets.
+///
+/// This widget sets up two-way communication between Dart and JavaScript via
+/// channels for directions and floor selection. It dynamically loads and injects
+/// API keys into the HTML before rendering. Useful for integrating interactive
+/// indoor navigation features within a Flutter app.
+///
+/// Channels:
+/// - `Directions`: Receives directions or error messages from JS.
+/// - `Floors`: Receives floor change events or errors from JS.
+///
+/// Usage:
+///   await _webViewKey.currentState?.showDirections("124", "817");
+///   await _webViewKey.currentState?.setFloor("Floor 2");
+
+
 import 'dart:convert';
+
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -24,7 +42,15 @@ class MappedinWebViewState extends State<MappedinWebView> {
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted);
 
-    // Directions Channel
+    /// Registers a JavaScript channel to receive direction updates from the WebView.
+    ///
+    /// - Channel name: `"Directions"`
+    /// - Receives: A JSON string with the following structure:
+    ///   {
+    ///     "type": "success" | "error",
+    ///     "payload": String | { "message": String }
+    ///   }
+    /// - Updates the [statusMessage] based on success or error.
     _controller.addJavaScriptChannel(
       "Directions",
       onMessageReceived: (JavaScriptMessage message) {
@@ -45,7 +71,15 @@ class MappedinWebViewState extends State<MappedinWebView> {
       },
     );
 
-    // Floor selection Channel
+    /// Registers a JavaScript channel to receive floor selection events from the WebView.
+    ///
+    /// - Channel name: `"Floors"`
+    /// - Receives: A JSON string with the following structure:
+    ///   {
+    ///     "type": "success" | "error",
+    ///     "payload": { "floorName": String } | { "message": String }
+    ///   }
+    /// - Updates the [statusMessage] to reflect the current floor or error.
     _controller.addJavaScriptChannel(
       "Floors",
       onMessageReceived: (JavaScriptMessage message) {
@@ -69,6 +103,8 @@ class MappedinWebViewState extends State<MappedinWebView> {
     _loadHtmlFromAssets();
   }
 
+  /// Loads the html file into the weview. It also inserts the js file into html and replaces the
+  /// labels with secrets from the .env file
   Future<void> _loadHtmlFromAssets() async {
     final fileHtmlContents =
         await rootBundle.loadString('assets/mappedin.html');
@@ -105,11 +141,18 @@ class MappedinWebViewState extends State<MappedinWebView> {
     _controller.loadHtmlString(fileHtmlWithKeys);
   }
 
+  /// Sends a request to the embedded JavaScript to generate directions.
+  ///
+  /// - [departure]: The starting location name.
+  /// - [destination]: The destination location name.
   showDirections(String departure, String destination) async {
     await _controller
         .runJavaScript("getDirections('$departure', '$destination')");
   }
 
+  /// Sends a request to the embedded JavaScript to change the visible floor.
+  ///
+  /// - [floorName]: The name of the floor to switch to.
   setFloor(String floorName) async {
     await _controller.runJavaScript("setFloor('$floorName')");
   }

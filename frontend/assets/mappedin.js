@@ -1,15 +1,28 @@
+/**
+ * Initializes and renders a 3D indoor map using Mappedin JS SDK.
+ *
+ * Dynamically injects credentials via placeholders for secure loading in WebView.
+ * Exposes global JS functions for Flutter-to-JS communication:
+ * - window.getDirections(start, destination): Draws path on map.
+ * - window.setFloor(floorName): Changes visible floor.
+ * - window.setCameraTo(spaceName): Animates camera to a named space.
+ *
+ * Also sets up a dropdown selector for manual floor switching.
+ */
+
 import {
   getMapData,
   show3dMap,
 } from "https://cdn.jsdelivr.net/npm/@mappedin/mappedin-js@beta/lib/esm/index.js";
 
+// Placeholder API credentials to be replaced at runtime
 const options = {
   key: "MAPPEDIN_API_KEY",
   secret: "MAPPEDIN_API_SECRET",
   mapId: "MAPPEDIN_API_MAP_ID",
 };
 
-// Initialize Map
+// Load map data and render 3D view
 const mapData = await getMapData(options);
 const mapView = await show3dMap(
   document.getElementById("mappedin-map"),
@@ -19,8 +32,13 @@ const mapView = await show3dMap(
 mapView.Labels.all();
 mapView.enableDebug();
 
-window.setCameraTo = function setCameraTo(spaceId) {
-  const space = mapData.getByType("space").find(s => s.id === spaceId);
+/**
+ * Moves camera to the center of a named space.
+ *
+ * - [spaceName]: Name of the space to focus on.
+ */
+window.setCameraTo = function setCameraTo(spaceName) {
+  const space = mapData.getByType("space").find(s => s.name === spaceName);
   if (space && mapView) {
     mapView.Camera.animateTo({
       center: space.geometry.center,
@@ -31,76 +49,77 @@ window.setCameraTo = function setCameraTo(spaceId) {
   }
 };
 
+/**
+ * Changes the visible floor on the map and notifies Flutter.
+ *
+ * - [floorName]: Name of the target floor.
+ *
+ * Sends success or error message via `Floors.postMessage()`.
+ */
 window.setFloor = function setFloor(floorName) {
   try {
     const floors = mapData.getByType("floor");
     const targetFloor = floors.find(floor => floor.name === floorName);
 
-    if (!targetFloor) {
-      throw new Error(`Floor "${floorName}" not found`);
-    }
-
-    if (!mapView) {
-      throw new Error("mapView is not initialized");
-    }
+    if (!targetFloor) throw new Error(`Floor "${floorName}" not found`);
+    if (!mapView) throw new Error("mapView is not initialized");
 
     mapView.setFloor(targetFloor.id);
 
-    const message = JSON.stringify({
+    Floors.postMessage(JSON.stringify({
       type: "success",
-      payload: { status: "success", floorName: floorName, floorId: floor.id }
-    });
-
-    Floors.postMessage(message);
-
+      payload: { status: "success", floorName, floorId: targetFloor.id }
+    }));
   } catch (error) {
-    const message = JSON.stringify({
+    Floors.postMessage(JSON.stringify({
       type: "error",
       payload: { message: error.message }
-    });
-    Floors.postMessage(message);
+    }));
   }
 };
 
-
+/**
+ * Draws directions between two named spaces and notifies Flutter.
+ *
+ * - [startName]: Name of starting space.
+ * - [destinationName]: Name of destination space.
+ *
+ * Sends directions or error via `DirectionsChannel.postMessage()`.
+ */
 window.getDirections = async function getDirections(startName, destinationName) {
   try {
     const spaces = mapData.getByType("space");
-    const startSpace = spaces.find(s => s.name === startName);
-    const destinationSpace = spaces.find(s => s.name === destinationName);
+    const start = spaces.find(s => s.name === startName);
+    const destination = spaces.find(s => s.name === destinationName);
 
-    if (!startSpace || !destinationSpace) {
-      throw new Error("Invalid start or destination");
-    }
+    if (!start || !destination) throw new Error("Invalid start or destination");
 
-    const directions = await mapData.getDirections(startSpace, destinationSpace);
-    if (!directions || !directions.path) {
-      throw new Error("Directions not found");
-    }
+    const directions = await mapData.getDirections(start, destination);
+    if (!directions?.path) throw new Error("Directions not found");
 
     mapView.Navigation.clear();
     mapView.Navigation.draw(directions);
 
-    const successMessage = {
+    const msg = {
       type: "success",
       payload: {
         distance: directions.distance,
         directions: directions.instructions,
       }
     };
-    DirectionsChannel.postMessage(JSON.stringify(successMessage));
-    return JSON.stringify(successMessage);
+    DirectionsChannel.postMessage(JSON.stringify(msg));
+    return JSON.stringify(msg);
   } catch (err) {
-    const errorMessage = {
+    const msg = {
       type: "error",
       payload: { message: err.message }
     };
-    DirectionsChannel.postMessage(JSON.stringify(errorMessage));
-    return JSON.stringify(errorMessage);
+    DirectionsChannel.postMessage(JSON.stringify(msg));
+    return JSON.stringify(msg);
   }
 };
 
-// Populate Floor Selector
+// Populate floor dropdown UI
 const floorSelect = document.getElementById("floor-select");
 const floors = mapData.getByType("floor");
 
@@ -112,10 +131,11 @@ floors.forEach((floor) => {
   floorSelect.appendChild(option);
 });
 
-// Handle Floor Selection
+// Handle dropdown floor selection
 floorSelect.addEventListener("change", () => {
   const selectedFloorId = floorSelect.value;
   if (selectedFloorId) {
     mapView.setFloor(selectedFloorId);
   }
 });
+
