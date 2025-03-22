@@ -44,7 +44,7 @@ class MappedinWebViewState extends State<MappedinWebView> {
 
     /// Registers a JavaScript channel to receive direction updates from the WebView.
     ///
-    /// - Channel name: `"Directions"`
+    /// - Channel name: `"DirectionsChannel"`
     /// - Receives: A JSON string with the following structure:
     ///   {
     ///     "type": "success" | "error",
@@ -52,7 +52,7 @@ class MappedinWebViewState extends State<MappedinWebView> {
     ///   }
     /// - Updates the [statusMessage] based on success or error.
     _controller.addJavaScriptChannel(
-      "Directions",
+      "DirectionsChannel",
       onMessageReceived: (JavaScriptMessage message) {
         try {
           final Map<String, dynamic> msg = jsonDecode(message.message);
@@ -73,7 +73,7 @@ class MappedinWebViewState extends State<MappedinWebView> {
 
     /// Registers a JavaScript channel to receive floor selection events from the WebView.
     ///
-    /// - Channel name: `"Floors"`
+    /// - Channel name: `"FloorsChannel"`
     /// - Receives: A JSON string with the following structure:
     ///   {
     ///     "type": "success" | "error",
@@ -81,7 +81,7 @@ class MappedinWebViewState extends State<MappedinWebView> {
     ///   }
     /// - Updates the [statusMessage] to reflect the current floor or error.
     _controller.addJavaScriptChannel(
-      "Floors",
+      "FloorsChannel",
       onMessageReceived: (JavaScriptMessage message) {
         try {
           final Map<String, dynamic> msg = jsonDecode(message.message);
@@ -129,15 +129,6 @@ class MappedinWebViewState extends State<MappedinWebView> {
       (prev, e) => prev.replaceAll(e.key, e.value),
     );
 
-    void printLargeString(String text, {int chunkSize = 1000}) {
-      for (int i = 0; i < text.length; i += chunkSize) {
-        print(text.substring(
-            i, i + chunkSize > text.length ? text.length : i + chunkSize));
-      }
-    }
-
-    printLargeString(fileHtmlWithKeys);
-
     _controller.loadHtmlString(fileHtmlWithKeys);
   }
 
@@ -159,15 +150,6 @@ class MappedinWebViewState extends State<MappedinWebView> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(child: WebViewWidget(controller: _controller)),
-        // Display the current status message
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(statusMessage, key: const Key('statusText')),
-        ),
-      ],
-    );
+    return WebViewWidget(controller: _controller);
   }
 }

@@ -54,7 +54,7 @@ window.setCameraTo = function setCameraTo(spaceName) {
  *
  * - [floorName]: Name of the target floor.
  *
- * Sends success or error message via `Floors.postMessage()`.
+ * Sends success or error message via `FloorsChannel.postMessage()`.
  */
 window.setFloor = function setFloor(floorName) {
   try {
@@ -66,12 +66,12 @@ window.setFloor = function setFloor(floorName) {
 
     mapView.setFloor(targetFloor.id);
 
-    Floors.postMessage(JSON.stringify({
+    FloorsChannel.postMessage(JSON.stringify({
       type: "success",
       payload: { status: "success", floorName, floorId: targetFloor.id }
     }));
   } catch (error) {
-    Floors.postMessage(JSON.stringify({
+    FloorsChannel.postMessage(JSON.stringify({
       type: "error",
       payload: { message: error.message }
     }));
@@ -93,6 +93,7 @@ window.getDirections = async function getDirections(startName, destinationName) 
     const destination = spaces.find(s => s.name === destinationName);
 
     if (!start || !destination) throw new Error("Invalid start or destination");
+
 
     const directions = await mapData.getDirections(start, destination);
     if (!directions?.path) throw new Error("Directions not found");
