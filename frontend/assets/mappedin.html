@@ -260,7 +260,6 @@
         mapId: "MAPPEDIN_API_MAP_ID",
       };
 
-      // Initialize Map
       const mapData = await getMapData(options);
       const mapView = await show3dMap(
         document.getElementById("mappedin-map"),
@@ -269,7 +268,9 @@
 
       mapView.Labels.all();
 
-      // UI Elements
+      const spaces = mapData.getByType("space");
+      const floors = mapData.getByType("floor");
+
       const startSelect = document.getElementById("start");
       const destinationSelect = document.getElementById("destination");
       const getDirectionsButton = document.getElementById("get-directions");
@@ -277,7 +278,60 @@
       const directionsList = document.getElementById("directions-list");
       const toggleSteps = document.getElementById("toggle-steps");
 
-      const spaces = mapData.getByType("space");
+      const floorSelect = document.getElementById("floor-select");
+
+      const avgWalkingSpeed = 85;
+
+      function calculateWalkingTime(distanceInMeters) {
+        return Math.ceil(distanceInMeters / avgWalkingSpeed);
+      }
+
+      function updateDirectionsPanel(directions) {
+        const totalDistance = directions.distance;
+        const estimatedTime = calculateWalkingTime(totalDistance);
+
+        document.getElementById(
+          "estimated-time"
+        ).innerText = `Estimated Time: ${estimatedTime} min`;
+        document.getElementById(
+          "total-distance"
+        ).innerText = `Total Distance: ${Math.round(totalDistance)} meters`;
+
+        directionsList.innerHTML = "";
+        directions.instructions.forEach((step, index) => {
+          const stepDiv = document.createElement("div");
+          stepDiv.className = "direction-step";
+          stepDiv.innerHTML = `
+            <img src="https://img.icons8.com/ios-filled/50/right.png" />
+            <strong>Step ${index + 1}:</strong> ${
+            step.text || "No instruction"
+          } (${Math.round(step.distance * 100) / 100 || "0"} meters)
+          `;
+          directionsList.appendChild(stepDiv);
+        });
+
+        directionsPanel.style.display = "block";
+        directionsList.style.display = "none";
+        toggleSteps.textContent = "Show Steps";
+      }
+
+      // Populate floor dropdown
+      floors.sort((a, b) => a.elevation - b.elevation);
+      floors.forEach((floor) => {
+        const option = document.createElement("option");
+        option.value = floor.id;
+        option.textContent = floor.name;
+        floorSelect.appendChild(option);
+      });
+
+      floorSelect.addEventListener("change", () => {
+        const selectedFloorId = floorSelect.value;
+        if (selectedFloorId) {
+          mapView.setFloor(selectedFloorId);
+        }
+      });
+
+      // Populate start/destination dropdowns
       spaces.forEach((space) => {
         const option = document.createElement("option");
         option.value = space.id;
@@ -286,29 +340,7 @@
         destinationSelect.appendChild(option);
       });
 
-      // Camera focuses on selected start location
-      startSelect.addEventListener("change", () => {
-        const selectedSpaceId = startSelect.value;
-        const selectedSpace = spaces.find((s) => s.id === selectedSpaceId);
-
-        if (selectedSpace) {
-          mapView.Camera.animateTo({
-            center: selectedSpace.geometry.center,
-            zoomLevel: 20,
-            pitch: 45,
-            bearing: 0,
-          });
-        }
-      });
-
-      // Calculate Walking Time
-      const avg_walking_speed = 85;
-
-      function calculateWalkingTime(distanceInMeters) {
-        return Math.ceil(distanceInMeters / avg_walking_speed);
-      }
-
-      // Get Directions and Display Estimated Time
+      // Handle dropdown directions
       getDirectionsButton.addEventListener("click", async () => {
         const startId = startSelect.value;
         const destinationId = destinationSelect.value;
@@ -322,43 +354,6 @@
               startSpace,
               destinationSpace
             );
-
-            if (directions && directions.path) {
-              mapView.Navigation.clear();
-              mapView.Navigation.draw(directions);
-
-              const totalDistance = directions.distance;
-              const estimatedTime = calculateWalkingTime(totalDistance);
-
-              // Update UI
-              document.getElementById(
-                "estimated-time"
-              ).textContent = `Estimated Time: ${estimatedTime} min`;
-              document.getElementById(
-                "total-distance"
-              ).textContent = `Total Distance: ${Math.round(
-                totalDistance
-              )} meters`;
-
-              // Populate Directions List
-              directionsList.innerHTML = "";
-              directions.instructions.forEach((step, index) => {
-                const stepDiv = document.createElement("div");
-                stepDiv.className = "direction-step";
-                stepDiv.innerHTML = `
-                  <img src="https://img.icons8.com/ios-filled/50/right.png" />
-                  <strong>Step ${index + 1}:</strong> ${
-                  step.text || "No instruction"
-                } (${Math.round(step.distance * 100) / 100 || "0"} meters)
-                `;
-                directionsList.appendChild(stepDiv);
-              });
-
-              // Ensure panel is visible when directions are shown
-              directionsPanel.style.display = "block";
-              directionsList.style.display = "none";
-              toggleSteps.textContent = "Show Steps";
-            }
           }
         }
       });
@@ -370,8 +365,6 @@
         ) {
           directionsList.style.display = "block";
           toggleSteps.textContent = "Hide Steps";
-
-          // Add this to ensure proper rendering
           directionsPanel.style.background = "white";
         } else {
           directionsList.style.display = "none";
@@ -379,23 +372,57 @@
         }
       });
 
-      // Populate Floor Selector
-      const floorSelect = document.getElementById("floor-select");
-      const floors = mapData.getByType("floor");
+      // Tap-to-select behavior
+      function setSpacesInteractive(interactive) {
+        spaces.forEach((space) => {
+          mapView.updateState(space, {
+            interactive: interactive,
+            hoverColor: interactive ? "#f26336" : null,
+          });
+        });
+      }
 
-      floors.sort((a, b) => a.elevation - b.elevation);
-      floors.forEach((floor) => {
-        const option = document.createElement("option");
-        option.value = floor.id;
-        option.textContent = floor.name;
-        floorSelect.appendChild(option);
-      });
+      setSpacesInteractive(true);
 
-      // Handle Floor Selection
-      floorSelect.addEventListener("change", () => {
-        const selectedFloorId = floorSelect.value;
-        if (selectedFloorId) {
-          mapView.setFloor(selectedFloorId);
+      let clickedStart = null;
+      let path = null;
+
+      mapView.on("click", async (event) => {
+        if (!event?.spaces?.length) return;
+
+        const clickedSpace = event.spaces[0];
+
+        if (!clickedStart) {
+          clickedStart = clickedSpace;
+          alert(`Start room: ${clickedStart.name}`);
+        } else if (!path) {
+          const directions = await mapData.getDirections(
+            clickedStart,
+            clickedSpace
+          );
+
+          if (!directions?.coordinates?.length) {
+            alert("No valid path found.");
+            return;
+          }
+
+          // Clear Navigation (in case dropdown was used before)
+          mapView.Navigation.clear();
+
+          path = mapView.Paths.add(directions.coordinates, {
+            nearRadius: 0.5,
+            farRadius: 0.5,
+            color: "#912338",
+          });
+
+          updateDirectionsPanel(directions);
+          setSpacesInteractive(false);
+        } else {
+          mapView.Paths.removeAll();
+          clickedStart = null;
+          path = null;
+          setSpacesInteractive(true);
+          alert("Path cleared. Tap to start again.");
         }
       });
     </script>
