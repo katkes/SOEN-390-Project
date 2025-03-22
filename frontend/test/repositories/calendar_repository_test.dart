@@ -35,7 +35,7 @@ void main() {
       final cachedEvents = [Event(summary: 'Cached Event')];
 
       // Mocks the behavior of cache service to return stored events.
-      when(mockCacheService.getStoredEvents())
+      when(mockCacheService.getStoredEvents(calendarId: anyNamed('calendarId')))
           .thenAnswer((_) async => cachedEvents);
 
       final events = await calendarRepository.getEvents();
@@ -44,7 +44,7 @@ void main() {
       expect(events.first.summary, 'Cached Event');
 
       // Ensures the cache service is called but the API is not used.
-      verify(mockCacheService.getStoredEvents()).called(1);
+      verify(mockCacheService.getStoredEvents(calendarId: 'primary')).called(1);
       verifyNever(mockCalendarService.fetchEvents());
     });
 
@@ -53,10 +53,12 @@ void main() {
       final freshEvents = [Event(summary: 'Fresh Event')];
 
       // Mocks an empty cache and a successful fetch from the API.
-      when(mockCacheService.getStoredEvents()).thenAnswer((_) async => []);
+      when(mockCacheService.getStoredEvents(calendarId: 'primary'))
+          .thenAnswer((_) async => []);
       when(mockCalendarService.fetchEvents())
           .thenAnswer((_) async => freshEvents);
-      when(mockCacheService.storeEvents(any)).thenAnswer((_) async {});
+      when(mockCacheService.storeEvents(any, calendarId: 'primary'))
+          .thenAnswer((_) async {});
 
       final events = await calendarRepository.getEvents();
 
@@ -64,9 +66,10 @@ void main() {
       expect(events.first.summary, 'Fresh Event');
 
       // Ensures that cache service is checked first, then API is used, and results are stored.
-      verify(mockCacheService.getStoredEvents()).called(1);
+      verify(mockCacheService.getStoredEvents(calendarId: 'primary')).called(1);
       verify(mockCalendarService.fetchEvents()).called(1);
-      verify(mockCacheService.storeEvents(freshEvents)).called(1);
+      verify(mockCacheService.storeEvents(freshEvents, calendarId: 'primary'))
+          .called(1);
     });
 
     /// Tests that `getEvents` returns events from the API when `useCache` is false.
@@ -76,7 +79,8 @@ void main() {
       // Mocks fetching events directly from the service.
       when(mockCalendarService.fetchEvents())
           .thenAnswer((_) async => freshEvents);
-      when(mockCacheService.storeEvents(any)).thenAnswer((_) async {});
+      when(mockCacheService.storeEvents(any, calendarId: 'primary'))
+          .thenAnswer((_) async {});
 
       final events = await calendarRepository.getEvents(useCache: false);
 
@@ -84,16 +88,18 @@ void main() {
       expect(events.first.summary, 'Fresh Event');
 
       // Ensures cache is not checked and API is directly queried.
-      verifyNever(mockCacheService.getStoredEvents());
+      verifyNever(mockCacheService.getStoredEvents(calendarId: 'primary'));
       verify(mockCalendarService.fetchEvents()).called(1);
-      verify(mockCacheService.storeEvents(freshEvents)).called(1);
+      verify(mockCacheService.storeEvents(freshEvents, calendarId: 'primary'))
+          .called(1);
     });
 
     /// Tests that `getEvents` returns an empty list when both cache and API return no data.
     test('returns an empty list if both cache and API return no data',
         () async {
       // Mocks both cache and API returning empty lists.
-      when(mockCacheService.getStoredEvents()).thenAnswer((_) async => []);
+      when(mockCacheService.getStoredEvents(calendarId: 'primary'))
+          .thenAnswer((_) async => []);
       when(mockCalendarService.fetchEvents()).thenAnswer((_) async => []);
 
       final events = await calendarRepository.getEvents();
