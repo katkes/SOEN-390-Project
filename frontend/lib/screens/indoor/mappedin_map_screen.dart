@@ -27,7 +27,14 @@ class MappedinMapScreenState extends State<MappedinMapScreen> {
     super.initState();
     // Create and configure the WebView controller
     _controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted);
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onPageFinished: (String url) {
+            _sendBooleanToJS();
+          },
+        ),
+      );
     _loadHtmlFromAssets();
   }
 
@@ -53,6 +60,13 @@ class MappedinMapScreenState extends State<MappedinMapScreen> {
         .fold(fileHtmlContents, (prev, e) => prev.replaceAll(e.key, e.value));
 
     _controller.loadHtmlString(fileHtmlWithKeys);
+  }
+
+  //this function is necessary to send the preference boolean value to JS for
+  //mappedIN indoor navigation
+  void _sendBooleanToJS() async {
+    bool myBoolean = await IndoorAccessibilityState.getMobilityStatusPreference();
+    await _controller.runJavaScript("receiveSharedPreferenceForMobilityImpairment($myBoolean);");
   }
 
   @override

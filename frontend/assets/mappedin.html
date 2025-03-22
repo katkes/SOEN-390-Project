@@ -318,10 +318,18 @@
           const destinationSpace = spaces.find((s) => s.id === destinationId);
 
           if (startSpace && destinationSpace) {
-            const directions = await mapData.getDirections(
-              startSpace,
-              destinationSpace
-            );
+            // const directions = await mapData.getDirections(startSpace,destinationSpace);
+
+
+
+
+            function receiveSharedPreferenceForMobilityImpairment(bool) {
+              const directions = await mapData.getDirections(startSpace,destinationSpace, {accessible: bool});
+            }
+
+
+
+
 
             if (directions && directions.path) {
               mapView.Navigation.clear();
