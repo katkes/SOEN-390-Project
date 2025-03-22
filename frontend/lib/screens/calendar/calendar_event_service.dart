@@ -61,4 +61,15 @@ class CalendarEventService {
       throw Exception("An error occurred while fetching calendars: $e");
     }
   }
+
+//Function to delete an event from cache using the CalendarRepository
+  Future<void> deleteEventFromCache(String eventId, String calendarId) async {
+    try {
+      await calendarRepository.removeEventFromCache(eventId, calendarId);
+      print(
+          "Event with ID $eventId deleted from cache for calendar $calendarId");
+    } catch (e) {
+      throw Exception("An error occurred while deleting event from cache: $e");
+    }
+  }
 }

@@ -60,6 +60,31 @@ class CacheService {
     return eventList.map((e) => Event.fromJson(jsonDecode(e))).toList();
   }
 
+  /// Removes a specific event from the cache for a given calendar.
+  /// This method is used to update the cache when an event is deleted.
+  /// The event is identified by its unique ID.
+  /// If the event is not found in the cache, no action is taken.
+  /// ## Parameters:
+  /// - [eventId]: The ID of the event to remove from cache.
+  /// - [calendarId]: The ID of the calendar associated with the event.
+  ///
+  /// ## Returns:
+  /// - A `Future<void>` indicating the completion of the operation.
+
+  Future<void> removeEventFromCache(String eventId,
+      {required String calendarId}) async {
+    final cacheKey = _getCacheKey(calendarId);
+    final eventList = _preferences.getStringList(cacheKey) ?? [];
+
+    // Remove event from the list
+    final updatedEventList = eventList
+        .where((e) => Event.fromJson(jsonDecode(e)).id != eventId)
+        .toList();
+
+    // Store the updated list back to cache
+    await _preferences.setStringList(cacheKey, updatedEventList);
+  }
+
   /// Generates a unique cache key per calendar based on the calendar ID.
   ///
   /// ## Parameters:

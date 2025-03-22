@@ -4,6 +4,7 @@ import 'package:googleapis/calendar/v3.dart' as gcal;
 import 'package:intl/intl.dart';
 import 'package:soen_390/screens/calendar/event_list_widget.dart';
 
+
 ///This test file tests the EventListWidget class
 ///The EventListWidget is a widget that displays a list of events
 ///The widget is used in the CalendarScreen to display the events for a selected day
@@ -12,14 +13,31 @@ import 'package:soen_390/screens/calendar/event_list_widget.dart';
 ///The tests use the flutter_test package to test the widget
 ///The tests use the testWidgets function to test the widget
 ///
+
+import 'package:mockito/mockito.dart';
+import 'package:soen_390/services/calendar_service.dart';
+import 'package:soen_390/screens/calendar/calendar_event_service.dart';
+
+// Mock Classes
+class MockCalendarService extends Mock implements CalendarService {}
+class MockCalendarEventService extends Mock implements CalendarEventService {}
+
 void main() {
   group('EventListWidget', () {
-    testWidgets('displays message when event list is empty',
-        (WidgetTester tester) async {
+    testWidgets('displays message when event list is empty', (WidgetTester tester) async {
+      // Mock Services
+      final calendarService = MockCalendarService();
+      final calendarEventService = MockCalendarEventService();
+
       await tester.pumpWidget(
-        const MaterialApp(
+        MaterialApp(
           home: Scaffold(
-            body: EventListWidget(events: []),
+            body: EventListWidget(
+              events: [],
+              calendarService: calendarService,
+              calendarEventService: calendarEventService,
+              calendarId: 'test',
+            ),
           ),
         ),
       );
@@ -27,8 +45,11 @@ void main() {
       expect(find.text('No events for selected day'), findsOneWidget);
     });
 
-    testWidgets('displays list of events with time',
-        (WidgetTester tester) async {
+    testWidgets('displays list of events with time', (WidgetTester tester) async {
+      // Mock Services
+      final calendarService = MockCalendarService();
+      final calendarEventService = MockCalendarEventService();
+      
       final testDate = DateTime(2025, 3, 20, 14, 30);
       final testEvent = gcal.Event(
         summary: 'Test Event',
@@ -38,7 +59,12 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: EventListWidget(events: [testEvent]),
+            body: EventListWidget(
+              events: [testEvent],
+              calendarService: calendarService,
+              calendarEventService: calendarEventService,
+              calendarId: 'test',
+            ),
           ),
         ),
       );
@@ -48,8 +74,11 @@ void main() {
       expect(find.byIcon(Icons.event), findsOneWidget);
     });
 
-    testWidgets('displays event with "No Title" if summary is null',
-        (WidgetTester tester) async {
+    testWidgets('displays event with "No Title" if summary is null', (WidgetTester tester) async {
+      // Mock Services
+      final calendarService = MockCalendarService();
+      final calendarEventService = MockCalendarEventService();
+
       final testEvent = gcal.Event(
         summary: null,
         start: gcal.EventDateTime(dateTime: DateTime.now()),
@@ -58,7 +87,12 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: EventListWidget(events: [testEvent]),
+            body: EventListWidget(
+              events: [testEvent],
+              calendarService: calendarService,
+              calendarEventService: calendarEventService,
+              calendarId: 'test',
+            ),
           ),
         ),
       );
@@ -66,25 +100,38 @@ void main() {
       expect(find.text('No Title'), findsOneWidget);
     });
 
-    testWidgets('does not display time if start.dateTime is null',
-        (WidgetTester tester) async {
-      final testEvent = gcal.Event(
-        summary: 'No Time Event',
-        start: gcal.EventDateTime(),
-      );
+    testWidgets('does not display time if start.dateTime is null', (WidgetTester tester) async {
+  // Mock Services
+  final calendarService = MockCalendarService();
+  final calendarEventService = MockCalendarEventService();
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: EventListWidget(events: [testEvent]),
-          ),
+  final testEvent = gcal.Event(
+    summary: 'No Time Event',
+    start: gcal.EventDateTime(),
+  );
+
+  await tester.pumpWidget(
+    MaterialApp(
+      home: Scaffold(
+        body: EventListWidget(
+          events: [testEvent],
+          calendarService: calendarService,
+          calendarEventService: calendarEventService,
+          calendarId: 'test',
         ),
-      );
+      ),
+    ),
+  );
 
-      expect(find.text('No Time Event'), findsOneWidget);
-      // Should only find the title, not a time string
-      final tiles = tester.widget<ListTile>(find.byType(ListTile));
-      expect(tiles.subtitle, isNull);
-    });
+  expect(find.text('No Time Event'), findsOneWidget);
+
+  // Find the ListTile and check if the subtitle is an empty Column
+  final listTile = tester.widget<ListTile>(find.byType(ListTile));
+  final subtitle = listTile.subtitle as Column;
+
+  // Check if the Column widget has no children (i.e., no time)
+  expect(subtitle.children.isEmpty, isTrue);
+});
+
   });
 }

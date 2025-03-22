@@ -51,7 +51,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
   List<gcal.CalendarListEntry> _calendars = []; // List of user's calendars
 
-  late CalendarEventService _calendarEventService;
+  late CalendarEventService calendarEventService;
 
   // Calendar controller
   CalendarFormat _calendarFormat = CalendarFormat.month;
@@ -85,7 +85,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     // Initialize CalendarApi using the http client from httpService
     final calendarApi = gcal.CalendarApi(httpService.client);
 
-    _calendarEventService = CalendarEventService(
+    calendarEventService = CalendarEventService(
         calendarRepository: CalendarRepository(calendarService,
             CacheService(await SharedPreferences.getInstance(), calendarApi)));
 
@@ -100,7 +100,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
       });
 
       // Fetch calendars using CalendarEventService
-      final calendars = await _calendarEventService.fetchCalendars();
+      final calendars = await calendarEventService.fetchCalendars();
 
       setState(() {
         _calendars = calendars;
@@ -128,7 +128,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
       });
 
       // Fetch all events using the service
-      final allEventsByDay = await _calendarEventService.fetchCalendarEvents(
+      final allEventsByDay = await calendarEventService.fetchCalendarEvents(
           _selectedCalendarId ?? 'primary',
           useCache: useCashe);
 
@@ -283,8 +283,20 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
           ),
           const SizedBox(height: 16),
           Expanded(
-            child: EventListWidget(events: _getEventsForDay(_selectedDay!)),
-          ),
+            child: EventListWidget(
+              events: _getEventsForDay(_selectedDay!),
+              calendarEventService: calendarEventService,
+              calendarId: _selectedCalendarId ?? 'primary',
+              calendarService: CalendarService(AuthRepository(
+                authService: widget.authService,
+                httpService: widget.authService.httpService,
+                secureStorage: widget.authService.secureStorage,
+              )),
+              onEventChanged: () {
+                fetchCalendarEvents(useCashe: false);
+              },
+            ),
+          )
         ],
       ),
       floatingActionButton: FloatingActionButton(

@@ -11,6 +11,7 @@ import 'building_search.dart';
 class EventCreationPopup extends StatefulWidget {
   final void Function(String name, String building, String classroom,
       TimeOfDay time, DateTime day, String? recurrenceFrequency) onSave;
+
   const EventCreationPopup({super.key, required this.onSave});
 
   @override
@@ -24,7 +25,6 @@ class _EventCreationPopupState extends State<EventCreationPopup> {
   String? _selectedBuilding;
   TimeOfDay? _selectedTime;
   DateTime? _selectedDate;
-
   String? _recurrenceFrequency;
   final List<String> recurrenceOptions = ["None", "Daily", "Weekly", "Monthly"];
 
@@ -67,110 +67,99 @@ class _EventCreationPopupState extends State<EventCreationPopup> {
       child: Container(
         constraints: BoxConstraints(
           maxWidth: 500,
-          maxHeight: MediaQuery.of(context).size.height * 0.8,
+          maxHeight: MediaQuery.of(context).size.height * 0.7,
         ),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Form(
             key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Create New Event",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        TextFormField(
-                          controller: _eventNameController,
-                          decoration:
-                              const InputDecoration(labelText: "Event Name"),
-                          validator: (value) =>
-                              value?.isEmpty ?? true ? "Required" : null,
-                        ),
-                        const SizedBox(height: 16),
-                        // Building search field
-                        BuildingSearchField(
-                          initialValue: _selectedBuilding,
-                          onSelected: (building) =>
-                              setState(() => _selectedBuilding = building),
-                        ),
-                        const SizedBox(height: 16),
-                        TextFormField(
-                          controller: _classroomController,
-                          decoration:
-                              const InputDecoration(labelText: "Classroom"),
-                          validator: (value) => value == null || value.isEmpty
-                              ? "Required"
-                              : null,
-                        ),
-                        const SizedBox(height: 16),
-                        ElevatedButton.icon(
-                          onPressed: _pickDate,
-                          icon: const Icon(Icons.calendar_today),
-                          label: Text(_selectedDate != null
-                              ? DateFormat('yyyy-MM-dd').format(_selectedDate!)
-                              : "Pick a date"),
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: const Size.fromHeight(40),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        ElevatedButton.icon(
-                          onPressed: _pickTime,
-                          icon: const Icon(Icons.access_time),
-                          label: Text(_selectedTime != null
-                              ? _selectedTime!.format(context)
-                              : "Pick a time"),
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: const Size.fromHeight(40),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        DropdownButtonFormField<String>(
-                          value: _recurrenceFrequency,
-                          decoration:
-                              const InputDecoration(labelText: "Recurrence"),
-                          items: recurrenceOptions.map((String option) {
-                            return DropdownMenuItem<String>(
-                              value: option,
-                              child: Text(option),
-                            );
-                          }).toList(),
-                          onChanged: (String? value) {
-                            setState(() {
-                              _recurrenceFrequency = value;
-                            });
-                          },
-                        ),
-                      ],
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Create New Event",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text("Cancel"),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _eventNameController,
+                    decoration: const InputDecoration(labelText: "Event Name"),
+                    validator: (value) =>
+                        value?.isEmpty ?? true ? "Required" : null,
+                  ),
+                  const SizedBox(height: 16),
+                  // Building search field
+                  BuildingSearchField(
+                    initialValue: _selectedBuilding,
+                    onSelected: (building) =>
+                        setState(() => _selectedBuilding = building),
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _classroomController,
+                    decoration: const InputDecoration(labelText: "Classroom"),
+                    validator: (value) =>
+                        value == null || value.isEmpty ? "Required" : null,
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton.icon(
+                    onPressed: _pickDate,
+                    icon: const Icon(Icons.calendar_today),
+                    label: Text(_selectedDate != null
+                        ? DateFormat('yyyy-MM-dd').format(_selectedDate!)
+                        : "Pick a date"),
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size.fromHeight(40),
                     ),
-                    const SizedBox(width: 8),
-                    ElevatedButton(
-                      onPressed: _submit,
-                      child: const Text("Save"),
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton.icon(
+                    onPressed: _pickTime,
+                    icon: const Icon(Icons.access_time),
+                    label: Text(_selectedTime != null
+                        ? _selectedTime!.format(context)
+                        : "Pick a time"),
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size.fromHeight(40),
                     ),
-                  ],
-                ),
-              ],
+                  ),
+                  const SizedBox(height: 16),
+                  DropdownButtonFormField<String>(
+                    value: _recurrenceFrequency,
+                    decoration: const InputDecoration(labelText: "Recurrence"),
+                    items: recurrenceOptions.map((String option) {
+                      return DropdownMenuItem<String>(
+                        value: option,
+                        child: Text(option),
+                      );
+                    }).toList(),
+                    onChanged: (String? value) {
+                      setState(() {
+                        _recurrenceFrequency = value;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text("Cancel"),
+                      ),
+                      const SizedBox(width: 8),
+                      ElevatedButton(
+                        onPressed: _submit,
+                        child: const Text("Save"),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
