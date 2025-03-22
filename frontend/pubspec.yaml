@@ -62,6 +62,8 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
+  webview_flutter_platform_interface: ^2.10.0
+  plugin_platform_interface: ^2.1.8
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -91,6 +93,7 @@ flutter:
     - assets/geojson_files/building_boundaries.geojson
     - assets/images/buildings/hall.png
     - assets/mappedin.html
+    - assets/mappedin.js
     - assets/images/Google_G_logo.png
     - .env
 

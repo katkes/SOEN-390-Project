@@ -137,9 +137,10 @@ class MappedinWebViewState extends State<MappedinWebView> {
   ///
   /// - [departure]: The starting location name.
   /// - [destination]: The destination location name.
-  showDirections(String departure, String destination) async {
+  /// - [accessible]: If the route should be accessible.
+  showDirections(String departure, String destination, bool accessible) async {
     await controller
-        .runJavaScript("getDirections('$departure', '$destination')");
+        .runJavaScript("getDirections('$departure', '$destination', '$accessible')");
   }
 
   /// Sends a request to the embedded JavaScript to change the visible floor.

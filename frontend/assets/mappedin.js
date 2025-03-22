@@ -86,7 +86,7 @@ window.setFloor = function setFloor(floorName) {
  *
  * Sends directions or error via `DirectionsChannel.postMessage()`.
  */
-window.getDirections = async function getDirections(startName, destinationName) {
+window.getDirections = async function getDirections(startName, destinationName, accessible) {
   try {
     const spaces = mapData.getByType("space");
     const start = spaces.find(s => s.name === startName);
@@ -95,7 +95,7 @@ window.getDirections = async function getDirections(startName, destinationName) 
     if (!start || !destination) throw new Error("Invalid start or destination");
 
 
-    const directions = await mapData.getDirections(start, destination);
+    const directions = await mapData.getDirections(start, destination, {accessible: accessible });
     if (!directions?.path) throw new Error("Directions not found");
 
     mapView.Navigation.clear();

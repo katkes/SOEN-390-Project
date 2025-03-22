@@ -32,9 +32,10 @@ class MappedinMapScreen extends StatelessWidget {
           ///
           /// - From location: `"124"`
           /// - To location: `"817"`
+          /// - Accessible: true
           ElevatedButton(
             onPressed: () async {
-              await _webViewKey.currentState?.showDirections("124", "Hrozzz");
+              await _webViewKey.currentState?.showDirections("124", "Hrozzz", true);
             },
             child: const Text("Get Directions"),
           ),

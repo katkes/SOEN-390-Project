@@ -174,31 +174,6 @@ jobs:
           gsutil cp frontend/reports/test_report.xml gs://soen_390_reports/$BRANCH_NAME/frontend/
           gsutil cp frontend/reports/lcov.info gs://soen_390_reports/$BRANCH_NAME/frontend/
         
-        
-
-
-  # flutter_build:
-  #   name: Build Flutter Project
-  #   runs-on: [our-runner]
-  #   needs: [linting, testing]
-  #   if: github.event_name == 'pull_request'  
-
-  #   steps:
-
-  #     - name: Copy env file
-  #       working-directory: ./frontend
-  #       run: cp -n ~/env/.env .
-
-  #     - name: Build Flutter APK
-  #       working-directory: ./frontend
-  #       run: flutter build apk --release
-
-  #     - name: Upload APK artifact
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: flutter-apk
-  #         path: frontend/build/app/outputs/flutter-apk/app-release.apk
-
   sonarqube:
     name: SonarCloud Analysis
     runs-on: [our-runner]
