@@ -371,7 +371,7 @@ class MyPage extends StatelessWidget {
           routeService: routeService,
           mapsApiClient: mapsApiClient,
           buildingPopUps: buildingPopUps,
-          routePoints: [],
+          routePoints: const [],
         ),
       ),
     );
