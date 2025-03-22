@@ -2,6 +2,7 @@
 ///
 /// Provides UI controls to trigger directions and floor selection via JS interop.
 /// Uses a [GlobalKey] to interact with the underlying [MappedinWebView] state.
+library;
 
 import 'package:flutter/material.dart';
 import 'package:soen_390/widgets/mappedin_webview.dart';

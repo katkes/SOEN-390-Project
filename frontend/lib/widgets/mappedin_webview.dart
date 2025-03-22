@@ -13,6 +13,7 @@
 /// Usage:
 ///   await _webViewKey.currentState?.showDirections("124", "817");
 ///   await _webViewKey.currentState?.setFloor("Floor 2");
+library;
 
 
 import 'dart:convert';
