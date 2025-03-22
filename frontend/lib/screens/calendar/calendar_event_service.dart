@@ -18,8 +18,7 @@ class CalendarEventService {
   }) async {
     try {
       // Fetch events using the CalendarRepository
-      final events =
-          await calendarRepository.getEvents(
+      final events = await calendarRepository.getEvents(
           calendarId: calendarId, useCache: useCache);
 
       // Group events by date

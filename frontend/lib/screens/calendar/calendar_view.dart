@@ -17,7 +17,6 @@ import 'event_list_widget.dart';
 import 'calendar_app_bar.dart';
 import 'calendar_dropdown.dart';
 import 'event_creation_widget.dart';
-import 'package:intl/intl.dart';
 
 /// A screen that displays the user's Google Calendar events.
 /// Show upcoming classes and events in a structured format (list, calendar, or timeline view).
@@ -233,7 +232,6 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                     });
 
                     try {
-                      // Fetch events without using cache
                       await fetchCalendarEvents(useCashe: false);
                       print(_selectedCalendarId);
                       setState(() {
@@ -256,7 +254,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                       setState(() {
                         _selectedCalendarId = calendarId;
                       });
-                      fetchCalendarEvents(); // Fetch events for the selected calendar
+                      fetchCalendarEvents();
                     },
                   ),
                 ),
@@ -294,55 +292,76 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
           showDialog(
             context: context,
             builder: (context) => EventCreationPopup(
-              onSave: (name, building, classroom, time, day) async {
-                final event = gcal.Event()
-                  ..summary = name
-                  ..location = "$building, $classroom"
-                  ..start = gcal.EventDateTime(
-                      dateTime: DateTime(
-                          day.year, day.month, day.day, time.hour, time.minute))
-                  ..end = gcal.EventDateTime(
-                      dateTime: DateTime(day.year, day.month, day.day,
-                          time.hour + 1, time.minute));
+              onSave: (name, building, classroom, time, day,
+                  recurringFrequency) async {
+                List<DateTime> eventDates = [];
 
-                try {
-                  final calendarService = CalendarService(AuthRepository(
-                    authService: widget.authService,
-                    httpService: widget.authService.httpService,
-                    secureStorage: widget.authService.secureStorage,
+                switch (recurringFrequency) {
+                  case "Daily":
+                    for (int i = 0; i < 7; i++) {
+                      eventDates.add(day.add(Duration(days: i)));
+                    }
+                    break;
+                  case "Weekly":
+                    for (int i = 0; i < 13; i++) {
+                      eventDates.add(day.add(Duration(days: 7 * i)));
+                    }
+                    break;
+                  case "Monthly":
+                    for (int i = 0; i < 12; i++) {
+                      int newMonth = day.month + i;
+                      int yearOffset = (newMonth - 1) ~/ 12;
+                      int adjustedMonth = ((newMonth - 1) % 12) + 1;
+
+                      int daysInMonth =
+                          DateTime(day.year + yearOffset, adjustedMonth + 1, 0)
+                              .day;
+                      int adjustedDay =
+                          day.day > daysInMonth ? daysInMonth : day.day;
+
+                      DateTime monthlyDate = DateTime(
+                          day.year + yearOffset, adjustedMonth, adjustedDay);
+
+                      eventDates.add(monthlyDate);
+                    }
+                    break;
+                  default:
+                    eventDates.add(day);
+                }
+
+                // Create and save events
+                for (final eventDate in eventDates) {
+                  final event = gcal.Event()
+                    ..summary = name
+                    ..location = "$building, $classroom"
+                    ..start = gcal.EventDateTime(
+                        dateTime: DateTime(eventDate.year, eventDate.month,
+                            eventDate.day, time.hour, time.minute))
+                    ..end = gcal.EventDateTime(
+                        dateTime: DateTime(eventDate.year, eventDate.month,
+                            eventDate.day, time.hour + 1, time.minute));
+
+                  try {
+                    final calendarService = CalendarService(AuthRepository(
+                      authService: widget.authService,
+                      httpService: widget.authService.httpService,
+                      secureStorage: widget.authService.secureStorage,
+                    ));
+                    await calendarService.createEvent(
+                        _selectedCalendarId ?? 'primary', event);
+                  } catch (e) {
+                    print(
+                        "Error creating event on ${eventDate.toString()}: $e");
+                  }
+                }
+
+                await fetchCalendarEvents();
+
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(
+                        'Event "$name" saved with ${recurringFrequency ?? "no"} recurrence'),
                   ));
-                  await calendarService.createEvent(
-                      _selectedCalendarId ?? 'primary', event);
-
-                  // Reload events after successfully creating the event
-                  await fetchCalendarEvents();
-
-                  Future.delayed(const Duration(milliseconds: 300), () {
-                    if (mounted) {
-                      final BuildContext currentContext = context;
-                      if (currentContext.mounted) {
-                        final snackBar = SnackBar(
-                          content: Text(
-                              'Event "$name" saved on ${DateFormat.yMd().format(day)} at ${time.format(currentContext)}'),
-                        );
-                        ScaffoldMessenger.of(currentContext)
-                            .showSnackBar(snackBar);
-                      }
-                    }
-                  });
-                } catch (e) {
-                  Future.delayed(const Duration(milliseconds: 300), () {
-                    if (mounted) {
-                      final BuildContext currentContext = context;
-                      if (currentContext.mounted) {
-                        final snackBar = SnackBar(
-                          content: Text('Failed to save event: $e'),
-                        );
-                        ScaffoldMessenger.of(currentContext)
-                            .showSnackBar(snackBar);
-                      }
-                    }
-                  });
                 }
               },
             ),

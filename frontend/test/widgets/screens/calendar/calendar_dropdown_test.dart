@@ -68,7 +68,7 @@ void main() {
       MaterialApp(
         home: Scaffold(
           body: CalendarDropdown(
-            calendars: [],
+            calendars: const [],
             selectedCalendarId: null,
             onCalendarSelected: mockCallback,
           ),

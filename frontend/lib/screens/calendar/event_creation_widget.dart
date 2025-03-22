@@ -10,7 +10,7 @@ import 'building_search.dart';
 /// The user can save the event by clicking the save button.
 class EventCreationPopup extends StatefulWidget {
   final void Function(String name, String building, String classroom,
-      TimeOfDay time, DateTime day) onSave;
+      TimeOfDay time, DateTime day, String? recurrenceFrequency) onSave;
   const EventCreationPopup({super.key, required this.onSave});
 
   @override
@@ -24,6 +24,9 @@ class _EventCreationPopupState extends State<EventCreationPopup> {
   String? _selectedBuilding;
   TimeOfDay? _selectedTime;
   DateTime? _selectedDate;
+
+  String? _recurrenceFrequency;
+  final List<String> recurrenceOptions = ["None", "Daily", "Weekly", "Monthly"];
 
   Future<void> _pickTime() async {
     final time =
@@ -52,6 +55,7 @@ class _EventCreationPopupState extends State<EventCreationPopup> {
         _classroomController.text.trim(),
         _selectedTime!,
         _selectedDate!,
+        _recurrenceFrequency,
       );
       Navigator.of(context).pop();
     }
@@ -131,11 +135,27 @@ class _EventCreationPopupState extends State<EventCreationPopup> {
                             minimumSize: const Size.fromHeight(40),
                           ),
                         ),
+                        const SizedBox(height: 16),
+                        DropdownButtonFormField<String>(
+                          value: _recurrenceFrequency,
+                          decoration:
+                              const InputDecoration(labelText: "Recurrence"),
+                          items: recurrenceOptions.map((String option) {
+                            return DropdownMenuItem<String>(
+                              value: option,
+                              child: Text(option),
+                            );
+                          }).toList(),
+                          onChanged: (String? value) {
+                            setState(() {
+                              _recurrenceFrequency = value;
+                            });
+                          },
+                        ),
                       ],
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
