@@ -4,7 +4,6 @@ import 'package:soen_390/screens/calendar/calendar_event_service.dart';
 import 'package:googleapis/calendar/v3.dart' as gcal;
 import 'package:soen_390/repositories/calendar_repository.dart';
 
-
 class MockCalendarRepository extends Mock implements CalendarRepository {}
 
 void main() {
