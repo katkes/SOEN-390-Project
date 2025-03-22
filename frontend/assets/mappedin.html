@@ -354,6 +354,18 @@
               startSpace,
               destinationSpace
             );
+
+            if (directions && directions.path) {
+              // Clear any tap path
+              mapView.Paths.removeAll();
+              path = null;
+              clickedStart = null;
+
+              mapView.Navigation.clear();
+              mapView.Navigation.draw(directions);
+
+              updateDirectionsPanel(directions);
+            }
           }
         }
       });
