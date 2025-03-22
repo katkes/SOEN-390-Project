@@ -27,8 +27,8 @@ class MappedinMapScreen extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           /// Triggers the `showDirections` method on the WebView with hardcoded IDs.
-          /// This button mainly shows how to interact with the code. TODO delete for the actual
-          /// implementation
+          /// This button mainly shows how to interact with the code.
+          /// TODO: delete for the actual implementation, will be changed in 5.2.2 
           ///
           /// - From location: `"124"`
           /// - To location: `"817"`
@@ -43,8 +43,8 @@ class MappedinMapScreen extends StatelessWidget {
           const SizedBox(height: 8),
 
           /// Triggers the `setFloor` method on the WebView.
-          /// This button mainly shows how to interact with the code. TODO delete for the actual
-          /// implementation
+          /// This button mainly shows how to interact with the code. 
+          /// TODO: delete for the actual implementation, will be changed in 5.2.2 
           ///
           /// - Floor: `"Level 9"`
           ElevatedButton(
