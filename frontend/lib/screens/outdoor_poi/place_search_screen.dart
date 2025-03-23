@@ -10,26 +10,22 @@ import 'package:soen_390/widgets/poi_list_view.dart';
 import 'package:soen_390/widgets/poi_search_bar.dart';
 import 'package:soen_390/widgets/poi_type_selector.dart';
 
-/// A screen widget that allows users to search for nearby points of interest (POIs)
-/// either by using their current location or by searching an address manually.
+/// A screen widget that allows users to search for nearby Points of Interest (POIs)
+/// either by using their current location or by searching for a specific address.
 ///
-/// Users can also filter POIs based on type (e.g., restaurants, parks, etc.).
-/// The screen displays a list of places fetched from a Google POI service.
+/// Functionality Flow:
+/// 1. User can enter a location or use current location via [POISearchBar].
+/// 2. The app fetches and updates location coordinates.
+/// 3. User selects a POI type using [POITypeSelector].
+/// 4. The app queries nearby places via [GooglePOIService].
+/// 5. Results are displayed in a scrollable list using [POIListView].
+/// 6. Tapping a POI opens a detailed screen, with an option to set destination.
 class PlaceSearchScreen extends StatefulWidget {
-  /// Service responsible for obtaining the device's location.
   final LocationService locationService;
-
-  /// Service responsible for fetching POIs from Google APIs.
   final GooglePOIService poiService;
-
-  //
   final PointOfInterestFactory poiFactory;
-
   final void Function(String name, double lat, double lng)? onSetDestination;
 
-  /// Constructs a [PlaceSearchScreen] with required [locationService] and [poiService].
-  ///
-  /// These are injected for better testability and separation of concerns.
   const PlaceSearchScreen({
     required this.locationService,
     required this.poiService,
@@ -45,43 +41,28 @@ class PlaceSearchScreen extends StatefulWidget {
 /// State class for [PlaceSearchScreen], managing user interactions, data fetching,
 /// and UI state updates.
 class _PlaceSearchScreenState extends State<PlaceSearchScreen> {
-  /// Instance of [LocationService], initialized from widget for DI.
   late final LocationService locationService;
-
-  /// Instance of [GooglePOIService], initialized from widget for DI.
   late final GooglePOIService poiService;
 
-  /// Latitude of the current or searched location.
   double? _latitude;
-
-  /// Longitude of the current or searched location.
   double? _longitude;
-
-  /// Currently selected POI type filter.
   String _selectedType = '';
-
-  /// List of fetched places based on current location and type.
   List<Place> _places = [];
-
-  /// Indicates if data fetching is in progress (used to show loading indicator).
   bool _isLoading = false;
-
-  /// Controller for the search bar input.
   final TextEditingController _searchController = TextEditingController();
-
-  
-  /// Controls the visibility of the POITypeSelector widget.
   bool _isPOISelectorVisible = false;
 
+  /// Getter for accessing the Google API key.
+  String get _googleApiKey => dotenv.env['GOOGLE_PLACES_API_KEY'] ?? '';
 
   @override
   void initState() {
     super.initState();
-    // Initialize services from the widget for dependency injection.
     locationService = widget.locationService;
     poiService = widget.poiService;
   }
 
+  /// Toggles the visibility of the POI Type Selector widget.
   void _togglePOISelectorVisibility() {
     setState(() {
       _isPOISelectorVisible = !_isPOISelectorVisible;
@@ -89,17 +70,18 @@ class _PlaceSearchScreenState extends State<PlaceSearchScreen> {
   }
 
   /// Displays a [SnackBar] with the provided [message].
-  ///
-  /// Useful for showing user-friendly error messages or status updates.
   void _showSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  /// Logs and displays errors consistently.
+  void _handleError(String logMessage, String userMessage) {
+    print(logMessage);
+    _showSnackBar(userMessage);
   }
 
   /// Updates the stored location to the given [lat] and [lng] coordinates.
-  ///
-  /// If a POI type is already selected, triggers fetching places for the new location.
   void _updateLocation(double lat, double lng) {
     setState(() {
       _latitude = lat;
@@ -112,32 +94,31 @@ class _PlaceSearchScreenState extends State<PlaceSearchScreen> {
   }
 
   /// Attempts to get the user's current location and updates the stored location.
-  ///
-  /// Shows a [SnackBar] on failure.
-  void _useCurrentLocation() async {
+  Future<void> _useCurrentLocation(
+      Function(double lat, double lng)? onCoordsObtained) async {
     try {
       await locationService.startUp();
       LatLng pos = locationService.convertPositionToLatLng(
         await locationService.getCurrentLocationAccurately(),
       );
       _updateLocation(pos.latitude, pos.longitude);
+
+      if (onCoordsObtained != null) {
+        onCoordsObtained(pos.latitude, pos.longitude);
+      }
     } catch (e) {
-      print("Error getting current location: $e");
-      _showSnackBar("Unable to fetch current location");
+      _handleError("Error getting current location: $e",
+          "Unable to fetch current location");
     }
   }
 
   /// Handles a location search event with [address], [lat], and [lng] parameters.
-  ///
-  /// Updates the stored location and triggers POI fetching if a type is selected.
   void _handleLocationSearch(String address, double lat, double lng) {
     _updateLocation(lat, lng);
   }
 
   /// Fetches places of the selected [type] near the current location.
-  ///
-  /// Shows a loading indicator while fetching and handles errors gracefully.
-  void _onTypeSelected(String type) async {
+  Future<void> _onTypeSelected(String type) async {
     if (_latitude == null || _longitude == null) {
       print("Location not set. Cannot fetch POIs.");
       return;
@@ -145,10 +126,11 @@ class _PlaceSearchScreenState extends State<PlaceSearchScreen> {
 
     setState(() {
       _isLoading = true;
+      _selectedType = type;
     });
 
     try {
-      List<Place> fetchedPlaces = await poiService.getNearbyPlaces(
+      final fetchedPlaces = await poiService.getNearbyPlaces(
         latitude: _latitude!,
         longitude: _longitude!,
         type: type,
@@ -156,12 +138,17 @@ class _PlaceSearchScreenState extends State<PlaceSearchScreen> {
       );
 
       setState(() {
-        _selectedType = type;
         _places = fetchedPlaces;
       });
+
+      if (fetchedPlaces.isEmpty) {
+        print("No places found for type: $type");
+      }
     } catch (e) {
-      print("Error fetching POIs: $e");
-      _showSnackBar("Failed to fetch places");
+      _handleError("Error fetching POIs: $e", "Failed to fetch places");
+      setState(() {
+        _places = [];
+      });
     } finally {
       setState(() {
         _isLoading = false;
@@ -169,18 +156,15 @@ class _PlaceSearchScreenState extends State<PlaceSearchScreen> {
     }
   }
 
-  void _handlePlaceTap(Place place) async {
+  /// Handles tapping a place to view details and potentially set it as a destination.
+  Future<void> _handlePlaceTap(Place place) async {
     print('--- _handlePlaceTap started ---');
-
     setState(() {
       _isLoading = true;
     });
 
     try {
-      final imageUrl =
-          place.thumbnailPhotoUrl(dotenv.env['GOOGLE_PLACES_API_KEY'] ?? '') ??
-              '';
-
+      final imageUrl = place.thumbnailPhotoUrl(_googleApiKey) ?? '';
       final poi = await widget.poiFactory.createPointOfInterest(
         placeId: place.placeId,
         imageUrl: imageUrl,
@@ -188,12 +172,9 @@ class _PlaceSearchScreenState extends State<PlaceSearchScreen> {
 
       if (!mounted) return;
 
-      // 👉 Await result from POIDetailScreen
       final result = await Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) => PoiDetailScreen(poi: poi),
-        ),
+        MaterialPageRoute(builder: (context) => PoiDetailScreen(poi: poi)),
       );
 
       if (result != null && result is Map<String, dynamic>) {
@@ -202,22 +183,22 @@ class _PlaceSearchScreenState extends State<PlaceSearchScreen> {
           result['lat'] as double,
           result['lng'] as double,
         );
-
-        Navigator.pop(
-            context); // Close PlaceSearchScreen and send result back up
+        Navigator.pop(context);
       }
     } catch (e) {
-      print('Error creating POI: $e');
-      _showSnackBar("Failed to load place details.");
+      _handleError('Error creating POI: $e', "Failed to load place details.");
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
 
     print('--- _handlePlaceTap completed ---');
   }
 
+  /// For testing purposes: Allows setting the places manually.
   void testSetPlaces(List<Place> places) {
     setState(() {
       _places = places;
@@ -228,7 +209,7 @@ class _PlaceSearchScreenState extends State<PlaceSearchScreen> {
   /// - A search bar for manual location input or using current location.
   /// - A POI type selector to filter places.
   /// - A list view displaying nearby places or a loading indicator.
- @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Explore Nearby')),
@@ -237,8 +218,10 @@ class _PlaceSearchScreenState extends State<PlaceSearchScreen> {
           POISearchBar(
             controller: _searchController,
             onSearch: _handleLocationSearch,
-            onUseCurrentLocation: _useCurrentLocation,
-            googleApiKey: dotenv.env['GOOGLE_PLACES_API_KEY'] ?? '',
+            onUseCurrentLocation: (callback) async {
+              await _useCurrentLocation(callback);
+            },
+            googleApiKey: _googleApiKey,
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -258,7 +241,7 @@ class _PlaceSearchScreenState extends State<PlaceSearchScreen> {
                 ? const Center(child: CircularProgressIndicator())
                 : POIListView(
                     places: _places,
-                    apiKey: dotenv.env['GOOGLE_PLACES_API_KEY'] ?? '',
+                    apiKey: _googleApiKey,
                     onPlaceTap: _handlePlaceTap,
                   ),
           ),
