@@ -7,30 +7,33 @@ import 'package:soen_390/services/map_service.dart';
 class BuildingSearchField extends StatefulWidget {
   final void Function(String buildingName)? onSelected;
   final String? initialValue;
-  const BuildingSearchField({super.key, this.onSelected, this.initialValue});
+  final MapService? mapService;
+  const BuildingSearchField(
+      {super.key, this.onSelected, this.initialValue, this.mapService});
 
   @override
   State<BuildingSearchField> createState() => _BuildingSearchFieldState();
 }
 
 class _BuildingSearchFieldState extends State<BuildingSearchField> {
-  final TextEditingController _controller = TextEditingController();
-  final MapService _mapService = MapService();
-  List<String> _suggestions = [];
-  bool _isLoading = false;
+  final TextEditingController controller = TextEditingController();
 
+  List<String> suggestions = [];
+  bool _isLoading = false;
+  late MapService mapService;
   @override
   void initState() {
     super.initState();
+    mapService = widget.mapService ?? MapService();
     if (widget.initialValue != null) {
-      _controller.text = widget.initialValue!;
+      controller.text = widget.initialValue!;
     }
   }
 
   Future<void> updateSuggestions(String input) async {
     if (input.isEmpty) {
       setState(() {
-        _suggestions = [];
+        suggestions = [];
         _isLoading = false;
       });
       return;
@@ -41,12 +44,12 @@ class _BuildingSearchFieldState extends State<BuildingSearchField> {
     });
 
     try {
-      final results = await _mapService.getBuildingSuggestions(input);
+      final results = await mapService.getBuildingSuggestions(input);
 
       if (!mounted) return;
 
       setState(() {
-        _suggestions = results;
+        suggestions = results;
         _isLoading = false;
       });
     } catch (e) {
@@ -55,17 +58,17 @@ class _BuildingSearchFieldState extends State<BuildingSearchField> {
       setState(() {
         _isLoading = false;
 
-        _suggestions = ["Error loading suggestions"];
+        suggestions = ["Error loading suggestions"];
       });
 
-      print("Error fetching building suggestions: $e");
+      print("Error fetching building suggestions");
     }
   }
 
   void selectBuilding(String building) {
-    _controller.text = building;
+    controller.text = building;
     setState(() {
-      _suggestions = [];
+      suggestions = [];
     });
     widget.onSelected?.call(building);
   }
@@ -79,7 +82,8 @@ class _BuildingSearchFieldState extends State<BuildingSearchField> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           TextField(
-            controller: _controller,
+            key: const Key('building_search_field'),
+            controller: controller,
             decoration: InputDecoration(
               labelText: "Building",
               suffixIcon: _isLoading
@@ -92,14 +96,15 @@ class _BuildingSearchFieldState extends State<BuildingSearchField> {
             onChanged: (value) {
               // Debounce the API call
               Future.delayed(const Duration(milliseconds: 300), () {
-                if (_controller.text == value) {
+                if (controller.text == value) {
                   updateSuggestions(value);
                 }
               });
             },
           ),
-          if (_suggestions.isNotEmpty)
+          if (suggestions.isNotEmpty)
             Container(
+              key: const Key('suggestions_list'),
               margin: const EdgeInsets.only(top: 4),
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -116,12 +121,13 @@ class _BuildingSearchFieldState extends State<BuildingSearchField> {
               child: ListView.builder(
                 shrinkWrap: true,
                 padding: EdgeInsets.zero,
-                itemCount: _suggestions.length,
+                itemCount: suggestions.length,
                 itemBuilder: (context, index) {
                   return ListTile(
+                    key: Key('suggestion_$index'),
                     dense: true,
-                    title: Text(_suggestions[index]),
-                    onTap: () => selectBuilding(_suggestions[index]),
+                    title: Text(suggestions[index]),
+                    onTap: () => selectBuilding(suggestions[index]),
                   );
                 },
               ),
@@ -133,7 +139,7 @@ class _BuildingSearchFieldState extends State<BuildingSearchField> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    controller.dispose();
     super.dispose();
   }
 }

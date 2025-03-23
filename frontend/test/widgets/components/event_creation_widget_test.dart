@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/intl.dart';
-import 'package:soen_390/screens/calendar/building_search.dart';
+import 'package:soen_390/utils/building_search.dart';
 import 'package:soen_390/screens/calendar/event_creation_widget.dart';
 
 void main() {

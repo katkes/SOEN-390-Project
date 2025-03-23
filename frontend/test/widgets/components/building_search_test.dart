@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:soen_390/services/map_service.dart';
-import 'package:soen_390/screens/calendar/building_search.dart';
+import 'package:soen_390/utils/building_search.dart';
 import 'package:mockito/mockito.dart';
 
 // Mock class for MapService

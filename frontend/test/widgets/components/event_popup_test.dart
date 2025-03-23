@@ -42,6 +42,8 @@ void main() {
                   calendarService: mockCalendarService,
                   calendarEventService: mockCalendarEventService,
                   calendarId: testCalendarId,
+                  onEventUpdated: () {},
+                  onEventDeleted: () {},
                 ),
               );
             },
@@ -52,6 +54,41 @@ void main() {
     );
   }
 
+  testWidgets('EventEditPopup initializes with correct event details',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(createWidgetUnderTest());
+    await tester.tap(find.text('Open Dialog'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Edit Event'), findsOneWidget);
+
+    final titleFieldFinder = find.byType(TextField).first;
+    expect(
+        (titleFieldFinder.evaluate().first.widget as TextField)
+            .controller
+            ?.text,
+        'Test Event');
+
+    final classroomFieldFinder = find.byType(TextField).at(2);
+    expect(
+        (classroomFieldFinder.evaluate().first.widget as TextField)
+            .controller
+            ?.text,
+        'Test Classroom');
+
+    expect(
+        find.text(
+            DateFormat('yyyy-MM-dd HH:mm').format(DateTime(2023, 1, 1, 10, 0))),
+        findsOneWidget);
+    expect(
+        find.text(
+            DateFormat('yyyy-MM-dd HH:mm').format(DateTime(2023, 1, 1, 11, 0))),
+        findsOneWidget);
+
+    expect(find.text('Update'), findsOneWidget);
+    expect(find.text('Go Now'), findsOneWidget);
+    expect(find.byIcon(Icons.delete), findsOneWidget);
+  });
   testWidgets('EventEditPopup displays event details',
       (WidgetTester tester) async {
     await tester.pumpWidget(createWidgetUnderTest());

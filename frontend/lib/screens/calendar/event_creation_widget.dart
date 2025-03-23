@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'building_search.dart';
+import '../../utils/building_search.dart';
 
 /// This file contains the EventCreationPopup widget which is used to create a new event.
 /// The widget is a dialog that allows the user to input the event name, building, classroom, date, and time.

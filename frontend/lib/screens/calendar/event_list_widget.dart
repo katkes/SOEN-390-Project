@@ -53,24 +53,11 @@ class EventListWidget extends StatelessWidget {
                           if (onEventChanged != null) {
                             onEventChanged!();
                           }
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Event updated successfully'),
-                              duration: Duration(seconds: 2),
-                            ),
-                          );
                         },
                         onEventDeleted: () {
                           if (onEventChanged != null) {
                             onEventChanged!();
                           }
-
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Event deleted successfully'),
-                              duration: Duration(seconds: 2),
-                            ),
-                          );
                         },
                       ),
                     );

@@ -3,7 +3,7 @@ import 'package:googleapis/calendar/v3.dart' as gcal;
 import 'package:intl/intl.dart';
 import 'package:soen_390/services/calendar_service.dart';
 import 'calendar_event_service.dart';
-import 'building_search.dart';
+import '../../utils/building_search.dart';
 import 'package:soen_390/styles/theme.dart';
 
 /// This widget displays a popup dialog for editing an event.
