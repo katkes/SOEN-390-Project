@@ -273,7 +273,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   static const int _startLocationIndex = 0;
   static const int _minimumWaypoints = 2;
 
-void _removeStop(int index) {
+  void _removeStop(int index) {
     setState(() {
       itinerary.removeAt(index);
       widget.onLocationChanged?.call();
