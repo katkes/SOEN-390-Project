@@ -28,14 +28,15 @@ class MappedinMapScreen extends StatelessWidget {
         children: [
           /// Triggers the `showDirections` method on the WebView with hardcoded IDs.
           /// This button mainly shows how to interact with the code.
-          /// TODO: delete for the actual implementation, will be changed in 5.2.2 
+          /// TODO: delete for the actual implementation, will be changed in 5.2.2
           ///
           /// - From location: `"124"`
           /// - To location: `"817"`
           /// - Accessible: true
           ElevatedButton(
             onPressed: () async {
-              await _webViewKey.currentState?.showDirections("124", "Hrozzz", true);
+              await _webViewKey.currentState
+                  ?.showDirections("124", "Hrozzz", true);
             },
             child: const Text("Get Directions"),
           ),
@@ -43,8 +44,8 @@ class MappedinMapScreen extends StatelessWidget {
           const SizedBox(height: 8),
 
           /// Triggers the `setFloor` method on the WebView.
-          /// This button mainly shows how to interact with the code. 
-          /// TODO: delete for the actual implementation, will be changed in 5.2.2 
+          /// This button mainly shows how to interact with the code.
+          /// TODO: delete for the actual implementation, will be changed in 5.2.2
           ///
           /// - Floor: `"Level 9"`
           ElevatedButton(
@@ -58,4 +59,3 @@ class MappedinMapScreen extends StatelessWidget {
     );
   }
 }
-

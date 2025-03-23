@@ -17,17 +17,13 @@ import 'event_creation_btn_test.mocks.dart';
 
 void main() {
   late MockAuthService mockAuthService;
-  late MockCalendarService mockCalendarService;
   late MockHttpService mockHttpService;
   late MockSecureStorage mockSecureStorage;
-  late bool fetchCalendarEventsCalled;
 
   setUp(() {
     mockAuthService = MockAuthService();
-    mockCalendarService = MockCalendarService();
     mockHttpService = MockHttpService();
     mockSecureStorage = MockSecureStorage();
-    fetchCalendarEventsCalled = false;
 
     when(mockAuthService.httpService).thenReturn(mockHttpService);
     when(mockAuthService.secureStorage).thenReturn(mockSecureStorage);
@@ -41,9 +37,7 @@ void main() {
             parentContext: context,
             authService: mockAuthService,
             selectedCalendarId: 'testCalendarId',
-            fetchCalendarEvents: () async {
-              fetchCalendarEventsCalled = true;
-            },
+            fetchCalendarEvents: () async {},
           ),
         ),
       ),
@@ -400,27 +394,6 @@ class TestableEventCreationButton extends EventCreationButton {
   });
 
   // Expose the private methods for testing
-  @override
-  List<DateTime> generateEventDates(DateTime day, String frequency) {
-    return super.generateEventDates(day, frequency);
-  }
-
-  @override
-  gcal.Event createEvent({
-    required String name,
-    required String building,
-    required String classroom,
-    required DateTime date,
-    required TimeOfDay time,
-  }) {
-    return super.createEvent(
-      name: name,
-      building: building,
-      classroom: classroom,
-      date: date,
-      time: time,
-    );
-  }
 }
 
 // Helper class to test the private methods

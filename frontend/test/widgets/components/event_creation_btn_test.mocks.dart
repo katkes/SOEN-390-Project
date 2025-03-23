@@ -219,12 +219,6 @@ class MockAuthRepository extends _i1.Mock implements _i11.AuthRepository {
     _i1.throwOnMissingStub(this);
   }
 
-  get authService => null;
-
-  get httpService => null;
-
-  get secureStorage => null;
-
   @override
   _i7.Future<_i8.AuthClient?> getAuthClient() => (super.noSuchMethod(
         Invocation.method(#getAuthClient, []),
