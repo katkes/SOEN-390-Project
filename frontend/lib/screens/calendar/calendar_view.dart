@@ -50,7 +50,6 @@ class CalendarScreen extends ConsumerStatefulWidget {
 
 class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   bool _isLoading = true;
-  String? _error;
   String? _selectedCalendarId;
 
   List<gcal.CalendarListEntry> _calendars = []; // List of user's calendars
@@ -106,7 +105,6 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     try {
       setState(() {
         _isLoading = true;
-        _error = null;
       });
 
       // Fetch calendars using CalendarEventService
@@ -124,7 +122,6 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
       await fetchCalendarEvents();
     } catch (e) {
       setState(() {
-        _error = "Failed to load calendars: $e";
         _isLoading = false;
       });
     }
@@ -134,7 +131,6 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     try {
       setState(() {
         _isLoading = true;
-        _error = null;
       });
 
       // Fetch all events using the service
@@ -173,7 +169,6 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
       }
     } catch (e) {
       setState(() {
-        _error = "Failed to load events: $e";
         _isLoading = false;
       });
     }
@@ -236,7 +231,6 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                         });
                       } catch (e) {
                         setState(() {
-                          _error = "Failed to refresh events: $e";
                           _isLoading = false;
                         });
                       }

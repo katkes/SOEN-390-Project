@@ -43,11 +43,6 @@ void main() {
   late MockHttpService mockHttpService;
   late MockSecureStorage mockSecureStorage;
   late MockAuthClientFactory mockAuthClientFactory;
-  late MockAuthRepository mockAuthRepository;
-  late MockCalendarService mockCalendarService;
-  late MockCalendarRepository mockCalendarRepository;
-  late MockCalendarEventService mockCalendarEventService;
-  late MockCacheService mockCacheService;
   late AuthService authService;
   late http.Client httpClient;
 
@@ -56,11 +51,6 @@ void main() {
     mockHttpService = MockHttpService();
     mockSecureStorage = MockSecureStorage();
     mockAuthClientFactory = MockAuthClientFactory();
-    mockAuthRepository = MockAuthRepository();
-    mockCalendarService = MockCalendarService();
-    mockCalendarRepository = MockCalendarRepository();
-    mockCalendarEventService = MockCalendarEventService();
-    mockCacheService = MockCacheService();
 
     httpClient = http.Client();
 
@@ -383,8 +373,6 @@ class TestCalendarScreenState extends ConsumerState<TestCalendarScreen> {
   String? _selectedCalendarId;
   List<gcal.CalendarListEntry> _calendars = [];
   Map<DateTime, List<gcal.Event>> _eventsByDay = {};
-  final CalendarFormat _calendarFormat = CalendarFormat.month;
-  final DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
 
   @override
