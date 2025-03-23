@@ -71,7 +71,6 @@ void main() {
         (WidgetTester tester) async {
       await tester.pumpWidget(createTestWidget());
 
-
       // Simulate suggestion click manually
       final prediction = Prediction(description: 'Test Location');
 

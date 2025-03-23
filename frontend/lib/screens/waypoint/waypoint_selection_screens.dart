@@ -79,7 +79,6 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
     );
   }
 
-
   bool _tryDisplayFromCache(String googleTransportMode, String waypointKey,
       List<String> waypoints, String transportMode) {
     if (!_locationsChanged &&
