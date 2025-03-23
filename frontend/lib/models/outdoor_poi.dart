@@ -198,8 +198,9 @@ class PointOfInterest {
 
     if (result['serves_beer'] == true) amenitiesList.add('Beer');
     if (result['serves_wine'] == true) amenitiesList.add('Wine');
-    if (result['serves_vegetarian_food'] == true)
+    if (result['serves_vegetarian_food'] == true) {
       amenitiesList.add('Vegetarian');
+    }
     if (result['takeout'] == true) amenitiesList.add('Takeout');
     if (result['wheelchair_accessible_entrance'] == true) {
       amenitiesList.add('Wheelchair Accessible');
