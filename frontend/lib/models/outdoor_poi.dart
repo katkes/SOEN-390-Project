@@ -94,101 +94,19 @@ class PointOfInterest {
   /// Extracts relevant fields, formats opening hours, amenities, and category,
   /// and parses reviews. Accepts a required [imageUrl], typically constructed
   /// externally from photo references.
-  factory PointOfInterest.fromPlaceDetails(Map<String, dynamic> result,
+factory PointOfInterest.fromPlaceDetails(Map<String, dynamic> result,
       {required String imageUrl}) {
     print('Parsing Place Details to PointOfInterest...');
 
-    const allowedTypes = [
-      'restaurant',
-      'store',
-      'hospital',
-      'bank',
-      'transit_station',
-      'lodging',
-      'movie_theater',
-      'park',
-      'church',
-      'school',
-      'local_government_office',
-      'car_repair',
-      'beauty_salon',
-      'tourist_attraction',
-    ];
-
-    print('Name: ${result['name']}');
-
-    final typesList = result['types'] != null
-        ? (result['types'] as List).cast<String>()
-        : <String>[];
-
+    final typesList = _parseTypesList(result);
     print('Types List: $typesList');
 
-    final filteredType = typesList.firstWhere(
-      (type) => allowedTypes.contains(type),
-      orElse: () => '',
-    );
+    final formattedCategory = _getFormattedCategory(typesList);
+    final openingHoursMap = _parseOpeningHours(result);
+    final amenitiesList = _parseAmenities(result);
+    final parsedReviews = _parseReviewsIfAvailable(result);
+    final priceRange = _parsePriceRange(result);
 
-    String? formattedCategory;
-    if (filteredType.isNotEmpty) {
-      formattedCategory = prettifyCategory(filteredType);
-    } else {
-      formattedCategory = null;
-    }
-
-    // Parse opening hours if available
-    final weekdayTextList = result['opening_hours']?['weekday_text'] as List?;
-    Map<String, String>? openingHoursMap;
-    if (weekdayTextList != null && weekdayTextList.isNotEmpty) {
-      try {
-        openingHoursMap = {
-          for (var e in weekdayTextList)
-            if (e.toString().contains(':'))
-              e.toString().split(':')[0]:
-                  e.toString().split(':').sublist(1).join(':').trim()
-        };
-      } catch (e) {
-        print('Error parsing opening hours: $e');
-        openingHoursMap = null;
-      }
-    }
-
-    // Parse available amenities
-    final amenitiesList = <String>[];
-    if (result['serves_beer'] == true) amenitiesList.add('Beer');
-    if (result['serves_wine'] == true) amenitiesList.add('Wine');
-    if (result['serves_vegetarian_food'] == true) {
-      amenitiesList.add('Vegetarian');
-    }
-    if (result['takeout'] == true) amenitiesList.add('Takeout');
-    if (result['wheelchair_accessible_entrance'] == true) {
-      amenitiesList.add('Wheelchair Accessible');
-    }
-
-    // Parse reviews if available
-    final reviewsJsonList = result['reviews'] as List?;
-    final parsedReviews =
-        reviewsJsonList != null ? parseReviews(reviewsJsonList) : null;
-
-    // Convert price level integer to dollar signs
-    String? priceRange;
-    final priceLevel = result['price_level'];
-    if (priceLevel != null) {
-      switch (priceLevel) {
-        case 1:
-          priceRange = '\$';
-          break;
-        case 2:
-          priceRange = '\$\$';
-          break;
-        case 3:
-          priceRange = '\$\$\$';
-          break;
-        case 4:
-          priceRange = '\$\$\$\$';
-          break;
-      }
-    }
-    // Extract latitude and longitude
     final location = result['geometry']?['location'];
     final latitude = (location?['lat'] as num?)?.toDouble() ?? 0.0;
     final longitude = (location?['lng'] as num?)?.toDouble() ?? 0.0;
@@ -211,6 +129,92 @@ class PointOfInterest {
       longitude: longitude,
     );
   }
+
+  static List<String> _parseTypesList(Map<String, dynamic> result) {
+    return result['types'] != null
+        ? (result['types'] as List).cast<String>()
+        : <String>[];
+  }
+
+  static String? _getFormattedCategory(List<String> typesList) {
+    const allowedTypes = [
+      'restaurant',
+      'store',
+      'hospital',
+      'bank',
+      'transit_station',
+      'lodging',
+      'movie_theater',
+      'park',
+      'church',
+      'school',
+      'local_government_office',
+      'car_repair',
+      'beauty_salon',
+      'tourist_attraction',
+    ];
+
+    final filteredType = typesList.firstWhere(
+      (type) => allowedTypes.contains(type),
+      orElse: () => '',
+    );
+
+    return filteredType.isNotEmpty ? prettifyCategory(filteredType) : null;
+  }
+
+static Map<String, String>? _parseOpeningHours(Map<String, dynamic> result) {
+    final weekdayTextList = result['opening_hours']?['weekday_text'] as List?;
+    if (weekdayTextList == null || weekdayTextList.isEmpty) return null;
+
+    try {
+      return {
+        for (var e in weekdayTextList)
+          if (e.toString().contains(':'))
+            e.toString().split(':')[0]:
+                e.toString().split(':').sublist(1).join(':').trim()
+      };
+    } catch (e) {
+      print('Error parsing opening hours: $e');
+      return null;
+    }
+  }
+
+static List<String> _parseAmenities(Map<String, dynamic> result) {
+    final amenitiesList = <String>[];
+
+    if (result['serves_beer'] == true) amenitiesList.add('Beer');
+    if (result['serves_wine'] == true) amenitiesList.add('Wine');
+    if (result['serves_vegetarian_food'] == true)
+      amenitiesList.add('Vegetarian');
+    if (result['takeout'] == true) amenitiesList.add('Takeout');
+    if (result['wheelchair_accessible_entrance'] == true) {
+      amenitiesList.add('Wheelchair Accessible');
+    }
+
+    return amenitiesList;
+  }
+
+  static List<Review>? _parseReviewsIfAvailable(Map<String, dynamic> result) {
+    final reviewsJsonList = result['reviews'] as List?;
+    return reviewsJsonList != null ? parseReviews(reviewsJsonList) : null;
+  }
+
+static String? _parsePriceRange(Map<String, dynamic> result) {
+    final priceLevel = result['price_level'];
+    switch (priceLevel) {
+      case 1:
+        return '\$';
+      case 2:
+        return '\$\$';
+      case 3:
+        return '\$\$\$';
+      case 4:
+        return '\$\$\$\$';
+      default:
+        return null;
+    }
+  }
+
 }
 
 /// Converts a category string with underscores into a more human-readable format.
