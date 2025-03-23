@@ -4,6 +4,9 @@
 /// the author's name and profile, rating, time of posting, and the review text.
 /// This model also provides methods to serialize and deserialize from JSON.
 class Review {
+  /// Conversion factor from seconds to milliseconds for DateTime conversions.
+  static const int _secondsToMilliseconds = 1000;
+
   /// The name of the review author.
   final String authorName;
 
@@ -48,6 +51,7 @@ class Review {
   /// final review = Review.fromJson(jsonMap);
   /// ```
   factory Review.fromJson(Map<String, dynamic> json) {
+    final int timeInSeconds = json['time'] ?? 0;
     return Review(
       authorName: json['author_name'] ?? '',
       authorUrl: json['author_url'] ?? '',
@@ -55,7 +59,8 @@ class Review {
       rating: json['rating'] ?? 0,
       relativeTimeDescription: json['relative_time_description'] ?? '',
       text: json['text'] ?? '',
-      time: DateTime.fromMillisecondsSinceEpoch((json['time'] ?? 0) * 1000),
+      time: DateTime.fromMillisecondsSinceEpoch(
+          timeInSeconds * _secondsToMilliseconds),
     );
   }
 
@@ -73,7 +78,8 @@ class Review {
       'rating': rating,
       'relative_time_description': relativeTimeDescription,
       'text': text,
-      'time': time.millisecondsSinceEpoch ~/ 1000, // Convert to seconds
+      'time': time.millisecondsSinceEpoch ~/
+          _secondsToMilliseconds, // Convert to seconds
     };
   }
 }
