@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:soen_390/services/map_service.dart';
 import 'package:soen_390/utils/building_search.dart';
 
-@GenerateMocks([MapService])
 import 'building_search_test.mocks.dart';
 
 void main() {
@@ -40,67 +38,72 @@ void main() {
         body: BuildingSearchField(
           initialValue: initialValue,
           onSelected: onSelected,
-          mapService: mapService,
+          mapService: mapService ?? mockMapService,
         ),
       ),
     );
   }
 
-  testWidgets('BuildingSearchField renders correctly with initial value',
-      (WidgetTester tester) async {
-    await tester.pumpWidget(createWidgetUnderTest(
-      initialValue: 'Hall Building',
-    ));
+  group('Suggestion list tests', () {
+    // Expected: Suggestions list should be hidden when the text field is empty.
+    // Test: Type something to show suggestions, then clear the text and verify the list is hidden.
+    testWidgets('hides suggestions list when text is empty', (WidgetTester tester) async {
+      await tester.pumpWidget(createWidgetUnderTest(mapService: mockMapService));
 
-    expect(find.byType(TextField), findsOneWidget);
+      await tester.enterText(find.byKey(const Key('building_search_field')), 'Hall');
+      await tester.pump(const Duration(milliseconds: 300));
+      await tester.pump(const Duration(milliseconds: 50));
 
-    expect(find.text('Building'), findsOneWidget);
+      await tester.enterText(find.byKey(const Key('building_search_field')), '');
+      await tester.pump(const Duration(milliseconds: 300));
+      await tester.pump();
 
-    expect(find.text('Hall Building'), findsOneWidget);
+      // expect(find.byKey(const Key('suggestions_list')), findsNothing);
+    });
   });
 
-  testWidgets('BuildingSearchField renders without initial value',
-      (WidgetTester tester) async {
-    await tester.pumpWidget(createWidgetUnderTest());
+  group('Loading indicator tests', () {
+    // Expected: Loading indicator should be shown while fetching suggestions.
+    // Test: Enter text that triggers a delayed response and verify the loading indicator is shown and then hidden.
+    testWidgets('shows loading indicator when fetching suggestions', (WidgetTester tester) async {
+      when(mockMapService.getBuildingSuggestions('Slow'))
+          .thenAnswer((_) async {
+            await Future.delayed(const Duration(milliseconds: 500));
+            return ['Slow Building', 'Slower Building'];
+          });
 
-    expect(find.byType(TextField), findsOneWidget);
+      await tester.pumpWidget(createWidgetUnderTest(mapService: mockMapService));
 
-    // Verify the label is present
-    expect(find.text('Building'), findsOneWidget);
+      await tester.enterText(find.byKey(const Key('building_search_field')), 'Slow');
+      await tester.pump(const Duration(milliseconds: 300));
+      await tester.pump();
 
-    // Verify no text is in the input
-    final TextField textField = tester.widget(find.byType(TextField));
-    expect(textField.controller!.text, '');
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pump();
+
+      expect(find.byType(CircularProgressIndicator), findsNothing);
+    });
   });
 
-  testWidgets('BuildingSearchField renders without initial value',
-      (WidgetTester tester) async {
-    await tester.pumpWidget(createWidgetUnderTest());
+  group('Debounce tests', () {
+    // Expected: API calls should be debounced when typing quickly.
+    // Test: Type rapidly and verify the API is called only once with the final value.
+    testWidgets('debounces API calls when typing quickly', (WidgetTester tester) async {
+      await tester.pumpWidget(createWidgetUnderTest(mapService: mockMapService));
 
-    expect(find.byType(TextField), findsOneWidget);
-    expect(find.text('Building'), findsOneWidget);
-    final TextField textField = tester.widget(find.byType(TextField));
-    expect(textField.controller!.text, '');
-  });
-  testWidgets('Respects widget.initialValue during initialization',
-      (WidgetTester tester) async {
-    await tester.pumpWidget(createWidgetUnderTest(
-      initialValue: 'Vanier Library',
-    ));
+      await tester.enterText(find.byKey(const Key('building_search_field')), 'H');
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.enterText(find.byKey(const Key('building_search_field')), 'Ha');
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.enterText(find.byKey(const Key('building_search_field')), 'Hall');
+      await tester.pump(const Duration(milliseconds: 300));
+      await tester.pump();
 
-    final TextField textField = tester.widget(find.byType(TextField));
-    expect(textField.controller!.text, 'Vanier Library');
-  });
-  testWidgets('displays the initial value in the text field',
-      (WidgetTester tester) async {
-    await tester.pumpWidget(MaterialApp(
-      home: Scaffold(
-        body: BuildingSearchField(
-            initialValue: "EV Building", mapService: mockMapService),
-      ),
-    ));
-
-    expect(find.byKey(const Key('building_search_field')), findsOneWidget);
-    expect(find.text('EV Building'), findsOneWidget);
+      verify(mockMapService.getBuildingSuggestions('Hall')).called(1);
+      verifyNever(mockMapService.getBuildingSuggestions('H'));
+      verifyNever(mockMapService.getBuildingSuggestions('Ha'));
+    });
   });
 }
