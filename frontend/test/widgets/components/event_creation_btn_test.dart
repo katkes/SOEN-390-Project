@@ -18,12 +18,15 @@ import 'event_creation_btn_test.mocks.dart';
 void main() {
   late MockAuthService mockAuthService;
   late MockHttpService mockHttpService;
+  late MockCalendarService mockCalendarService;
   late MockSecureStorage mockSecureStorage;
+  late bool fetchCalendarEventsCalled;
 
   setUp(() {
     mockAuthService = MockAuthService();
     mockHttpService = MockHttpService();
     mockSecureStorage = MockSecureStorage();
+    mockCalendarService = MockCalendarService(); 
 
     when(mockAuthService.httpService).thenReturn(mockHttpService);
     when(mockAuthService.secureStorage).thenReturn(mockSecureStorage);
@@ -33,12 +36,16 @@ void main() {
     return MaterialApp(
       home: Scaffold(
         body: Builder(
-          builder: (context) => EventCreationButton(
-            parentContext: context,
-            authService: mockAuthService,
-            selectedCalendarId: 'testCalendarId',
-            fetchCalendarEvents: () async {},
-          ),
+          builder: (context) {
+            return EventCreationButton(
+              parentContext: context,
+              authService: mockAuthService,
+              selectedCalendarId: 'testCalendarId',
+              fetchCalendarEvents: () async {
+                fetchCalendarEventsCalled = true;
+              },
+            );
+          },
         ),
       ),
     );
@@ -383,6 +390,47 @@ void main() {
     expect(result.length, 1);
     expect(result[0], day);
   });
+   testWidgets(
+        'handleEventSave should call fetchCalendarEvents and pop the dialog',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(createWidgetUnderTest());
+
+      final buttonFinder = find.byType(EventCreationButton);
+      final button = tester.widget<EventCreationButton>(buttonFinder);
+      final wrapper = EventCreationButtonWrapper(button);
+
+      const name = 'Test Event';
+      const building = 'Test Building';
+      const classroom = 'Test Classroom';
+      final time = const TimeOfDay(hour: 10, minute: 0);
+      final day = DateTime(2023, 10, 26);
+      const recurringFrequency = 'None';
+
+      // Mock the buildCalendarService and createEvent.
+      when(mockAuthService.httpService).thenReturn(mockHttpService);
+      when(mockAuthService.secureStorage).thenReturn(mockSecureStorage);
+      when(mockCalendarService.createEvent(any, any))
+          .thenAnswer((_) async => gcal.Event());
+
+      // Call handleEventSave
+      wrapper.callHandleEventSave(
+        name,
+        building,
+        classroom,
+        time,
+        day,
+        recurringFrequency,
+      );
+      await tester.pumpAndSettle();
+
+      // Verify that fetchCalendarEvents was called.
+      expect(fetchCalendarEventsCalled, true);
+
+      // Verify that the dialog was popped.  This is harder to test directly.
+      // We check that nothing is left.
+      expect(find.byType(EventCreationPopup),
+          findsNothing); //checks that the event creation popup is not on the screen
+    });
 }
 
 class TestableEventCreationButton extends EventCreationButton {
@@ -394,6 +442,27 @@ class TestableEventCreationButton extends EventCreationButton {
   });
 
   // Expose the private methods for testing
+  @override
+  List<DateTime> generateEventDates(DateTime day, String frequency) {
+    return super.generateEventDates(day, frequency);
+  }
+
+  @override
+  gcal.Event createEvent({
+    required String name,
+    required String building,
+    required String classroom,
+    required DateTime date,
+    required TimeOfDay time,
+  }) {
+    return super.createEvent(
+      name: name,
+      building: building,
+      classroom: classroom,
+      date: date,
+      time: time,
+    );
+  }
 }
 
 // Helper class to test the private methods
