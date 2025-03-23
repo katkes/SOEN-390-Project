@@ -152,7 +152,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
                   side: const BorderSide(color: Color(0xff912338)),
                 ),
               ),
-              child: const Text("Search POIS"),
+              child: const Text("What's Nearby?"),
             ),
             Container(
               decoration: BoxDecoration(

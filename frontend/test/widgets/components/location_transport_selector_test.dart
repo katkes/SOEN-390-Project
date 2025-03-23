@@ -249,7 +249,7 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
     ));
 
     // Tap the "Search POIS" button
-    await tester.tap(find.text('Search POIS'));
+    await tester.tap(find.text("What's Nearby?"));
     await tester.pumpAndSettle(); // Wait for navigation
 
     expect(find.byType(PlaceSearchScreen), findsOneWidget);
