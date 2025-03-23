@@ -101,20 +101,3 @@ class IndoorAccessibilityState extends State<IndoorAccessibilityPage> {
     return _setStateCount;
   }
 }
-
-//just to test how it looks inside of the app. Uncomment when necessary if adding additional options.
-// void main() {
-//   runApp(const MyApp());
-// }
-//
-// class MyApp extends StatelessWidget {
-//   const MyApp({super.key});
-//
-//   //used for
-//   @override
-//   Widget build(BuildContext context) {
-//     return const MaterialApp(
-//       home: IndoorAccessibilityPage(),
-//     );
-//   }
-// }
