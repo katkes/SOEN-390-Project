@@ -194,10 +194,22 @@ void _setLoadingState(String transportMode) {
     _displayRoutesAndLogDetails(waypoints, topRoutes, transportMode);
   }
 
-  Future<Map<String, LatLng>?> _resolveCoordinates(
+Future<Map<String, LatLng>?> _resolveCoordinates(
       List<String> waypoints) async {
-    final LatLng? startPoint =
-        await geocodingService.getCoordinates(waypoints.first);
+    LatLng? startPoint;
+
+    // Check if "Your Location" is used and get current GPS location
+    if (waypoints.first == 'Your Location') {
+      try {
+        final position = await locationService.getCurrentLocation();
+        startPoint = LatLng(position.latitude, position.longitude);
+      } catch (e) {
+        throw Exception("Failed to fetch current location: $e");
+      }
+    } else {
+      startPoint = await geocodingService.getCoordinates(waypoints.first);
+    }
+
     LatLng? endPoint;
 
     if (widget.destinationLat != null && widget.destinationLng != null) {
@@ -206,12 +218,17 @@ void _setLoadingState(String transportMode) {
       endPoint = await geocodingService.getCoordinates(waypoints.last);
     }
 
-    if (startPoint == null || endPoint == null) {
-      throw Exception("Failed to resolve coordinates for waypoints");
+    if (startPoint == null) {
+      throw Exception("Failed to resolve start point coordinates.");
+    }
+    if (endPoint == null) {
+      throw Exception("Failed to resolve end point coordinates.");
     }
 
     return {'start': startPoint, 'end': endPoint};
   }
+
+
 
 bool _validateRoutes(
       Map<String, List<RouteResult>> routes, String googleTransportMode) {
