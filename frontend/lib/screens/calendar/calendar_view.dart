@@ -16,7 +16,7 @@ import 'table_calendar_widget.dart';
 import 'event_list_widget.dart';
 import 'calendar_app_bar.dart';
 import 'calendar_dropdown.dart';
-import 'event_creation_widget.dart';
+import 'event_creation_btn.dart';
 
 /// A screen that displays the user's Google Calendar events.
 /// Show upcoming classes and events in a structured format (list, calendar, or timeline view).
@@ -52,16 +52,14 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   bool _isLoading = true;
   String? _selectedCalendarId;
 
-  List<gcal.CalendarListEntry> _calendars = []; // List of user's calendars
+  List<gcal.CalendarListEntry> _calendars = [];
 
   late CalendarEventService calendarEventService;
 
-  // Calendar controller
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
 
-  // Map to store events by date
   Map<DateTime, List<gcal.Event>> _eventsByDay = {};
 
   @override
@@ -289,87 +287,11 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (context) => EventCreationPopup(
-              onSave: (name, building, classroom, time, day,
-                  recurringFrequency) async {
-                List<DateTime> eventDates = [];
-
-                switch (recurringFrequency) {
-                  case "Daily":
-                    for (int i = 0; i < 7; i++) {
-                      eventDates.add(day.add(Duration(days: i)));
-                    }
-                    break;
-                  case "Weekly":
-                    for (int i = 0; i < 13; i++) {
-                      eventDates.add(day.add(Duration(days: 7 * i)));
-                    }
-                    break;
-                  case "Monthly":
-                    for (int i = 0; i < 12; i++) {
-                      int newMonth = day.month + i;
-                      int yearOffset = (newMonth - 1) ~/ 12;
-                      int adjustedMonth = ((newMonth - 1) % 12) + 1;
-
-                      int daysInMonth =
-                          DateTime(day.year + yearOffset, adjustedMonth + 1, 0)
-                              .day;
-                      int adjustedDay =
-                          day.day > daysInMonth ? daysInMonth : day.day;
-
-                      DateTime monthlyDate = DateTime(
-                          day.year + yearOffset, adjustedMonth, adjustedDay);
-
-                      eventDates.add(monthlyDate);
-                    }
-                    break;
-                  default:
-                    eventDates.add(day);
-                }
-
-                // Create and save events
-                for (final eventDate in eventDates) {
-                  final event = gcal.Event()
-                    ..summary = name
-                    ..location = "$building, $classroom"
-                    ..start = gcal.EventDateTime(
-                        dateTime: DateTime(eventDate.year, eventDate.month,
-                            eventDate.day, time.hour, time.minute))
-                    ..end = gcal.EventDateTime(
-                        dateTime: DateTime(eventDate.year, eventDate.month,
-                            eventDate.day, time.hour + 1, time.minute));
-
-                  try {
-                    final calendarService = CalendarService(AuthRepository(
-                      authService: widget.authService,
-                      httpService: widget.authService.httpService,
-                      secureStorage: widget.authService.secureStorage,
-                    ));
-                    await calendarService.createEvent(
-                        _selectedCalendarId ?? 'primary', event);
-                  } catch (e) {
-                    print(
-                        "Error creating event on ${eventDate.toString()}: $e");
-                  }
-                }
-
-                await fetchCalendarEvents();
-
-                if (mounted) {
-                  Navigator.pop(context);
-                }
-              },
-            ),
-          );
-        },
-        tooltip: 'Create Event',
-        child: const Icon(Icons.add),
-        backgroundColor: const Color(0xFF004085),
-        mini: true,
+      floatingActionButton: EventCreationButton(
+        parentContext: context,
+        authService: widget.authService,
+        selectedCalendarId: _selectedCalendarId,
+        fetchCalendarEvents: fetchCalendarEvents,
       ),
       bottomNavigationBar:
           NavBar(selectedIndex: selectedIndex, onItemTapped: onItemTapped),
