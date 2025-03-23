@@ -211,8 +211,6 @@
   </head>
   <body>
     <div id="mappedin-map"></div>
-
-    <!-- Updated Modal for Selecting Start/Destination with Floor Selector -->
     <div id="route-panel">
       <div class="panel-header">
         <h2>Mappedin Map</h2>
@@ -223,31 +221,10 @@
           </select>
         </div>
       </div>
-
-      <label for="start">Start:</label>
-      <select id="start">
-        <option value="">Select start point</option>
-      </select>
-
-      <label for="destination">Destination:</label>
-      <select id="destination">
-        <option value="">Select destination</option>
-      </select>
-
-      <button id="get-directions">Get Directions</button>
     </div>
 
-    <!-- Step-by-Step Directions -->
-    <div id="directions-panel">
-      <div id="drag-handle"></div>
-      <button id="toggle-steps">Show Steps</button>
-      <div id="route-info">
-        <p id="estimated-time">Estimated Time: N/A</p>
-        <p id="total-distance">Total Distance: N/A</p>
-      </div>
-      <div id="directions-list" style="display: none"></div>
-    </div>
 
+    <!-- IMPORTANT DO NOT CHANGE THE NEXT 3 LINES -->
     <script type="module">
       import {
         getMapData,
@@ -437,6 +414,8 @@
           alert("Path cleared. Tap to start again.");
         }
       });
+    JAVASCRIPTCODE
     </script>
+
   </body>
 </html>
