@@ -66,6 +66,39 @@ void main() {
       final state = tester.state<IndoorAccessibilityState>(
           find.byType(IndoorAccessibilityPage));
       expect(state.getMobilityStatus(), false);
+    });
+
+    testWidgets("Checkbox onChanged updates UI, state, and setState coverage",
+        (WidgetTester tester) async {
+      await tester.pumpWidget(const MaterialApp(
+        home: IndoorAccessibilityPage(),
+      ));
+
+      final checkbox = find.byType(Checkbox);
+      final state = tester.state<IndoorAccessibilityState>(
+          find.byType(IndoorAccessibilityPage));
+
+      expect(state.getSetStateCount(), 0); //initial value
+
+      await tester.tap(checkbox);
+      await tester.pump();
+
+      expect(state.getSetStateCount(), 1); //check if it incremented
+
+      expect(
+          find.text('Requires mobility considerations: true'), findsOneWidget);
+      expect(tester.widget<Checkbox>(checkbox).value, true);
+      expect(state.getMobilityStatus(), true);
+
+      await tester.tap(checkbox);
+      await tester.pump();
+
+      expect(state.getSetStateCount(), 2); //check if it incremented again.
+
+      expect(
+          find.text('Requires mobility considerations: false'), findsOneWidget);
+      expect(tester.widget<Checkbox>(checkbox).value, false);
+      expect(state.getMobilityStatus(), false);
     }); //end of test
   }); //end of group
 

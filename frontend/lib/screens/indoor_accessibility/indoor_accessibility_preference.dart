@@ -24,6 +24,7 @@ class IndoorAccessibilityState extends State<IndoorAccessibilityPage> {
   //the key itself should be private for security reasons and data consistency (avoiding data corruption)
   //however, the value will be made accessible globally.
   static const String _mobilityKey = 'mobility_impaired';
+  int _setStateCount = 0;
 
   bool getMobilityStatus() {
     //necessary for UI and UI testing
@@ -83,6 +84,7 @@ class IndoorAccessibilityState extends State<IndoorAccessibilityPage> {
                   onChanged: (bool? newValue) {
                     setState(() {
                       _isMobilityImpaired = newValue ?? false;
+                      _setStateCount++;
                     });
                     _savePreference(_isMobilityImpaired);
                   },
@@ -93,6 +95,10 @@ class IndoorAccessibilityState extends State<IndoorAccessibilityPage> {
         ),
       ),
     );
+  }
+
+  int getSetStateCount() {
+    return _setStateCount;
   }
 }
 
