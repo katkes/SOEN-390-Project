@@ -48,7 +48,7 @@ void main() {
   testWidgets('Displays empty state when no places are available',
       (WidgetTester tester) async {
     await tester.pumpWidget(createTestWidget(
-      POIListView(places: [], apiKey: testApiKey, onPlaceTap: (_) {}),
+      POIListView(places: const [], apiKey: testApiKey, onPlaceTap: (_) {}),
     ));
 
     expect(find.text('No places found.'), findsOneWidget);

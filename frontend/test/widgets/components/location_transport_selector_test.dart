@@ -140,29 +140,28 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
     expect(state.selectedTimeOption, equals('Depart At'));
   });
 
-  testWidgets('_showLocationSuggestions displays SuggestionsPopup',
+testWidgets('_showLocationSuggestions displays SuggestionsPopup',
       (WidgetTester tester) async {
     await tester.pumpWidget(createWidgetUnderTest());
 
-    // Tap the start location field to trigger _showLocationSuggestions
-    await tester.tap(find.text('Start Location'));
-    await tester.pumpAndSettle(); // Wait for dialog to open
+    // Tap the start location field with the default 'Your Location'
+    await tester.tap(find.text('Your Location'));
+    await tester.pumpAndSettle();
 
     expect(find.byType(SuggestionsPopup), findsOneWidget);
   });
 
-  testWidgets('_handleLocationSelection updates itinerary for start location',
+testWidgets('_handleLocationSelection updates itinerary for start location',
       (WidgetTester tester) async {
     await tester.pumpWidget(createWidgetUnderTest());
 
-    // Tap to open the suggestions dialog
-    await tester.tap(find.text('Start Location'));
-    await tester.pumpAndSettle(); // Ensure dialog is rendered
+    // Tap the start location field to open suggestions
+    await tester.tap(find.text('Your Location'));
+    await tester.pumpAndSettle();
 
-    // Tap on the first suggestion (e.g., "Restaurant")
+    // Select 'Restaurant' from suggestions
     await tester.tap(find.text('Restaurant').first);
-    await tester
-        .pumpAndSettle(); // Wait for post-frame callback & dialog to close
+    await tester.pumpAndSettle();
 
     final state = tester.state(find.byType(LocationTransportSelector))
         as LocationTransportSelectorState;
@@ -171,7 +170,8 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
     expect(state.itinerary.first, equals('Restaurant'));
   });
 
-  testWidgets(
+
+testWidgets(
       '_setStartLocation inserts at position 0 when itinerary not empty',
       (WidgetTester tester) async {
     await tester.pumpWidget(createWidgetUnderTest());
@@ -179,14 +179,18 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
     final state = tester.state(find.byType(LocationTransportSelector))
         as LocationTransportSelectorState;
 
-    // Set initial destination to populate itinerary
+    // Clear the default-initialized itinerary
+    state.itinerary.clear();
+
+    // Now proceed
     state.setDestinationLocation('Destination');
     expect(state.itinerary, ['Destination']);
 
-    // Now set start location
     state.setStartLocation('Start');
     expect(state.itinerary, ['Start', 'Destination']);
   });
+
+
 
   testWidgets(
       'Transport mode fallback triggers onConfirmRoute when onTransportModeChange is null',

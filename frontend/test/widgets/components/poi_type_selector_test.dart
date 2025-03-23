@@ -48,7 +48,7 @@ void main() {
     await tester.pumpWidget(MaterialApp(
       home: Scaffold(
         body: POITypeSelector(
-          types: ['museum', 'theater'],
+          types: const ['museum', 'theater'],
           onTypeSelected: (type) {
             selectedType = type;
           },

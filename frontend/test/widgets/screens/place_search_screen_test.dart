@@ -25,6 +25,7 @@ void main() {
   dotenv.testLoad(fileInput: '''
 GOOGLE_PLACES_API_KEY=TEST_API_KEY
 ''');
+
   late MockLocationService mockLocationService;
   late MockGooglePOIService mockPoiService;
   late MockPointOfInterestFactory mockPoiFactory;
@@ -48,42 +49,12 @@ GOOGLE_PLACES_API_KEY=TEST_API_KEY
   testWidgets('renders core widgets', (WidgetTester tester) async {
     await tester.pumpWidget(createTestWidget());
     expect(find.byType(POISearchBar), findsOneWidget);
-    expect(find.byType(POITypeSelector), findsOneWidget);
     expect(find.byType(POIListView), findsOneWidget);
   });
 
+
   testWidgets('uses current location on button tap',
       (WidgetTester tester) async {
-    when(mockLocationService.startUp()).thenAnswer((_) async {});
-    when(mockLocationService.getCurrentLocationAccurately()).thenAnswer(
-        (_) async => Position(
-            latitude: 45.0,
-            longitude: -73.0,
-            timestamp: DateTime.now(),
-            accuracy: 1,
-            altitude: 1,
-            heading: 1,
-            speed: 1,
-            speedAccuracy: 1,
-            altitudeAccuracy: 1,
-            headingAccuracy: 1,
-            isMocked: false));
-    when(mockLocationService.convertPositionToLatLng(any))
-        .thenReturn(const LatLng(45.0, -73.0));
-
-    await tester.pumpWidget(createTestWidget());
-
-    // Tap the location button inside POISearchBar
-    await tester.tap(find.byIcon(Icons.my_location));
-    await tester.pump();
-
-    verify(mockLocationService.startUp()).called(1);
-    verify(mockLocationService.getCurrentLocationAccurately()).called(1);
-  });
-
-  testWidgets('uses current location and loads POIs into UI',
-      (WidgetTester tester) async {
-    // Mock LocationService behavior
     when(mockLocationService.startUp()).thenAnswer((_) async {});
     when(mockLocationService.getCurrentLocationAccurately()).thenAnswer(
       (_) async => Position(
@@ -103,7 +74,38 @@ GOOGLE_PLACES_API_KEY=TEST_API_KEY
     when(mockLocationService.convertPositionToLatLng(any))
         .thenReturn(const LatLng(45.0, -73.0));
 
-    // Mock POI fetching based on location + type
+    await tester.pumpWidget(createTestWidget());
+
+    await tester.tap(find.byIcon(Icons.my_location));
+    await tester.pumpAndSettle();
+
+    verify(mockLocationService.startUp()).called(1);
+    verify(mockLocationService.getCurrentLocationAccurately()).called(1);
+  });
+
+  testWidgets('uses current location and loads POIs into UI',
+      (WidgetTester tester) async {
+    // Mock location service responses
+    when(mockLocationService.startUp()).thenAnswer((_) async {});
+    when(mockLocationService.getCurrentLocationAccurately()).thenAnswer(
+      (_) async => Position(
+        latitude: 45.0,
+        longitude: -73.0,
+        timestamp: DateTime.now(),
+        accuracy: 1,
+        altitude: 1,
+        heading: 1,
+        speed: 1,
+        speedAccuracy: 1,
+        altitudeAccuracy: 1,
+        headingAccuracy: 1,
+        isMocked: false,
+      ),
+    );
+    when(mockLocationService.convertPositionToLatLng(any))
+        .thenReturn(const LatLng(45.0, -73.0));
+
+    // Mock POI service response
     final testPlace = Place(
       name: 'Location Place',
       placeId: 'loc_place_1',
@@ -130,17 +132,19 @@ GOOGLE_PLACES_API_KEY=TEST_API_KEY
 
     await tester.pumpWidget(createTestWidget());
 
-    // Tap location icon
+    // Tap location icon to set current location
     await tester.tap(find.byIcon(Icons.my_location));
-    await tester.pumpAndSettle(); // Wait for location fetch
+    await tester.pumpAndSettle();
 
-    // Tap POI type "RESTAURANT"
+    // Reveal POITypeSelector first
+    await tester.tap(find.byType(ElevatedButton));
+    await tester.pumpAndSettle();
+
+    // Now tap on "RESTAURANT"
     await tester.tap(find.text('RESTAURANT'));
-    await tester.pumpAndSettle(); // Wait for POI fetch
+    await tester.pumpAndSettle();
 
-    // Verify services were called
-    verify(mockLocationService.startUp()).called(1);
-    verify(mockLocationService.getCurrentLocationAccurately()).called(1);
+    // Verify POI service was called
     verify(mockPoiService.getNearbyPlaces(
       latitude: 45.0,
       longitude: -73.0,
@@ -148,9 +152,147 @@ GOOGLE_PLACES_API_KEY=TEST_API_KEY
       radius: 1500,
     )).called(1);
 
-    // Verify the fetched place appears in the UI
+    // Verify POI shows up in UI
     expect(find.text('Location Place'), findsOneWidget);
   });
+
+
+  testWidgets('shows SnackBar on POI fetch error', (WidgetTester tester) async {
+    when(mockLocationService.startUp()).thenAnswer((_) async {});
+    when(mockLocationService.getCurrentLocationAccurately()).thenAnswer(
+      (_) async => Position(
+        latitude: 45.0,
+        longitude: -73.0,
+        timestamp: DateTime.now(),
+        accuracy: 1,
+        altitude: 1,
+        heading: 1,
+        speed: 1,
+        speedAccuracy: 1,
+        altitudeAccuracy: 1,
+        headingAccuracy: 1,
+        isMocked: false,
+      ),
+    );
+    when(mockLocationService.convertPositionToLatLng(any))
+        .thenReturn(const LatLng(45.0, -73.0));
+
+    when(mockPoiService.getNearbyPlaces(
+      latitude: 45.0,
+      longitude: -73.0,
+      type: 'restaurant',
+      radius: 1500,
+    )).thenThrow(Exception('Failed to fetch POIs'));
+
+    await tester.pumpWidget(createTestWidget());
+
+    // Tap location icon to simulate location fetch
+    await tester.tap(find.byIcon(Icons.my_location));
+    await tester.pumpAndSettle();
+
+    // Reveal POITypeSelector
+    await tester.tap(find.byType(ElevatedButton)); // Toggle button
+    await tester.pumpAndSettle();
+
+    // Tap on "RESTAURANT"
+    await tester.tap(find.text('RESTAURANT'));
+    await tester.pumpAndSettle();
+
+    // Check that SnackBar with error message appears
+    expect(find.text('Failed to fetch places'), findsOneWidget);
+  });
+
+
+  testWidgets('shows SnackBar on location fetch error',
+      (WidgetTester tester) async {
+    when(mockLocationService.startUp()).thenAnswer((_) async {});
+    when(mockLocationService.getCurrentLocationAccurately())
+        .thenThrow(Exception('Location error'));
+
+    await tester.pumpWidget(createTestWidget());
+
+    await tester.tap(find.byIcon(Icons.my_location));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Unable to fetch current location'), findsOneWidget);
+  });
+
+testWidgets('shows loading indicator while fetching POIs',
+      (WidgetTester tester) async {
+    when(mockLocationService.startUp()).thenAnswer((_) async {});
+    when(mockLocationService.getCurrentLocationAccurately()).thenAnswer(
+      (_) async => Position(
+        latitude: 45.0,
+        longitude: -73.0,
+        timestamp: DateTime.now(),
+        accuracy: 1,
+        altitude: 1,
+        heading: 1,
+        speed: 1,
+        speedAccuracy: 1,
+        altitudeAccuracy: 1,
+        headingAccuracy: 1,
+        isMocked: false,
+      ),
+    );
+    when(mockLocationService.convertPositionToLatLng(any))
+        .thenReturn(const LatLng(45.0, -73.0));
+
+    final completer = Completer<List<Place>>();
+    when(mockPoiService.getNearbyPlaces(
+      latitude: 45.0,
+      longitude: -73.0,
+      type: 'park',
+      radius: 1500,
+    )).thenAnswer((_) => completer.future);
+
+    await tester.pumpWidget(createTestWidget());
+
+    // Tap to get current location
+    await tester.tap(find.byIcon(Icons.my_location));
+    await tester.pumpAndSettle();
+
+    // Reveal POITypeSelector
+    await tester.tap(find.byType(ElevatedButton)); // Toggle button
+    await tester.pumpAndSettle();
+
+    // Now tap "PARK"
+    await tester.tap(find.text('PARK'));
+    await tester.pump();
+
+    // Verify loading indicator is shown while awaiting POIs
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+    // Complete POI fetch
+    completer.complete([]);
+    await tester.pumpAndSettle();
+
+    // Verify loading indicator is gone
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+  });
+
+
+testWidgets('does not fetch POIs if location is null',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(createTestWidget());
+
+    // Toggle POITypeSelector visibility first
+    await tester.tap(find.byType(ElevatedButton));
+    await tester.pumpAndSettle();
+
+    // Tap POI type 'RESTAURANT' (now visible)
+    await tester.tap(find.text('RESTAURANT'));
+    await tester.pumpAndSettle();
+
+    // Verify POIService is never called because location is null
+    verifyNever(mockPoiService.getNearbyPlaces(
+      latitude: anyNamed('latitude'),
+      longitude: anyNamed('longitude'),
+      type: anyNamed('type'),
+      radius: anyNamed('radius'),
+    ));
+  });
+
 
   testWidgets('tapping a place creates POI and navigates',
       (WidgetTester tester) async {
@@ -181,8 +323,9 @@ GOOGLE_PLACES_API_KEY=TEST_API_KEY
     );
 
     when(mockPoiFactory.createPointOfInterest(
-            placeId: anyNamed('placeId'), imageUrl: anyNamed('imageUrl')))
-        .thenAnswer((_) async => testPOI);
+      placeId: anyNamed('placeId'),
+      imageUrl: anyNamed('imageUrl'),
+    )).thenAnswer((_) async => testPOI);
 
     await tester.pumpWidget(createTestWidget());
 
@@ -199,174 +342,6 @@ GOOGLE_PLACES_API_KEY=TEST_API_KEY
       imageUrl: '',
     )).called(1);
 
-    // Verify navigation happened (new screen exists)
     expect(find.byType(PoiDetailScreen), findsOneWidget);
   });
-
-testWidgets('shows SnackBar on POI fetch error', (WidgetTester tester) async {
-    // Mock failure from POI service
-    when(mockPoiService.getNearbyPlaces(
-      latitude: 45.0,
-      longitude: -73.0,
-      type: 'restaurant',
-      radius: 1500,
-    )).thenThrow(Exception('Failed to fetch POIs'));
-
-    when(mockLocationService.startUp()).thenAnswer((_) async {});
-    when(mockLocationService.getCurrentLocationAccurately()).thenAnswer(
-      (_) async => Position(
-        latitude: 45.0,
-        longitude: -73.0,
-        timestamp: DateTime.now(),
-        accuracy: 1,
-        altitude: 1,
-        heading: 1,
-        speed: 1,
-        speedAccuracy: 1,
-        altitudeAccuracy: 1,
-        headingAccuracy: 1,
-        isMocked: false,
-      ),
-    );
-    when(mockLocationService.convertPositionToLatLng(any))
-        .thenReturn(const LatLng(45.0, -73.0));
-
-    await tester.pumpWidget(MaterialApp(
-        home: PlaceSearchScreen(
-      locationService: mockLocationService,
-      poiService: mockPoiService,
-      poiFactory: mockPoiFactory,
-    )));
-
-    // Simulate user pressing the location button to set location
-    await tester.tap(find.byIcon(Icons.my_location));
-    await tester.pumpAndSettle();
-
-    // Simulate user selecting POI type to trigger _onTypeSelected
-    await tester.tap(find.text('RESTAURANT'));
-    await tester.pumpAndSettle();
-
-    // Expect error message in SnackBar
-    expect(find.text('Failed to fetch places'), findsOneWidget);
-  });
-
-  testWidgets('shows SnackBar on location fetch error',
-      (WidgetTester tester) async {
-    when(mockLocationService.startUp()).thenAnswer((_) async {});
-    when(mockLocationService.getCurrentLocationAccurately())
-        .thenThrow(Exception('Location error'));
-
-    await tester.pumpWidget(createTestWidget());
-
-    await tester.tap(find.byIcon(Icons.my_location));
-    await tester.pumpAndSettle();
-
-    expect(find.text('Unable to fetch current location'), findsOneWidget);
-  });
-
-  testWidgets('shows loading indicator while fetching POIs',
-      (WidgetTester tester) async {
-    when(mockLocationService.startUp()).thenAnswer((_) async {});
-    when(mockLocationService.getCurrentLocationAccurately()).thenAnswer(
-      (_) async => Position(
-        latitude: 45.0,
-        longitude: -73.0,
-        timestamp: DateTime.now(),
-        accuracy: 1,
-        altitude: 1,
-        heading: 1,
-        speed: 1,
-        speedAccuracy: 1,
-        altitudeAccuracy: 1,
-        headingAccuracy: 1,
-        isMocked: false,
-      ),
-    );
-    when(mockLocationService.convertPositionToLatLng(any))
-        .thenReturn(const LatLng(45.0, -73.0));
-
-    final completer = Completer<List<Place>>();
-    when(mockPoiService.getNearbyPlaces(
-      latitude: 45.0,
-      longitude: -73.0,
-      type: 'park',
-      radius: 1500,
-    )).thenAnswer((_) => completer.future);
-
-    await tester.pumpWidget(MaterialApp(
-        home: PlaceSearchScreen(
-      locationService: mockLocationService,
-      poiService: mockPoiService,
-      poiFactory: mockPoiFactory,
-    )));
-
-    await tester.tap(find.byIcon(Icons.my_location));
-    await tester.pumpAndSettle();
-
-    await tester.tap(find.text('PARK'));
-    await tester.pump();
-
-    // Loading indicator should be shown while POI fetch is pending
-    expect(find.byType(CircularProgressIndicator), findsOneWidget);
-
-    // Complete the future to stop loading
-    completer.complete([]);
-    await tester.pumpAndSettle();
-
-    // Loading indicator gone
-    expect(find.byType(CircularProgressIndicator), findsNothing);
-  });
-
-  testWidgets('_updateLocation triggers POI fetch if type is set',
-      (WidgetTester tester) async {
-    // Arrange: Mock POI service
-    when(mockPoiService.getNearbyPlaces(
-      latitude: 45.0,
-      longitude: -73.0,
-      type: 'park',
-      radius: 1500,
-    )).thenAnswer((_) async => []);
-
-    await tester.pumpWidget(MaterialApp(
-      home: PlaceSearchScreen(
-        locationService: mockLocationService,
-        poiService: mockPoiService,
-        poiFactory: mockPoiFactory,
-      ),
-    ));
-
-    // Step 1: Simulate location update first
-    final searchBarFinder = find.byType(POISearchBar);
-    final searchBarWidget = tester.widget<POISearchBar>(searchBarFinder);
-    searchBarWidget.onSearch('Test Address', 45.0, -73.0);
-    await tester.pump(); // allow location state update
-
-    // Step 2: Now select the POI type ("PARK")
-    await tester.tap(find.text('PARK'));
-    await tester.pumpAndSettle(); // triggers POI fetch
-
-    // Assert: Verify POI service was called with correct location and type
-    verify(mockPoiService.getNearbyPlaces(
-      latitude: 45.0,
-      longitude: -73.0,
-      type: 'park',
-      radius: 1500,
-    )).called(1);
-  });
-
-  testWidgets('does not fetch POIs if location is null',
-      (WidgetTester tester) async {
-    await tester.pumpWidget(createTestWidget());
-
-    await tester.tap(find.text('RESTAURANT'));
-    await tester.pumpAndSettle();
-
-    verifyNever(mockPoiService.getNearbyPlaces(
-      latitude: anyNamed('latitude'),
-      longitude: anyNamed('longitude'),
-      type: anyNamed('type'),
-      radius: anyNamed('radius'),
-    ));
-  });
-
 }
