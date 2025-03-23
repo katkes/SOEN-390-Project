@@ -328,7 +328,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const MappedinMapScreen(),
+                            builder: (context) => MappedinMapScreen(),
                           ),
                         );
                       },
