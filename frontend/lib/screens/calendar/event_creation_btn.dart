@@ -5,6 +5,8 @@ import 'package:soen_390/services/calendar_service.dart';
 import 'package:soen_390/repositories/auth_repository.dart';
 import 'package:soen_390/services/auth_service.dart';
 
+/// The file defines a EventCreationButton widget in Flutter. This widget is used to trigger the creation of a new calendar event within the application.
+
 class EventCreationButton extends StatelessWidget {
   final BuildContext parentContext;
   final AuthService authService;
