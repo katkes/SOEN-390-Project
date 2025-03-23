@@ -230,8 +230,8 @@ class _PlaceSearchScreenState extends State<PlaceSearchScreen> {
             child: ElevatedButton(
               onPressed: _togglePOISelectorVisibility,
               child: Text(_isPOISelectorVisible
-                  ? 'Show Place Categories'
-                  : 'Hide Place Categories'),
+                  ? 'Hide Place Categories'
+                  : 'Show Place Categories'),
             ),
           ),
           Visibility(
