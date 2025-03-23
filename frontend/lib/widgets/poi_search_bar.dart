@@ -47,18 +47,24 @@ class POISearchBar extends StatelessWidget {
             countries: countries,
             fetchCoordinates: true,
             onPlaceDetailsWithCoordinatesReceived: (prediction) {
-              double lat = double.tryParse(prediction.lat.toString()) ?? 0.0;
-              double lng = double.tryParse(prediction.lng.toString()) ?? 0.0;
+              // Safely parse latitude and longitude as doubles
+              final latParsed = double.tryParse(prediction.lat.toString());
+              final lngParsed = double.tryParse(prediction.lng.toString());
 
-              if (lat == 0.0 && lng == 0.0) {
+              // Validate that both lat and lng are present and valid
+              if (latParsed == null || lngParsed == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text("Failed to get valid location coordinates."),
                   ),
                 );
-                return;
+                return; // Abort operation if invalid
               }
 
+              final double lat = latParsed;
+              final double lng = lngParsed;
+
+              // Proceed with valid coordinates
               String desc = prediction.description ?? '';
               controller.text = desc;
               controller.selection = TextSelection.fromPosition(
@@ -68,6 +74,7 @@ class POISearchBar extends StatelessWidget {
               onSearch(desc, lat, lng);
             },
             onSuggestionClicked: (prediction) {
+              // Update text field when user clicks on a suggestion
               controller.text = prediction.description ?? '';
               controller.selection = TextSelection.fromPosition(
                 TextPosition(offset: controller.text.length),
@@ -85,11 +92,13 @@ class POISearchBar extends StatelessWidget {
         IconButton(
           icon: const Icon(Icons.my_location),
           onPressed: () {
+            // Indicate location fetching
             controller.text = 'Getting location...';
             controller.selection = TextSelection.fromPosition(
               TextPosition(offset: controller.text.length),
             );
 
+            // Use current location via callback
             onUseCurrentLocation((lat, lng) {
               controller.text = 'Current Location';
               controller.selection = TextSelection.fromPosition(
