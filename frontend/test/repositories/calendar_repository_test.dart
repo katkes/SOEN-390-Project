@@ -137,4 +137,19 @@ void main() {
       expect(result, isEmpty);
     });
   });
+
+  /// Group of tests for `removeEventFromCache` method.
+  group('removeEventFromCache', () {
+    test('calls CacheService.removeEventFromCache with correct parameters',
+        () async {
+      final eventId = 'testEventId';
+      final calendarId = 'testCalendarId';
+
+      await calendarRepository.removeEventFromCache(eventId, calendarId);
+
+      verify(mockCacheService.removeEventFromCache(eventId,
+              calendarId: calendarId))
+          .called(1);
+    });
+  });
 }
