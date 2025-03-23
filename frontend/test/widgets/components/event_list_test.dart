@@ -35,13 +35,12 @@ class MockCalendarRepository extends Mock implements CalendarRepository {}
 void main() {
   late MockCalendarService mockCalendarService;
   late MockCalendarEventService mockCalendarEventService;
-  late MockCalendarRepository mockCalendarRepository;
+
   late List<gcal.Event> fakeEvents;
   final String testCalendarId = 'testCalendarId';
   setUp(() {
     mockCalendarService = MockCalendarService();
     mockCalendarEventService = MockCalendarEventService();
-    mockCalendarRepository = MockCalendarRepository();
 
     fakeEvents = [
       gcal.Event()
@@ -56,7 +55,7 @@ void main() {
         ..location = 'Test Location 2',
     ];
   });
-  Widget createWidgetUnderTest() {
+  Widget createWidgetUnderTest(VoidCallback? onEventChanged) {
     return MaterialApp(
       home: Scaffold(
         body: EventListWidget(
@@ -64,14 +63,14 @@ void main() {
           calendarService: mockCalendarService,
           calendarEventService: mockCalendarEventService,
           calendarId: testCalendarId,
-          onEventChanged: () {},
+          onEventChanged: onEventChanged,
         ),
       ),
     );
   }
 
-  testWidgets('EventListWidget renders events correctly', (tester) async {
-    await tester.pumpWidget(createWidgetUnderTest());
+  testWidgets('EventListWidget displays events', (WidgetTester tester) async {
+    await tester.pumpWidget(createWidgetUnderTest(null));
 
     expect(find.text('Event 1'), findsOneWidget);
     expect(find.text('Event 2'), findsOneWidget);
@@ -79,17 +78,22 @@ void main() {
     expect(find.text('Test Location 2'), findsOneWidget);
   });
 
-  testWidgets('EventListWidget opens event edit popup when tapped',
-      (tester) async {
-    await tester.pumpWidget(createWidgetUnderTest());
+  testWidgets('EventListWidget shows no events message when list is empty',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(
+        body: EventListWidget(
+          events: [],
+          calendarService: mockCalendarService,
+          calendarEventService: mockCalendarEventService,
+          calendarId: testCalendarId,
+        ),
+      ),
+    ));
 
-    await tester.tap(find.text('Event 1'));
-    await tester.pumpAndSettle();
-
-    expect(find.byType(EventEditPopup), findsOneWidget);
+    expect(find.text('No events for selected day'), findsOneWidget);
   });
 
-// Write me a test to handle empty events
   testWidgets('handle empty events list', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
@@ -105,7 +109,6 @@ void main() {
       ),
     );
 
-    // Check if the "No events for selected day" message is displayed when the events list is empty.
     expect(find.text('No events for selected day'), findsOneWidget);
   });
 
@@ -184,6 +187,39 @@ void main() {
       );
 
       expect(find.text('No Title'), findsOneWidget);
+    });
+
+    testWidgets('onTap shows dialog when an event is tapped',
+        (WidgetTester tester) async {
+      final calendarService = MockCalendarService();
+      final calendarEventService = MockCalendarEventService();
+
+      final testEvent = gcal.Event(
+        summary: 'Test Event',
+        start: gcal.EventDateTime(dateTime: DateTime(2025, 3, 20, 14, 30)),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: EventListWidget(
+              events: [testEvent],
+              calendarService: calendarService,
+              calendarEventService: calendarEventService,
+              calendarId: 'test',
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('Test Event'), findsOneWidget);
+
+      await tester.tap(find.text('Test Event'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(EventEditPopup), findsOneWidget);
+
+      expect(find.text('Update'), findsOneWidget);
     });
 
     testWidgets('does not display time if start.dateTime is null',
