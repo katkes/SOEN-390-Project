@@ -101,111 +101,173 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
     return false;
   }
 
+// Main method with extracted helper methods
   void _handleRouteConfirmation(
       List<String> waypoints, String transportMode) async {
-    if (waypoints.length < _minRoutes) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text("You must have at least a start and destination.")),
-      );
-      return;
-    }
+    // Early validation
+    if (!_validateWaypoints(waypoints)) return;
 
+    // Setup and cache checking
     final String googleTransportMode =
         utils.mapTransportModeToApiMode(transportMode);
     String waypointKey = "${waypoints.first}-${waypoints.last}";
 
-    // Check cache with consistent keys
+    // Return early if route found in cache
     if (_tryDisplayFromCache(
         googleTransportMode, waypointKey, waypoints, transportMode)) {
       return;
     }
 
-    if (selectedMode != transportMode) {
-      _clearConfirmedRoutes(); // Clear routes when mode changes
-      selectedMode = transportMode;
-      // _routeCache.clear();
-    }
+    // Handle transport mode changes
+    _handleTransportModeChange(transportMode);
 
+    // Update state before API call
+    _setLoadingState(transportMode);
+
+    try {
+      // Fetch and display routes
+      await _fetchAndDisplayRoutes(
+          waypoints, googleTransportMode, transportMode);
+    } catch (e) {
+      _handleRouteError(e);
+    }
+  }
+
+// Helper methods
+  bool _validateWaypoints(List<String> waypoints) {
+    if (waypoints.length < _minRoutes) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text("You must have at least a start and destination.")),
+      );
+      return false;
+    }
+    return true;
+  }
+
+void _handleTransportModeChange(String transportMode) {
+    if (selectedMode != transportMode) {
+      _clearConfirmedRoutes();
+      selectedMode = transportMode;
+    }
+  }
+
+void _setLoadingState(String transportMode) {
     setState(() {
       isLoading = true;
       errorMessage = null;
       selectedMode = transportMode;
       _locationsChanged = false;
     });
+}
 
-    try {
-      // Convert location names to coordinates using geocoding service
-      final LatLng? startPoint =
-          await geocodingService.getCoordinates(waypoints.first);
-      LatLng? endPoint;
+  Future<void> _fetchAndDisplayRoutes(List<String> waypoints,
+      String googleTransportMode, String transportMode) async {
+    // Resolve start and end coordinates
+    final coordinates = await _resolveCoordinates(waypoints);
+    if (coordinates == null) return;
 
-      if (widget.destinationLat != null && widget.destinationLng != null) {
-        endPoint = LatLng(widget.destinationLat!, widget.destinationLng!);
-      } else {
-        endPoint = await geocodingService.getCoordinates(waypoints.last);
-      }
+    final startPoint = coordinates['start']!;
+    final endPoint = coordinates['end']!;
 
-      assert(startPoint != null && endPoint != null,
-          "Start and end points should not be null after resolving waypoints.");
+    // Get routes from service
+    final routes = await routeService.getRoutes(from: startPoint, to: endPoint);
 
-      // Fetch routes for the selected transport mode
-      final routes = await routeService.getRoutes(
-        from: startPoint!,
-        to: endPoint!,
-      );
-      isCrossCampus =
-          GoogleRouteService.isRouteInterCampus(from: startPoint, to: endPoint);
-      print("Route involves campus switch: $isCrossCampus");
+    // Check for cross-campus route
+    isCrossCampus =
+        GoogleRouteService.isRouteInterCampus(from: startPoint, to: endPoint);
+    print("Route involves campus switch: $isCrossCampus");
 
-      if (routes.isEmpty ||
-          !routes.containsKey(googleTransportMode) ||
-          routes[googleTransportMode]!.isEmpty) {
-        throw Exception("No routes found for the selected transport mode");
-      }
+    // Validate and process routes
+    if (!_validateRoutes(routes, googleTransportMode)) return;
+  
+    // Get and cache the routes
+    final topRoutes =
+        _processAndCacheRoutes(routes, googleTransportMode, waypoints);
+    if (topRoutes == null) return;
 
-      // Get the top 4 routes for the selected transport mode
-      final selectedRoutes = routes[googleTransportMode]!;
-      final topRoutes =
-          selectedRoutes.take(_maxRoutes).toList(); // Get the top 4 routes
+    // Update UI state
+    if (!mounted) return;
+    setState(() => _locationsChanged = false);
 
-      // Store routes in cache
-      if (!_routeCache.containsKey(googleTransportMode)) {
-        _routeCache[googleTransportMode] = {};
-      }
-      _routeCache[googleTransportMode]![waypointKey] = selectedRoutes;
-      if (!mounted) return;
+    // Display the routes
+    _displayRoutesAndLogDetails(waypoints, topRoutes, transportMode);
+  }
 
-      setState(() {
-        _locationsChanged = false;
-      });
+  Future<Map<String, LatLng>?> _resolveCoordinates(
+      List<String> waypoints) async {
+    final LatLng? startPoint =
+        await geocodingService.getCoordinates(waypoints.first);
+    LatLng? endPoint;
 
-      // Display the routes
-      display.displayRoutes(
-        context: context,
-        updateRoutes: (routes) => setState(() => confirmedRoutes = routes),
-        waypoints: waypoints,
-        routes: topRoutes,
-        transportMode: transportMode,
-      );
-
-      print("Final confirmed route: $waypoints, Mode: $transportMode");
-      print(
-          "Route details: ${topRoutes.first.distance} meters, ${topRoutes.first.duration} seconds");
-    } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        isLoading = false;
-        errorMessage = "Error finding route: ${e.toString()}";
-      });
-
-      if (!mounted) {
-        return;
-      }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(errorMessage!)),
-      );
+    if (widget.destinationLat != null && widget.destinationLng != null) {
+      endPoint = LatLng(widget.destinationLat!, widget.destinationLng!);
+    } else {
+      endPoint = await geocodingService.getCoordinates(waypoints.last);
     }
+
+    if (startPoint == null || endPoint == null) {
+      throw Exception("Failed to resolve coordinates for waypoints");
+    }
+
+    return {'start': startPoint, 'end': endPoint};
+  }
+
+bool _validateRoutes(
+      Map<String, List<RouteResult>> routes, String googleTransportMode) {
+    if (routes.isEmpty ||
+        !routes.containsKey(googleTransportMode) ||
+        routes[googleTransportMode]!.isEmpty) {
+      throw Exception("No routes found for the selected transport mode");
+    }
+    return true;
+  }
+
+List<RouteResult>? _processAndCacheRoutes(
+      Map<String, List<RouteResult>> routes,
+      String googleTransportMode,
+      List<String> waypoints) {
+    final selectedRoutes = routes[googleTransportMode]!;
+    final topRoutes = selectedRoutes.take(_maxRoutes).toList();
+  
+    // Cache the routes
+    if (!_routeCache.containsKey(googleTransportMode)) {
+      _routeCache[googleTransportMode] = {};
+    }
+    String waypointKey = "${waypoints.first}-${waypoints.last}";
+    _routeCache[googleTransportMode]![waypointKey] = selectedRoutes;
+  
+    return topRoutes;
+  }
+
+void _displayRoutesAndLogDetails(
+      List<String> waypoints, List<RouteResult> routes, String transportMode) {
+    display.displayRoutes(
+      context: context,
+      updateRoutes: (routes) => setState(() => confirmedRoutes = routes),
+      waypoints: waypoints,
+      routes: routes,
+      transportMode: transportMode,
+    );
+
+    print("Final confirmed route: $waypoints, Mode: $transportMode");
+    print(
+        "Route details: ${routes.first.distance} meters, ${routes.first.duration} seconds");
+  }
+
+  void _handleRouteError(dynamic error) {
+    if (!mounted) return;
+  
+    setState(() {
+      isLoading = false;
+      errorMessage = "Error finding route: ${error.toString()}";
+    });
+  
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(errorMessage!)),
+    );
   }
 
   void _setLocationChanged() {
