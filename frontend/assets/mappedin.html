@@ -211,8 +211,6 @@
   </head>
   <body>
     <div id="mappedin-map"></div>
-
-    <!-- Updated Modal for Selecting Start/Destination with Floor Selector -->
     <div id="route-panel">
       <div class="panel-header">
         <h2>Mappedin Map</h2>
@@ -223,181 +221,13 @@
           </select>
         </div>
       </div>
-
-      <label for="start">Start:</label>
-      <select id="start">
-        <option value="">Select start point</option>
-      </select>
-
-      <label for="destination">Destination:</label>
-      <select id="destination">
-        <option value="">Select destination</option>
-      </select>
-
-      <button id="get-directions">Get Directions</button>
     </div>
 
-    <!-- Step-by-Step Directions -->
-    <div id="directions-panel">
-      <div id="drag-handle"></div>
-      <button id="toggle-steps">Show Steps</button>
-      <div id="route-info">
-        <p id="estimated-time">Estimated Time: N/A</p>
-        <p id="total-distance">Total Distance: N/A</p>
-      </div>
-      <div id="directions-list" style="display: none"></div>
-    </div>
 
+    <!-- IMPORTANT DO NOT CHANGE THE NEXT 3 LINES -->
     <script type="module">
-      import {
-        getMapData,
-        show3dMap,
-      } from "https://cdn.jsdelivr.net/npm/@mappedin/mappedin-js@beta/lib/esm/index.js";
-
-      const options = {
-        key: "MAPPEDIN_API_KEY",
-        secret: "MAPPEDIN_API_SECRET",
-        mapId: "MAPPEDIN_API_MAP_ID",
-      };
-
-      // Initialize Map
-      const mapData = await getMapData(options);
-      const mapView = await show3dMap(
-        document.getElementById("mappedin-map"),
-        mapData
-      );
-
-      mapView.Labels.all();
-
-      // UI Elements
-      const startSelect = document.getElementById("start");
-      const destinationSelect = document.getElementById("destination");
-      const getDirectionsButton = document.getElementById("get-directions");
-      const directionsPanel = document.getElementById("directions-panel");
-      const directionsList = document.getElementById("directions-list");
-      const toggleSteps = document.getElementById("toggle-steps");
-
-      const spaces = mapData.getByType("space");
-      spaces.forEach((space) => {
-        const option = document.createElement("option");
-        option.value = space.id;
-        option.textContent = space.name;
-        startSelect.appendChild(option.cloneNode(true));
-        destinationSelect.appendChild(option);
-      });
-
-      // Camera focuses on selected start location
-      startSelect.addEventListener("change", () => {
-        const selectedSpaceId = startSelect.value;
-        const selectedSpace = spaces.find((s) => s.id === selectedSpaceId);
-
-        if (selectedSpace) {
-          mapView.Camera.animateTo({
-            center: selectedSpace.geometry.center,
-            zoomLevel: 20,
-            pitch: 45,
-            bearing: 0,
-          });
-        }
-      });
-
-      // Calculate Walking Time
-      const avg_walking_speed = 85;
-
-      function calculateWalkingTime(distanceInMeters) {
-        return Math.ceil(distanceInMeters / avg_walking_speed);
-      }
-
-      // Get Directions and Display Estimated Time
-      getDirectionsButton.addEventListener("click", async () => {
-        const startId = startSelect.value;
-        const destinationId = destinationSelect.value;
-
-        if (startId && destinationId) {
-          const startSpace = spaces.find((s) => s.id === startId);
-          const destinationSpace = spaces.find((s) => s.id === destinationId);
-
-          if (startSpace && destinationSpace) {
-            const directions = await mapData.getDirections(
-              startSpace,
-              destinationSpace
-            );
-
-            if (directions && directions.path) {
-              mapView.Navigation.clear();
-              mapView.Navigation.draw(directions);
-
-              const totalDistance = directions.distance;
-              const estimatedTime = calculateWalkingTime(totalDistance);
-
-              // Update UI
-              document.getElementById(
-                "estimated-time"
-              ).textContent = `Estimated Time: ${estimatedTime} min`;
-              document.getElementById(
-                "total-distance"
-              ).textContent = `Total Distance: ${Math.round(
-                totalDistance
-              )} meters`;
-
-              // Populate Directions List
-              directionsList.innerHTML = "";
-              directions.instructions.forEach((step, index) => {
-                const stepDiv = document.createElement("div");
-                stepDiv.className = "direction-step";
-                stepDiv.innerHTML = `
-                  <img src="https://img.icons8.com/ios-filled/50/right.png" />
-                  <strong>Step ${index + 1}:</strong> ${
-                  step.text || "No instruction"
-                } (${Math.round(step.distance * 100) / 100 || "0"} meters)
-                `;
-                directionsList.appendChild(stepDiv);
-              });
-
-              // Ensure panel is visible when directions are shown
-              directionsPanel.style.display = "block";
-              directionsList.style.display = "none";
-              toggleSteps.textContent = "Show Steps";
-            }
-          }
-        }
-      });
-
-      toggleSteps.addEventListener("click", () => {
-        if (
-          directionsList.style.display === "none" ||
-          directionsList.style.display === ""
-        ) {
-          directionsList.style.display = "block";
-          toggleSteps.textContent = "Hide Steps";
-
-          // Add this to ensure proper rendering
-          directionsPanel.style.background = "white";
-        } else {
-          directionsList.style.display = "none";
-          toggleSteps.textContent = "Show Steps";
-        }
-      });
-
-      // Populate Floor Selector
-      const floorSelect = document.getElementById("floor-select");
-      const floors = mapData.getByType("floor");
-
-      floors.sort((a, b) => a.elevation - b.elevation);
-      floors.forEach((floor) => {
-        const option = document.createElement("option");
-        option.value = floor.id;
-        option.textContent = floor.name;
-        floorSelect.appendChild(option);
-      });
-
-      // Handle Floor Selection
-      floorSelect.addEventListener("change", () => {
-        const selectedFloorId = floorSelect.value;
-        if (selectedFloorId) {
-          mapView.setFloor(selectedFloorId);
-        }
-      });
+    JAVASCRIPTCODE
     </script>
+
   </body>
 </html>
