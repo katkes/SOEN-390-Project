@@ -11,8 +11,8 @@
  */
 
 import {
-    getMapData,
-    show3dMap,
+      getMapData,
+      show3dMap,
 } from "https://cdn.jsdelivr.net/npm/@mappedin/mappedin-js@beta/lib/esm/index.js";
 
 // Placeholder API credentials to be replaced at runtime
