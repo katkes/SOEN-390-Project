@@ -16,7 +16,6 @@ import 'package:soen_390/utils/route_display.dart' as display;
 import 'package:soen_390/utils/route_utils.dart' as utils;
 import "package:soen_390/screens/indoor_accessibility/indoor_accessibility_preference.dart";
 
-
 class WaypointSelectionScreen extends StatefulWidget {
   final IRouteService routeService;
   final GeocodingService geocodingService;
@@ -251,9 +250,10 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
-        actions: [ //const Icon(Icons.more_vert, color: Colors.white),
+        actions: [
+          //const Icon(Icons.more_vert, color: Colors.white),
 
-           Padding(
+          Padding(
             padding: const EdgeInsets.symmetric(
                 horizontal: 8), // Adjust padding as needed
             child: SizedBox(
@@ -271,7 +271,7 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
                   backgroundColor: Colors.white, // White button for contrast
                   foregroundColor: const Color(0xff912338), // Text color
                   padding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8), // Rounded edges
                   ),
@@ -283,9 +283,6 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
               ),
             ),
           ),
-
-
-
         ],
       ),
       body: SingleChildScrollView(

@@ -6,7 +6,6 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:soen_390/widgets/mappedin_webview.dart';
-import "package:soen_390/screens/indoor_accessibility/indoor_accessibility_preference.dart";
 
 class MappedinMapScreen extends StatelessWidget {
   /// Constructs the [MappedinMapScreen].
@@ -22,7 +21,6 @@ class MappedinMapScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Indoor Navigation'),
         backgroundColor: const Color(0xff912338),
-
       ),
       body: MappedinWebView(key: _webViewKey),
       floatingActionButton: Column(
