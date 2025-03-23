@@ -30,7 +30,7 @@ const mapView = await show3dMap(
 );
 
 mapView.Labels.all();
-mapView.enableDebug();
+//mapView.enableDebug();
 
 /**
  * Moves camera to the center of a named space.
@@ -94,8 +94,8 @@ window.getDirections = async function getDirections(startName, destinationName, 
 
     if (!start || !destination) throw new Error("Invalid start or destination");
 
-
-    const directions = await mapData.getDirections(start, destination, {accessible: accessible });
+    //const directions = await mapData.getDirections(start, destination, {accessible: accessible });
+    const directions = await mapData.getDirections(start, destination, {accessible});
     if (!directions?.path) throw new Error("Directions not found");
 
     mapView.Navigation.clear();
