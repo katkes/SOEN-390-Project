@@ -19,6 +19,7 @@ class IndoorAccessibilityPage extends StatefulWidget {
   IndoorAccessibilityState createState() => IndoorAccessibilityState();
 }
 
+
 class IndoorAccessibilityState extends State<IndoorAccessibilityPage> {
   bool _isMobilityImpaired = false;
   //the key itself should be private for security reasons and data consistency (avoiding data corruption)

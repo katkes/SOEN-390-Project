@@ -6,6 +6,7 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:soen_390/widgets/mappedin_webview.dart';
+import "package:soen_390/screens/indoor_accessibility/indoor_accessibility_preference.dart";
 
 class MappedinMapScreen extends StatelessWidget {
   /// Constructs the [MappedinMapScreen].
@@ -21,6 +22,39 @@ class MappedinMapScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Indoor Navigation'),
         backgroundColor: const Color(0xff912338),
+
+        actions:[
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8), // Adjust padding as needed
+            child: SizedBox(
+              height: 40, // Control button height
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const IndoorAccessibilityPage(),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white, // White button for contrast
+                  foregroundColor: const Color(0xff912338), // Text color
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8), // Rounded edges
+                  ),
+                ),
+                child: const Text(
+                  'Specify Disability',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ),
+        ],
+
+
       ),
       body: MappedinWebView(key: _webViewKey),
       floatingActionButton: Column(
