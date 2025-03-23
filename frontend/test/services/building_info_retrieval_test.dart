@@ -262,5 +262,4 @@ void main() {
           throwsA(isA<Exception>()));
     });
   });
-
 }

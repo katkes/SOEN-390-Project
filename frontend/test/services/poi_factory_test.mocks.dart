@@ -26,7 +26,7 @@ import 'package:soen_390/services/building_info_api.dart' as _i3;
 
 class _FakeClient_0 extends _i1.SmartFake implements _i2.Client {
   _FakeClient_0(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 /// A class which mocks [GoogleMapsApiClient].
@@ -39,23 +39,19 @@ class MockGoogleMapsApiClient extends _i1.Mock
   }
 
   @override
-  String get apiKey =>
-      (super.noSuchMethod(
-            Invocation.getter(#apiKey),
-            returnValue: _i4.dummyValue<String>(
-              this,
-              Invocation.getter(#apiKey),
-            ),
-          )
-          as String);
+  String get apiKey => (super.noSuchMethod(
+        Invocation.getter(#apiKey),
+        returnValue: _i4.dummyValue<String>(
+          this,
+          Invocation.getter(#apiKey),
+        ),
+      ) as String);
 
   @override
-  _i2.Client get client =>
-      (super.noSuchMethod(
-            Invocation.getter(#client),
-            returnValue: _FakeClient_0(this, Invocation.getter(#client)),
-          )
-          as _i2.Client);
+  _i2.Client get client => (super.noSuchMethod(
+        Invocation.getter(#client),
+        returnValue: _FakeClient_0(this, Invocation.getter(#client)),
+      ) as _i2.Client);
 
   @override
   _i5.Future<Map<String, dynamic>> fetchBuildingInformation(
@@ -64,24 +60,22 @@ class MockGoogleMapsApiClient extends _i1.Mock
     String? locationName,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#fetchBuildingInformation, [
-              latitude,
-              longitude,
-              locationName,
-            ]),
-            returnValue: _i5.Future<Map<String, dynamic>>.value(
-              <String, dynamic>{},
-            ),
-          )
-          as _i5.Future<Map<String, dynamic>>);
+        Invocation.method(#fetchBuildingInformation, [
+          latitude,
+          longitude,
+          locationName,
+        ]),
+        returnValue: _i5.Future<Map<String, dynamic>>.value(
+          <String, dynamic>{},
+        ),
+      ) as _i5.Future<Map<String, dynamic>>);
 
   @override
   _i5.Future<Map<String, dynamic>> fetchPlaceDetailsById(String? placeId) =>
       (super.noSuchMethod(
-            Invocation.method(#fetchPlaceDetailsById, [placeId]),
-            returnValue: _i5.Future<Map<String, dynamic>>.value(
-              <String, dynamic>{},
-            ),
-          )
-          as _i5.Future<Map<String, dynamic>>);
+        Invocation.method(#fetchPlaceDetailsById, [placeId]),
+        returnValue: _i5.Future<Map<String, dynamic>>.value(
+          <String, dynamic>{},
+        ),
+      ) as _i5.Future<Map<String, dynamic>>);
 }

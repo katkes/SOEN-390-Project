@@ -79,30 +79,6 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
     );
   }
 
-  Future<LatLng?> _getCurrentPosition() async {
-    try {
-      await locationService.startUp();
-      return locationService.convertPositionToLatLng(
-          await locationService.getCurrentLocationAccurately());
-    } catch (e) {
-      print("Error starting location service: $e");
-      return null;
-    }
-  }
-
-  Future<Map<String, LatLng>> _resolveWaypoints(
-      List<String> waypoints, LatLng? pos) async {
-    final LatLng? startPoint = (pos != null && waypoints[0] == 'Your Location')
-        ? pos
-        : await geocodingService.getCoordinates(waypoints.first);
-    final LatLng? endPoint =
-        await geocodingService.getCoordinates(waypoints.last);
-
-    if (startPoint == null || endPoint == null) {
-      throw Exception("Could not find coordinates for one or more locations");
-    }
-    return {'start': startPoint, 'end': endPoint};
-  }
 
   bool _tryDisplayFromCache(String googleTransportMode, String waypointKey,
       List<String> waypoints, String transportMode) {

@@ -88,7 +88,6 @@ class POISearchBar extends StatelessWidget {
               onSearch('Current Location', lat, lng);
             });
           },
-
         ),
       ],
     );

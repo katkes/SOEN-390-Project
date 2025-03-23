@@ -71,8 +71,6 @@ void main() {
         (WidgetTester tester) async {
       await tester.pumpWidget(createTestWidget());
 
-      final poiSearchBar =
-          tester.widget<POISearchBar>(find.byType(POISearchBar));
 
       // Simulate suggestion click manually
       final prediction = Prediction(description: 'Test Location');

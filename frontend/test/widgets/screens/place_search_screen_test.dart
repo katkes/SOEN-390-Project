@@ -14,7 +14,6 @@ import 'package:soen_390/services/google_poi_service.dart';
 import 'package:soen_390/services/poi_factory.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'package:soen_390/widgets/poi_search_bar.dart';
-import 'package:soen_390/widgets/poi_type_selector.dart';
 import 'package:soen_390/widgets/poi_list_view.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -51,7 +50,6 @@ GOOGLE_PLACES_API_KEY=TEST_API_KEY
     expect(find.byType(POISearchBar), findsOneWidget);
     expect(find.byType(POIListView), findsOneWidget);
   });
-
 
   testWidgets('uses current location on button tap',
       (WidgetTester tester) async {
@@ -156,7 +154,6 @@ GOOGLE_PLACES_API_KEY=TEST_API_KEY
     expect(find.text('Location Place'), findsOneWidget);
   });
 
-
   testWidgets('shows SnackBar on POI fetch error', (WidgetTester tester) async {
     when(mockLocationService.startUp()).thenAnswer((_) async {});
     when(mockLocationService.getCurrentLocationAccurately()).thenAnswer(
@@ -202,7 +199,6 @@ GOOGLE_PLACES_API_KEY=TEST_API_KEY
     expect(find.text('Failed to fetch places'), findsOneWidget);
   });
 
-
   testWidgets('shows SnackBar on location fetch error',
       (WidgetTester tester) async {
     when(mockLocationService.startUp()).thenAnswer((_) async {});
@@ -217,7 +213,7 @@ GOOGLE_PLACES_API_KEY=TEST_API_KEY
     expect(find.text('Unable to fetch current location'), findsOneWidget);
   });
 
-testWidgets('shows loading indicator while fetching POIs',
+  testWidgets('shows loading indicator while fetching POIs',
       (WidgetTester tester) async {
     when(mockLocationService.startUp()).thenAnswer((_) async {});
     when(mockLocationService.getCurrentLocationAccurately()).thenAnswer(
@@ -271,8 +267,7 @@ testWidgets('shows loading indicator while fetching POIs',
     expect(find.byType(CircularProgressIndicator), findsNothing);
   });
 
-
-testWidgets('does not fetch POIs if location is null',
+  testWidgets('does not fetch POIs if location is null',
       (WidgetTester tester) async {
     await tester.pumpWidget(createTestWidget());
 
@@ -292,7 +287,6 @@ testWidgets('does not fetch POIs if location is null',
       radius: anyNamed('radius'),
     ));
   });
-
 
   testWidgets('tapping a place creates POI and navigates',
       (WidgetTester tester) async {

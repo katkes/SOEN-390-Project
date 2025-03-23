@@ -35,6 +35,7 @@ class PlaceSearchScreen extends StatefulWidget {
   });
 
   @override
+  // ignore: library_private_types_in_public_api
   _PlaceSearchScreenState createState() => _PlaceSearchScreenState();
 }
 
@@ -224,7 +225,8 @@ class _PlaceSearchScreenState extends State<PlaceSearchScreen> {
             googleApiKey: _googleApiKey,
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: ElevatedButton(
               onPressed: _togglePOISelectorVisibility,
               child: Text(_isPOISelectorVisible

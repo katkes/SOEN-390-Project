@@ -37,7 +37,7 @@ void main() {
   late MockGeocodingService mockGeocodingService;
   late MockLocationService mockLocationService;
   TestWidgetsFlutterBinding.ensureInitialized();
-  
+
   dotenv.testLoad(fileInput: '''
 GOOGLE_PLACES_API_KEY=FAKE_API_KEY
 ''');
@@ -205,7 +205,7 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
     expect(find.textContaining('20 min'), findsOneWidget);
   });
 
-testWidgets('WaypointSelectionScreen handles location coordinates error',
+  testWidgets('WaypointSelectionScreen handles location coordinates error',
       (WidgetTester tester) async {
     when(mockGeocodingService.getCoordinates(any))
         .thenAnswer((_) async => null);
@@ -223,7 +223,6 @@ testWidgets('WaypointSelectionScreen handles location coordinates error',
     // Assert: Flexible match for robustness
     expect(find.textContaining('Error finding route'), findsOneWidget);
   });
-
 
   testWidgets('WaypointSelectionScreen handles transport mode changes',
       (WidgetTester tester) async {

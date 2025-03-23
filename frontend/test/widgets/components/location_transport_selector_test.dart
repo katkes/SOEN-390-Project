@@ -140,7 +140,7 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
     expect(state.selectedTimeOption, equals('Depart At'));
   });
 
-testWidgets('_showLocationSuggestions displays SuggestionsPopup',
+  testWidgets('_showLocationSuggestions displays SuggestionsPopup',
       (WidgetTester tester) async {
     await tester.pumpWidget(createWidgetUnderTest());
 
@@ -151,7 +151,7 @@ testWidgets('_showLocationSuggestions displays SuggestionsPopup',
     expect(find.byType(SuggestionsPopup), findsOneWidget);
   });
 
-testWidgets('_handleLocationSelection updates itinerary for start location',
+  testWidgets('_handleLocationSelection updates itinerary for start location',
       (WidgetTester tester) async {
     await tester.pumpWidget(createWidgetUnderTest());
 
@@ -170,8 +170,7 @@ testWidgets('_handleLocationSelection updates itinerary for start location',
     expect(state.itinerary.first, equals('Restaurant'));
   });
 
-
-testWidgets(
+  testWidgets(
       '_setStartLocation inserts at position 0 when itinerary not empty',
       (WidgetTester tester) async {
     await tester.pumpWidget(createWidgetUnderTest());
@@ -189,8 +188,6 @@ testWidgets(
     state.setStartLocation('Start');
     expect(state.itinerary, ['Start', 'Destination']);
   });
-
-
 
   testWidgets(
       'Transport mode fallback triggers onConfirmRoute when onTransportModeChange is null',
