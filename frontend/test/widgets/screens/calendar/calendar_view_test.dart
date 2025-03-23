@@ -18,15 +18,9 @@ import 'package:soen_390/repositories/calendar_repository.dart';
 import 'package:soen_390/services/cache_service.dart';
 import 'package:soen_390/screens/calendar/calendar_event_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:soen_390/screens/calendar/event_list_widget.dart';
 import 'package:googleapis/calendar/v3.dart' as gcal;
 import 'package:table_calendar/table_calendar.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:soen_390/screens/calendar/table_calendar_widget.dart';
-import 'package:soen_390/screens/calendar/calendar_dropdown.dart';
-import 'package:soen_390/screens/calendar/event_creation_widget.dart';
-import 'package:soen_390/screens/calendar/calendar_app_bar.dart';
-import 'package:soen_390/screens/calendar/event_creation_widget.dart';
 
 @GenerateMocks([
   GoogleSignIn,
