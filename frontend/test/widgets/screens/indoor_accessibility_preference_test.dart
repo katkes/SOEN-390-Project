@@ -67,16 +67,19 @@ void main() {
           find.byType(IndoorAccessibilityPage));
       expect(state.getMobilityStatus(), false);
     }); //end of test
-  });//end of group
+  }); //end of group
 
-  group("Testing data persistence from the shared preferences package implementation", (){
+  group(
+      "Testing data persistence from the shared preferences package implementation",
+      () {
     setUp(() async {
       //mock shared preferences
       SharedPreferences.setMockInitialValues({});
     });
 
     test('Initial value should be false', () async {
-      bool result = await IndoorAccessibilityState.getMobilityStatusPreference();
+      bool result =
+          await IndoorAccessibilityState.getMobilityStatusPreference();
       expect(result, false);
     });
 
@@ -85,7 +88,8 @@ void main() {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('mobility_impaired', true);
 
-      bool result = await IndoorAccessibilityState.getMobilityStatusPreference();
+      bool result =
+          await IndoorAccessibilityState.getMobilityStatusPreference();
       expect(result, true);
     });
   });

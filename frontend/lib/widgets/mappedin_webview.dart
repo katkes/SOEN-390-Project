@@ -15,9 +15,7 @@
 ///   await _webViewKey.currentState?.setFloor("Floor 2");
 library;
 
-
 import 'dart:convert';
-
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -139,11 +137,13 @@ class MappedinWebViewState extends State<MappedinWebView> {
   /// - [departure]: The starting location name.
   /// - [destination]: The destination location name.
   /// - [accessible]: If the route should be accessible.
-  showDirections(String departure, String destination, bool accessibility) async {
+  showDirections(
+      String departure, String destination, bool accessibility) async {
     // accessibility is not used, preference will be taken from preference from sharedPreferences
-    bool preference = await IndoorAccessibilityState.getMobilityStatusPreference();
-    await controller
-        .runJavaScript("getDirections('$departure', '$destination', '$preference')");
+    bool preference =
+        await IndoorAccessibilityState.getMobilityStatusPreference();
+    await controller.runJavaScript(
+        "getDirections('$departure', '$destination', '$preference')");
   }
 
   /// Sends a request to the embedded JavaScript to change the visible floor.

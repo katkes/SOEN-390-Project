@@ -19,14 +19,14 @@ class IndoorAccessibilityPage extends StatefulWidget {
   IndoorAccessibilityState createState() => IndoorAccessibilityState();
 }
 
-
 class IndoorAccessibilityState extends State<IndoorAccessibilityPage> {
   bool _isMobilityImpaired = false;
   //the key itself should be private for security reasons and data consistency (avoiding data corruption)
   //however, the value will be made accessible globally.
   static const String _mobilityKey = 'mobility_impaired';
 
-  bool getMobilityStatus() { //necessary for UI and UI testing
+  bool getMobilityStatus() {
+    //necessary for UI and UI testing
     return _isMobilityImpaired;
   }
 
@@ -49,12 +49,12 @@ class IndoorAccessibilityState extends State<IndoorAccessibilityPage> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_mobilityKey, value);
   }
+
   //this is the function other files should call to obtain the mobility preference state
   static Future<bool> getMobilityStatusPreference() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool(_mobilityKey) ?? false;
   }
-
 
   @override
   Widget build(BuildContext context) {
