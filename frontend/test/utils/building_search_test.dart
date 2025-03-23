@@ -4,7 +4,6 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:soen_390/services/map_service.dart';
 import 'package:soen_390/utils/building_search.dart';
-import 'package:fake_async/fake_async.dart';
 
 @GenerateMocks([MapService])
 import 'building_search_test.mocks.dart';

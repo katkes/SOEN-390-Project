@@ -83,7 +83,7 @@ void main() {
     await tester.pumpWidget(MaterialApp(
       home: Scaffold(
         body: EventListWidget(
-          events: [],
+          events: const [],
           calendarService: mockCalendarService,
           calendarEventService: mockCalendarEventService,
           calendarId: testCalendarId,
@@ -99,7 +99,7 @@ void main() {
       MaterialApp(
         home: Scaffold(
           body: EventListWidget(
-            events: [],
+            events: const [],
             calendarService: mockCalendarService,
             calendarEventService: mockCalendarEventService,
             calendarId: testCalendarId,

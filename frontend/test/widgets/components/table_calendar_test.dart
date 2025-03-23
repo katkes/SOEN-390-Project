@@ -74,12 +74,42 @@ void main() {
 
     testWidgets('triggers onDaySelected callback when a day is tapped',
         (WidgetTester tester) async {
-      await tester.pumpWidget(createWidgetUnderTest());
-      await tester.tap(find.text('${now.day}'));
+      // Choose a specific date instead of using now
+      final testDate = DateTime(2023, 5, 15); // May 15, 2023
+      selectedDay = testDate;
+
+      // Update the widget creation to use this specific date
+      Widget createSpecificDateWidget() {
+        return MaterialApp(
+          home: Scaffold(
+            body: TableCalendarWidget(
+              focusedDay: testDate,
+              selectedDay: selectedDay,
+              calendarFormat: CalendarFormat.month,
+              onDaySelected: (selected, focused) {
+                daySelected = true;
+                selectedDay = selected;
+              },
+              onFormatChanged: (format) {
+                changedFormat = format;
+              },
+              onPageChanged: (day) {
+                pageChangedDay = day;
+              },
+              eventLoader: (day) => [],
+            ),
+          ),
+        );
+      }
+
+      await tester.pumpWidget(createSpecificDateWidget());
+
+      // Now tap on the specific day that should be unique in this view
+      await tester.tap(find.text('15').first);
       await tester.pumpAndSettle();
 
       expect(daySelected, isTrue);
-      expect(selectedDay.day, now.day);
+      expect(selectedDay.day, 15);
     });
 
     testWidgets('triggers onPageChanged callback', (WidgetTester tester) async {

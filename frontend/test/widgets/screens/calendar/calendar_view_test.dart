@@ -25,6 +25,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:soen_390/screens/calendar/table_calendar_widget.dart';
 import 'package:soen_390/screens/calendar/calendar_dropdown.dart';
 import 'package:soen_390/screens/calendar/event_creation_widget.dart';
+import 'package:soen_390/screens/calendar/calendar_app_bar.dart';
+import 'package:soen_390/screens/calendar/event_creation_widget.dart';
 
 @GenerateMocks([
   GoogleSignIn,
@@ -38,6 +40,8 @@ import 'package:soen_390/screens/calendar/event_creation_widget.dart';
   CalendarEventService,
   SharedPreferences,
 ])
+class MockAuthService extends Mock implements AuthService {}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -222,6 +226,123 @@ void main() {
 
       expect(selectedIndex, equals(0));
     });
+    testWidgets('should display TableCalendarWidget when loaded',
+        (tester) async {
+      // Set up mock calendars
+      final testCalendars = [
+        gcal.CalendarListEntry()
+          ..id = 'calendar1'
+          ..summary = 'Calendar 1',
+      ];
+
+      final testEvents = {
+        DateTime(2025, 3, 23): [
+          gcal.Event()
+            ..id = 'event1'
+            ..summary = 'Test Event'
+            ..start = gcal.EventDateTime(dateTime: DateTime(2025, 3, 23, 10, 0))
+            ..end = gcal.EventDateTime(dateTime: DateTime(2025, 3, 23, 11, 0))
+        ]
+      };
+
+      final mockCalendarEventService = MockCalendarEventService();
+      when(mockCalendarEventService.fetchCalendars())
+          .thenAnswer((_) async => testCalendars);
+      when(mockCalendarEventService.fetchCalendarEvents(any,
+              useCache: anyNamed('useCache')))
+          .thenAnswer((_) async => testEvents);
+
+      final widget = ProviderScope(
+        overrides: [
+          navigationProvider.overrideWith((ref) => NavigationNotifier()),
+        ],
+        child: MaterialApp(
+          home: CalendarScreen(
+            authService: authService,
+            testCalendarEventService: mockCalendarEventService,
+          ),
+        ),
+      );
+
+      await tester.pumpWidget(widget);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(TableCalendarWidget), findsOneWidget);
+    });
+    testWidgets(
+        'should display EventListWidget with correct events when loaded',
+        (tester) async {
+      final mockCalendarEventService = MockCalendarEventService();
+
+      final testDate = DateTime(2025, 3, 23);
+      final normalizedTestDate =
+          DateTime(testDate.year, testDate.month, testDate.day);
+
+      final testCalendars = [
+        gcal.CalendarListEntry()
+          ..id = 'calendar1'
+          ..summary = 'Calendar 1',
+      ];
+
+      final testEvents = {
+        normalizedTestDate: [
+          gcal.Event()
+            ..id = 'event1'
+            ..summary = 'Morning Meeting'
+            ..start = gcal.EventDateTime(dateTime: DateTime(2025, 3, 23, 9, 0))
+            ..end = gcal.EventDateTime(dateTime: DateTime(2025, 3, 23, 10, 0)),
+          gcal.Event()
+            ..id = 'event2'
+            ..summary = 'Lunch Break'
+            ..start = gcal.EventDateTime(dateTime: DateTime(2025, 3, 23, 12, 0))
+            ..end = gcal.EventDateTime(dateTime: DateTime(2025, 3, 23, 13, 0))
+        ]
+      };
+
+      when(mockCalendarEventService.fetchCalendars())
+          .thenAnswer((_) async => testCalendars);
+      when(mockCalendarEventService.fetchCalendarEvents(any,
+              useCache: anyNamed('useCache')))
+          .thenAnswer((_) async => testEvents);
+
+      final widget = ProviderScope(
+        overrides: [
+          navigationProvider.overrideWith((ref) => NavigationNotifier()),
+        ],
+        child: MaterialApp(
+          home: TestCalendarScreen(
+            authService: authService,
+            testCalendars: testCalendars,
+            testEvents: testEvents,
+            initialCalendarId: 'calendar1',
+          ),
+        ),
+      );
+
+      await tester.pumpWidget(widget);
+      await tester.pumpAndSettle(const Duration(seconds: 3));
+
+      debugDumpApp();
+
+      expect(find.byType(ListView), findsOneWidget,
+          reason: "ListView should be present");
+
+      expect(find.textContaining('Morning'), findsAtLeastNWidgets(1),
+          reason: "Should find text containing 'Morning'");
+      expect(find.textContaining('Lunch'), findsAtLeastNWidgets(1),
+          reason: "Should find text containing 'Lunch'");
+
+      final listTiles = find.byType(ListTile);
+      expect(listTiles, findsAtLeastNWidgets(1),
+          reason: "Should find at least one ListTile");
+
+      if (listTiles.evaluate().isNotEmpty) {
+        await tester.tap(listTiles.first);
+        await tester.pumpAndSettle();
+
+        expect(true, isTrue, reason: "Should not crash when tapping an event");
+      }
+    });
   });
 }
 
@@ -268,8 +389,8 @@ class TestCalendarScreenState extends ConsumerState<TestCalendarScreen> {
   String? _selectedCalendarId;
   List<gcal.CalendarListEntry> _calendars = [];
   Map<DateTime, List<gcal.Event>> _eventsByDay = {};
-  CalendarFormat _calendarFormat = CalendarFormat.month;
-  DateTime _focusedDay = DateTime.now();
+  final CalendarFormat _calendarFormat = CalendarFormat.month;
+  final DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
 
   @override

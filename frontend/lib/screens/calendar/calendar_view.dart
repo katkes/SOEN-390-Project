@@ -37,8 +37,12 @@ import 'event_creation_widget.dart';
 
 class CalendarScreen extends ConsumerStatefulWidget {
   final AuthService authService;
-
-  const CalendarScreen({super.key, required this.authService});
+  final CalendarEventService? testCalendarEventService;
+  const CalendarScreen({
+    super.key,
+    required this.authService,
+    this.testCalendarEventService,
+  });
 
   @override
   ConsumerState<CalendarScreen> createState() => _CalendarScreenState();
@@ -69,6 +73,12 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   }
 
   Future<void> _initialize() async {
+    if (widget.testCalendarEventService != null) {
+      calendarEventService = widget.testCalendarEventService!;
+      await fetchCalendars();
+      return;
+    }
+
     final httpService = widget.authService.httpService;
     final secureStorage = widget.authService.secureStorage;
 
@@ -133,16 +143,11 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
           useCache: useCashe);
 
       // If a calendar is selected, filter events for that calendar
-      print("Fetched all events: $allEventsByDay");
+
       if (_selectedCalendarId != null) {
         final filteredEventsByDay = <DateTime, List<gcal.Event>>{};
 
         allEventsByDay.forEach((date, events) {
-          for (var event in events) {
-            print("Event ID: ${event.id}");
-            print("Event Organizer Email: ${event.organizer?.email}");
-            print("Event Creator Email: ${event.creator?.email}");
-          }
           final filteredEvents = events.where((event) {
             // Filter events based on the selected calendar ID
             return event.organizer?.email == _selectedCalendarId ||
@@ -157,7 +162,6 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
         setState(() {
           _eventsByDay = filteredEventsByDay;
-          print(_eventsByDay);
           _isLoading = false;
         });
       } else {
@@ -206,84 +210,76 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
       );
     }
 
-    if (_error != null) {
-      return Scaffold(
-        appBar: const CustomAppBar(),
-        body: Center(child: Text(_error!)),
-        bottomNavigationBar:
-            NavBar(selectedIndex: selectedIndex, onItemTapped: onItemTapped),
-      );
-    }
-
     return Scaffold(
+      key: const Key("calendar_screen_scaffold"),
       appBar: const CustomAppBar(),
-      body: Column(
-        children: [
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: Row(
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.refresh),
-                  onPressed: () async {
-                    setState(() {
-                      _isLoading = true;
-                    });
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.refresh),
+                    onPressed: () async {
+                      setState(() {
+                        _isLoading = true;
+                      });
 
-                    try {
-                      await fetchCalendarEvents(useCashe: false);
-                      print(_selectedCalendarId);
-                      setState(() {
-                        _isLoading = false;
-                      });
-                    } catch (e) {
-                      setState(() {
-                        _error = "Failed to refresh events: $e";
-                        _isLoading = false;
-                      });
-                    }
-                  },
-                  tooltip: "Refresh Calendars",
-                ),
-                Expanded(
-                  child: CalendarDropdown(
-                    calendars: _calendars,
-                    selectedCalendarId: _selectedCalendarId,
-                    onCalendarSelected: (calendarId) {
-                      setState(() {
-                        _selectedCalendarId = calendarId;
-                      });
-                      fetchCalendarEvents();
+                      try {
+                        await fetchCalendarEvents(useCashe: false);
+
+                        setState(() {
+                          _isLoading = false;
+                        });
+                      } catch (e) {
+                        setState(() {
+                          _error = "Failed to refresh events: $e";
+                          _isLoading = false;
+                        });
+                      }
                     },
+                    tooltip: "Refresh Calendars",
                   ),
-                ),
-              ],
+                  Expanded(
+                    child: CalendarDropdown(
+                      calendars: _calendars,
+                      selectedCalendarId: _selectedCalendarId,
+                      onCalendarSelected: (calendarId) {
+                        setState(() {
+                          _selectedCalendarId = calendarId;
+                        });
+                        fetchCalendarEvents();
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          TableCalendarWidget(
-            focusedDay: _focusedDay,
-            selectedDay: _selectedDay,
-            calendarFormat: _calendarFormat,
-            onDaySelected: (selectedDay, focusedDay) {
-              setState(() {
-                _selectedDay = selectedDay;
+            TableCalendarWidget(
+              focusedDay: _focusedDay,
+              selectedDay: _selectedDay,
+              calendarFormat: _calendarFormat,
+              onDaySelected: (selectedDay, focusedDay) {
+                setState(() {
+                  _selectedDay = selectedDay;
+                  _focusedDay = focusedDay;
+                });
+              },
+              onFormatChanged: (format) {
+                setState(() {
+                  _calendarFormat = format;
+                });
+              },
+              onPageChanged: (focusedDay) {
                 _focusedDay = focusedDay;
-              });
-            },
-            onFormatChanged: (format) {
-              setState(() {
-                _calendarFormat = format;
-              });
-            },
-            onPageChanged: (focusedDay) {
-              _focusedDay = focusedDay;
-            },
-            eventLoader: _getEventsForDay,
-          ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: EventListWidget(
+              },
+              eventLoader: _getEventsForDay,
+            ),
+            const SizedBox(height: 16),
+            EventListWidget(
               events: _getEventsForDay(_selectedDay!),
               calendarEventService: calendarEventService,
               calendarId: _selectedCalendarId ?? 'primary',
@@ -295,9 +291,9 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
               onEventChanged: () {
                 fetchCalendarEvents(useCashe: false);
               },
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -370,17 +366,15 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                 await fetchCalendarEvents();
 
                 if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text(
-                        'Event "$name" saved with ${recurringFrequency ?? "no"} recurrence'),
-                  ));
+                  Navigator.pop(context);
                 }
               },
             ),
           );
         },
-        backgroundColor: const Color(0xFF004085),
+        tooltip: 'Create Event',
         child: const Icon(Icons.add),
+        backgroundColor: const Color(0xFF004085),
         mini: true,
       ),
       bottomNavigationBar:

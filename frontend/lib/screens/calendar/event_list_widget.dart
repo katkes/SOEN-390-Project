@@ -24,61 +24,62 @@ class EventListWidget extends StatelessWidget {
       required this.calendarEventService,
       this.onEventChanged,
       required this.calendarId});
-
   @override
   Widget build(BuildContext context) {
     return events.isEmpty
         ? const Center(child: Text("No events for selected day"))
-        : ListView.builder(
-            itemCount: events.length,
-            itemBuilder: (context, index) {
-              final event = events[index];
-              String timeString = '';
-              if (event.start?.dateTime != null) {
-                timeString =
-                    DateFormat('h:mm a').format(event.start!.dateTime!);
-              }
-              return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                child: InkWell(
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => EventEditPopup(
-                        event: event,
-                        calendarEventService: calendarEventService,
-                        calendarId: calendarId,
-                        calendarService: calendarService,
-                        onEventUpdated: () {
-                          if (onEventChanged != null) {
-                            onEventChanged!();
-                          }
-                        },
-                        onEventDeleted: () {
-                          if (onEventChanged != null) {
-                            onEventChanged!();
-                          }
-                        },
+        : Column(
+            children: [
+              ...events.map((event) {
+                // Create a widget for each event here
+                String timeString = '';
+                if (event.start?.dateTime != null) {
+                  timeString =
+                      DateFormat('h:mm a').format(event.start!.dateTime!);
+                }
+                return Card(
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  child: InkWell(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => EventEditPopup(
+                          event: event,
+                          calendarEventService: calendarEventService,
+                          calendarId: calendarId,
+                          calendarService: calendarService,
+                          onEventUpdated: () {
+                            if (onEventChanged != null) {
+                              onEventChanged!();
+                            }
+                          },
+                          onEventDeleted: () {
+                            if (onEventChanged != null) {
+                              onEventChanged!();
+                            }
+                          },
+                        ),
+                      );
+                    },
+                    child: ListTile(
+                      leading: const Icon(Icons.event),
+                      title: Text(event.summary ?? 'No Title'),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (timeString.isNotEmpty) Text(timeString),
+                          if (event.location != null &&
+                              event.location!.isNotEmpty)
+                            Text(event.location!,
+                                style: const TextStyle(fontSize: 12)),
+                        ],
                       ),
-                    );
-                  },
-                  child: ListTile(
-                    leading: const Icon(Icons.event),
-                    title: Text(event.summary ?? 'No Title'),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (timeString.isNotEmpty) Text(timeString),
-                        if (event.location != null &&
-                            event.location!.isNotEmpty)
-                          Text(event.location!,
-                              style: const TextStyle(fontSize: 12)),
-                      ],
                     ),
                   ),
-                ),
-              );
-            },
+                );
+              }),
+            ],
           );
   }
 }
