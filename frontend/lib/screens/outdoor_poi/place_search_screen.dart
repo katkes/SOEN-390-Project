@@ -184,7 +184,9 @@ class _PlaceSearchScreenState extends State<PlaceSearchScreen> {
           result['lat'] as double,
           result['lng'] as double,
         );
-        Navigator.pop(context);
+        if (mounted) {
+          Navigator.pop(context);
+        }
       }
     } catch (e) {
       _handleError('Error creating POI: $e', "Failed to load place details.");
