@@ -94,7 +94,7 @@ class PointOfInterest {
   /// Extracts relevant fields, formats opening hours, amenities, and category,
   /// and parses reviews. Accepts a required [imageUrl], typically constructed
   /// externally from photo references.
-factory PointOfInterest.fromPlaceDetails(Map<String, dynamic> result,
+  factory PointOfInterest.fromPlaceDetails(Map<String, dynamic> result,
       {required String imageUrl}) {
     print('Parsing Place Details to PointOfInterest...');
 
@@ -130,12 +130,18 @@ factory PointOfInterest.fromPlaceDetails(Map<String, dynamic> result,
     );
   }
 
+  /// Parses the 'types' field from [result] and returns it as a [List<String>].
+  /// If the field is absent or null, returns an empty list.
   static List<String> _parseTypesList(Map<String, dynamic> result) {
     return result['types'] != null
         ? (result['types'] as List).cast<String>()
         : <String>[];
   }
 
+  /// Filters the provided [typesList] against a predefined set of allowed types,
+  /// then formats it into a user-friendly category string if applicable.
+  ///
+  /// Returns `null` if no matching type is found.
   static String? _getFormattedCategory(List<String> typesList) {
     const allowedTypes = [
       'restaurant',
@@ -162,7 +168,11 @@ factory PointOfInterest.fromPlaceDetails(Map<String, dynamic> result,
     return filteredType.isNotEmpty ? prettifyCategory(filteredType) : null;
   }
 
-static Map<String, String>? _parseOpeningHours(Map<String, dynamic> result) {
+  /// Parses the 'opening_hours' field in [result] and converts it into a
+  /// [Map<String, String>] where the key is the weekday and the value is the hours.
+  ///
+  /// Returns `null` if parsing fails or if data is unavailable.
+  static Map<String, String>? _parseOpeningHours(Map<String, dynamic> result) {
     final weekdayTextList = result['opening_hours']?['weekday_text'] as List?;
     if (weekdayTextList == null || weekdayTextList.isEmpty) return null;
 
@@ -179,7 +189,11 @@ static Map<String, String>? _parseOpeningHours(Map<String, dynamic> result) {
     }
   }
 
-static List<String> _parseAmenities(Map<String, dynamic> result) {
+  /// Parses amenity-related boolean flags in [result] and returns a
+  /// [List<String>] representing the available amenities (e.g., Beer, Wine).
+  ///
+  /// Returns an empty list if no amenities are found.
+  static List<String> _parseAmenities(Map<String, dynamic> result) {
     final amenitiesList = <String>[];
 
     if (result['serves_beer'] == true) amenitiesList.add('Beer');
@@ -194,12 +208,18 @@ static List<String> _parseAmenities(Map<String, dynamic> result) {
     return amenitiesList;
   }
 
+  /// Parses the 'reviews' field from [result] and converts it into a list of
+  /// [Review] objects using [parseReviews]. Returns `null` if no reviews are found.
   static List<Review>? _parseReviewsIfAvailable(Map<String, dynamic> result) {
     final reviewsJsonList = result['reviews'] as List?;
     return reviewsJsonList != null ? parseReviews(reviewsJsonList) : null;
   }
 
-static String? _parsePriceRange(Map<String, dynamic> result) {
+  /// Parses the 'price_level' integer from [result] and converts it into a
+  /// string representation using dollar signs (e.g., "$$", "$$$").
+  ///
+  /// Returns `null` if price level is unavailable or not recognized.
+  static String? _parsePriceRange(Map<String, dynamic> result) {
     final priceLevel = result['price_level'];
     switch (priceLevel) {
       case 1:
@@ -214,7 +234,6 @@ static String? _parsePriceRange(Map<String, dynamic> result) {
         return null;
     }
   }
-
 }
 
 /// Converts a category string with underscores into a more human-readable format.
