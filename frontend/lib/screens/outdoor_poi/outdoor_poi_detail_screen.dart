@@ -43,7 +43,7 @@ class PoiDetailScreen extends StatefulWidget {
     super.key,
     required this.poi,
     this.onBack,
-    this.onSetDestination, // add this
+    this.onSetDestination,
   });
 
   @override
