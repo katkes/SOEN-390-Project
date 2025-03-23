@@ -30,7 +30,7 @@ const mapView = await show3dMap(
 );
 
 mapView.Labels.all();
-// mapView.enableDebug();
+// mapView.enableDebug(); //commented since it would appear during the demo and shouldnt be shown (only for debugginf purposes)
 
 /**
  * Moves camera to the center of a named space.
