@@ -47,14 +47,18 @@ void main() {
   group('Suggestion list tests', () {
     // Expected: Suggestions list should be hidden when the text field is empty.
     // Test: Type something to show suggestions, then clear the text and verify the list is hidden.
-    testWidgets('hides suggestions list when text is empty', (WidgetTester tester) async {
-      await tester.pumpWidget(createWidgetUnderTest(mapService: mockMapService));
+    testWidgets('hides suggestions list when text is empty',
+        (WidgetTester tester) async {
+      await tester
+          .pumpWidget(createWidgetUnderTest(mapService: mockMapService));
 
-      await tester.enterText(find.byKey(const Key('building_search_field')), 'Hall');
+      await tester.enterText(
+          find.byKey(const Key('building_search_field')), 'Hall');
       await tester.pump(const Duration(milliseconds: 300));
       await tester.pump(const Duration(milliseconds: 50));
 
-      await tester.enterText(find.byKey(const Key('building_search_field')), '');
+      await tester.enterText(
+          find.byKey(const Key('building_search_field')), '');
       await tester.pump(const Duration(milliseconds: 300));
       await tester.pump();
 
@@ -65,16 +69,18 @@ void main() {
   group('Loading indicator tests', () {
     // Expected: Loading indicator should be shown while fetching suggestions.
     // Test: Enter text that triggers a delayed response and verify the loading indicator is shown and then hidden.
-    testWidgets('shows loading indicator when fetching suggestions', (WidgetTester tester) async {
-      when(mockMapService.getBuildingSuggestions('Slow'))
-          .thenAnswer((_) async {
-            await Future.delayed(const Duration(milliseconds: 500));
-            return ['Slow Building', 'Slower Building'];
-          });
+    testWidgets('shows loading indicator when fetching suggestions',
+        (WidgetTester tester) async {
+      when(mockMapService.getBuildingSuggestions('Slow')).thenAnswer((_) async {
+        await Future.delayed(const Duration(milliseconds: 500));
+        return ['Slow Building', 'Slower Building'];
+      });
 
-      await tester.pumpWidget(createWidgetUnderTest(mapService: mockMapService));
+      await tester
+          .pumpWidget(createWidgetUnderTest(mapService: mockMapService));
 
-      await tester.enterText(find.byKey(const Key('building_search_field')), 'Slow');
+      await tester.enterText(
+          find.byKey(const Key('building_search_field')), 'Slow');
       await tester.pump(const Duration(milliseconds: 300));
       await tester.pump();
 
@@ -90,14 +96,19 @@ void main() {
   group('Debounce tests', () {
     // Expected: API calls should be debounced when typing quickly.
     // Test: Type rapidly and verify the API is called only once with the final value.
-    testWidgets('debounces API calls when typing quickly', (WidgetTester tester) async {
-      await tester.pumpWidget(createWidgetUnderTest(mapService: mockMapService));
+    testWidgets('debounces API calls when typing quickly',
+        (WidgetTester tester) async {
+      await tester
+          .pumpWidget(createWidgetUnderTest(mapService: mockMapService));
 
-      await tester.enterText(find.byKey(const Key('building_search_field')), 'H');
+      await tester.enterText(
+          find.byKey(const Key('building_search_field')), 'H');
       await tester.pump(const Duration(milliseconds: 100));
-      await tester.enterText(find.byKey(const Key('building_search_field')), 'Ha');
+      await tester.enterText(
+          find.byKey(const Key('building_search_field')), 'Ha');
       await tester.pump(const Duration(milliseconds: 100));
-      await tester.enterText(find.byKey(const Key('building_search_field')), 'Hall');
+      await tester.enterText(
+          find.byKey(const Key('building_search_field')), 'Hall');
       await tester.pump(const Duration(milliseconds: 300));
       await tester.pump();
 

@@ -130,7 +130,7 @@ void main() {
     expect(find.text(DateFormat('yyyy-MM-dd').format(DateTime.now())),
         findsOneWidget);
   });
-  
+
   // Test to verify that the time picker widget works correctly
   testWidgets('EventCreationPopup time picker works',
       (WidgetTester tester) async {
@@ -155,7 +155,7 @@ void main() {
   testWidgets('EventCreationPopup cancel button works',
       (WidgetTester tester) async {
     bool dialogClosed = false;
-    
+
     // Set up a test environment with a button that opens the dialog
     await tester.pumpWidget(
       MaterialApp(
@@ -167,31 +167,33 @@ void main() {
                 builder: (_) => EventCreationPopup(
                   onSave: (name, building, classroom, time, day, recurrence) {},
                 ),
-              ).then((_) => dialogClosed = true); // Set flag when dialog is closed
+              ).then(
+                  (_) => dialogClosed = true); // Set flag when dialog is closed
             },
             child: const Text('Show Dialog'),
           ),
         ),
       ),
     );
-    
+
     // Open the dialog
     await tester.tap(find.text('Show Dialog'));
     await tester.pumpAndSettle();
-    
+
     // Tap the cancel button
     await tester.tap(find.text('Cancel'));
     await tester.pumpAndSettle();
-    
+
     // Verify the dialog was closed
     expect(dialogClosed, true);
   });
 
   // Test to verify that form validation prevents submission when required fields are missing
-  testWidgets('EventCreationPopup validation prevents submission with missing fields',
+  testWidgets(
+      'EventCreationPopup validation prevents submission with missing fields',
       (WidgetTester tester) async {
     bool onSaveCalled = false;
-    
+
     await tester.pumpWidget(
       MaterialApp(
         home: EventCreationPopup(
@@ -201,186 +203,187 @@ void main() {
         ),
       ),
     );
-    
+
     // Try to submit without filling required fields
     await tester.tap(find.text('Save'));
     await tester.pumpAndSettle();
-    
+
     // onSave should not be called due to validation
     expect(onSaveCalled, false);
-    
+
     // Form should still be visible (dialog not closed)
     expect(find.text('Create New Event'), findsOneWidget);
   });
 
   // Test to verify that the onSave callback is called with the correct data when form is valid
   testWidgets('EventCreationPopup onSave callback is called with correct data',
-    (WidgetTester tester) async {
-  // Variables to capture the values passed to onSave
-  String? savedName;
-  String? savedBuilding;
-  String? savedClassroom;
-  TimeOfDay? savedTime;
-  DateTime? savedDay;
-  String? savedRecurrence;
- 
-  await tester.pumpWidget(
-    MaterialApp(
-      home: Scaffold(  // Add Scaffold for proper context
-        body: EventCreationPopup(
-          onSave: (name, building, classroom, time, day, recurrence) {
-            // Capture all values passed to onSave
-            savedName = name;
-            savedBuilding = building;
-            savedClassroom = classroom;
-            savedTime = time;
-            savedDay = day;
-            savedRecurrence = recurrence;
-          },
+      (WidgetTester tester) async {
+    // Variables to capture the values passed to onSave
+    String? savedName;
+    String? savedBuilding;
+    String? savedClassroom;
+    TimeOfDay? savedTime;
+    DateTime? savedDay;
+    String? savedRecurrence;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          // Add Scaffold for proper context
+          body: EventCreationPopup(
+            onSave: (name, building, classroom, time, day, recurrence) {
+              // Capture all values passed to onSave
+              savedName = name;
+              savedBuilding = building;
+              savedClassroom = classroom;
+              savedTime = time;
+              savedDay = day;
+              savedRecurrence = recurrence;
+            },
+          ),
         ),
       ),
-    ),
-  );
- 
-  // Fill all required fields
-  await tester.enterText(find.byType(TextFormField).at(0), 'Test Event');
-  await tester.enterText(find.byType(TextFormField).at(1), 'Room 301');
- 
-  // Select building using the custom BuildingSearchField
-  final buildingSearchField = tester.widget<BuildingSearchField>(
-    find.byType(BuildingSearchField)
-  );
-  buildingSearchField.onSelected?.call('Test Building');
- 
-  // Select date
-  await tester.tap(find.byIcon(Icons.calendar_today));
-  await tester.pumpAndSettle();
-  await tester.tap(find.text('OK'));
-  await tester.pumpAndSettle();
- 
-  // Select time
-  await tester.tap(find.byIcon(Icons.access_time));
-  await tester.pumpAndSettle();
-  await tester.tap(find.text('OK'));
-  await tester.pumpAndSettle();
- 
-  // Select recurrence from dropdown
-  // Find the dropdown button and tap it
-  final dropdownFinder = find.byType(DropdownButtonFormField<String>);
-  await tester.ensureVisible(dropdownFinder);  // Ensure it's visible
-  await tester.tap(dropdownFinder);
-  await tester.pumpAndSettle();
-  
-  // Select the 'Weekly' option from the dropdown menu
-  // Using .last because there might be multiple "Weekly" elements in the widget tree
-  await tester.tap(find.text('Weekly').last, warnIfMissed: false);
-  await tester.pumpAndSettle();
- 
-  // Submit form
-  await tester.tap(find.text('Save'));
-  await tester.pumpAndSettle();
- 
-  // Verify callback was called with correct data
-  expect(savedName, 'Test Event');
-  expect(savedBuilding, 'Test Building');
-  expect(savedClassroom, 'Room 301');
-  expect(savedTime, isNotNull);
-  expect(savedDay, isNotNull);
-  expect(savedRecurrence, 'Weekly');
-});
+    );
+
+    // Fill all required fields
+    await tester.enterText(find.byType(TextFormField).at(0), 'Test Event');
+    await tester.enterText(find.byType(TextFormField).at(1), 'Room 301');
+
+    // Select building using the custom BuildingSearchField
+    final buildingSearchField =
+        tester.widget<BuildingSearchField>(find.byType(BuildingSearchField));
+    buildingSearchField.onSelected?.call('Test Building');
+
+    // Select date
+    await tester.tap(find.byIcon(Icons.calendar_today));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('OK'));
+    await tester.pumpAndSettle();
+
+    // Select time
+    await tester.tap(find.byIcon(Icons.access_time));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('OK'));
+    await tester.pumpAndSettle();
+
+    // Select recurrence from dropdown
+    // Find the dropdown button and tap it
+    final dropdownFinder = find.byType(DropdownButtonFormField<String>);
+    await tester.ensureVisible(dropdownFinder); // Ensure it's visible
+    await tester.tap(dropdownFinder);
+    await tester.pumpAndSettle();
+
+    // Select the 'Weekly' option from the dropdown menu
+    // Using .last because there might be multiple "Weekly" elements in the widget tree
+    await tester.tap(find.text('Weekly').last, warnIfMissed: false);
+    await tester.pumpAndSettle();
+
+    // Submit form
+    await tester.tap(find.text('Save'));
+    await tester.pumpAndSettle();
+
+    // Verify callback was called with correct data
+    expect(savedName, 'Test Event');
+    expect(savedBuilding, 'Test Building');
+    expect(savedClassroom, 'Room 301');
+    expect(savedTime, isNotNull);
+    expect(savedDay, isNotNull);
+    expect(savedRecurrence, 'Weekly');
+  });
 
   // Test to verify that widget state is properly reset when dialog is reopened
   testWidgets('EventCreationPopup handles widget state disposal properly',
-    (WidgetTester tester) async {
-  await tester.pumpWidget(
-    MaterialApp(
-      home: Builder(
-        builder: (context) => ElevatedButton(
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (_) => EventCreationPopup(
-                onSave: (name, building, classroom, time, day, recurrence) {},
-              ),
-            );
-          },
-          child: const Text('Show Dialog'),
+      (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Builder(
+          builder: (context) => ElevatedButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (_) => EventCreationPopup(
+                  onSave: (name, building, classroom, time, day, recurrence) {},
+                ),
+              );
+            },
+            child: const Text('Show Dialog'),
+          ),
         ),
       ),
-    ),
-  );
-  
-  // Open dialog
-  await tester.tap(find.text('Show Dialog'));
-  await tester.pumpAndSettle();
-  
-  // Enter text in fields
-  await tester.enterText(find.byType(TextFormField).at(0), 'Test Event');
-  
-  // Close dialog
-  await tester.tap(find.text('Cancel'));
-  await tester.pumpAndSettle();
-  
-  // Reopen dialog and check if state is reset
-  await tester.tap(find.text('Show Dialog'));
-  await tester.pumpAndSettle();
-  
-  // Verify field is empty (state should be reset)
-  expect(find.text('Test Event'), findsNothing);
-});
+    );
+
+    // Open dialog
+    await tester.tap(find.text('Show Dialog'));
+    await tester.pumpAndSettle();
+
+    // Enter text in fields
+    await tester.enterText(find.byType(TextFormField).at(0), 'Test Event');
+
+    // Close dialog
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+
+    // Reopen dialog and check if state is reset
+    await tester.tap(find.text('Show Dialog'));
+    await tester.pumpAndSettle();
+
+    // Verify field is empty (state should be reset)
+    expect(find.text('Test Event'), findsNothing);
+  });
 
   // Test to verify that form maintains state during scrolling
   testWidgets('EventCreationPopup form maintains state during scrolling',
-    (WidgetTester tester) async {
-  await tester.pumpWidget(
-    MaterialApp(
-      home: EventCreationPopup(
-        onSave: (name, building, classroom, time, day, recurrence) {},
+      (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: EventCreationPopup(
+          onSave: (name, building, classroom, time, day, recurrence) {},
+        ),
       ),
-    ),
-  );
-  
-  // Enter text in the first field
-  await tester.enterText(find.byType(TextFormField).at(0), 'Test Event Name');
-  
-  // Scroll down to see the rest of the form
-  await tester.drag(find.byType(SingleChildScrollView), const Offset(0, -300));
-  await tester.pumpAndSettle();
-  
-  // Scroll back up
-  await tester.drag(find.byType(SingleChildScrollView), const Offset(0, 300));
-  await tester.pumpAndSettle();
-  
-  // Verify the text is still there (state maintained during scrolling)
-  expect(find.text('Test Event Name'), findsOneWidget);
-});
+    );
+
+    // Enter text in the first field
+    await tester.enterText(find.byType(TextFormField).at(0), 'Test Event Name');
+
+    // Scroll down to see the rest of the form
+    await tester.drag(
+        find.byType(SingleChildScrollView), const Offset(0, -300));
+    await tester.pumpAndSettle();
+
+    // Scroll back up
+    await tester.drag(find.byType(SingleChildScrollView), const Offset(0, 300));
+    await tester.pumpAndSettle();
+
+    // Verify the text is still there (state maintained during scrolling)
+    expect(find.text('Test Event Name'), findsOneWidget);
+  });
 
   // Test to verify form validation for null values
   testWidgets('EventCreationPopup validation handles null values properly',
-    (WidgetTester tester) async {
-  bool onSaveCalled = false;
-  
-  await tester.pumpWidget(
-    MaterialApp(
-      home: EventCreationPopup(
-        onSave: (name, building, classroom, time, day, recurrence) {
-          onSaveCalled = true;
-        },
+      (WidgetTester tester) async {
+    bool onSaveCalled = false;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: EventCreationPopup(
+          onSave: (name, building, classroom, time, day, recurrence) {
+            onSaveCalled = true;
+          },
+        ),
       ),
-    ),
-  );
-  
-  // Enter text only in the required text fields
-  await tester.enterText(find.byType(TextFormField).at(0), 'Test Event');
-  await tester.enterText(find.byType(TextFormField).at(1), 'Room 301');
-  
-  // Don't select building, time, or date (leaving them null)
-  
-  // Try to submit
-  await tester.tap(find.text('Save'));
-  await tester.pumpAndSettle();
-  
-  // Verify onSave was not called (validation should prevent submission)
-  expect(onSaveCalled, false);
-});
+    );
+
+    // Enter text only in the required text fields
+    await tester.enterText(find.byType(TextFormField).at(0), 'Test Event');
+    await tester.enterText(find.byType(TextFormField).at(1), 'Room 301');
+
+    // Don't select building, time, or date (leaving them null)
+
+    // Try to submit
+    await tester.tap(find.text('Save'));
+    await tester.pumpAndSettle();
+
+    // Verify onSave was not called (validation should prevent submission)
+    expect(onSaveCalled, false);
+  });
 }
