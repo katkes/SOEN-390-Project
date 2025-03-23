@@ -47,6 +47,10 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   String destinationLocation =
       ''; // variable to store destination location address
 
+  static const int _destinationIndex = 1;
+  static const int _minItineraryLength = 2;
+
+
   @override
   void initState() {
     super.initState();
@@ -132,10 +136,10 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
                       onSetDestination: (name, lat, lng) {
                         setState(() {
                           destinationLocation = name;
-                          if (itinerary.length < 2) {
+                          if (itinerary.length < _minItineraryLength) {
                             itinerary.add(name);
-                          } else if (itinerary.length >= 2) {
-                            itinerary[1] = name;
+                          } else if (itinerary.length >= _minItineraryLength) {
+                            itinerary[_destinationIndex] = name;
                           }
                         });
                         widget.onLocationChanged?.call();
@@ -187,7 +191,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   }
 
   void _confirmRoute() {
-    if (itinerary.length < 2) {
+    if (itinerary.length < _minItineraryLength) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
             content: Text("You must have at least a start and destination.")),
@@ -289,7 +293,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   }
 
   void _setDestinationLocation(String selectedLocation) {
-    if (itinerary.length < 2) {
+    if (itinerary.length < _minItineraryLength) {
       destinationLocation = selectedLocation;
       itinerary.add(selectedLocation);
     }
@@ -326,9 +330,9 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
 
   void setDestinationLocation(String selectedLocation) {
     destinationLocation = selectedLocation;
-    if (itinerary.length < 2) {
+    if (itinerary.length < _minItineraryLength) {
       itinerary.add(selectedLocation);
-    } else if (itinerary.length == 2) {
+    } else if (itinerary.length == _minItineraryLength) {
       itinerary[1] = selectedLocation;
     }
   }
@@ -357,7 +361,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
           widget.onTransportModeChange!(label);
         }
         // Otherwise use the confirm route handler if we have waypoints
-        else if (itinerary.length >= 2) {
+        else if (itinerary.length >= _minItineraryLength) {
           widget.onConfirmRoute(List.from(itinerary), selectedMode);
         }
       },
