@@ -145,21 +145,21 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
     return true;
   }
 
-void _handleTransportModeChange(String transportMode) {
+  void _handleTransportModeChange(String transportMode) {
     if (selectedMode != transportMode) {
       _clearConfirmedRoutes();
       selectedMode = transportMode;
     }
   }
 
-void _setLoadingState(String transportMode) {
+  void _setLoadingState(String transportMode) {
     setState(() {
       isLoading = true;
       errorMessage = null;
       selectedMode = transportMode;
       _locationsChanged = false;
     });
-}
+  }
 
   Future<void> _fetchAndDisplayRoutes(List<String> waypoints,
       String googleTransportMode, String transportMode) async {
@@ -180,7 +180,7 @@ void _setLoadingState(String transportMode) {
 
     // Validate and process routes
     if (!_validateRoutes(routes, googleTransportMode)) return;
-  
+
     // Get and cache the routes
     final topRoutes =
         _processAndCacheRoutes(routes, googleTransportMode, waypoints);
@@ -194,7 +194,7 @@ void _setLoadingState(String transportMode) {
     _displayRoutesAndLogDetails(waypoints, topRoutes, transportMode);
   }
 
-Future<Map<String, LatLng>?> _resolveCoordinates(
+  Future<Map<String, LatLng>?> _resolveCoordinates(
       List<String> waypoints) async {
     LatLng? startPoint;
 
@@ -228,9 +228,7 @@ Future<Map<String, LatLng>?> _resolveCoordinates(
     return {'start': startPoint, 'end': endPoint};
   }
 
-
-
-bool _validateRoutes(
+  bool _validateRoutes(
       Map<String, List<RouteResult>> routes, String googleTransportMode) {
     if (routes.isEmpty ||
         !routes.containsKey(googleTransportMode) ||
@@ -240,24 +238,24 @@ bool _validateRoutes(
     return true;
   }
 
-List<RouteResult>? _processAndCacheRoutes(
+  List<RouteResult>? _processAndCacheRoutes(
       Map<String, List<RouteResult>> routes,
       String googleTransportMode,
       List<String> waypoints) {
     final selectedRoutes = routes[googleTransportMode]!;
     final topRoutes = selectedRoutes.take(_maxRoutes).toList();
-  
+
     // Cache the routes
     if (!_routeCache.containsKey(googleTransportMode)) {
       _routeCache[googleTransportMode] = {};
     }
     String waypointKey = "${waypoints.first}-${waypoints.last}";
     _routeCache[googleTransportMode]![waypointKey] = selectedRoutes;
-  
+
     return topRoutes;
   }
 
-void _displayRoutesAndLogDetails(
+  void _displayRoutesAndLogDetails(
       List<String> waypoints, List<RouteResult> routes, String transportMode) {
     display.displayRoutes(
       context: context,
@@ -274,12 +272,12 @@ void _displayRoutesAndLogDetails(
 
   void _handleRouteError(dynamic error) {
     if (!mounted) return;
-  
+
     setState(() {
       isLoading = false;
       errorMessage = "Error finding route: ${error.toString()}";
     });
-  
+
     if (!mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
