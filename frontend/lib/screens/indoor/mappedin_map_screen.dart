@@ -8,12 +8,23 @@ import 'package:flutter/material.dart';
 import 'package:soen_390/widgets/mappedin_webview.dart';
 
 class MappedinMapScreen extends StatelessWidget {
-  /// Constructs the [MappedinMapScreen].
-  MappedinMapScreen({super.key});
+  /// To allow injection of a custom webView (for testing)
+  MappedinMapScreen({super.key, this.webView});
 
-  /// Key to access the [MappedinWebViewState] for calling methods like [showDirections] and [setFloor].
+  /// Optionally injected WebView.
+  final Widget? webView;
+
+  /// GlobalKey to access the MappedinWebViewState.
   final GlobalKey<MappedinWebViewState> _webViewKey =
       GlobalKey<MappedinWebViewState>();
+
+  /// Helper method to build Floating Action Buttons with standard styling.
+  Widget _buildFABButton(String text, VoidCallback onPressed) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      child: Text(text),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +37,7 @@ class MappedinMapScreen extends StatelessWidget {
         backgroundColor: const Color(0xff912338),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: MappedinWebView(key: _webViewKey),
+      body: webView ?? MappedinWebView(key: _webViewKey),
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -52,12 +63,9 @@ class MappedinMapScreen extends StatelessWidget {
           /// TODO: delete for the actual implementation, will be changed in 5.2.2
           ///
           /// - Floor: `"Level 9"`
-          ElevatedButton(
-            onPressed: () async {
-              await _webViewKey.currentState?.setFloor("Level 9");
-            },
-            child: const Text("Set Floor"),
-          ),
+          _buildFABButton("Set Floor", () async {
+            await _webViewKey.currentState?.setFloor("Level 9");
+          }),
         ],
       ),
     );

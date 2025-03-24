@@ -17,7 +17,8 @@
         <key>NSLocationAlwaysUsageDescription</key>
         <string>We need your location even when the app is in the background.</string>
 
-
+          <key>NSAllowsArbitraryLoads</key>
+                <true/>
 
 	<key>CFBundleURLTypes</key>
 <array>

@@ -21,6 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import "package:soen_390/screens/indoor_accessibility/indoor_accessibility_preference.dart";
 
 class MappedinWebView extends StatefulWidget {
   /// Optional controller override for testing.
@@ -136,9 +137,13 @@ class MappedinWebViewState extends State<MappedinWebView> {
   /// - [departure]: The starting location name.
   /// - [destination]: The destination location name.
   /// - [accessible]: If the route should be accessible.
-  showDirections(String departure, String destination, bool accessible) async {
+  showDirections(
+      String departure, String destination, bool accessibility) async {
+    // accessibility is not used, preference will be taken from preference from sharedPreferences
+    bool preference =
+        await IndoorAccessibilityState.getMobilityStatusPreference();
     await controller.runJavaScript(
-        "getDirections('$departure', '$destination', '$accessible')");
+        "getDirections('$departure', '$destination', '$preference')");
   }
 
   /// Sends a request to the embedded JavaScript to change the visible floor.

@@ -30,7 +30,12 @@ const mapView = await show3dMap(
 );
 
 mapView.Labels.all();
-// mapView.enableDebug(); //commented since it would appear during the demo and shouldnt be shown (only for debugginf purposes)
+
+//This is the functionality which adds the "black box" at the top and allows us to access
+//a lot of the mappedIN SDK functionality for quick debugging and testing.
+//mapView.enableDebug();
+
+
 
 /**
  * Moves camera to the center of a named space.
