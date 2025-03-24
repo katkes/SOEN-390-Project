@@ -155,9 +155,6 @@ class EventEditPopupState extends State<EventEditPopup> {
 
   Future<void> _selectDateTime(BuildContext context,
       {required bool isStartTime}) async {
-    if (!mounted) return;
-
-    final localContext = context;
     final initialDate = isStartTime ? _startDate : _endDate;
 
     final pickedDate = await showDatePicker(
@@ -167,32 +164,34 @@ class EventEditPopupState extends State<EventEditPopup> {
       lastDate: DateTime(2101),
     );
 
-    if (!mounted || pickedDate == null) return;
+    if (pickedDate == null) return;
+
+    if (!context.mounted) return;
 
     final TimeOfDay? pickedTime = await showTimePicker(
-      context: localContext,
+      context: context,
       initialTime: TimeOfDay.fromDateTime(initialDate),
     );
 
     if (pickedTime == null) return;
 
-    final newDateTime = DateTime(
-      pickedDate.year,
-      pickedDate.month,
-      pickedDate.day,
-      pickedTime.hour,
-      pickedTime.minute,
-    );
+    if (context.mounted) {
+      final newDateTime = DateTime(
+        pickedDate.year,
+        pickedDate.month,
+        pickedDate.day,
+        pickedTime.hour,
+        pickedTime.minute,
+      );
 
-    if (!mounted) return;
-
-    setState(() {
-      if (isStartTime) {
-        _startDate = newDateTime;
-      } else {
-        _endDate = newDateTime;
-      }
-    });
+      setState(() {
+        if (isStartTime) {
+          _startDate = newDateTime;
+        } else {
+          _endDate = newDateTime;
+        }
+      });
+    }
   }
 
   Future<void> _updateEvent() async {
