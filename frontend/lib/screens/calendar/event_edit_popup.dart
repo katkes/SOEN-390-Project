@@ -161,6 +161,7 @@ class EventEditPopupState extends State<EventEditPopup> {
       {required bool isStartTime}) async {
     if (!mounted) return;
 
+    final localContext = context;
     final initialDate = isStartTime ? _startDate : _endDate;
     final DateTime? pickedDate = await showDatePicker(
       context: context,
@@ -172,7 +173,7 @@ class EventEditPopupState extends State<EventEditPopup> {
     if (!mounted || pickedDate == null) return; // Check again before proceeding
 
     final TimeOfDay? pickedTime = await showTimePicker(
-      context: context,
+      context: localContext,
       initialTime: TimeOfDay.fromDateTime(initialDate),
     );
 
