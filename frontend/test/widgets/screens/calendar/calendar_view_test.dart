@@ -306,8 +306,6 @@ void main() {
       await tester.pumpWidget(widget);
       await tester.pumpAndSettle(const Duration(seconds: 3));
 
-      debugDumpApp();
-
       expect(find.byType(ListView), findsOneWidget,
           reason: "ListView should be present");
 
