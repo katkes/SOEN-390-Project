@@ -40,24 +40,37 @@ class CalendarService {
       : _calendarApiProvider =
             calendarApiProvider ?? ((authClient) => CalendarApi(authClient));
 
-  /// Fetches a list of events from the **primary calendar**.
+  /// Fetches a list of events from a specified calendar or the **primary calendar** by default.
   ///
-  /// This method retrieves events from the user's primary Google Calendar.
+  /// ## Parameters:
+  /// - [calendarId] *(optional)*: The ID of the calendar to fetch events from. Defaults to `'primary'`.
   ///
   /// ## Returns:
-  /// - A `List<Event>` containing the user's scheduled events.
+  /// - A `List<Event>` containing the calendar's events.
   /// - Returns an **empty list** if authentication fails or no events are found.
   ///
   /// ## Example:
   /// ```dart
-  /// final events = await calendarService.fetchEvents();
+  /// final events = await calendarService.fetchEvents(); // Fetches from primary
+  /// final events = await calendarService.fetchEvents('custom_calendar_id'); // Fetches from specific calendar
   /// ```
-  Future<List<Event>> fetchEvents() async {
+  Future<List<Event>> fetchEvents([String calendarId = 'primary']) async {
     final auth.AuthClient? authClient = await _authRepository.getAuthClient();
     if (authClient == null) return [];
 
     final calendar = _calendarApiProvider(authClient);
-    final events = await calendar.events.list('primary');
+
+    final events = await calendar.events.list(
+      calendarId,
+      singleEvents: true, // Expand recurring events
+      orderBy: 'startTime', // Order for consistency
+      timeMin: DateTime.now().toUtc(),
+    );
+    for (var event in events.items ?? []) {
+      print("Event ID: ${event.id}");
+      print("Summary: ${event.summary}");
+      print("Is Recurrence Instance: ${event.recurringEventId != null}");
+    }
 
     return events.items ?? [];
   }
@@ -145,7 +158,7 @@ class CalendarService {
   /// - [eventId]: The ID of the event to be removed.
   ///
   /// ## Example:
-  /// ```dart
+  /// ```dartX
   /// await calendarService.deleteEvent('primary', 'eventId123');
   /// ```
   Future<void> deleteEvent(String calendarId, String eventId) async {

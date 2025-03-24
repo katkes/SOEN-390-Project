@@ -27,6 +27,9 @@ class AuthService {
         _secureStorage = secureStorage,
         _authClientFactory = authClientFactory;
 
+  SecureStorage get secureStorage => _secureStorage;
+  HttpService get httpService => _httpService;
+
   Future<auth.AuthClient?> signIn() async {
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();

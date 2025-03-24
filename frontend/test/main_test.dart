@@ -415,16 +415,15 @@ void main() {
     // Stub the signIn method to return the mocked AuthClient
     when(mockAuthService.signIn()).thenAnswer((_) async => mockAuthClient);
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: MyHomePage(
-          title: 'Test App',
-          routeService: mockRouteService,
-          httpService: mockHttpService,
-          authService: mockAuthService,
-        ),
+    await tester.pumpWidget(ProviderScope(
+        child: MaterialApp(
+      home: MyHomePage(
+        title: 'Test App',
+        routeService: mockRouteService,
+        httpService: mockHttpService,
+        authService: mockAuthService,
       ),
-    );
+    )));
 
     final myHomePageState =
         tester.state<MyHomePageState>(find.byType(MyHomePage));
@@ -439,22 +438,27 @@ void main() {
 
   testWidgets('signOut sets isLoggedIn to false', (WidgetTester tester) async {
     await tester.pumpWidget(
-      MaterialApp(
-        home: MyHomePage(
-          title: 'Test App',
-          routeService: mockRouteService,
-          httpService: mockHttpService,
-          authService: MockAuthService(),
+      ProviderScope(
+        child: MaterialApp(
+          home: MyHomePage(
+            title: 'Test App',
+            routeService: mockRouteService,
+            httpService: mockHttpService,
+            authService: MockAuthService(),
+          ),
         ),
       ),
     );
 
     final myHomePageState =
         tester.state<MyHomePageState>(find.byType(MyHomePage));
+
     myHomePageState.signIn();
     await tester.pumpAndSettle();
+
     myHomePageState.signOut();
-    await tester.pump();
+    await tester.pumpAndSettle();
+
     expect(myHomePageState.isLoggedIn, false);
   });
 }

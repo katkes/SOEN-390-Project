@@ -95,8 +95,12 @@ void main() {
       final mockEvent = Event(summary: 'Test Event');
       final eventsList = Events(items: [mockEvent]);
 
-      when(mockEventsResource.list('primary'))
-          .thenAnswer((_) async => eventsList);
+      when(mockEventsResource.list(
+        'primary',
+        singleEvents: true,
+        orderBy: 'startTime',
+        timeMin: anyNamed('timeMin'),
+      )).thenAnswer((_) async => eventsList);
 
       final events = await calendarService.fetchEvents();
 

@@ -18,6 +18,8 @@ import 'package:soen_390/services/building_info_api.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'package:soen_390/screens/login/login_screen.dart';
 import 'package:soen_390/screens/profile/profile_screen.dart';
+import 'package:soen_390/screens/calendar/calendar_view.dart';
+import 'package:soen_390/providers/navigation_provider.dart';
 
 /// The entry point of the application.
 ///
@@ -48,7 +50,7 @@ class MyApp extends ConsumerWidget {
     // Fetch dependencies using Riverpod providers.
     final routeService = ref.watch(routeServiceProvider);
     final httpService = ref.watch(httpServiceProvider);
-    final authService = ref.watch(authServiceProvider); // Inject AuthService
+    final authService = ref.watch(authServiceProvider);
 
     return MaterialApp(
       title: 'Flutter Demo',
@@ -96,7 +98,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
   // Set initial campus to SGW (default campus)
   String selectedCampus = 'SGW';
   TextEditingController searchController = TextEditingController();
-  int _selectedIndex = 0;
+  //int _selectedIndex = 0;
   LatLng currentLocation = const LatLng(45.497856, -73.579588);
   LatLng _userLiveLocation = const LatLng(5.497856, -73.579588);
   late LocationService _locationService;
@@ -156,12 +158,12 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
     _locationService.stopListening();
   }
 
-  void _onItemTapped(int index) {
-    polylinePoints = [];
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+  // void _onItemTapped(int index) {
+  //   polylinePoints = [];
+  //   setState(() {
+  //     _selectedIndex = index;
+  //   });
+  // }
 
   Future<void> signIn() async {
     setState(() {
@@ -230,6 +232,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final selectedIndex = ref.watch(navigationProvider).selectedIndex;
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -246,7 +249,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
         ],
       ),
       body: IndexedStack(
-        index: _selectedIndex,
+        index: selectedIndex,
         children: [
           const Center(child: Text('Home Page')),
           LayoutBuilder(
@@ -342,11 +345,13 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
                   email: email,
                   photoUrl: photoUrl,
                   onSignOut: signOut,
-                  //TODO: Implement calendar view for 4.1.3
                   onViewCalendar: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Calendar view would open here')),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            CalendarScreen(authService: widget.authService),
+                      ),
                     );
                   },
                 )
@@ -358,8 +363,10 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
         ],
       ),
       bottomNavigationBar: NavBar(
-        selectedIndex: _selectedIndex,
-        onItemTapped: _onItemTapped,
+        selectedIndex: selectedIndex,
+        onItemTapped: (index) {
+          ref.read(navigationProvider.notifier).setSelectedIndex(index);
+        },
       ),
     );
   }
