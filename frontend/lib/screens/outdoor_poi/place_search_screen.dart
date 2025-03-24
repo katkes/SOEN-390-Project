@@ -217,8 +217,12 @@ class _PlaceSearchScreenState extends State<PlaceSearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Explore Nearby'),
+        title: const Text(
+          'Explore Nearby',
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: appTheme.primaryColor,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Column(
         children: [
