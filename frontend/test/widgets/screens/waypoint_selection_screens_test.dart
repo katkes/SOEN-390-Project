@@ -434,49 +434,45 @@ void main() {
     expect(find.text('Shuttle Bus selected!'), findsOneWidget);
   });
 
-testWidgets('Specify Disability button navigates to IndoorAccessibilityPage', 
-  (WidgetTester tester) async {
-  
-  // Arrange
-  await tester.pumpWidget(MaterialApp(
-    home: WaypointSelectionScreen(
-      routeService: mockGoogleRouteService,
-      geocodingService: mockGeocodingService,
-      locationService: mockLocationService,
-    ),
-  ));
+  testWidgets('Specify Disability button navigates to IndoorAccessibilityPage',
+      (WidgetTester tester) async {
+    // Arrange
+    await tester.pumpWidget(MaterialApp(
+      home: WaypointSelectionScreen(
+        routeService: mockGoogleRouteService,
+        geocodingService: mockGeocodingService,
+        locationService: mockLocationService,
+      ),
+    ));
 
-  // Act
-  final buttonFinder = find.text('Specify Disability');
-  expect(buttonFinder, findsOneWidget);
+    // Act
+    final buttonFinder = find.text('Specify Disability');
+    expect(buttonFinder, findsOneWidget);
 
-  // Find the ElevatedButton widget (not the Text widget)
-  final ElevatedButton elevatedButton = tester.widget<ElevatedButton>(find.byType(ElevatedButton).first);
+    // Find the ElevatedButton widget (not the Text widget)
+    final ElevatedButton elevatedButton =
+        tester.widget<ElevatedButton>(find.byType(ElevatedButton).first);
 
-  final ButtonStyle style = elevatedButton.style!;
+    final ButtonStyle style = elevatedButton.style!;
 
-  // Assert button background color is white
-  expect(style.backgroundColor?.resolve({}), equals(Colors.white));
+    // Assert button background color is white
+    expect(style.backgroundColor?.resolve({}), equals(Colors.white));
 
-  // Assert button text color is the specific color
-  expect(style.foregroundColor?.resolve({}), equals(const Color(0xff912338)));
+    // Assert button text color is the specific color
+    expect(style.foregroundColor?.resolve({}), equals(const Color(0xff912338)));
 
-  // Check the text style for font size and weight
-  final Text textWidget = tester.widget<Text>(find.text('Specify Disability'));
-  final TextStyle textStyle = textWidget.style!;
-  expect(textStyle.fontSize, equals(14));
-  expect(textStyle.fontWeight, equals(FontWeight.bold));
+    // Check the text style for font size and weight
+    final Text textWidget =
+        tester.widget<Text>(find.text('Specify Disability'));
+    final TextStyle textStyle = textWidget.style!;
+    expect(textStyle.fontSize, equals(14));
+    expect(textStyle.fontWeight, equals(FontWeight.bold));
 
-  // Tap the button and check navigation
-  await tester.tap(buttonFinder);
-  await tester.pumpAndSettle();
+    // Tap the button and check navigation
+    await tester.tap(buttonFinder);
+    await tester.pumpAndSettle();
 
-  // Assert navigation to IndoorAccessibilityPage
-  expect(find.byType(IndoorAccessibilityPage), findsOneWidget);
-});
-
-
-
+    // Assert navigation to IndoorAccessibilityPage
+    expect(find.byType(IndoorAccessibilityPage), findsOneWidget);
+  });
 }
-
-

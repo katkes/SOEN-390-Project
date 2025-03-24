@@ -18,7 +18,6 @@ class MappedinMapScreen extends StatelessWidget {
   final GlobalKey<MappedinWebViewState> _webViewKey =
       GlobalKey<MappedinWebViewState>();
 
-  
   /// Helper method to build Floating Action Buttons with standard styling.
   Widget _buildFABButton(String text, VoidCallback onPressed) {
     return ElevatedButton(
@@ -31,9 +30,8 @@ class MappedinMapScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Indoor Navigation'),
-        backgroundColor: const Color(0xff912338)
-      ),
+          title: const Text('Indoor Navigation'),
+          backgroundColor: const Color(0xff912338)),
       body: webView ?? MappedinWebView(key: _webViewKey),
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
