@@ -159,6 +159,8 @@ class EventEditPopupState extends State<EventEditPopup> {
 
   Future<void> _selectDateTime(BuildContext context,
       {required bool isStartTime}) async {
+    if (!mounted) return;
+
     final initialDate = isStartTime ? _startDate : _endDate;
     final DateTime? pickedDate = await showDatePicker(
       context: context,
@@ -167,29 +169,31 @@ class EventEditPopupState extends State<EventEditPopup> {
       lastDate: DateTime(2101),
     );
 
-    if (pickedDate != null) {
-      final TimeOfDay? pickedTime = await showTimePicker(
-        context: context,
-        initialTime: TimeOfDay.fromDateTime(initialDate),
-      );
+    if (!mounted || pickedDate == null) return; // Check again before proceeding
 
-      if (pickedTime != null) {
-        final newDateTime = DateTime(
-          pickedDate.year,
-          pickedDate.month,
-          pickedDate.day,
-          pickedTime.hour,
-          pickedTime.minute,
-        );
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(initialDate),
+    );
 
-        setState(() {
-          if (isStartTime) {
-            _startDate = newDateTime;
-          } else {
-            _endDate = newDateTime;
-          }
-        });
-      }
+    if (!mounted || pickedTime == null) return; // Final check
+
+    final newDateTime = DateTime(
+      pickedDate.year,
+      pickedDate.month,
+      pickedDate.day,
+      pickedTime.hour,
+      pickedTime.minute,
+    );
+
+    if (mounted) {
+      setState(() {
+        if (isStartTime) {
+          _startDate = newDateTime;
+        } else {
+          _endDate = newDateTime;
+        }
+      });
     }
   }
 
@@ -251,6 +255,9 @@ class EventEditPopupState extends State<EventEditPopup> {
             onPressed: _isDeleting
                 ? null
                 : () async {
+                    if (!mounted) {
+                      return; // Ensure widget is still active before proceeding
+                    }
                     setState(() {
                       _isDeleting = true;
                     });
@@ -261,7 +268,7 @@ class EventEditPopupState extends State<EventEditPopup> {
                         widget.event.id!,
                       );
 
-                      if (widget.onEventDeleted != null) {
+                      if (mounted && widget.onEventDeleted != null) {
                         widget.onEventDeleted?.call();
                       }
 
@@ -270,7 +277,6 @@ class EventEditPopupState extends State<EventEditPopup> {
                         Navigator.pop(context);
                       }
                     } catch (e) {
-                      // Handle errors
                       if (mounted) {
                         Navigator.pop(context);
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
