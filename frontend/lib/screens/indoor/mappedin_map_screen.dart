@@ -6,7 +6,6 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:soen_390/widgets/mappedin_webview.dart';
-import 'package:soen_390/screens/indoor_accessibility/indoor_accessibility_preference.dart';
 
 class MappedinMapScreen extends StatelessWidget {
   /// To allow injection of a custom webView (for testing)
@@ -19,38 +18,7 @@ class MappedinMapScreen extends StatelessWidget {
   final GlobalKey<MappedinWebViewState> _webViewKey =
       GlobalKey<MappedinWebViewState>();
 
-  /// Helper method for building the AppBar's action button.
-  Widget _buildAppBarButton(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: SizedBox(
-        height: 40,
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const IndoorAccessibilityPage(),
-              ),
-            );
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.white,
-            foregroundColor: const Color(0xff912338),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-          child: const Text(
-            'Specify Disability',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-          ),
-        ),
-      ),
-    );
-  }
-
+  
   /// Helper method to build Floating Action Buttons with standard styling.
   Widget _buildFABButton(String text, VoidCallback onPressed) {
     return ElevatedButton(
@@ -64,10 +32,7 @@ class MappedinMapScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Indoor Navigation'),
-        backgroundColor: const Color(0xff912338),
-        actions: [
-          _buildAppBarButton(context),
-        ],
+        backgroundColor: const Color(0xff912338)
       ),
       body: webView ?? MappedinWebView(key: _webViewKey),
       floatingActionButton: Column(
