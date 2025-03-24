@@ -212,9 +212,8 @@ class EventEditPopupState extends State<EventEditPopup> {
         updatedEvent,
       );
 
-      // Call callback if provided
       if (widget.onEventUpdated != null) {
-        widget.onEventUpdated!();
+        widget.onEventUpdated?.call();
       }
 
       if (mounted) {
@@ -263,7 +262,7 @@ class EventEditPopupState extends State<EventEditPopup> {
                       );
 
                       if (widget.onEventDeleted != null) {
-                        widget.onEventDeleted!();
+                        widget.onEventDeleted?.call();
                       }
 
                       if (mounted) {

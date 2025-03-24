@@ -51,12 +51,12 @@ class EventListWidget extends StatelessWidget {
                           calendarService: calendarService,
                           onEventUpdated: () {
                             if (onEventChanged != null) {
-                              onEventChanged!();
+                              onEventChanged?.call();
                             }
                           },
                           onEventDeleted: () {
                             if (onEventChanged != null) {
-                              onEventChanged!();
+                              onEventChanged?.call();
                             }
                           },
                         ),
