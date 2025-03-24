@@ -63,12 +63,9 @@ class MappedinMapScreen extends StatelessWidget {
           /// TODO: delete for the actual implementation, will be changed in 5.2.2
           ///
           /// - Floor: `"Level 9"`
-          ElevatedButton(
-            onPressed: () async {
-              await _webViewKey.currentState?.setFloor("Level 9");
-            },
-            child: const Text("Set Floor"),
-          ),
+          _buildFABButton("Set Floor", () async {
+            await _webViewKey.currentState?.setFloor("Level 9");
+          }),
         ],
       ),
     );
