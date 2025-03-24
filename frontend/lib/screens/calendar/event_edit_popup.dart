@@ -9,12 +9,8 @@ import 'package:soen_390/styles/theme.dart';
 /// This widget displays a popup dialog for editing an event.
 /// The user can edit the event title, location, description, start time, and end time.
 /// The user can also delete the event.
-/// The widget is used by the [EventListWidget] to display a dialog for editing an event.
-/// The widget is used by the [CalendarScreen] to display a dialog for editing an event.
 /// The widget uses the [CalendarService] to update and delete events.
 /// The widget uses the [CalendarEventService] to fetch and group calendar events by date.
-/// The widget is used in the [EventListWidget] to display a dialog for editing an event.
-/// The widget is used in the [CalendarScreen] to display a dialog for editing an event.
 
 class EventEditPopup extends StatefulWidget {
   final gcal.Event event;
@@ -22,7 +18,6 @@ class EventEditPopup extends StatefulWidget {
   final VoidCallback? onEventUpdated;
   final VoidCallback? onEventDeleted;
   final CalendarEventService calendarEventService;
-
   final String calendarId;
 
   const EventEditPopup({
@@ -132,7 +127,8 @@ class EventEditPopupState extends State<EventEditPopup> {
                           ? const SizedBox(
                               width: 20,
                               height: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2))
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
                           : const Text("Update"),
                     ),
                     ElevatedButton.icon(
@@ -163,21 +159,22 @@ class EventEditPopupState extends State<EventEditPopup> {
 
     final localContext = context;
     final initialDate = isStartTime ? _startDate : _endDate;
-    final DateTime? pickedDate = await showDatePicker(
+
+    final pickedDate = await showDatePicker(
       context: context,
       initialDate: initialDate,
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
     );
 
-    if (!mounted || pickedDate == null) return; // Check again before proceeding
+    if (!mounted || pickedDate == null) return;
 
     final TimeOfDay? pickedTime = await showTimePicker(
       context: localContext,
       initialTime: TimeOfDay.fromDateTime(initialDate),
     );
 
-    if (!mounted || pickedTime == null) return; // Final check
+    if (!mounted || pickedTime == null) return;
 
     final newDateTime = DateTime(
       pickedDate.year,
@@ -187,15 +184,15 @@ class EventEditPopupState extends State<EventEditPopup> {
       pickedTime.minute,
     );
 
-    if (mounted) {
-      setState(() {
-        if (isStartTime) {
-          _startDate = newDateTime;
-        } else {
-          _endDate = newDateTime;
-        }
-      });
-    }
+    if (!mounted) return;
+
+    setState(() {
+      if (isStartTime) {
+        _startDate = newDateTime;
+      } else {
+        _endDate = newDateTime;
+      }
+    });
   }
 
   Future<void> _updateEvent() async {
@@ -217,15 +214,12 @@ class EventEditPopupState extends State<EventEditPopup> {
         updatedEvent,
       );
 
-      if (widget.onEventUpdated != null) {
-        widget.onEventUpdated?.call();
-      }
+      widget.onEventUpdated?.call();
 
       if (mounted) {
-        Navigator.pop(context);
+        Navigator.of(context).pop();
       }
     } catch (e) {
-      // Handle errors
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('Failed to update event: $e'),
@@ -249,17 +243,18 @@ class EventEditPopupState extends State<EventEditPopup> {
         content: const Text('Are you sure you want to delete this event?'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.of(context).pop(),
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: _isDeleting ? null : () => _handleDelete(context),
+            onPressed: _isDeleting ? null : () => _handleDelete(),
             child: _isDeleting
                 ? const SizedBox(
                     width: 20,
                     height: 20,
                     child: CircularProgressIndicator(
-                        strokeWidth: 2, color: Colors.red))
+                        strokeWidth: 2, color: Colors.red),
+                  )
                 : const Text('Delete', style: TextStyle(color: Colors.red)),
           ),
         ],
@@ -267,10 +262,13 @@ class EventEditPopupState extends State<EventEditPopup> {
     );
   }
 
-  Future<void> _handleDelete(BuildContext context) async {
+  Future<void> _handleDelete() async {
     if (!mounted) return;
 
-    _setDeletingState(true);
+    Navigator.of(context).pop();
+    setState(() {
+      _isDeleting = true;
+    });
 
     try {
       await widget.calendarService.deleteEvent(
@@ -278,43 +276,24 @@ class EventEditPopupState extends State<EventEditPopup> {
         widget.event.id!,
       );
 
-      _notifyEventDeleted();
-      _closeDialogs(context);
-    } catch (e) {
-      _handleDeleteError(context, e);
-    } finally {
-      if (mounted) _setDeletingState(false);
-    }
-  }
-
-  void _setDeletingState(bool state) {
-    if (mounted) {
-      setState(() {
-        _isDeleting = state;
-      });
-    }
-  }
-
-  void _notifyEventDeleted() {
-    if (mounted && widget.onEventDeleted != null) {
       widget.onEventDeleted?.call();
-    }
-  }
 
-  void _closeDialogs(BuildContext context) {
-    if (mounted) {
-      Navigator.pop(context);
-      Navigator.pop(context);
-    }
-  }
-
-  void _handleDeleteError(BuildContext context, Object e) {
-    if (mounted) {
-      Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Failed to delete event: $e'),
-        backgroundColor: Colors.red,
-      ));
+      if (mounted) {
+        Navigator.of(context).pop(); // Close the edit dialog
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Failed to delete event: $e'),
+          backgroundColor: Colors.red,
+        ));
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isDeleting = false;
+        });
+      }
     }
   }
 
