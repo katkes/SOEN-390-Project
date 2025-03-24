@@ -15,11 +15,15 @@
     <!--    Keeping the device's CPU active even if user not using it-->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
+    <!-- permissions for webview flutter package in order to  -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
         android:label="soen_390"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
+        android:usesCleartextTraffic="true"
         >
 
         <activity

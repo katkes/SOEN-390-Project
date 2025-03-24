@@ -20,6 +20,7 @@ import 'package:soen_390/services/interfaces/route_service_interface.dart';
 import 'package:soen_390/utils/route_display.dart' as display;
 import 'package:soen_390/utils/route_utils.dart' as utils;
 import 'package:http/http.dart' as http;
+import "package:soen_390/screens/indoor_accessibility/indoor_accessibility_preference.dart";
 
 class WaypointSelectionScreen extends StatefulWidget {
   final IRouteService routeService;
@@ -145,21 +146,21 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
     return true;
   }
 
-void _handleTransportModeChange(String transportMode) {
+  void _handleTransportModeChange(String transportMode) {
     if (selectedMode != transportMode) {
       _clearConfirmedRoutes();
       selectedMode = transportMode;
     }
   }
 
-void _setLoadingState(String transportMode) {
+  void _setLoadingState(String transportMode) {
     setState(() {
       isLoading = true;
       errorMessage = null;
       selectedMode = transportMode;
       _locationsChanged = false;
     });
-}
+  }
 
   Future<void> _fetchAndDisplayRoutes(List<String> waypoints,
       String googleTransportMode, String transportMode) async {
@@ -180,7 +181,7 @@ void _setLoadingState(String transportMode) {
 
     // Validate and process routes
     if (!_validateRoutes(routes, googleTransportMode)) return;
-  
+
     // Get and cache the routes
     final topRoutes =
         _processAndCacheRoutes(routes, googleTransportMode, waypoints);
@@ -194,7 +195,7 @@ void _setLoadingState(String transportMode) {
     _displayRoutesAndLogDetails(waypoints, topRoutes, transportMode);
   }
 
-Future<Map<String, LatLng>?> _resolveCoordinates(
+  Future<Map<String, LatLng>?> _resolveCoordinates(
       List<String> waypoints) async {
     LatLng? startPoint;
 
@@ -228,9 +229,7 @@ Future<Map<String, LatLng>?> _resolveCoordinates(
     return {'start': startPoint, 'end': endPoint};
   }
 
-
-
-bool _validateRoutes(
+  bool _validateRoutes(
       Map<String, List<RouteResult>> routes, String googleTransportMode) {
     if (routes.isEmpty ||
         !routes.containsKey(googleTransportMode) ||
@@ -240,24 +239,24 @@ bool _validateRoutes(
     return true;
   }
 
-List<RouteResult>? _processAndCacheRoutes(
+  List<RouteResult>? _processAndCacheRoutes(
       Map<String, List<RouteResult>> routes,
       String googleTransportMode,
       List<String> waypoints) {
     final selectedRoutes = routes[googleTransportMode]!;
     final topRoutes = selectedRoutes.take(_maxRoutes).toList();
-  
+
     // Cache the routes
     if (!_routeCache.containsKey(googleTransportMode)) {
       _routeCache[googleTransportMode] = {};
     }
     String waypointKey = "${waypoints.first}-${waypoints.last}";
     _routeCache[googleTransportMode]![waypointKey] = selectedRoutes;
-  
+
     return topRoutes;
   }
 
-void _displayRoutesAndLogDetails(
+  void _displayRoutesAndLogDetails(
       List<String> waypoints, List<RouteResult> routes, String transportMode) {
     display.displayRoutes(
       context: context,
@@ -274,12 +273,12 @@ void _displayRoutesAndLogDetails(
 
   void _handleRouteError(dynamic error) {
     if (!mounted) return;
-  
+
     setState(() {
       isLoading = false;
       errorMessage = "Error finding route: ${error.toString()}";
     });
-  
+
     if (!mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -316,7 +315,40 @@ void _displayRoutesAndLogDetails(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
-        actions: const [Icon(Icons.more_vert, color: Colors.white)],
+        actions: [
+          //const Icon(Icons.more_vert, color: Colors.white),
+
+          Padding(
+            padding: const EdgeInsets.symmetric(
+                horizontal: 8), // Adjust padding as needed
+            child: SizedBox(
+              height: 40, // Control button height
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const IndoorAccessibilityPage(),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white, // White button for contrast
+                  foregroundColor: const Color(0xff912338), // Text color
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8), // Rounded edges
+                  ),
+                ),
+                child: const Text(
+                  'Specify Disability',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(

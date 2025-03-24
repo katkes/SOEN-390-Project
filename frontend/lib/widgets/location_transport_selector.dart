@@ -50,7 +50,6 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   static const int _destinationIndex = 1;
   static const int _minItineraryLength = 2;
 
-
   @override
   void initState() {
     super.initState();
