@@ -3,7 +3,7 @@ import 'package:soen_390/widgets/mappedin_webview.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class FakeMappedinWebView extends MappedinWebView {
-  FakeMappedinWebView({Key? key}) : super(key: key);
+  FakeMappedinWebView({super.key});
 
   @override
   FakeMappedinWebViewState createState() => FakeMappedinWebViewState();
