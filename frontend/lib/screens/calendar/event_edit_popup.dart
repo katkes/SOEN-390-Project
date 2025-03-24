@@ -174,7 +174,7 @@ class EventEditPopupState extends State<EventEditPopup> {
       initialTime: TimeOfDay.fromDateTime(initialDate),
     );
 
-    if (!mounted || pickedTime == null) return;
+    if (pickedTime == null) return;
 
     final newDateTime = DateTime(
       pickedDate.year,
