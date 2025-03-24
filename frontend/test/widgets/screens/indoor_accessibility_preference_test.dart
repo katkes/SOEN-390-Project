@@ -125,5 +125,30 @@ void main() {
           await IndoorAccessibilityState.getMobilityStatusPreference();
       expect(result, true);
     });
+
+    testWidgets("Toggling checkbox updates shared preferences",
+        (WidgetTester tester) async {
+      // Ensure shared preferences is mocked.
+      SharedPreferences.setMockInitialValues({});
+
+      // Pump the widget.
+      await tester.pumpWidget(const MaterialApp(
+        home: IndoorAccessibilityPage(),
+      ));
+
+      // Initially, the preference should be false.
+      var prefs = await SharedPreferences.getInstance();
+      expect(prefs.getBool('mobility_impaired') ?? false, false);
+
+      // Find the checkbox and tap it.
+      final checkboxFinder = find.byType(Checkbox);
+      expect(checkboxFinder, findsOneWidget);
+      await tester.tap(checkboxFinder);
+      await tester.pumpAndSettle();
+
+      // Now the checkbox should be true and the preference updated.
+      prefs = await SharedPreferences.getInstance();
+      expect(prefs.getBool('mobility_impaired'), true);
+    });
   });
 } //end of main function
