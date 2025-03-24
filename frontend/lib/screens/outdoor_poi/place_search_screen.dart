@@ -5,6 +5,7 @@ import 'package:soen_390/models/places.dart';
 import 'package:soen_390/screens/outdoor_poi/outdoor_poi_detail_screen.dart';
 import 'package:soen_390/services/google_poi_service.dart';
 import 'package:soen_390/services/poi_factory.dart';
+import 'package:soen_390/styles/theme.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'package:soen_390/widgets/poi_list_view.dart';
 import 'package:soen_390/widgets/poi_search_bar.dart';
@@ -215,7 +216,10 @@ class _PlaceSearchScreenState extends State<PlaceSearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Explore Nearby')),
+      appBar: AppBar(
+        title: const Text('Explore Nearby'),
+        backgroundColor: appTheme.primaryColor,
+      ),
       body: Column(
         children: [
           POISearchBar(
