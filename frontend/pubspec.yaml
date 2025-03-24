@@ -81,6 +81,7 @@ dev_dependencies:
   # The following section is specific to Flutter packages.
   geolocator_platform_interface: any
   network_image_mock: ^2.1.1
+  google_sign_in_platform_interface: any
 flutter:
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

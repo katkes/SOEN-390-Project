@@ -4,6 +4,10 @@
 // The confirmed waypoints and transport mode are sent to the routing system for processing.
 
 import 'package:flutter/material.dart';
+import 'package:soen_390/screens/outdoor_poi/place_search_screen.dart';
+import 'package:soen_390/services/google_poi_service.dart';
+import 'package:soen_390/services/poi_factory.dart';
+import 'package:soen_390/utils/location_service.dart';
 import 'package:soen_390/widgets/suggestions.dart';
 
 class LocationTransportSelector extends StatefulWidget {
@@ -12,8 +16,15 @@ class LocationTransportSelector extends StatefulWidget {
   final Function()? onLocationChanged;
   final String? initialDestination;
 
+  final LocationService locationService;
+  final GooglePOIService poiService;
+  final PointOfInterestFactory poiFactory;
+
   const LocationTransportSelector({
     super.key,
+    required this.locationService,
+    required this.poiService,
+    required this.poiFactory,
     this.onLocationChanged,
     required this.onConfirmRoute,
     this.onTransportModeChange,
@@ -35,6 +46,10 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   String defaultYourLocationString = 'Your Location';
   String destinationLocation =
       ''; // variable to store destination location address
+
+  static const int _destinationIndex = 1;
+  static const int _minItineraryLength = 2;
+
 
   @override
   void initState() {
@@ -106,18 +121,32 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             ElevatedButton(
-              onPressed: () {
-                if (itinerary.length < 2) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text(
-                            "Select both start and destination before adding!")),
-                  );
-                } else {
-                  setState(() {
-                    itinerary.add("New Stop ${itinerary.length + 1}");
-                  });
-                }
+              onPressed: () async {
+                final locationService = widget.locationService;
+                final poiService = widget.poiService;
+                final poiFactory = widget.poiFactory;
+
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PlaceSearchScreen(
+                      locationService: locationService,
+                      poiService: poiService,
+                      poiFactory: poiFactory,
+                      onSetDestination: (name, lat, lng) {
+                        setState(() {
+                          destinationLocation = name;
+                          if (itinerary.length < _minItineraryLength) {
+                            itinerary.add(name);
+                          } else if (itinerary.length >= _minItineraryLength) {
+                            itinerary[_destinationIndex] = name;
+                          }
+                        });
+                        widget.onLocationChanged?.call();
+                      },
+                    ),
+                  ),
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
@@ -127,7 +156,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
                   side: const BorderSide(color: Color(0xff912338)),
                 ),
               ),
-              child: const Text("Add Stop to Itinerary"),
+              child: const Text("What's Nearby?"),
             ),
             Container(
               decoration: BoxDecoration(
@@ -162,7 +191,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   }
 
   void _confirmRoute() {
-    if (itinerary.length < 2) {
+    if (itinerary.length < _minItineraryLength) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
             content: Text("You must have at least a start and destination.")),
@@ -264,7 +293,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   }
 
   void _setDestinationLocation(String selectedLocation) {
-    if (itinerary.length < 2) {
+    if (itinerary.length < _minItineraryLength) {
       destinationLocation = selectedLocation;
       itinerary.add(selectedLocation);
     }
@@ -273,7 +302,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   static const int _startLocationIndex = 0;
   static const int _minimumWaypoints = 2;
 
-void _removeStop(int index) {
+  void _removeStop(int index) {
     setState(() {
       itinerary.removeAt(index);
       widget.onLocationChanged?.call();
@@ -301,9 +330,9 @@ void _removeStop(int index) {
 
   void setDestinationLocation(String selectedLocation) {
     destinationLocation = selectedLocation;
-    if (itinerary.length < 2) {
+    if (itinerary.length < _minItineraryLength) {
       itinerary.add(selectedLocation);
-    } else if (itinerary.length == 2) {
+    } else if (itinerary.length == _minItineraryLength) {
       itinerary[1] = selectedLocation;
     }
   }
@@ -332,7 +361,7 @@ void _removeStop(int index) {
           widget.onTransportModeChange!(label);
         }
         // Otherwise use the confirm route handler if we have waypoints
-        else if (itinerary.length >= 2) {
+        else if (itinerary.length >= _minItineraryLength) {
           widget.onConfirmRoute(List.from(itinerary), selectedMode);
         }
       },
