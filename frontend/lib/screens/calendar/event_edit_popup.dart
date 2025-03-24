@@ -252,46 +252,7 @@ class EventEditPopupState extends State<EventEditPopup> {
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: _isDeleting
-                ? null
-                : () async {
-                    if (!mounted) {
-                      return; // Ensure widget is still active before proceeding
-                    }
-                    setState(() {
-                      _isDeleting = true;
-                    });
-
-                    try {
-                      await widget.calendarService.deleteEvent(
-                        widget.calendarId,
-                        widget.event.id!,
-                      );
-
-                      if (mounted && widget.onEventDeleted != null) {
-                        widget.onEventDeleted?.call();
-                      }
-
-                      if (mounted) {
-                        Navigator.pop(context);
-                        Navigator.pop(context);
-                      }
-                    } catch (e) {
-                      if (mounted) {
-                        Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text('Failed to delete event: $e'),
-                          backgroundColor: Colors.red,
-                        ));
-                      }
-                    } finally {
-                      if (mounted) {
-                        setState(() {
-                          _isDeleting = false;
-                        });
-                      }
-                    }
-                  },
+            onPressed: _isDeleting ? null : () => _handleDelete(context),
             child: _isDeleting
                 ? const SizedBox(
                     width: 20,
@@ -303,6 +264,57 @@ class EventEditPopupState extends State<EventEditPopup> {
         ],
       ),
     );
+  }
+
+  Future<void> _handleDelete(BuildContext context) async {
+    if (!mounted) return;
+
+    _setDeletingState(true);
+
+    try {
+      await widget.calendarService.deleteEvent(
+        widget.calendarId,
+        widget.event.id!,
+      );
+
+      _notifyEventDeleted();
+      _closeDialogs(context);
+    } catch (e) {
+      _handleDeleteError(context, e);
+    } finally {
+      if (mounted) _setDeletingState(false);
+    }
+  }
+
+  void _setDeletingState(bool state) {
+    if (mounted) {
+      setState(() {
+        _isDeleting = state;
+      });
+    }
+  }
+
+  void _notifyEventDeleted() {
+    if (mounted && widget.onEventDeleted != null) {
+      widget.onEventDeleted?.call();
+    }
+  }
+
+  void _closeDialogs(BuildContext context) {
+    if (mounted) {
+      Navigator.pop(context);
+      Navigator.pop(context);
+    }
+  }
+
+  void _handleDeleteError(BuildContext context, Object e) {
+    if (mounted) {
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Failed to delete event: $e'),
+        backgroundColor: Colors.red,
+      ));
+    }
   }
 
   @override
