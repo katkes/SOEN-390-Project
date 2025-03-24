@@ -17,69 +17,69 @@ class EventListWidget extends StatelessWidget {
 
   final String calendarId;
 
-  const EventListWidget(
-      {super.key,
-      required this.events,
-      required this.calendarService,
-      required this.calendarEventService,
-      this.onEventChanged,
-      required this.calendarId});
+  const EventListWidget({
+    super.key,
+    required this.events,
+    required this.calendarService,
+    required this.calendarEventService,
+    this.onEventChanged,
+    required this.calendarId,
+  });
+
   @override
   Widget build(BuildContext context) {
     return events.isEmpty
         ? const Center(child: Text("No events for selected day"))
         : Column(
-            children: [
-              ...events.map((event) {
-                // Create a widget for each event here
-                String timeString = '';
-                if (event.start?.dateTime != null) {
-                  timeString =
-                      DateFormat('h:mm a').format(event.start!.dateTime!);
-                }
-                return Card(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                  child: InkWell(
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => EventEditPopup(
-                          event: event,
-                          calendarEventService: calendarEventService,
-                          calendarId: calendarId,
-                          calendarService: calendarService,
-                          onEventUpdated: () {
-                            if (onEventChanged != null) {
-                              onEventChanged?.call();
-                            }
-                          },
-                          onEventDeleted: () {
-                            if (onEventChanged != null) {
-                              onEventChanged?.call();
-                            }
-                          },
-                        ),
-                      );
-                    },
-                    child: ListTile(
-                      leading: const Icon(Icons.event),
-                      title: Text(event.summary ?? 'No Title'),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (timeString.isNotEmpty) Text(timeString),
-                          if (event.location != null &&
-                              event.location!.isNotEmpty)
-                            Text(event.location!,
-                                style: const TextStyle(fontSize: 12)),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              }),
-            ],
+            children:
+                events.map((event) => buildEventCard(context, event)).toList(),
           );
+  }
+
+  Card buildEventCard(BuildContext context, gcal.Event event) {
+    String timeString = formatEventTime(event);
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: InkWell(
+        onTap: () => onEventTapped(context, event),
+        child: ListTile(
+          leading: const Icon(Icons.event),
+          title: Text(event.summary ?? 'No Title'),
+          subtitle: buildEventSubtitle(event, timeString),
+        ),
+      ),
+    );
+  }
+
+  String formatEventTime(gcal.Event event) {
+    if (event.start?.dateTime != null) {
+      return DateFormat('h:mm a').format(event.start!.dateTime!);
+    }
+    return '';
+  }
+
+  Column buildEventSubtitle(gcal.Event event, String timeString) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (timeString.isNotEmpty) Text(timeString),
+        if (event.location != null && event.location!.isNotEmpty)
+          Text(event.location!, style: const TextStyle(fontSize: 12)),
+      ],
+    );
+  }
+
+  void onEventTapped(BuildContext context, gcal.Event event) {
+    showDialog(
+      context: context,
+      builder: (context) => EventEditPopup(
+        event: event,
+        calendarEventService: calendarEventService,
+        calendarId: calendarId,
+        calendarService: calendarService,
+        onEventUpdated: () => onEventChanged?.call(),
+        onEventDeleted: () => onEventChanged?.call(),
+      ),
+    );
   }
 }
