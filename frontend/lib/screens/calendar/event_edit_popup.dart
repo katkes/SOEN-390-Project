@@ -11,7 +11,7 @@ import 'package:soen_390/styles/theme.dart';
 /// The user can also delete the event.
 /// The widget uses the [CalendarService] to update and delete events.
 /// The widget uses the [CalendarEventService] to fetch and group calendar events by date.
-
+//test comment
 class EventEditPopup extends StatefulWidget {
   final gcal.Event event;
   final CalendarService calendarService;
