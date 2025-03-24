@@ -178,4 +178,88 @@ void main() {
           throwsA(isA<Exception>()));
     });
   });
+
+  /// **Tests for fetchPlaceDetailsById**
+  group('fetchPlaceDetailsById Tests', () {
+    late MockClient client;
+    late GoogleMapsApiClient mapsApiClient;
+    const String apiKey = 'FAKE_API_KEY';
+
+    setUp(() {
+      client = MockClient();
+      mapsApiClient = GoogleMapsApiClient(apiKey: apiKey, client: client);
+    });
+
+    test('fetchPlaceDetailsById should return valid place details', () async {
+      const placeId = 'test_place_id';
+      final testResponse = {
+        "status": "OK",
+        "result": {
+          "formatted_address": "123 Test St",
+          "formatted_phone_number": "123-456-7890",
+          "website": "https://example.com",
+          "rating": 4.5,
+          "opening_hours": {
+            "weekday_text": ["Monday: 9:00 AM - 5:00 PM"]
+          },
+          "types": ["cafe"],
+          "reviews": [],
+          "editorial_summary": {"overview": "Great place"},
+          "price_level": 2,
+          "name": "Test Cafe",
+          "geometry": {
+            "location": {"lat": 40.7128, "lng": -74.0060}
+          }
+        }
+      };
+
+      final uri = Uri.parse(
+          "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&fields=formatted_address,formatted_phone_number,website,rating,opening_hours,types,reviews,editorial_summary,price_level,name,geometry&key=$apiKey");
+
+      when(client.get(uri)).thenAnswer(
+          (_) async => http.Response(jsonEncode(testResponse), 200));
+
+      final result = await mapsApiClient.fetchPlaceDetailsById(placeId);
+
+      expect(result, isA<Map<String, dynamic>>());
+      expect(result["name"], "Test Cafe");
+      expect(result["rating"], 4.5);
+      expect(result["formatted_address"], "123 Test St");
+      expect(result["geometry"], isNotNull);
+      expect(result["geometry"]["location"]["lat"], 40.7128);
+    });
+
+    test(
+        'fetchPlaceDetailsById should throw exception when response status code is not 200',
+        () async {
+      const placeId = 'test_place_id';
+      final uri = Uri.parse(
+          "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&fields=formatted_address,formatted_phone_number,website,rating,opening_hours,types,reviews,editorial_summary,price_level,name,geometry&key=$apiKey");
+
+      when(client.get(uri))
+          .thenAnswer((_) async => http.Response('Server Error', 500));
+
+      expect(() async => await mapsApiClient.fetchPlaceDetailsById(placeId),
+          throwsA(isA<Exception>()));
+    });
+
+    test(
+        'fetchPlaceDetailsById should throw exception when API status is not OK',
+        () async {
+      const placeId = 'test_place_id';
+      final errorResponse = {
+        "status": "REQUEST_DENIED",
+        "error_message": "Invalid API key."
+      };
+
+      final uri = Uri.parse(
+          "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&fields=formatted_address,formatted_phone_number,website,rating,opening_hours,types,reviews,editorial_summary,price_level,name,geometry&key=$apiKey");
+
+      when(client.get(uri)).thenAnswer(
+          (_) async => http.Response(jsonEncode(errorResponse), 200));
+
+      expect(() async => await mapsApiClient.fetchPlaceDetailsById(placeId),
+          throwsA(isA<Exception>()));
+    });
+  });
 }

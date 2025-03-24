@@ -387,4 +387,16 @@ class MockGoogleMapsApiClient extends _i1.Mock
           <String, dynamic>{},
         ),
       ) as _i5.Future<Map<String, dynamic>>);
+
+  @override
+  _i5.Future<Map<String, dynamic>> fetchPlaceDetailsById(String? placeId) =>
+      (super.noSuchMethod(
+        Invocation.method(#fetchPlaceDetailsById, [placeId]),
+        returnValue: _i5.Future<Map<String, dynamic>>.value(
+          <String, dynamic>{},
+        ),
+        returnValueForMissingStub: _i5.Future<Map<String, dynamic>>.value(
+          <String, dynamic>{},
+        ),
+      ) as _i5.Future<Map<String, dynamic>>);
 }

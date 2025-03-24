@@ -1,6 +1,7 @@
 //This test test the functionality of the building_information_popup.dart file
 //It tests upon clicking the marker, the building information is displayed
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:mockito/annotations.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,11 @@ import 'package:soen_390/providers/service_providers.dart';
 import 'building_popover_test.mocks.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  dotenv.testLoad(fileInput: '''
+GOOGLE_PLACES_API_KEY=FAKE_API_KEY
+''');
   group('BuildingInformationPopup Tests', () {
     testWidgets('renders building information popup correctly',
         (WidgetTester tester) async {
