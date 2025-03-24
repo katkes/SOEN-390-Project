@@ -19,8 +19,12 @@ class MappedinMapScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Indoor Navigation'),
+        title: const Text(
+          'Indoor Navigation',
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: const Color(0xff912338),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: MappedinWebView(key: _webViewKey),
       floatingActionButton: Column(
