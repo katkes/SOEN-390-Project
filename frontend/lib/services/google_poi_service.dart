@@ -1,5 +1,5 @@
-import 'dart:convert';
 import 'package:soen_390/services/interfaces/http_client_interface.dart';
+import 'package:soen_390/utils/google_api_helper.dart';
 import '../models/places.dart';
 import 'http_service.dart';
 
@@ -11,21 +11,26 @@ import 'http_service.dart';
 class GooglePOIService {
   final IHttpClient _httpClient;
   final String _apiKey;
+  final GoogleApiHelper _apiHelper;
 
-  // Base URL for Google Places Nearby Search API.
+  /// Base URL for Google Places Nearby Search API.
   final String _baseUrl =
       'https://maps.googleapis.com/maps/api/place/nearbysearch/json';
 
   /// Creates a [GooglePOIService] instance.
   ///
-  /// The [apiKey] parameter is required and should be a valid
-  /// Google Places API key. An optional [httpService] can be provided;
-  /// if not, a default [HttpService] will be used.
+  /// - [apiKey]: A valid Google Places API key.
+  /// - [httpClient]: Optional injected HTTP client.
+  /// - [apiHelper]: Optional injected utility for parsing responses.
+  ///
+  /// Throws if [apiKey] is missing or empty.
   GooglePOIService({
     required String apiKey,
     IHttpClient? httpClient,
+    GoogleApiHelper? apiHelper,
   })  : _apiKey = apiKey,
-        _httpClient = httpClient ?? HttpService();
+        _httpClient = httpClient ?? HttpService(),
+        _apiHelper = apiHelper ?? GoogleApiHelper();
 
   /// Fetches a list of nearby places of a specified [type] within a given
   /// [radius] around the provided [latitude] and [longitude].
@@ -46,7 +51,7 @@ class GooglePOIService {
     required String type,
     required int radius,
   }) async {
-    final Uri uri = Uri.parse(_baseUrl).replace(queryParameters: {
+    final uri = Uri.parse(_baseUrl).replace(queryParameters: {
       'location': '$latitude,$longitude',
       'radius': radius.toString(),
       'type': type,
@@ -54,21 +59,9 @@ class GooglePOIService {
     });
 
     try {
-      final response = await _httpClient.get(uri);
-
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> data = json.decode(response.body);
-
-        if (data['status'] == 'OK') {
-          final List<dynamic> results = data['results'];
-          return results.map((place) => Place.fromJson(place)).toList();
-        } else {
-          throw Exception('Google Places API Error: ${data['status']}');
-        }
-      } else {
-        throw Exception(
-            'Failed to fetch nearby places: ${response.statusCode}');
-      }
+      final data = await _apiHelper.fetchJson(_httpClient, uri);
+      final results = data['results'] as List<dynamic>;
+      return results.map((place) => Place.fromJson(place)).toList();
     } catch (e) {
       throw Exception('Error fetching nearby places: $e');
     }
