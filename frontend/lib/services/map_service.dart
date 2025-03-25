@@ -1,25 +1,9 @@
-import 'dart:convert';
 import 'dart:async';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter/material.dart';
+import 'package:soen_390/repositories/geojson_repository.dart';
 
-/// Service for handling map-related operations and data processing.
-///
-/// This service is responsible for:
-/// * Loading and parsing GeoJSON building data
-/// * Creating map markers for buildings
-/// * Handling building polygon creation
-/// * Managing map styling constants
-///
-/// Example usage:
-/// ```dart
-/// final mapService = MapService();
-/// final markers = await mapService.loadBuildingMarkers((lat, lon, name, address, pos) {
-///   print('Marker tapped: $name');
-/// });
-/// ```
 class MapService {
   static const Color markerColor = Color(0xFF912338);
   static const Color polygonFillColor = Color(0x33FF0000);
@@ -27,13 +11,16 @@ class MapService {
   static const Color polygonBorderColor = Colors.red;
   static const double markerSize = 40.0;
   static const double borderStrokeWidth = 2.0;
-  static const String _buildingListPath =
-      'assets/geojson_files/building_list.geojson';
   static const String _buildingLongName = 'Building Long Name';
+
+  final GeoJsonRepository _geoJsonRepository;
 
   LatLng? _selectedMarkerLocation;
   Timer? _markerClearTimer;
   Function? onMarkerCleared;
+
+  MapService({GeoJsonRepository? geoJsonRepository})
+      : _geoJsonRepository = geoJsonRepository ?? GeoJsonRepository();
 
   void selectMarker(LatLng location) {
     _selectedMarkerLocation = location;
@@ -53,11 +40,10 @@ class MapService {
 
   Future<List<Marker>> loadBuildingMarkers(Function onMarkerTapped) async {
     try {
-      final String data = await rootBundle.loadString(_buildingListPath);
-      final Map<String, dynamic> jsonData = jsonDecode(data);
-
+      final jsonData = await _geoJsonRepository.loadBuildingList();
       return _parseMarkers(jsonData, onMarkerTapped);
     } catch (e) {
+      debugPrint('Error loading building markers: $e');
       return [];
     }
   }
@@ -79,12 +65,10 @@ class MapService {
 
           final currentLocation = LatLng(lat, lon);
 
-          // Check if this marker is the selected one
           bool isSelected = _selectedMarkerLocation != null &&
               _selectedMarkerLocation!.latitude == lat &&
               _selectedMarkerLocation!.longitude == lon;
 
-          // Use red for selected marker, default color otherwise
           Color markerColor = isSelected
               ? MapService.secondaryMarkerColor
               : MapService.markerColor;
@@ -112,24 +96,14 @@ class MapService {
 
   Future<List<Polygon>> loadBuildingPolygons() async {
     try {
-      final String data = await rootBundle
-          .loadString('assets/geojson_files/building_boundaries.geojson');
-      final Map<String, dynamic> jsonData = jsonDecode(data);
-
+      final jsonData = await _geoJsonRepository.loadBuildingBoundaries();
       return _parsePolygons(jsonData);
     } catch (e) {
+      debugPrint('Error loading building polygons: $e');
       return [];
     }
   }
 
-  /// Parses GeoJSON data and converts it into a list of Flutter map Polygon objects.
-  ///
-  /// Takes a GeoJSON structure containing MultiPolygon features and converts them into
-  /// Flutter map Polygon objects for rendering on a map.
-  ///
-  /// - [jsonData]: The GeoJSON data as a Map, expected to contain 'features' with 'geometry' objects.
-  ///
-  /// Returns a list of Polygon objects ready to be added to a Flutter map.
   List<Polygon> _parsePolygons(Map<String, dynamic> jsonData) {
     List<Polygon> polygons = [];
 
@@ -141,10 +115,6 @@ class MapService {
     return polygons;
   }
 
-  /// Processes a single GeoJSON feature and extracts polygon data.
-  ///
-  /// - [feature]: A single feature from the GeoJSON 'features' array.
-  /// - [polygons]: The list of polygons to add extracted polygons to.
   void _processFeature(Map<String, dynamic> feature, List<Polygon> polygons) {
     var geometry = feature['geometry'];
 
@@ -157,10 +127,6 @@ class MapService {
     }
   }
 
-  /// Processes a MultiPolygon geometry and converts its coordinates to Polygon objects.
-  ///
-  /// - [multiPolygonCoordinates]: The coordinates array from a MultiPolygon geometry.
-  /// - [polygons]: The list of polygons to add extracted polygons to.
   void _processMultiPolygon(
       List multiPolygonCoordinates, List<Polygon> polygons) {
     for (var polygonRings in multiPolygonCoordinates) {
@@ -171,33 +137,18 @@ class MapService {
     }
   }
 
-  /// Extracts polygon points from GeoJSON coordinates, converting them to LatLng objects.
-  ///
-  /// Note: GeoJSON format uses [longitude, latitude] order, while LatLng uses [latitude, longitude].
-  ///
-  /// - [coordinates]: List of coordinate pairs from the GeoJSON data.
-  ///
-  /// Returns a list of LatLng objects representing the polygon's points.
   List<LatLng> _extractPolygonPoints(List coordinates) {
     return coordinates
         .map<LatLng>((coord) => LatLng(coord[1], coord[0]))
         .toList();
   }
 
-  /// Ensures a polygon is closed by adding the first point to the end if necessary.
-  ///
-  /// - [polygonPoints]: The list of points representing the polygon.
   void _ensureClosedPolygon(List<LatLng> polygonPoints) {
     if (polygonPoints.isNotEmpty && polygonPoints.first != polygonPoints.last) {
       polygonPoints.add(polygonPoints.first);
     }
   }
 
-  /// Creates a Flutter map Polygon object with the specified points and styling.
-  ///
-  /// - [points]: The list of LatLng points defining the polygon's vertices.
-  ///
-  /// Returns a styled Polygon object ready to be added to a map.
   Polygon _createPolygon(List<LatLng> points) {
     return Polygon(
       points: points,
@@ -211,8 +162,7 @@ class MapService {
     try {
       if (query.isEmpty) return [];
 
-      final String data = await rootBundle.loadString(_buildingListPath);
-      final Map<String, dynamic> jsonData = jsonDecode(data);
+      final jsonData = await _geoJsonRepository.loadBuildingList();
       List<String> suggestions = [];
 
       for (var feature in jsonData['features']) {
@@ -225,16 +175,15 @@ class MapService {
       }
       return suggestions.take(1).toList();
     } catch (e) {
+      debugPrint('Error getting suggestions: $e');
       return [];
     }
   }
 
-  //searches building by name and returns its location and details
   Future<Map<String, dynamic>?> searchBuildingWithDetails(
       String buildingName) async {
     try {
-      final String data = await rootBundle.loadString(_buildingListPath);
-      final Map<String, dynamic> jsonData = jsonDecode(data);
+      final jsonData = await _geoJsonRepository.loadBuildingList();
 
       for (var feature in jsonData['features']) {
         var properties = feature['properties'];
@@ -263,23 +212,20 @@ class MapService {
 
   Future<String?> findCampusForBuilding(String buildingName) async {
     try {
-      final String data = await rootBundle.loadString(_buildingListPath);
-      final Map<String, dynamic> jsonData = jsonDecode(data);
+      final jsonData = await _geoJsonRepository.loadBuildingList();
 
       if (jsonData['features'] is List) {
         for (var feature in jsonData['features']) {
           var properties = feature['properties'];
 
-          // Check if the building name matches the one in the GeoJSON data
           if (properties?[_buildingLongName] == buildingName) {
-            return properties?['Campus'] ??
-                "Unknown Campus"; // Return the campus name
+            return properties?['Campus'] ?? "Unknown Campus";
           }
         }
       }
     } catch (e) {
       debugPrint('Error loading campus data: $e');
     }
-    return null; // Return null if no matching building is found
+    return null;
   }
 }
