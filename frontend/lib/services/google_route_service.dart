@@ -23,6 +23,7 @@ class GoogleRouteService implements IRouteService {
 
   /// A wrapper around the HTTP client for making requests.
   final IHttpClient _httpClient;
+
   /// Creates a new instance of `GoogleRouteService`.
   ///
   /// - [locationService]: Manages location tracking.

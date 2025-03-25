@@ -33,7 +33,7 @@ final routeServiceProvider = Provider<IRouteService>((ref) {
 
   return GoogleRouteService(
     locationService: locationService,
-    httpService: httpService,
+    httpClient: httpService,
   );
 });
 
@@ -43,7 +43,7 @@ final buildingToCoordinatesProvider = Provider<GeocodingService>((ref) {
   final httpService = ref.read(httpServiceProvider);
 
   return GeocodingService(
-    httpService: httpService,
+    httpClient: httpService,
     apiKey: apiKey, // Pass the API key if available
   );
 });

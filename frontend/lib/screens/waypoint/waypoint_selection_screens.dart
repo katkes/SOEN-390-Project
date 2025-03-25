@@ -357,7 +357,7 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
               locationService: widget.locationService,
               poiService: GooglePOIService(
                 apiKey: dotenv.env['GOOGLE_PLACES_API_KEY'] ?? '',
-                httpService: HttpService(),
+                httpClient: HttpService(),
               ),
               poiFactory: PointOfInterestFactory(
                 apiClient: GoogleMapsApiClient(
