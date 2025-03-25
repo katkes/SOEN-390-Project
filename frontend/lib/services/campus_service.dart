@@ -15,10 +15,10 @@ import 'package:flutter/services.dart';
 /// final buildings = campusService.getBuildingList();
 /// ```
 class CampusService {
-  final AssetBundle assetBundle;
+  final GeoJsonLoader geoJsonLoader;
 
-  CampusService({AssetBundle? assetBundle})
-      : assetBundle = assetBundle ?? rootBundle;
+  CampusService({GeoJsonLoader? loader})
+      : geoJsonLoader = loader ?? GeoJsonLoader();
 
   Map<String, dynamic>? buildingBoundaries;
   Map<String, dynamic>? buildingList;
@@ -26,45 +26,16 @@ class CampusService {
 
   Future<void> loadGeoJsonData() async {
     try {
-      // Load Building Boundaries
-      String buildingBoundariesString = await assetBundle
-          .loadString('assets/geojson/building_boundaries.geojson');
-      buildingBoundaries = jsonDecode(buildingBoundariesString);
+      buildingBoundaries = await geoJsonLoader
+          .load('assets/geojson/building_boundaries.geojson');
 
-      // Load Building List
-      String buildingListString =
-          await assetBundle.loadString('assets/geojson/building_list.geojson');
-      buildingList = jsonDecode(buildingListString);
+      buildingList =
+          await geoJsonLoader.load('assets/geojson/building_list.geojson');
 
-      // Load Campus Boundaries
-      String campusBoundariesString =
-          await assetBundle.loadString('assets/geojson/campus.geojson');
-      campusBoundaries = jsonDecode(campusBoundariesString);
+      campusBoundaries =
+          await geoJsonLoader.load('assets/geojson/campus.geojson');
     } catch (e) {
       print("Error loading GeoJSON files: $e");
     }
-  }
-
-  //Function to get building names
-  List<String> getBuildingNames() {
-    List<String> buildingNames = [];
-    if (buildingList != null) {
-      buildingList!['features']?.forEach((building) {
-        buildingNames.add(building['properties']['name']);
-      });
-    }
-    return buildingNames;
-  }
-
-  Map<String, dynamic>? getBuildingBoundaries() {
-    return buildingBoundaries;
-  }
-
-  Map<String, dynamic>? getBuildingList() {
-    return buildingList;
-  }
-
-  Map<String, dynamic>? getCampusBoundaries() {
-    return campusBoundaries;
   }
 }
