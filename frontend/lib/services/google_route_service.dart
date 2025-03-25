@@ -1,4 +1,4 @@
-import 'dart:convert';
+
 import 'dart:async';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:latlong2/latlong.dart';
@@ -6,6 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:soen_390/services/interfaces/http_client_interface.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'interfaces/route_service_interface.dart';
+import 'package:soen_390/utils/google_api_helper.dart';
 
 /// A service to retrieve routes from the Google Maps Directions API.
 ///
@@ -23,6 +24,8 @@ class GoogleRouteService implements IRouteService {
 
   /// A wrapper around the HTTP client for making requests.
   final IHttpClient _httpClient;
+  // A helper class for interacting with Google APIs.
+  final GoogleApiHelper _apiHelper;
 
   /// Creates a new instance of `GoogleRouteService`.
   ///
@@ -31,17 +34,20 @@ class GoogleRouteService implements IRouteService {
   /// - [apiKey]: Optional API key for requests. Defaults to the value in `..env`.
   ///
   /// Throws an exception if the API key is missing.
-  GoogleRouteService({
+GoogleRouteService({
     required this.locationService,
     required IHttpClient httpClient,
-    String? apiKey, // Allow passing an API key for testing
+    GoogleApiHelper? apiHelper,
+    String? apiKey,
   })  : _httpClient = httpClient,
+        _apiHelper = apiHelper ?? GoogleApiHelper(),
         apiKey = apiKey ?? dotenv.env['GOOGLE_MAPS_API_KEY'] ?? "" {
     if (this.apiKey.isEmpty) {
       throw Exception(
           "ERROR: Missing Google Maps API Key! Provide one or check your ..env file.");
     }
   }
+
 
   /// Fetches the best driving route between two locations.
   ///
@@ -136,7 +142,7 @@ class GoogleRouteService implements IRouteService {
   /// - [alternatives]: If `true`, fetches alternative routes.
   ///
   /// Returns a list of `RouteResult` containing multiple possible routes.
-  Future<List<RouteResult>?> _fetchRoute({
+Future<List<RouteResult>?> _fetchRoute({
     required LatLng from,
     required LatLng to,
     required String mode,
@@ -153,16 +159,15 @@ class GoogleRouteService implements IRouteService {
       alternatives: alternatives,
     );
 
-    final response = await _httpClient.get(Uri.parse(url));
-
-    if (response.statusCode == 200) {
-      return _processApiResponse(response.body);
-    } else {
-      print("HTTP Error: ${response.statusCode} - ${response.reasonPhrase}");
-      // Optionally throw or handle specific errors;
-    }
+    try {
+      final data = await _apiHelper.fetchJson(_httpClient, Uri.parse(url));
+      return _extractRouteResults(data);
+    } catch (e) {
+      print("Exception during route fetch: $e");
     return null;
-  }
+    }
+}
+
 
   /// Builds a Google Maps Directions API request URL with the specified parameters.
   ///
@@ -203,34 +208,7 @@ class GoogleRouteService implements IRouteService {
     return url;
   }
 
-  /// Processes the Google Maps Directions API response JSON.
-  ///
-  /// This function handles parsing the response body, validating it contains
-  /// expected data, and transforming it into RouteResult objects.
-  ///
-  /// - [responseBody]: The raw JSON response string from the Directions API.
-  ///
-  /// Returns a list of RouteResult objects if successful, or null if:
-  /// - The response contains no routes
-  /// - The API returned a non-OK status
-  ///
-  /// Logs detailed error information when route retrieval fails.
-  List<RouteResult>? _processApiResponse(String responseBody) {
-    final data = jsonDecode(responseBody);
 
-    if (!data.containsKey('routes') || data['routes'].isEmpty) {
-      print(" No routes found. Full API Response: ${jsonEncode(data)}");
-      return null;
-    }
-
-    if (data['status'] != 'OK') {
-      print(
-          "API Error: ${data['status']} - Full Response: ${jsonEncode(data)}");
-      return null;
-    }
-
-    return _extractRouteResults(data);
-  }
 
   /// Extracts and transforms route data from parsed API response.
   ///
