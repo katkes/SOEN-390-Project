@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:soen_390/services/interfaces/http_client_interface.dart';
 import '../models/places.dart';
 import 'http_service.dart';
 
@@ -8,7 +9,7 @@ import 'http_service.dart';
 /// This class leverages an [HttpService] to make HTTP requests and requires
 /// a valid Google Places API key to function.
 class GooglePOIService {
-  final HttpService _httpService;
+  final IHttpClient _httpClient;
   final String _apiKey;
 
   // Base URL for Google Places Nearby Search API.
@@ -22,9 +23,9 @@ class GooglePOIService {
   /// if not, a default [HttpService] will be used.
   GooglePOIService({
     required String apiKey,
-    HttpService? httpService,
+    IHttpClient? httpClient,
   })  : _apiKey = apiKey,
-        _httpService = httpService ?? HttpService();
+        _httpClient = httpClient ?? HttpService();
 
   /// Fetches a list of nearby places of a specified [type] within a given
   /// [radius] around the provided [latitude] and [longitude].
@@ -53,7 +54,7 @@ class GooglePOIService {
     });
 
     try {
-      final response = await _httpService.client.get(uri);
+      final response = await _httpClient.get(uri);
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
@@ -71,13 +72,5 @@ class GooglePOIService {
     } catch (e) {
       throw Exception('Error fetching nearby places: $e');
     }
-  }
-
-  /// Disposes the internal [HttpService] to free up resources.
-  ///
-  /// This should be called when the [GooglePOIService] is no longer needed,
-  /// especially if the underlying [HttpService] maintains open connections.
-  void dispose() {
-    _httpService.dispose();
   }
 }
