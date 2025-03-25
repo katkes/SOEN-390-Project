@@ -169,20 +169,17 @@ void main() {
     ///
     /// **Expected Outcome:**
     /// - The function should throw an `Exception`.
-    test('fetchBuildingInformation should throw an error if API key is missing',
-        () async {
-      final mapsApiClientNoKey =
-          GoogleMapsApiClient(apiKey: '', httpClient: mockHttpClient);
-
-      when(mockHttpClient.get(Uri.parse(
-              "https://maps.googleapis.com/maps/api/geocode/json?latlng=37.7749,-122.4194&key=")))
-          .thenAnswer((_) async => http.Response('Invalid API key', 403));
-
+test('should throw if API key is missing during construction', () {
       expect(
-          () async => await mapsApiClientNoKey.fetchBuildingInformation(
-              37.7749, -122.4194, "Test Location"),
-          throwsA(isA<Exception>()));
+        () => GoogleMapsApiClient(apiKey: '', httpClient: mockHttpClient),
+        throwsA(isA<Exception>().having(
+          (e) => e.toString(),
+          'message',
+          contains('Missing Google Maps API Key'),
+        )),
+      );
     });
+
   });
 
   /// **Tests for fetchPlaceDetailsById**

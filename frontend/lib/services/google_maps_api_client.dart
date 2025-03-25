@@ -1,75 +1,71 @@
-/// This library defines a client for interacting with the Google Maps and Places APIs.
+import 'package:soen_390/services/interfaces/maps_api_client.dart';
+import 'package:soen_390/services/interfaces/base_google_service.dart';
+
+/// A client for interacting with the Google Maps and Places APIs.
 ///
-/// It provides methods to fetch building/location details such as phone number,
-/// website, rating, opening hours, types, and photo using coordinates or a place ID.
+/// This class extends [BaseGoogleService] and implements the [MapsApiClient] interface,
+/// enabling functionality to:
+/// - Fetch a place's details using its geographic coordinates (latitude/longitude)
+/// - Fetch rich information about a place using its unique Google Places `placeId`
 ///
-/// The API key used for requests is expected to be stored in a `.env` file and
-/// accessed using the `flutter_dotenv` package.
-///
-/// The class supports:
-/// - Fetching place ID based on latitude and longitude.
-/// - Retrieving detailed place information using the place ID.
-/// - Graceful error handling for missing API key or failed requests.
+/// This client uses Google’s Geocoding and Places APIs, including the `nearbysearch`,
+/// `details`, and `photo` endpoints.
 ///
 /// Example usage:
 /// ```dart
-/// final client = GoogleMapsApiClient(
+/// final mapsClient = GoogleMapsApiClient(
 ///   apiKey: dotenv.env['GOOGLE_MAPS_API_KEY']!,
 ///   httpClient: HttpService(),
 /// );
-/// final info = await client.fetchBuildingInformation(45.5, -73.6, "My Building");
-/// print(info['phone']);
+///
+/// final info = await mapsClient.fetchBuildingInformation(
+///   45.5017, -73.5673, "Hall Building",
+/// );
+///
+/// final placeDetails = await mapsClient.fetchPlaceDetailsById("ChIJN1t_tDeuEmsRUsoyG83frY4");
 /// ```
-library;
-
-import 'package:soen_390/services/interfaces/http_client_interface.dart';
-import 'package:soen_390/services/interfaces/maps_api_client.dart';
-import 'package:soen_390/utils/google_api_helper.dart';
-
-/// A client for interacting with Google Maps and Places APIs.
-class GoogleMapsApiClient implements MapsApiClient {
-  /// The API key used to authenticate with the Google Maps API.
-  final String apiKey;
-
-  /// The HTTP client used for sending requests.
-  final IHttpClient httpClient;
-
-  /// Helper used to fetch and validate API responses.
-  final GoogleApiHelper apiHelper;
-
-  /// Creates a [GoogleMapsApiClient] with the provided [apiKey], [httpClient],
-  /// and an optional [apiHelper]. If [apiHelper] is not provided, a default
-  /// instance is used.
-  GoogleMapsApiClient({
-    required this.apiKey,
-    required this.httpClient,
-    GoogleApiHelper? apiHelper,
-  }) : apiHelper = apiHelper ?? GoogleApiHelper();
-
-  /// Fetches detailed building/location information based on latitude and longitude.
+class GoogleMapsApiClient extends BaseGoogleService implements MapsApiClient {
+  /// Creates an instance of [GoogleMapsApiClient].
   ///
-  /// This method first queries the Google Geocoding API to retrieve the `place_id`
-  /// for the provided [latitude] and [longitude]. Then it uses that `place_id` to
-  /// request detailed information from the Places Details API.
+  /// Requires:
+  /// - [apiKey]: A valid Google Maps API key.
+  /// - [httpClient]: A custom HTTP client implementing [IHttpClient].
   ///
-  /// The returned map includes:
-  /// - `name`: The custom name provided.
-  /// - `phone`: Formatted phone number (if available).
-  /// - `website`: Website URL.
-  /// - `rating`: Average user rating.
-  /// - `opening_hours`: A list of weekday opening hours.
-  /// - `types`: List of place types (e.g., university, building).
-  /// - `photo`: A Google Maps photo URL, if available.
+  /// Optionally:
+  /// - [apiHelper]: A custom instance of [GoogleApiHelper] for API response handling.
   ///
   /// Throws:
-  /// - [Exception] if the API key is invalid or missing.
-  /// - [Exception] if no results are found for the given coordinates.
+  /// - [Exception] if [apiKey] is not provided or is empty (handled in [BaseGoogleService]).
+  GoogleMapsApiClient({
+    required super.apiKey,
+    required super.httpClient,
+    super.apiHelper,
+  });
+
+  /// Fetches building/place information using geographic coordinates.
   ///
-  /// Example:
-  /// ```dart
-  /// final info = await client.fetchBuildingInformation(45.5017, -73.5673, "Hall Building");
-  /// print(info["rating"]);
-  /// ```
+  /// First, it calls the Google Geocoding API to resolve a `place_id` using the
+  /// provided [latitude] and [longitude]. Then it queries the Places Details API
+  /// to retrieve details like:
+  /// - Formatted phone number
+  /// - Website URL
+  /// - User rating
+  /// - Opening hours
+  /// - Place types
+  /// - Photo reference
+  ///
+  /// Returns:
+  /// - A `Map<String, dynamic>` containing the location details, including:
+  ///   - `"name"`: The provided [locationName]
+  ///   - `"phone"`, `"website"`, `"rating"`, `"opening_hours"`, `"types"`, `"photo"`
+  ///
+  /// Throws:
+  /// - [Exception] if no results are found or if any of the API calls fail.
+  ///
+  /// Parameters:
+  /// - [latitude]: Latitude of the location.
+  /// - [longitude]: Longitude of the location.
+  /// - [locationName]: The custom display name to assign in the returned map.
   @override
   Future<Map<String, dynamic>> fetchBuildingInformation(
     double latitude,
@@ -118,31 +114,23 @@ class GoogleMapsApiClient implements MapsApiClient {
     };
   }
 
-  /// Fetches detailed information about a place using its [placeId] from
-  /// the Google Places Details API.
+  /// Fetches detailed information about a place using its [placeId].
   ///
-  /// This method retrieves rich details about a place, including:
-  /// - `name`
-  /// - `address`
-  /// - `phone`
-  /// - `website`
-  /// - `rating`
-  /// - `types`
-  /// - `opening_hours`
-  /// - `geometry`
-  /// - `reviews`, etc.
-  ///
-  /// Throws:
-  /// - [Exception] if the HTTP request fails or the response status is not "OK".
+  /// Uses the Google Places Details API to retrieve extended place information,
+  /// including:
+  /// - Address, phone number, website
+  /// - Opening hours, types, name
+  /// - User rating, reviews, summary, price level
+  /// - Geometry (location + viewport)
   ///
   /// Returns:
-  /// - A `Map<String, dynamic>` containing the place details.
+  /// - A `Map<String, dynamic>` representing the `"result"` field from the API response.
   ///
-  /// Example:
-  /// ```dart
-  /// final details = await client.fetchPlaceDetailsById("ChIJN1t_tDeuEmsRUsoyG83frY4");
-  /// print(details["name"]);
-  /// ```
+  /// Throws:
+  /// - [Exception] if the API request fails or the API returns a non-OK status.
+  ///
+  /// Parameters:
+  /// - [placeId]: A unique identifier for a place from Google Places API.
   @override
   Future<Map<String, dynamic>> fetchPlaceDetailsById(String placeId) async {
     const placeDetailsUrl =
