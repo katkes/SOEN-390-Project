@@ -1,30 +1,20 @@
 import 'dart:async';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:soen_390/services/interfaces/http_client_interface.dart';
+import 'package:soen_390/services/interfaces/base_google_service.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'interfaces/route_service_interface.dart';
-import 'package:soen_390/utils/google_api_helper.dart';
 
 /// A service to retrieve routes from the Google Maps Directions API.
 ///
 /// This class allows fetching multiple routes for different transportation modes
 /// (driving, walking, bicycling, transit) and enables live navigation with rerouting.
-class GoogleRouteService implements IRouteService {
+class GoogleRouteService extends BaseGoogleService implements IRouteService {
   /// Stores the selected route for live navigation.
   RouteResult? _selectedRoute;
 
-  /// The Google Maps API Key used for requests.
-  final String apiKey;
-
   /// Handles device location tracking and permissions.
   final LocationService locationService;
-
-  /// A wrapper around the HTTP client for making requests.
-  final IHttpClient _httpClient;
-  // A helper class for interacting with Google APIs.
-  final GoogleApiHelper _apiHelper;
 
   /// Creates a new instance of `GoogleRouteService`.
   ///
@@ -35,17 +25,10 @@ class GoogleRouteService implements IRouteService {
   /// Throws an exception if the API key is missing.
   GoogleRouteService({
     required this.locationService,
-    required IHttpClient httpClient,
-    GoogleApiHelper? apiHelper,
-    String? apiKey,
-  })  : _httpClient = httpClient,
-        _apiHelper = apiHelper ?? GoogleApiHelper(),
-        apiKey = apiKey ?? dotenv.env['GOOGLE_MAPS_API_KEY'] ?? "" {
-    if (this.apiKey.isEmpty) {
-      throw Exception(
-          "ERROR: Missing Google Maps API Key! Provide one or check your ..env file.");
-    }
-  }
+    required super.httpClient,
+    super.apiHelper,
+    super.apiKey,
+  });
 
   /// Fetches the best driving route between two locations.
   ///
@@ -124,12 +107,8 @@ class GoogleRouteService implements IRouteService {
     final toSGW = LocationService.checkIfPositionIsAtSGW(to);
     final toLOY = LocationService.checkIfPositionIsAtLOY(to);
 
-    if ((fromLOY && toSGW) || (fromSGW && toLOY)) {
-      return true;
-    }
-    return false;
+    return (fromLOY && toSGW) || (fromSGW && toLOY);
   }
-
   /// Fetches routes from Google Maps API.
   ///
   /// - [from]: The starting location as `LatLng`.
@@ -158,7 +137,7 @@ class GoogleRouteService implements IRouteService {
     );
 
     try {
-      final data = await _apiHelper.fetchJson(_httpClient, Uri.parse(url));
+      final data = await apiHelper.fetchJson(httpClient, Uri.parse(url));
       return _extractRouteResults(data);
     } catch (e) {
       print("Exception during route fetch: $e");
