@@ -1,5 +1,7 @@
 import 'package:soen_390/services/interfaces/maps_api_client.dart';
 import 'package:soen_390/services/interfaces/base_google_service.dart';
+import 'package:soen_390/utils/place_details_mapper.dart';
+
 
 /// A client for interacting with the Google Maps and Places APIs.
 ///
@@ -66,7 +68,7 @@ class GoogleMapsApiClient extends BaseGoogleService implements MapsApiClient {
   /// - [latitude]: Latitude of the location.
   /// - [longitude]: Longitude of the location.
   /// - [locationName]: The custom display name to assign in the returned map.
-  @override
+@override
   Future<Map<String, dynamic>> fetchBuildingInformation(
     double latitude,
     double longitude,
@@ -75,7 +77,6 @@ class GoogleMapsApiClient extends BaseGoogleService implements MapsApiClient {
     const placeSearchUrl = "https://maps.googleapis.com/maps/api/geocode/json";
     const placeDetailsUrl =
         "https://maps.googleapis.com/maps/api/place/details/json";
-    const placePhotoUrl = "https://maps.googleapis.com/maps/api/place/photo";
 
     final searchUri =
         Uri.parse("$placeSearchUrl?latlng=$latitude,$longitude&key=$apiKey");
@@ -94,25 +95,15 @@ class GoogleMapsApiClient extends BaseGoogleService implements MapsApiClient {
     );
 
     final detailsData = await apiHelper.fetchJson(httpClient, detailsUri);
-    final result = detailsData["result"] ?? {};
 
-    String? photoUrl;
-    if (result["photos"] != null && result["photos"].isNotEmpty) {
-      final photoReference = result["photos"][0]["photo_reference"];
-      photoUrl =
-          "$placePhotoUrl?maxwidth=400&photo_reference=$photoReference&key=$apiKey";
-    }
-
-    return {
-      "name": locationName,
-      "phone": result["formatted_phone_number"],
-      "website": result["website"],
-      "rating": result["rating"],
-      "opening_hours": result["opening_hours"]?["weekday_text"] ?? [],
-      "types": result["types"] ?? [],
-      "photo": photoUrl,
-    };
+    // Use the mapper here instead of inline mapping
+    return PlaceDetailsMapper.fromGoogleDetailsJson(
+      detailsData,
+      locationName,
+      apiKey,
+    );
   }
+
 
   /// Fetches detailed information about a place using its [placeId].
   ///
