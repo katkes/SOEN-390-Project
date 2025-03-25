@@ -12,17 +12,19 @@ library;
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-
-abstract class MapsApiClient {
-  Future<Map<String, dynamic>> fetchBuildingInformation(
-      double latitude, double longitude, String locationName);
-}
+import 'package:soen_390/services/interfaces/maps_api_client.dart';
+import 'package:soen_390/utils/google_api_helper.dart';
 
 class GoogleMapsApiClient implements MapsApiClient {
   final String apiKey;
-  final http.Client client; // Inject the http client
+  final http.Client client;
+  final GoogleApiHelper apiHelper;
 
-  GoogleMapsApiClient({required this.apiKey, required this.client});
+  GoogleMapsApiClient({
+    required this.apiKey,
+    required this.client,
+    GoogleApiHelper? apiHelper,
+  }) : apiHelper = apiHelper ?? GoogleApiHelper();
 
   @override
   Future<Map<String, dynamic>> fetchBuildingInformation(
@@ -164,17 +166,5 @@ class GoogleMapsApiClient implements MapsApiClient {
     print("Fetched place details successfully");
 
     return detailsData["result"] ?? {};
-  }
-}
-
-class BuildingPopUps {
-  final MapsApiClient mapsApiClient;
-
-  BuildingPopUps({required this.mapsApiClient});
-
-  Future<Map<String, dynamic>> fetchBuildingInformation(
-      double latitude, double longitude, String locationName) {
-    return mapsApiClient.fetchBuildingInformation(
-        latitude, longitude, locationName);
   }
 }
