@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:latlong2/latlong.dart';
-import '../services/http_service.dart';
+import 'package:soen_390/services/interfaces/http_client_interface.dart';
 
 /// A service to convert location names to coordinates using the Google Geocoding API.
 class GeocodingService {
@@ -9,7 +9,7 @@ class GeocodingService {
   final String apiKey;
 
   /// A wrapper around the HTTP client for making requests.
-  final HttpService httpService;
+  final IHttpClient httpClient;
 
   /// Creates a new instance of `GeocodingService`.
   ///
@@ -18,7 +18,7 @@ class GeocodingService {
   ///
   /// Throws an exception if the API key is missing.
   GeocodingService({
-    required this.httpService,
+    required this.httpClient,
     String? apiKey, // Allow passing an API key for testing
   }) : apiKey = apiKey ?? dotenv.env['GOOGLE_MAPS_API_KEY'] ?? "" {
     if (this.apiKey.isEmpty) {
@@ -47,7 +47,7 @@ class GeocodingService {
         "&key=$apiKey";
 
     try {
-      final response = await httpService.client.get(Uri.parse(url));
+      final response = await httpClient.get(Uri.parse(url));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
