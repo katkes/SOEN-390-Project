@@ -1,50 +1,62 @@
-import 'package:soen_390/services/interfaces/http_client_interface.dart';
-import 'package:soen_390/utils/google_api_helper.dart';
+import 'package:soen_390/services/interfaces/base_google_service.dart';
 import '../models/places.dart';
-import 'http_service.dart';
 
-/// A service that fetches nearby places of interest (POIs) using the
-/// Google Places API.
+/// A service that fetches nearby points of interest (POIs) using the Google Places API.
 ///
-/// This class leverages an [HttpService] to make HTTP requests and requires
-/// a valid Google Places API key to function.
-class GooglePOIService {
-  final IHttpClient _httpClient;
-  final String _apiKey;
-  final GoogleApiHelper _apiHelper;
-
-  /// Base URL for Google Places Nearby Search API.
+/// This service uses the `nearbysearch` endpoint from the Google Places API
+/// to search for nearby locations (e.g., restaurants, ATMs, libraries, etc.)
+/// based on coordinates, type, and search radius.
+///
+/// It extends [BaseGoogleService], inheriting the API key, HTTP client,
+/// and API helper for making and validating Google API requests.
+///
+/// Example usage:
+/// ```dart
+/// final poiService = GooglePOIService(httpClient: HttpService());
+/// final results = await poiService.getNearbyPlaces(
+///   latitude: 45.5017,
+///   longitude: -73.5673,
+///   type: 'restaurant',
+///   radius: 1000,
+/// );
+/// results.forEach((place) => print(place.name));
+/// ```
+class GooglePOIService extends BaseGoogleService {
+  /// Base URL for the Google Places Nearby Search API.
   final String _baseUrl =
       'https://maps.googleapis.com/maps/api/place/nearbysearch/json';
 
-  /// Creates a [GooglePOIService] instance.
+  /// Constructs a [GooglePOIService] instance.
   ///
-  /// - [apiKey]: A valid Google Places API key.
-  /// - [httpClient]: Optional injected HTTP client.
-  /// - [apiHelper]: Optional injected utility for parsing responses.
+  /// Requires a [httpClient] for performing network requests.
   ///
-  /// Throws if [apiKey] is missing or empty.
+  /// Optionally accepts:
+  /// - [apiHelper] to override the default [GoogleApiHelper] instance
+  /// - [apiKey] to override the key loaded from `.env`
+  ///
+  /// Throws:
+  /// - [Exception] if the API key is missing or empty (handled in [BaseGoogleService]).
   GooglePOIService({
-    required String apiKey,
-    IHttpClient? httpClient,
-    GoogleApiHelper? apiHelper,
-  })  : _apiKey = apiKey,
-        _httpClient = httpClient ?? HttpService(),
-        _apiHelper = apiHelper ?? GoogleApiHelper();
+    required super.httpClient,
+    super.apiHelper,
+    super.apiKey,
+  });
 
-  /// Fetches a list of nearby places of a specified [type] within a given
-  /// [radius] around the provided [latitude] and [longitude].
+  /// Fetches a list of nearby places of a given [type] around a specific location.
   ///
-  /// - [latitude]: The latitude coordinate of the search center.
-  /// - [longitude]: The longitude coordinate of the search center.
-  /// - [type]: The type of place to search for (e.g., `restaurant`, `park`).
-  /// - [radius]: The search radius in meters.
+  /// The request is made to the Google Places API `nearbysearch` endpoint.
   ///
-  /// Returns a [Future] that completes with a list of [Place] objects if
-  /// successful.
+  /// Parameters:
+  /// - [latitude]: Latitude of the center point.
+  /// - [longitude]: Longitude of the center point.
+  /// - [type]: Type of place to search for (e.g., 'restaurant', 'atm', 'library').
+  /// - [radius]: Radius (in meters) around the location to search within.
   ///
-  /// Throws an [Exception] if the request fails or the Google Places API
-  /// returns an error.
+  /// Returns:
+  /// - A `Future<List<Place>>` containing nearby places mapped from the JSON response.
+  ///
+  /// Throws:
+  /// - [Exception] if the API request fails or returns an error.
   Future<List<Place>> getNearbyPlaces({
     required double latitude,
     required double longitude,
@@ -55,11 +67,12 @@ class GooglePOIService {
       'location': '$latitude,$longitude',
       'radius': radius.toString(),
       'type': type,
-      'key': _apiKey,
+      'key': apiKey, //  inherited from BaseGoogleService
     });
 
     try {
-      final data = await _apiHelper.fetchJson(_httpClient, uri);
+      final data = await apiHelper.fetchJson(
+          httpClient, uri); //  use inherited properties
       final results = data['results'] as List<dynamic>;
       return results.map((place) => Place.fromJson(place)).toList();
     } catch (e) {
