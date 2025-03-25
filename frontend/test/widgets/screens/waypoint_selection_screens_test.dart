@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:soen_390/services/google_route_service.dart';
-import 'package:soen_390/services/building_to_coordinates.dart';
+import 'package:soen_390/services/geocoding_service.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';

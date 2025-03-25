@@ -10,7 +10,7 @@ import 'package:soen_390/services/interfaces/route_service_interface.dart';
 import 'package:soen_390/widgets/building_information_popup.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'package:soen_390/services/google_route_service.dart';
-import 'package:soen_390/services/building_to_coordinates.dart';
+import 'package:soen_390/services/geocoding_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:soen_390/providers/service_providers.dart';
 

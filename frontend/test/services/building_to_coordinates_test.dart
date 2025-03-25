@@ -22,7 +22,7 @@ import 'package:mockito/mockito.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
 import 'package:soen_390/services/http_service.dart';
-import 'package:soen_390/services/building_to_coordinates.dart';
+import 'package:soen_390/services/geocoding_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 @GenerateMocks([HttpService, http.Client])
