@@ -13,7 +13,7 @@ import 'package:soen_390/widgets/location_transport_selector.dart';
 import 'package:soen_390/widgets/nav_bar.dart';
 import 'package:soen_390/widgets/route_card.dart';
 import 'package:soen_390/services/google_route_service.dart';
-import 'package:soen_390/services/building_to_coordinates.dart';
+import 'package:soen_390/services/geocoding_service.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:soen_390/services/interfaces/route_service_interface.dart';
