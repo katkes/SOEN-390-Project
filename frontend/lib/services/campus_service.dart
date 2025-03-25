@@ -1,5 +1,4 @@
-import 'dart:convert';
-import 'package:flutter/services.dart';
+import 'package:soen_390/repositories/geojson_repository.dart';
 
 /// Service for loading and managing campus GeoJSON data.
 ///
@@ -15,10 +14,10 @@ import 'package:flutter/services.dart';
 /// final buildings = campusService.getBuildingList();
 /// ```
 class CampusService {
-  final GeoJsonLoader geoJsonLoader;
+  final GeoJsonRepository repository;
 
-  CampusService({GeoJsonLoader? loader})
-      : geoJsonLoader = loader ?? GeoJsonLoader();
+  CampusService({GeoJsonRepository? repository})
+      : repository = repository ?? GeoJsonRepository();
 
   Map<String, dynamic>? buildingBoundaries;
   Map<String, dynamic>? buildingList;
@@ -26,16 +25,12 @@ class CampusService {
 
   Future<void> loadGeoJsonData() async {
     try {
-      buildingBoundaries = await geoJsonLoader
-          .load('assets/geojson/building_boundaries.geojson');
-
-      buildingList =
-          await geoJsonLoader.load('assets/geojson/building_list.geojson');
-
-      campusBoundaries =
-          await geoJsonLoader.load('assets/geojson/campus.geojson');
+      buildingBoundaries = await repository.loadBuildingBoundaries();
+      buildingList = await repository.loadBuildingList();
+      campusBoundaries = await repository.loadCampusBoundaries();
     } catch (e) {
       print("Error loading GeoJSON files: $e");
     }
   }
 }
+

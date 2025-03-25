@@ -1,5 +1,6 @@
 // geojson_repository.dart
-import 'geojson_loader.dart';
+import 'package:soen_390/utils/geojson_loader.dart';
+
 
 class GeoJsonRepository {
   final GeoJsonLoader loader;
