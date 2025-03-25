@@ -1,51 +1,56 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:soen_390/services/interfaces/http_client_interface.dart';
-import 'package:soen_390/utils/google_api_helper.dart';
+import 'package:soen_390/services/interfaces/base_google_service.dart';
 
-/// A service to convert location names to coordinates using the Google Geocoding API.
+/// A service for converting human-readable location names (addresses)
+/// into geographic coordinates (latitude and longitude) using the
+/// Google Geocoding API.
 ///
-/// This class fetches latitude and longitude for a given address using the
-/// Google Geocoding API. It requires a valid API key and supports test injection
-/// for both the HTTP client and utility parser.
-class GeocodingService {
-  /// The Google Maps API Key used for requests.
-  final String apiKey;
-
-  /// A wrapper around the HTTP client for making requests.
-  final IHttpClient httpClient;
-
-  /// A utility helper for handling Google API responses.
-  final GoogleApiHelper apiHelper;
-
-  /// Creates a new instance of `GeocodingService`.
+/// This service extends [BaseGoogleService], inheriting shared functionality
+/// such as API key management, HTTP client usage, and API response validation.
+///
+/// Example usage:
+/// ```dart
+/// final service = GeocodingService(httpClient: HttpService());
+/// final coords = await service.getCoordinates("Concordia University");
+/// print(coords); // LatLng(45.4972, -73.5790)
+/// ```
+class GeocodingService extends BaseGoogleService {
+  /// Creates a new instance of [GeocodingService].
   ///
-  /// - [httpClient]: Handles HTTP requests.
-  /// - [apiHelper]: A helper class to handle Google API JSON responses.
-  /// - [apiKey]: Optional API key for requests. Defaults to the value in `.env`.
+  /// Requires a [httpClient] for making HTTP requests.
   ///
-  /// Throws an exception if the API key is missing.
+  /// Optionally accepts:
+  /// - [apiHelper] to provide a custom instance of [GoogleApiHelper]
+  /// - [apiKey] to override the default API key loaded from `.env`
+  ///
+  /// Throws:
+  /// - [Exception] if the API key is not found or empty.
   GeocodingService({
-    required this.httpClient,
-    GoogleApiHelper? apiHelper,
-    String? apiKey,
-  })  : apiHelper = apiHelper ?? GoogleApiHelper(),
-        apiKey = apiKey ?? dotenv.env['GOOGLE_MAPS_API_KEY'] ?? "" {
-    if (this.apiKey.isEmpty) {
-      throw Exception(
-          "ERROR: Missing Google Maps API Key! Provide one or check your .env file.");
-    }
-  }
+    required super.httpClient,
+    super.apiHelper,
+    super.apiKey,
+  });
 
-  /// Converts a location name to coordinates using the Google Geocoding API.
+  /// Converts a given address or location name into geographical coordinates
+  /// using the Google Geocoding API.
   ///
-  /// - [address]: The location name or address to geocode.
+  /// Parameters:
+  /// - [address]: A human-readable address or place name to convert into coordinates.
   ///
-  /// Returns a `LatLng` containing the coordinates for the location.
-  /// Returns `null` if the location cannot be geocoded or if the address is empty.
+  /// Returns:
+  /// - A [LatLng] object representing the latitude and longitude of the given address.
+  /// - Returns `null` if the address is empty or if no results are found.
+  ///
+  /// Notes:
+  /// - If the address contains the placeholder "New Stop", a fixed coordinate
+  ///   for downtown Montreal is returned (used for mock/test purposes).
+  ///
+  /// Throws:
+  /// - Catches exceptions during the HTTP or decoding process and logs them to console.
   Future<LatLng?> getCoordinates(String address) async {
     if (address.isEmpty) return null;
 
+    // Fallback for mock addresses
     if (address.contains("New Stop")) {
       return const LatLng(45.5088, -73.5540);
     }
