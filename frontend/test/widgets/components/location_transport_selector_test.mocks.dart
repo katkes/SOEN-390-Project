@@ -10,7 +10,7 @@ import 'package:latlong2/latlong.dart' as _i3;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:soen_390/models/outdoor_poi.dart' as _i5;
 import 'package:soen_390/models/places.dart' as _i9;
-import 'package:soen_390/services/building_info_api.dart' as _i4;
+import 'package:soen_390/services/google_maps_api_client.dart' as _i4;
 import 'package:soen_390/services/google_poi_service.dart' as _i8;
 import 'package:soen_390/services/poi_factory.dart' as _i10;
 import 'package:soen_390/utils/location_service.dart' as _i6;
@@ -257,12 +257,6 @@ class MockGooglePOIService extends _i1.Mock implements _i8.GooglePOIService {
         }),
         returnValue: _i7.Future<List<_i9.Place>>.value(<_i9.Place>[]),
       ) as _i7.Future<List<_i9.Place>>);
-
-  @override
-  void dispose() => super.noSuchMethod(
-        Invocation.method(#dispose, []),
-        returnValueForMissingStub: null,
-      );
 }
 
 /// A class which mocks [PointOfInterestFactory].

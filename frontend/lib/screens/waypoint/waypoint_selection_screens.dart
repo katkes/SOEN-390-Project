@@ -5,7 +5,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:soen_390/services/building_info_api.dart';
+import 'package:soen_390/services/google_maps_api_client.dart';
 import 'package:soen_390/services/google_poi_service.dart';
 import 'package:soen_390/services/http_service.dart';
 import 'package:soen_390/services/poi_factory.dart';
@@ -19,7 +19,6 @@ import 'package:latlong2/latlong.dart';
 import 'package:soen_390/services/interfaces/route_service_interface.dart';
 import 'package:soen_390/utils/route_display.dart' as display;
 import 'package:soen_390/utils/route_utils.dart' as utils;
-import 'package:http/http.dart' as http;
 import "package:soen_390/screens/indoor_accessibility/indoor_accessibility_preference.dart";
 
 class WaypointSelectionScreen extends StatefulWidget {
@@ -362,7 +361,7 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
               poiFactory: PointOfInterestFactory(
                 apiClient: GoogleMapsApiClient(
                   apiKey: dotenv.env['GOOGLE_PLACES_API_KEY'] ?? '',
-                  client: http.Client(),
+                  httpClient: HttpService(),
                 ),
               ),
               initialDestination: widget.initialDestination,

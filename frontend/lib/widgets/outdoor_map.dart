@@ -3,12 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:soen_390/services/interfaces/route_service_interface.dart';
-import 'package:http/http.dart' as http;
+import 'package:soen_390/services/interfaces/http_client_interface.dart';
+import 'package:soen_390/services/http_service.dart';
 import 'package:soen_390/services/map_service.dart';
 import 'package:soen_390/utils/marker_tap_handler.dart';
-import '../services/building_info_api.dart';
+import 'package:soen_390/widgets/building_popup.dart';
+import '../services/google_maps_api_client.dart';
 //import "package:soen_390/utils/location_service.dart";
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
+import 'package:http/http.dart' as http;
 
 /// A widget that displays an interactive map with routing functionality.
 ///
@@ -25,7 +28,7 @@ class MapWidget extends StatefulWidget {
   final LatLng userLocation;
 
   /// The HTTP client used for network requests related to map tiles.
-  final http.Client httpClient;
+  final IHttpClient httpClient;
 
   /// The route service responsible for fetching route data.
   final IRouteService routeService;
@@ -266,7 +269,11 @@ class MapWidgetState extends State<MapWidget> {
             TileLayer(
               urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
               additionalOptions: const {},
-              tileProvider: NetworkTileProvider(httpClient: widget.httpClient),
+              tileProvider: NetworkTileProvider(
+                httpClient: widget.httpClient is HttpService
+                    ? (widget.httpClient as HttpService).client
+                    : http.Client(), // fallback in test/mock mode
+              ),
             ),
             AnimatedLocationMarkerLayer(
               position: LocationMarkerPosition(
@@ -332,7 +339,7 @@ class MyPage extends StatelessWidget {
   final IRouteService routeService;
 
   /// The injected HTTP client for loading map tiles.
-  final http.Client httpClient;
+  final IHttpClient httpClient;
 
   /// The initial location for the map.
 
@@ -356,7 +363,7 @@ class MyPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final mapsApiClient = GoogleMapsApiClient(
       apiKey: "GOOGLE_MAPS_API_KEY",
-      client: httpClient,
+      httpClient: httpClient,
     );
 
     final buildingPopUps = BuildingPopUps(

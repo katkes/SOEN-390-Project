@@ -41,19 +41,24 @@ class _FakeClient_0 extends _i1.SmartFake implements _i2.Client {
       : super(parent, parentInvocation);
 }
 
-class _FakeAuthClient_1 extends _i1.SmartFake implements _i3.AuthClient {
-  _FakeAuthClient_1(Object parent, Invocation parentInvocation)
+class _FakeResponse_1 extends _i1.SmartFake implements _i2.Response {
+  _FakeResponse_1(Object parent, Invocation parentInvocation)
       : super(parent, parentInvocation);
 }
 
-class _FakeCalendarApi_2 extends _i1.SmartFake implements _i4.CalendarApi {
-  _FakeCalendarApi_2(Object parent, Invocation parentInvocation)
+class _FakeAuthClient_2 extends _i1.SmartFake implements _i3.AuthClient {
+  _FakeAuthClient_2(Object parent, Invocation parentInvocation)
       : super(parent, parentInvocation);
 }
 
-class _FakeCalendarRepository_3 extends _i1.SmartFake
+class _FakeCalendarApi_3 extends _i1.SmartFake implements _i4.CalendarApi {
+  _FakeCalendarApi_3(Object parent, Invocation parentInvocation)
+      : super(parent, parentInvocation);
+}
+
+class _FakeCalendarRepository_4 extends _i1.SmartFake
     implements _i5.CalendarRepository {
-  _FakeCalendarRepository_3(Object parent, Invocation parentInvocation)
+  _FakeCalendarRepository_4(Object parent, Invocation parentInvocation)
       : super(parent, parentInvocation);
 }
 
@@ -162,6 +167,14 @@ class MockHttpService extends _i1.Mock implements _i9.HttpService {
       ) as _i2.Client);
 
   @override
+  _i8.Future<_i2.Response> get(Uri? url) => (super.noSuchMethod(
+        Invocation.method(#get, [url]),
+        returnValue: _i8.Future<_i2.Response>.value(
+          _FakeResponse_1(this, Invocation.method(#get, [url])),
+        ),
+      ) as _i8.Future<_i2.Response>);
+
+  @override
   void dispose() => super.noSuchMethod(
         Invocation.method(#dispose, []),
         returnValueForMissingStub: null,
@@ -213,7 +226,7 @@ class MockAuthClientFactory extends _i1.Mock implements _i11.AuthClientFactory {
   ) =>
       (super.noSuchMethod(
         Invocation.method(#createAuthClient, [baseClient, credentials]),
-        returnValue: _FakeAuthClient_1(
+        returnValue: _FakeAuthClient_2(
           this,
           Invocation.method(#createAuthClient, [baseClient, credentials]),
         ),
@@ -347,7 +360,7 @@ class MockCacheService extends _i1.Mock implements _i14.CacheService {
   @override
   _i4.CalendarApi get calendarApi => (super.noSuchMethod(
         Invocation.getter(#calendarApi),
-        returnValue: _FakeCalendarApi_2(
+        returnValue: _FakeCalendarApi_3(
           this,
           Invocation.getter(#calendarApi),
         ),
@@ -403,7 +416,7 @@ class MockCalendarEventService extends _i1.Mock
   @override
   _i5.CalendarRepository get calendarRepository => (super.noSuchMethod(
         Invocation.getter(#calendarRepository),
-        returnValue: _FakeCalendarRepository_3(
+        returnValue: _FakeCalendarRepository_4(
           this,
           Invocation.getter(#calendarRepository),
         ),

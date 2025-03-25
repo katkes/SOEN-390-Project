@@ -50,6 +50,11 @@ class _FakeClient_3 extends _i1.SmartFake implements _i5.Client {
       : super(parent, parentInvocation);
 }
 
+class _FakeResponse_4 extends _i1.SmartFake implements _i5.Response {
+  _FakeResponse_4(Object parent, Invocation parentInvocation)
+      : super(parent, parentInvocation);
+}
+
 /// A class which mocks [AuthService].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -173,6 +178,14 @@ class MockHttpService extends _i1.Mock implements _i3.HttpService {
         Invocation.getter(#client),
         returnValue: _FakeClient_3(this, Invocation.getter(#client)),
       ) as _i5.Client);
+
+  @override
+  _i7.Future<_i5.Response> get(Uri? url) => (super.noSuchMethod(
+        Invocation.method(#get, [url]),
+        returnValue: _i7.Future<_i5.Response>.value(
+          _FakeResponse_4(this, Invocation.method(#get, [url])),
+        ),
+      ) as _i7.Future<_i5.Response>);
 
   @override
   void dispose() => super.noSuchMethod(

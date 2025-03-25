@@ -4,15 +4,17 @@ import 'package:http/http.dart' as http;
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import 'package:soen_390/services/building_info_api.dart';
+import 'package:soen_390/services/google_maps_api_client.dart';
+import 'package:soen_390/services/interfaces/http_client_interface.dart';
+import 'package:soen_390/widgets/building_popup.dart';
 
-@GenerateMocks([http.Client])
-import 'building_info_retrieval_test.mocks.dart';
+@GenerateMocks([IHttpClient])
+import 'google_maps_api_client_test.mocks.dart';
 
 /// **Unit tests for `GoogleMapsApiClient`**
 ///
 /// These tests verify the correctness of the `fetchBuildingInformation`
-/// method by simulating API responses using a mocked HTTP client.
+/// method by simulating API responses using a mocked HTTP mockHttpClient.
 ///
 /// ## **Why These Tests Exist**
 /// - The `GoogleMapsApiClient` interacts with **Google Maps API** to fetch **building information**.
@@ -30,18 +32,20 @@ import 'building_info_retrieval_test.mocks.dart';
 /// - This allows us to test the logic **without network dependency**.
 void main() {
   group('GoogleMapsApiClient Tests', () {
-    late MockClient client;
+    late MockIHttpClient mockHttpClient;
     late GoogleMapsApiClient mapsApiClient;
     const String apiKey = 'FAKE_API_KEY'; // Mocked API key
     late BuildingPopUps retriever;
 
     setUp(() {
-      client = MockClient();
-      mapsApiClient = GoogleMapsApiClient(apiKey: apiKey, client: client);
+      mockHttpClient = MockIHttpClient();
+      mapsApiClient =
+          GoogleMapsApiClient(apiKey: apiKey, httpClient: mockHttpClient);
+
       retriever = BuildingPopUps(mapsApiClient: mapsApiClient);
 
       /// **Prevents unmocked API calls from causing test failures.**
-      when(client.get(any)).thenThrow(
+      when(mockHttpClient.get(any)).thenThrow(
           Exception("Unexpected API call. Ensure all requests are stubbed."));
     });
 
@@ -55,7 +59,7 @@ void main() {
     /// - The response contains the expected `name`, `phone`, `website`, `rating`, `opening_hours`, `types`, and `photo`.
     test('fetchBuildingInformation should return valid location data',
         () async {
-      when(client.get(Uri.parse(
+      when(mockHttpClient.get(Uri.parse(
               "https://maps.googleapis.com/maps/api/geocode/json?latlng=37.7749,-122.4194&key=$apiKey")))
           .thenAnswer((_) async => http.Response(
               jsonEncode({
@@ -66,24 +70,26 @@ void main() {
               }),
               200));
 
-      when(client.get(Uri.parse(
+      when(mockHttpClient.get(Uri.parse(
               "https://maps.googleapis.com/maps/api/place/details/json?place_id=test_place_id&key=$apiKey&fields=formatted_phone_number,website,rating,opening_hours,types,photos")))
           .thenAnswer((_) async => http.Response(
-              jsonEncode({
-                "result": {
-                  "formatted_phone_number": "123-456-7890",
-                  "website": "https://example.com",
-                  "rating": 4.7,
-                  "opening_hours": {
-                    "weekday_text": ["Monday: 9:00 AM - 5:00 PM"]
-                  },
-                  "types": ["restaurant"],
-                  "photos": [
-                    {"photo_reference": "test_photo_ref"}
-                  ]
-                }
-              }),
-              200));
+                jsonEncode({
+                  "status": "OK",
+                  "result": {
+                    "formatted_phone_number": "123-456-7890",
+                    "website": "https://example.com",
+                    "rating": 4.7,
+                    "opening_hours": {
+                      "weekday_text": ["Monday: 9:00 AM - 5:00 PM"]
+                    },
+                    "types": ["restaurant"],
+                    "photos": [
+                      {"photo_reference": "test_photo_ref"}
+                    ]
+                  }
+                }),
+                200,
+              ));
 
       final result = await retriever.fetchBuildingInformation(
           37.7749, -122.4194, "Test Location");
@@ -107,7 +113,7 @@ void main() {
     /// - The function should throw an `Exception`.
     test('fetchBuildingInformation should throw an error for invalid API key',
         () async {
-      when(client.get(any))
+      when(mockHttpClient.get(any))
           .thenAnswer((_) async => http.Response('Invalid API key', 403));
 
       expect(
@@ -126,7 +132,7 @@ void main() {
     test(
         'fetchBuildingInformation should throw an error if no results are found',
         () async {
-      when(client.get(Uri.parse(
+      when(mockHttpClient.get(Uri.parse(
               "https://maps.googleapis.com/maps/api/geocode/json?latlng=37.7749,-122.4194&key=$apiKey")))
           .thenAnswer((_) async => http.Response(
               jsonEncode({"results": [], "status": "ZERO_RESULTS"}), 200));
@@ -146,7 +152,7 @@ void main() {
     /// - The function should throw an `Exception`.
     test('fetchBuildingInformation should throw an error if API request fails',
         () async {
-      when(client.get(any))
+      when(mockHttpClient.get(any))
           .thenAnswer((_) async => http.Response('Server error', 500));
 
       expect(
@@ -166,9 +172,9 @@ void main() {
     test('fetchBuildingInformation should throw an error if API key is missing',
         () async {
       final mapsApiClientNoKey =
-          GoogleMapsApiClient(apiKey: '', client: client);
+          GoogleMapsApiClient(apiKey: '', httpClient: mockHttpClient);
 
-      when(client.get(Uri.parse(
+      when(mockHttpClient.get(Uri.parse(
               "https://maps.googleapis.com/maps/api/geocode/json?latlng=37.7749,-122.4194&key=")))
           .thenAnswer((_) async => http.Response('Invalid API key', 403));
 
@@ -181,13 +187,14 @@ void main() {
 
   /// **Tests for fetchPlaceDetailsById**
   group('fetchPlaceDetailsById Tests', () {
-    late MockClient client;
+    late MockIHttpClient mockHttpClient;
     late GoogleMapsApiClient mapsApiClient;
     const String apiKey = 'FAKE_API_KEY';
 
     setUp(() {
-      client = MockClient();
-      mapsApiClient = GoogleMapsApiClient(apiKey: apiKey, client: client);
+      mockHttpClient = MockIHttpClient();
+      mapsApiClient =
+          GoogleMapsApiClient(apiKey: apiKey, httpClient: mockHttpClient);
     });
 
     test('fetchPlaceDetailsById should return valid place details', () async {
@@ -216,7 +223,7 @@ void main() {
       final uri = Uri.parse(
           "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&fields=formatted_address,formatted_phone_number,website,rating,opening_hours,types,reviews,editorial_summary,price_level,name,geometry&key=$apiKey");
 
-      when(client.get(uri)).thenAnswer(
+      when(mockHttpClient.get(uri)).thenAnswer(
           (_) async => http.Response(jsonEncode(testResponse), 200));
 
       final result = await mapsApiClient.fetchPlaceDetailsById(placeId);
@@ -236,7 +243,7 @@ void main() {
       final uri = Uri.parse(
           "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&fields=formatted_address,formatted_phone_number,website,rating,opening_hours,types,reviews,editorial_summary,price_level,name,geometry&key=$apiKey");
 
-      when(client.get(uri))
+      when(mockHttpClient.get(uri))
           .thenAnswer((_) async => http.Response('Server Error', 500));
 
       expect(() async => await mapsApiClient.fetchPlaceDetailsById(placeId),
@@ -255,7 +262,7 @@ void main() {
       final uri = Uri.parse(
           "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&fields=formatted_address,formatted_phone_number,website,rating,opening_hours,types,reviews,editorial_summary,price_level,name,geometry&key=$apiKey");
 
-      when(client.get(uri)).thenAnswer(
+      when(mockHttpClient.get(uri)).thenAnswer(
           (_) async => http.Response(jsonEncode(errorResponse), 200));
 
       expect(() async => await mapsApiClient.fetchPlaceDetailsById(placeId),

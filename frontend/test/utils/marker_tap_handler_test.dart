@@ -5,7 +5,7 @@ import 'package:mockito/mockito.dart';
 import 'package:flutter_map/flutter_map.dart';
 
 import 'package:soen_390/utils/marker_tap_handler.dart';
-import 'package:soen_390/services/building_info_api.dart';
+import 'package:soen_390/widgets/building_popup.dart';
 import 'marker_tap_handler_test.mocks.dart';
 
 /// Tests for MarkerTapHandler functionality.

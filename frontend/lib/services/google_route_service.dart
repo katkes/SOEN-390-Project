@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:latlong2/latlong.dart';
@@ -34,7 +33,7 @@ class GoogleRouteService implements IRouteService {
   /// - [apiKey]: Optional API key for requests. Defaults to the value in `..env`.
   ///
   /// Throws an exception if the API key is missing.
-GoogleRouteService({
+  GoogleRouteService({
     required this.locationService,
     required IHttpClient httpClient,
     GoogleApiHelper? apiHelper,
@@ -47,7 +46,6 @@ GoogleRouteService({
           "ERROR: Missing Google Maps API Key! Provide one or check your ..env file.");
     }
   }
-
 
   /// Fetches the best driving route between two locations.
   ///
@@ -142,7 +140,7 @@ GoogleRouteService({
   /// - [alternatives]: If `true`, fetches alternative routes.
   ///
   /// Returns a list of `RouteResult` containing multiple possible routes.
-Future<List<RouteResult>?> _fetchRoute({
+  Future<List<RouteResult>?> _fetchRoute({
     required LatLng from,
     required LatLng to,
     required String mode,
@@ -164,10 +162,9 @@ Future<List<RouteResult>?> _fetchRoute({
       return _extractRouteResults(data);
     } catch (e) {
       print("Exception during route fetch: $e");
-    return null;
+      return null;
     }
-}
-
+  }
 
   /// Builds a Google Maps Directions API request URL with the specified parameters.
   ///
@@ -207,8 +204,6 @@ Future<List<RouteResult>?> _fetchRoute({
 
     return url;
   }
-
-
 
   /// Extracts and transforms route data from parsed API response.
   ///
