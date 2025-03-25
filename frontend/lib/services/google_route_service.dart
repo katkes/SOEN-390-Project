@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:soen_390/services/interfaces/http_client_interface.dart';
 import 'package:soen_390/utils/location_service.dart';
-import 'package:soen_390/services/http_service.dart';
 import 'interfaces/route_service_interface.dart';
 
 /// A service to retrieve routes from the Google Maps Directions API.
@@ -22,20 +22,20 @@ class GoogleRouteService implements IRouteService {
   final LocationService locationService;
 
   /// A wrapper around the HTTP client for making requests.
-  final HttpService httpService;
-
+  final IHttpClient _httpClient;
   /// Creates a new instance of `GoogleRouteService`.
   ///
   /// - [locationService]: Manages location tracking.
-  /// - [httpService]: Handles HTTP requests.
+  /// - [httpClient]: Handles HTTP requests.
   /// - [apiKey]: Optional API key for requests. Defaults to the value in `..env`.
   ///
   /// Throws an exception if the API key is missing.
   GoogleRouteService({
     required this.locationService,
-    required this.httpService,
+    required IHttpClient httpClient,
     String? apiKey, // Allow passing an API key for testing
-  }) : apiKey = apiKey ?? dotenv.env['GOOGLE_MAPS_API_KEY'] ?? "" {
+  })  : _httpClient = httpClient,
+        apiKey = apiKey ?? dotenv.env['GOOGLE_MAPS_API_KEY'] ?? "" {
     if (this.apiKey.isEmpty) {
       throw Exception(
           "ERROR: Missing Google Maps API Key! Provide one or check your ..env file.");
@@ -152,7 +152,7 @@ class GoogleRouteService implements IRouteService {
       alternatives: alternatives,
     );
 
-    final response = await httpService.client.get(Uri.parse(url));
+    final response = await _httpClient.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
       return _processApiResponse(response.body);
