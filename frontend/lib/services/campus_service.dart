@@ -26,11 +26,20 @@ class CampusService {
   Future<void> loadGeoJsonData() async {
     try {
       buildingBoundaries = await repository.loadBuildingBoundaries();
+    } catch (e) {
+      print("Error loading building boundaries: $e");
+    }
+
+    try {
       buildingList = await repository.loadBuildingList();
+    } catch (e) {
+      print("Error loading building list: $e");
+    }
+
+    try {
       campusBoundaries = await repository.loadCampusBoundaries();
     } catch (e) {
-      print("Error loading GeoJSON files: $e");
+      print("Error loading campus boundaries: $e");
     }
   }
 }
-
