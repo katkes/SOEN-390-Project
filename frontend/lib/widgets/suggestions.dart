@@ -12,6 +12,13 @@ const List<String> kDefaultSuggestions = [
   "Bar",
 ];
 
+/// Pure filtering function (can be moved to a utils file)
+List<String> filterSuggestions(List<String> source, String input) {
+  return source
+      .where((s) => s.toLowerCase().contains(input.toLowerCase()))
+      .toList();
+}
+
 class SuggestionsPopup extends StatefulWidget {
   final Function(String) onSelect;
 
@@ -35,19 +42,14 @@ class SuggestionsPopupState extends State<SuggestionsPopup> {
 
   void _filterSuggestions(String input) {
     setState(() {
-      filteredSuggestions = suggestions
-          .where((suggestion) =>
-              suggestion.toLowerCase().contains(input.toLowerCase()))
-          .toList();
+      filteredSuggestions = filterSuggestions(suggestions, input);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -70,12 +72,11 @@ class SuggestionsPopupState extends State<SuggestionsPopup> {
               onSuggestionClicked: (prediction) {
                 _searchController.text = prediction.description ?? "";
                 _searchController.selection = TextSelection.fromPosition(
-                    TextPosition(offset: prediction.description?.length ?? 0));
+                  TextPosition(offset: prediction.description?.length ?? 0),
+                );
                 Navigator.pop(context);
               },
-              onChanged: (input) {
-                _filterSuggestions(input);
-              },
+              onChanged: _filterSuggestions,
               decoration: InputDecoration(
                 hintText: "Type address...",
                 border: OutlineInputBorder(
