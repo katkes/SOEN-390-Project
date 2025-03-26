@@ -21,24 +21,28 @@ class _IndoorTriggerState extends State<IndoorTrigger> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor,
-        borderRadius: BorderRadius.circular(kIndoorButtonBorderRadius),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(kShadowAlpha),
-            spreadRadius: kShadowSpread,
-            blurRadius: kShadowBlur,
-            offset: kShadowOffset,
-          ),
-        ],
-      ),
+      decoration: _buildIndoorButtonDecoration(context),
       padding: const EdgeInsets.all(kIndoorButtonPadding),
       child: const Icon(
         Icons.location_on,
         size: kIndoorButtonIconSize,
         color: Colors.white,
       ),
+    );
+  }
+
+  BoxDecoration _buildIndoorButtonDecoration(BuildContext context) {
+    return BoxDecoration(
+      color: Theme.of(context).primaryColor,
+      borderRadius: BorderRadius.circular(kIndoorButtonBorderRadius),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withAlpha(kShadowAlpha),
+          spreadRadius: kShadowSpread,
+          blurRadius: kShadowBlur,
+          offset: kShadowOffset,
+        ),
+      ],
     );
   }
 }
