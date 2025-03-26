@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:soen_390/services/interfaces/route_service_interface.dart';
-import 'package:soen_390/utils/waypoint_navigation_handler.dart'; // Make sure this path is correct
+import 'package:soen_390/utils/waypoint_navigation_handler.dart';
 
 class BuildingInformationPopup extends StatelessWidget {
   final String buildingName;
@@ -18,7 +18,8 @@ class BuildingInformationPopup extends StatelessWidget {
     this.navigationHandler,
   });
 
-  String _getAbbreviatedName(String name) {
+  
+  String abbreviateBuildingName(String name) {
     if (name.length > 27) {
       return "${name.split(" ")[0]} Bldg";
     } else {
@@ -94,8 +95,9 @@ class BuildingInformationPopup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String abbreviatedName = _getAbbreviatedName(buildingName);
-    Color burgundyColor = Theme.of(context).primaryColor;
+    final abbreviatedName =
+        abbreviateBuildingName(buildingName); // ✅ Usage updated
+    final burgundyColor = Theme.of(context).primaryColor;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
