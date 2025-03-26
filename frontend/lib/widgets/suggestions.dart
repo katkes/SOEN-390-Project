@@ -12,7 +12,7 @@ const List<String> kDefaultSuggestions = [
   "Bar",
 ];
 
-/// Pure filtering function (can be moved to a utils file)
+/// Pure filtering function
 List<String> filterSuggestions(List<String> source, String input) {
   return source
       .where((s) => s.toLowerCase().contains(input.toLowerCase()))
@@ -44,6 +44,25 @@ class SuggestionsPopupState extends State<SuggestionsPopup> {
     setState(() {
       filteredSuggestions = filterSuggestions(suggestions, input);
     });
+  }
+
+  Widget _buildSuggestionList() {
+    return Flexible(
+      child: ListView.builder(
+        shrinkWrap: true,
+        itemCount: filteredSuggestions.length,
+        itemBuilder: (context, index) {
+          final suggestion = filteredSuggestions[index];
+          return ListTile(
+            title: Text(suggestion),
+            onTap: () {
+              widget.onSelect(suggestion);
+              Navigator.pop(context);
+            },
+          );
+        },
+      ),
+    );
   }
 
   @override
@@ -86,21 +105,7 @@ class SuggestionsPopupState extends State<SuggestionsPopup> {
               ),
             ),
             const SizedBox(height: 10),
-            Flexible(
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: filteredSuggestions.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(filteredSuggestions[index]),
-                    onTap: () {
-                      widget.onSelect(filteredSuggestions[index]);
-                      Navigator.pop(context);
-                    },
-                  );
-                },
-              ),
-            ),
+            _buildSuggestionList(),
             ElevatedButton(
               onPressed: () {
                 if (_searchController.text.isNotEmpty) {
