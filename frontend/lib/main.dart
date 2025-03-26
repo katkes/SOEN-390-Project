@@ -311,7 +311,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
                   const Positioned(
                     bottom: 10,
                     right: 21,
-                    child: IndoorTrigger(),
+                    child: IndoorNavigationButton(),
                   ),
                   Positioned(
                     bottom: 80,

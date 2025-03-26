@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Styling Constants for IndoorTrigger
+/// Styling Constants for IndoorNavigationButton
 const double kIndoorButtonIconSize = 30;
 const double kIndoorButtonPadding = 10.0;
 const double kIndoorButtonBorderRadius = 20.0;
@@ -10,14 +10,14 @@ const double kShadowSpread = 2;
 const double kShadowBlur = 5;
 const Offset kShadowOffset = Offset(0, 4);
 
-class IndoorTrigger extends StatefulWidget {
-  const IndoorTrigger({super.key});
+class IndoorNavigationButton extends StatefulWidget {
+  const IndoorNavigationButton({super.key});
 
   @override
-  State<StatefulWidget> createState() => _IndoorTriggerState();
+  State<StatefulWidget> createState() => _IndoorNavigationButtonState();
 }
 
-class _IndoorTriggerState extends State<IndoorTrigger> {
+class _IndoorNavigationButtonState extends State<IndoorNavigationButton> {
   @override
   Widget build(BuildContext context) {
     return Container(
