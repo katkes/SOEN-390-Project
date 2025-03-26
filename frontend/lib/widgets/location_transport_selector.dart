@@ -104,7 +104,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
     );
   }
 
-  Widget _buildLocationInput() {
+Widget _buildLocationInput() {
     return Column(
       children: [
         LocationField(
@@ -119,7 +119,6 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
           },
           showDelete: startLocation != defaultYourLocationString,
         ),
-
         const SizedBox(height: 10),
         LocationField(
           text: destinationLocation,
@@ -133,82 +132,12 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
           },
           showDelete: destinationLocation.isNotEmpty,
         ),
-
         const SizedBox(height: 10),
-
-        // Add Stop & "Leave Now" Dropdown in Row
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            ElevatedButton(
-              onPressed: () async {
-                final locationService = widget.locationService;
-                final poiService = widget.poiService;
-                final poiFactory = widget.poiFactory;
-
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PlaceSearchScreen(
-                      locationService: locationService,
-                      poiService: poiService,
-                      poiFactory: poiFactory,
-                      onSetDestination: (name, lat, lng) {
-                        setState(() {
-                          destinationLocation = name;
-                          if (itinerary.length < _minItineraryLength) {
-                            itinerary.add(name);
-                          } else if (itinerary.length >= _minItineraryLength) {
-                            itinerary[_destinationIndex] = name;
-                          }
-                        });
-                        widget.onLocationChanged?.call();
-                      },
-                    ),
-                  ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: const Color(0xff912338),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                  side: const BorderSide(color: Color(0xff912338)),
-                ),
-              ),
-              child: const Text("What's Nearby?"),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.black26),
-                color: Colors.white,
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                  value: selectedTimeOption, // Default value
-                  icon: const Icon(Icons.arrow_drop_down),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      selectedTimeOption = newValue!;
-                    });
-                  },
-                  items: <String>["Leave Now", "Depart At", "Arrive By"]
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
-              ),
-            ),
-          ],
-        ),
+        _buildNearbyAndTimeSelector(), //
       ],
     );
   }
+
 
   void _confirmRoute() {
     if (itinerary.length < _minItineraryLength) {
@@ -319,6 +248,78 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
       ],
     );
   }
+  Widget _buildNearbyAndTimeSelector() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        ElevatedButton(
+          onPressed: () async {
+            final locationService = widget.locationService;
+            final poiService = widget.poiService;
+            final poiFactory = widget.poiFactory;
+
+            await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PlaceSearchScreen(
+                  locationService: locationService,
+                  poiService: poiService,
+                  poiFactory: poiFactory,
+                  onSetDestination: (name, lat, lng) {
+                    setState(() {
+                      destinationLocation = name;
+                      if (itinerary.length < _minItineraryLength) {
+                        itinerary.add(name);
+                      } else {
+                        itinerary[_destinationIndex] = name;
+                      }
+                    });
+                    widget.onLocationChanged?.call();
+                  },
+                ),
+              ),
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.white,
+            foregroundColor: const Color(0xff912338),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+              side: const BorderSide(color: Color(0xff912338)),
+            ),
+          ),
+          child: const Text("What's Nearby?"),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: Colors.black26),
+            color: Colors.white,
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              value: selectedTimeOption,
+              icon: const Icon(Icons.arrow_drop_down),
+              onChanged: (String? newValue) {
+                setState(() {
+                  selectedTimeOption = newValue!;
+                });
+              },
+              items: <String>["Leave Now", "Depart At", "Arrive By"]
+                  .map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
 
   Widget _buildTransportMode(String label, IconData icon,
       {bool isSelected = false}) {
