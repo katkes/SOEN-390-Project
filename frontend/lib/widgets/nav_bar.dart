@@ -14,6 +14,26 @@ const IconData kNavHomeOutline = Icons.home_outlined;
 const IconData kNavMapOutline = Icons.map_outlined;
 const IconData kNavProfileOutline = Icons.person_outline;
 
+/// Centralized list of navigation destinations
+final List<NavigationDestination> kNavDestinations = [
+  const NavigationDestination(
+    selectedIcon: Icon(kNavHomeIcon),
+    icon: Icon(kNavHomeOutline),
+    label: kNavHomeLabel,
+  ),
+  const NavigationDestination(
+    selectedIcon: Icon(kNavMapIcon),
+    icon: Icon(kNavMapOutline),
+    label: kNavMapLabel,
+  ),
+  const NavigationDestination(
+    selectedIcon: Icon(kNavProfileIcon),
+    icon: Icon(kNavProfileOutline),
+    label: kNavProfileLabel,
+  ),
+];
+
+/// Bottom navigation bar with dynamic destinations
 class NavBar extends StatelessWidget {
   final int selectedIndex;
   final Function(int) onItemTapped;
@@ -29,23 +49,7 @@ class NavBar extends StatelessWidget {
     return NavigationBar(
       onDestinationSelected: onItemTapped,
       selectedIndex: selectedIndex,
-      destinations: const <Widget>[
-        NavigationDestination(
-          selectedIcon: Icon(kNavHomeIcon),
-          icon: Icon(kNavHomeOutline),
-          label: kNavHomeLabel,
-        ),
-        NavigationDestination(
-          selectedIcon: Icon(kNavMapIcon),
-          icon: Icon(kNavMapOutline),
-          label: kNavMapLabel,
-        ),
-        NavigationDestination(
-          selectedIcon: Icon(kNavProfileIcon),
-          icon: Icon(kNavProfileOutline),
-          label: kNavProfileLabel,
-        ),
-      ],
+      destinations: kNavDestinations,
     );
   }
 }
