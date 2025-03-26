@@ -2,6 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:google_places_autocomplete_text_field/google_places_autocomplete_text_field.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+/// Symbolic constants for default suggestions
+const List<String> kDefaultSuggestions = [
+  "Restaurant",
+  "Fast Food",
+  "Coffee",
+  "Dessert",
+  "Shopping",
+  "Bar",
+];
+
 class SuggestionsPopup extends StatefulWidget {
   final Function(String) onSelect;
 
@@ -14,14 +24,7 @@ class SuggestionsPopup extends StatefulWidget {
 class SuggestionsPopupState extends State<SuggestionsPopup> {
   final TextEditingController _searchController = TextEditingController();
 
-  List<String> suggestions = [
-    "Restaurant",
-    "Fast Food",
-    "Coffee",
-    "Dessert",
-    "Shopping",
-    "Bar"
-  ];
+  List<String> suggestions = kDefaultSuggestions;
   List<String> filteredSuggestions = [];
 
   @override
