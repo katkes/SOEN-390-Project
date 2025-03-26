@@ -1,49 +1,60 @@
 import 'package:flutter/material.dart';
 
-/// Styling Constants for IndoorTrigger
-const double kIndoorButtonIconSize = 30;
-const double kIndoorButtonPadding = 10.0;
-const double kIndoorButtonBorderRadius = 20.0;
+/// Google Sign-In Button Styling Constants
+const double kGoogleButtonHeight = 50;
+const double kGoogleIconSize = 36;
+const double kGoogleButtonPadding = 12.0;
+const double kGoogleButtonBorderRadius = 8.0;
 
-const int kShadowAlpha = 76; // Equivalent to 0.3 opacity (0.3 * 255)
-const double kShadowSpread = 2;
-const double kShadowBlur = 5;
-const Offset kShadowOffset = Offset(0, 4);
+const Color kGoogleButtonBackground = Colors.white;
+const Color kGoogleButtonForeground = Colors.black87;
+final Color kGoogleButtonBorderColor = Colors.grey.shade300;
 
-/// Extracted shadow for reuse and clarity
-final BoxShadow kIndoorButtonShadow = BoxShadow(
-  color: Colors.black.withAlpha(kShadowAlpha),
-  spreadRadius: kShadowSpread,
-  blurRadius: kShadowBlur,
-  offset: kShadowOffset,
-);
+/// A reusable Google Sign-In button with consistent styling and semantics.
+class GoogleSignInButton extends StatelessWidget {
+  final VoidCallback onPressed;
 
-class IndoorTrigger extends StatefulWidget {
-  const IndoorTrigger({super.key});
+  const GoogleSignInButton({super.key, required this.onPressed});
 
-  @override
-  State<StatefulWidget> createState() => _IndoorTriggerState();
-}
-
-class _IndoorTriggerState extends State<IndoorTrigger> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: _buildIndoorButtonDecoration(context),
-      padding: const EdgeInsets.all(kIndoorButtonPadding),
-      child: const Icon(
-        Icons.location_on,
-        size: kIndoorButtonIconSize,
-        color: Colors.white,
+    return Semantics(
+      button: true,
+      label: 'Sign in with Google',
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: kGoogleButtonBackground,
+          foregroundColor: kGoogleButtonForeground,
+          minimumSize: const Size(double.infinity, kGoogleButtonHeight),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(kGoogleButtonBorderRadius),
+            side: BorderSide(color: kGoogleButtonBorderColor),
+          ),
+          elevation: 1,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: kGoogleButtonPadding),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.asset(
+                'assets/images/Google_G_logo.png',
+                height: kGoogleIconSize,
+                width: kGoogleIconSize,
+              ),
+              const SizedBox(width: 16),
+              const Text(
+                'Sign in with Google',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
-    );
-  }
-
-  BoxDecoration _buildIndoorButtonDecoration(BuildContext context) {
-    return BoxDecoration(
-      color: Theme.of(context).primaryColor,
-      borderRadius: BorderRadius.circular(kIndoorButtonBorderRadius),
-      boxShadow: [kIndoorButtonShadow],
     );
   }
 }
