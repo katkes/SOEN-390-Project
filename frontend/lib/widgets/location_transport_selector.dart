@@ -48,8 +48,10 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   String destinationLocation =
       ''; // variable to store destination location address
 
-  static const int _destinationIndex = 1;
-  static const int _minItineraryLength = 2;
+static const int _startLocationIndex = 0;
+static const int _destinationIndex = 1;
+static const int _minimumWaypoints = 2;
+
 
   @override
   void initState() {
@@ -114,7 +116,7 @@ Widget _buildLocationInput() {
           onDelete: () {
             setState(() {
               startLocation = '';
-              _removeStop(0);
+              _removeStop(_startLocationIndex);
             });
           },
           showDelete: startLocation != defaultYourLocationString,
@@ -127,7 +129,7 @@ Widget _buildLocationInput() {
           onDelete: () {
             setState(() {
               destinationLocation = '';
-              _removeStop(1);
+              _removeStop(_destinationIndex);
             });
           },
           showDelete: destinationLocation.isNotEmpty,
@@ -140,7 +142,7 @@ Widget _buildLocationInput() {
 
 
   void _confirmRoute() {
-    if (itinerary.length < _minItineraryLength) {
+    if (itinerary.length < _minimumWaypoints) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
             content: Text("You must have at least a start and destination.")),
@@ -187,20 +189,17 @@ Widget _buildLocationInput() {
     if (itinerary.isEmpty) {
       itinerary.add(selectedLocation);
     } else {
-      itinerary.insert(0, selectedLocation);
-      itinerary.removeAt(1);
+      itinerary.insert(_startLocationIndex, selectedLocation);
+      itinerary.removeAt(_destinationIndex);
     }
   }
 
   void _setDestinationLocation(String selectedLocation) {
-    if (itinerary.length < _minItineraryLength) {
+    if (itinerary.length < _minimumWaypoints) {
       destinationLocation = selectedLocation;
       itinerary.add(selectedLocation);
     }
   }
-
-  static const int _startLocationIndex = 0;
-  static const int _minimumWaypoints = 2;
 
   void _removeStop(int index) {
     setState(() {
@@ -224,15 +223,15 @@ Widget _buildLocationInput() {
     if (itinerary.isEmpty) {
       itinerary.add(selectedLocation);
     } else {
-      itinerary.insert(0, selectedLocation);
+      itinerary.insert(_startLocationIndex, selectedLocation);
     }
   }
 
   void setDestinationLocation(String selectedLocation) {
     destinationLocation = selectedLocation;
-    if (itinerary.length < _minItineraryLength) {
+    if (itinerary.length < _minimumWaypoints) {
       itinerary.add(selectedLocation);
-    } else if (itinerary.length == _minItineraryLength) {
+    } else if (itinerary.length == _minimumWaypoints) {
       itinerary[1] = selectedLocation;
     }
   }
@@ -268,7 +267,7 @@ Widget _buildLocationInput() {
                   onSetDestination: (name, lat, lng) {
                     setState(() {
                       destinationLocation = name;
-                      if (itinerary.length < _minItineraryLength) {
+                      if (itinerary.length < _minimumWaypoints) {
                         itinerary.add(name);
                       } else {
                         itinerary[_destinationIndex] = name;
@@ -333,7 +332,7 @@ Widget _buildLocationInput() {
           widget.onTransportModeChange!(label);
         }
         // Otherwise use the confirm route handler if we have waypoints
-        else if (itinerary.length >= _minItineraryLength) {
+        else if (itinerary.length >= _minimumWaypoints) {
           widget.onConfirmRoute(List.from(itinerary), selectedMode);
         }
       },
