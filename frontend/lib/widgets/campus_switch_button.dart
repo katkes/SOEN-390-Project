@@ -4,6 +4,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:soen_390/utils/location_service.dart' as location_service;
 import 'package:soen_390/utils/campus_locator.dart';
 
+/// Symbolic constants for campus keys
 const String kCampusSGW = 'SGW';
 const String kCampusLoyola = 'Loyola';
 
@@ -29,7 +30,9 @@ class CampusSwitch extends StatefulWidget {
 }
 
 class CampusSwitchState extends State<CampusSwitch> {
-  late String selectedBuilding;
+  late String selectedCampus;
+
+  // Private internal maps
   final Map<String, LatLng> _campusLocations = {
     kCampusSGW: const LatLng(45.497856, -73.579588),
     kCampusLoyola: const LatLng(45.4581, -73.6391),
@@ -44,10 +47,13 @@ class CampusSwitchState extends State<CampusSwitch> {
             fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),
   };
 
+  Map<String, LatLng> get campusLocations => Map.unmodifiable(_campusLocations);
+  Map<String, Widget> get campusOptions => Map.unmodifiable(_campusOptions);
+
   @override
   void initState() {
     super.initState();
-    selectedBuilding = widget.selectedCampus;
+    selectedCampus = widget.selectedCampus;
     _initClosestCampus();
   }
 
@@ -56,21 +62,22 @@ class CampusSwitchState extends State<CampusSwitch> {
     super.didUpdateWidget(oldWidget);
     if (widget.selectedCampus != oldWidget.selectedCampus) {
       setState(() {
-        selectedBuilding = widget.selectedCampus;
+        selectedCampus = widget.selectedCampus;
       });
     }
   }
 
-  // Initializes the closest campus based on the user's current location.
+  /// Initializes closest campus based on user's location.
   Future<void> _initClosestCampus() async {
     final locator = widget.campusLocator ??
         CampusLocator(
-            locationService: location_service.LocationService.instance);
+          locationService: location_service.LocationService.instance,
+        );
 
     final newCampus = await locator.findClosestCampus();
 
     if (mounted) {
-      setState(() => selectedBuilding = newCampus);
+      setState(() => selectedCampus = newCampus);
       widget.onSelectionChanged(newCampus);
       widget.onLocationChanged(locator.getCoordinates(newCampus));
     }
@@ -88,14 +95,14 @@ class CampusSwitchState extends State<CampusSwitch> {
         ),
         child: CupertinoSegmentedControl<String>(
           padding: EdgeInsets.zero,
-          groupValue: selectedBuilding,
-          children: _campusOptions,
+          groupValue: selectedCampus,
+          children: campusOptions,
           onValueChanged: (String newValue) {
             setState(() {
-              selectedBuilding = newValue;
+              selectedCampus = newValue;
             });
             widget.onSelectionChanged(newValue);
-            widget.onLocationChanged(_campusLocations[newValue]!);
+            widget.onLocationChanged(campusLocations[newValue]!);
           },
           borderColor: Colors.transparent,
           selectedColor: Colors.white,
