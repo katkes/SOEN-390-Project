@@ -1,57 +1,49 @@
-/// This file defines a custom Google Sign-In button widget for Flutter applications.
-/// It uses the `flutter_svg` package to display the Google "G" logo and provides
-/// a clean, visually appealing button with accessibility features.
-///
-/// The button is designed to be easily integrated into authentication flows,
-/// triggering a provided `onPressed` callback when tapped.
-library;
-
 import 'package:flutter/material.dart';
 
-class GoogleSignInButton extends StatelessWidget {
-  final VoidCallback onPressed;
+/// Styling Constants for IndoorTrigger
+const double kIndoorButtonIconSize = 30;
+const double kIndoorButtonPadding = 10.0;
+const double kIndoorButtonBorderRadius = 20.0;
 
-  const GoogleSignInButton({super.key, required this.onPressed});
+const int kShadowAlpha = 76; // Equivalent to 0.3 opacity (0.3 * 255)
+const double kShadowSpread = 2;
+const double kShadowBlur = 5;
+const Offset kShadowOffset = Offset(0, 4);
+
+/// Extracted shadow for reuse and clarity
+final BoxShadow kIndoorButtonShadow = BoxShadow(
+  color: Colors.black.withAlpha(kShadowAlpha),
+  spreadRadius: kShadowSpread,
+  blurRadius: kShadowBlur,
+  offset: kShadowOffset,
+);
+
+class IndoorTrigger extends StatefulWidget {
+  const IndoorTrigger({super.key});
 
   @override
+  State<StatefulWidget> createState() => _IndoorTriggerState();
+}
+
+class _IndoorTriggerState extends State<IndoorTrigger> {
+  @override
   Widget build(BuildContext context) {
-    return Semantics(
-      button: true,
-      label: 'Sign in with Google',
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black87,
-          minimumSize: const Size(double.infinity, 50),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-            side: BorderSide(color: Colors.grey.shade300),
-          ),
-          elevation: 1,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Image.asset(
-                'assets/images/Google_G_logo.png',
-                height: 36,
-                width: 36,
-              ),
-              const SizedBox(width: 16),
-              const Text(
-                'Sign in with Google',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-        ),
+    return Container(
+      decoration: _buildIndoorButtonDecoration(context),
+      padding: const EdgeInsets.all(kIndoorButtonPadding),
+      child: const Icon(
+        Icons.location_on,
+        size: kIndoorButtonIconSize,
+        color: Colors.white,
       ),
+    );
+  }
+
+  BoxDecoration _buildIndoorButtonDecoration(BuildContext context) {
+    return BoxDecoration(
+      color: Theme.of(context).primaryColor,
+      borderRadius: BorderRadius.circular(kIndoorButtonBorderRadius),
+      boxShadow: [kIndoorButtonShadow],
     );
   }
 }
