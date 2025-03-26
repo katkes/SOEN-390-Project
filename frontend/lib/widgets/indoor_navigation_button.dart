@@ -10,6 +10,14 @@ const double kShadowSpread = 2;
 const double kShadowBlur = 5;
 const Offset kShadowOffset = Offset(0, 4);
 
+/// Shared shadow style for the button
+final BoxShadow kIndoorButtonShadow = BoxShadow(
+  color: Colors.black.withAlpha(kShadowAlpha),
+  spreadRadius: kShadowSpread,
+  blurRadius: kShadowBlur,
+  offset: kShadowOffset,
+);
+
 class IndoorNavigationButton extends StatefulWidget {
   const IndoorNavigationButton({super.key});
 
@@ -35,14 +43,7 @@ class _IndoorNavigationButtonState extends State<IndoorNavigationButton> {
     return BoxDecoration(
       color: Theme.of(context).primaryColor,
       borderRadius: BorderRadius.circular(kIndoorButtonBorderRadius),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withAlpha(kShadowAlpha),
-          spreadRadius: kShadowSpread,
-          blurRadius: kShadowBlur,
-          offset: kShadowOffset,
-        ),
-      ],
+      boxShadow: [kIndoorButtonShadow],
     );
   }
 }
