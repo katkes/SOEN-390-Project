@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:soen_390/utils/location_service.dart' as location_service;
+import 'package:soen_390/utils/campus_locator.dart';
 
 class CampusSwitch extends StatefulWidget {
   final Function(String) onSelectionChanged;
@@ -57,30 +58,18 @@ class CampusSwitchState extends State<CampusSwitch> {
 
   // Initializes the closest campus based on the user's current location.
   Future<void> _initClosestCampus() async {
-    // Get the singleton instance.
-    final locationService = location_service.LocationService.instance;
+    final locator = CampusLocator(
+        locationService: location_service.LocationService.instance);
 
-    try {
-      // Retrieve the current location and determine the closest campus.
-      final newBuilding = (location_service.LocationService.getClosestCampus(
-                  await locationService.getCurrentLocation()) ==
-              "LOY")
-          ? "Loyola"
-          : "SGW";
+    final newCampus = await locator.findClosestCampus();
 
-      if (mounted) {
-        setState(() => selectedBuilding = newBuilding);
-        widget.onSelectionChanged(selectedBuilding);
-        widget.onLocationChanged(_campusLocations[selectedBuilding]!);
-      }
-    } catch (e) {
-      // For error handling (ex. location services disabled).
-      print('Error initializing closest campus: $e');
-
-      // Determine if location services are enabled.
-      if (!await locationService.determinePermissions()) {}
+    if (mounted) {
+      setState(() => selectedBuilding = newCampus);
+      widget.onSelectionChanged(newCampus);
+      widget.onLocationChanged(locator.getCoordinates(newCampus));
     }
-  }
+}
+
 
   @override
   Widget build(BuildContext context) {
