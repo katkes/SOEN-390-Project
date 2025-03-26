@@ -62,7 +62,7 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
         as LocationTransportSelectorState;
 
     expect(state.destinationLocation, equals('Test Destination'));
-    expect(state.itinerary.contains('Test Destination'), isTrue);
+    expect(state.itineraryManager.getWaypoints(), contains('Test Destination'));
   });
 
   testWidgets('Confirm Route button shows SnackBar if itinerary < 2',
@@ -70,7 +70,7 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
     await tester.pumpWidget(createWidgetUnderTest());
 
     await tester.tap(find.text('Confirm Route'));
-    await tester.pump(); // pump for SnackBar to show
+    await tester.pump();
 
     expect(find.text('You must have at least a start and destination.'),
         findsOneWidget);
@@ -101,8 +101,10 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
     state.setStartLocation('Start Location');
     state.setDestinationLocation('Destination Location');
 
-    expect(state.itinerary[0], equals('Start Location'));
-    expect(state.itinerary[1], equals('Destination Location'));
+    final waypoints = state.itineraryManager.getWaypoints();
+
+    expect(waypoints[0], equals('Start Location'));
+    expect(waypoints[1], equals('Destination Location'));
   });
 
   testWidgets('Remove stop updates itinerary and calls onLocationChanged',
@@ -118,10 +120,10 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
         as LocationTransportSelectorState;
     state.setStartLocation('Start');
     state.setDestinationLocation('Destination');
-    expect(state.itinerary.length, equals(2));
+    expect(state.itineraryManager.getWaypoints().length, equals(2));
 
     state.removeStopForTest(0);
-    expect(state.itinerary.length, equals(1));
+    expect(state.itineraryManager.getWaypoints().length, equals(1));
     expect(locationChangedCalled, isTrue);
   });
 
@@ -144,7 +146,6 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
       (WidgetTester tester) async {
     await tester.pumpWidget(createWidgetUnderTest());
 
-    // Tap the start location field with the default 'Your Location'
     await tester.tap(find.text('Your Location'));
     await tester.pumpAndSettle();
 
@@ -155,11 +156,9 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
       (WidgetTester tester) async {
     await tester.pumpWidget(createWidgetUnderTest());
 
-    // Tap the start location field to open suggestions
     await tester.tap(find.text('Your Location'));
     await tester.pumpAndSettle();
 
-    // Select 'Restaurant' from suggestions
     await tester.tap(find.text('Restaurant').first);
     await tester.pumpAndSettle();
 
@@ -167,10 +166,10 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
         as LocationTransportSelectorState;
 
     expect(state.startLocation, equals('Restaurant'));
-    expect(state.itinerary.first, equals('Restaurant'));
+    expect(state.itineraryManager.getWaypoints().first, equals('Restaurant'));
   });
 
-  testWidgets(
+testWidgets(
       '_setStartLocation inserts at position 0 when itinerary not empty',
       (WidgetTester tester) async {
     await tester.pumpWidget(createWidgetUnderTest());
@@ -178,16 +177,18 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
     final state = tester.state(find.byType(LocationTransportSelector))
         as LocationTransportSelectorState;
 
-    // Clear the default-initialized itinerary
-    state.itinerary.clear();
+    final manager = state.itineraryManager;
 
-    // Now proceed
-    state.setDestinationLocation('Destination');
-    expect(state.itinerary, ['Destination']);
+    // Reinitialize by setting only destination — this will append to default 'Your Location'
+    manager.setDestination('Destination');
+    // This results in: ['Your Location', 'Destination']
 
+    // Now replace start with custom value
     state.setStartLocation('Start');
-    expect(state.itinerary, ['Start', 'Destination']);
+
+    expect(manager.getWaypoints(), ['Start', 'Destination']);
   });
+
 
   testWidgets(
       'Transport mode fallback triggers onConfirmRoute when onTransportModeChange is null',
@@ -213,6 +214,7 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
     expect(confirmedRoute, containsAll(['Start', 'Destination']));
     expect(confirmedMode, equals('Bike'));
   });
+
   testWidgets(
       '_setDestinationLocation replaces second itinerary entry when length == 2',
       (WidgetTester tester) async {
@@ -220,12 +222,13 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
 
     final state = tester.state(find.byType(LocationTransportSelector))
         as LocationTransportSelectorState;
+    final manager = state.itineraryManager;
 
     state.setStartLocation('Start');
     state.setDestinationLocation('Old Destination');
     state.setDestinationLocation('New Destination');
 
-    expect(state.itinerary[1], equals('New Destination'));
+    expect(manager.getWaypoints()[1], equals('New Destination'));
   });
 
   testWidgets('"Search POIS" button navigates and updates destinationLocation',
@@ -248,27 +251,24 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
       ),
     ));
 
-    // Tap the "Search POIS" button
     await tester.tap(find.text("What's Nearby?"));
-    await tester.pumpAndSettle(); // Wait for navigation
+    await tester.pumpAndSettle();
 
     expect(find.byType(PlaceSearchScreen), findsOneWidget);
 
-    // Call onSetDestination as user would
     final screenWidget =
         tester.widget<PlaceSearchScreen>(find.byType(PlaceSearchScreen));
     screenWidget.onSetDestination?.call('Selected Destination', 0.0, 0.0);
 
-    // Pop the screen to trigger state update in LocationTransportSelector
     Navigator.pop(tester.element(find.byType(PlaceSearchScreen)));
     await tester.pumpAndSettle();
 
-    // Now test state
     final state = tester.state(find.byType(LocationTransportSelector))
         as LocationTransportSelectorState;
 
     expect(state.destinationLocation, equals('Selected Destination'));
-    expect(state.itinerary.contains('Selected Destination'), isTrue);
+    expect(state.itineraryManager.getWaypoints(),
+        contains('Selected Destination'));
     expect(locationChangedCalled, isTrue);
   });
 }

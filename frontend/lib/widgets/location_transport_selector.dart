@@ -10,6 +10,7 @@ import 'package:soen_390/services/poi_factory.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'package:soen_390/widgets/suggestions.dart';
 import 'package:soen_390/widgets/location_field.dart';
+import 'package:soen_390/utils/itinerary_manager.dart';
 
 class LocationTransportSelector extends StatefulWidget {
   final Function(List<String>, String) onConfirmRoute;
@@ -38,7 +39,7 @@ class LocationTransportSelector extends StatefulWidget {
 }
 
 class LocationTransportSelectorState extends State<LocationTransportSelector> {
-  List<String> itinerary = [];
+  late ItineraryManager itineraryManager;
   String selectedMode = "Train or Bus";
   String selectedTimeOption = "Leave Now"; // Default time selection
   String selectedLocation = ''; //variable to store selected location address
@@ -48,28 +49,21 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   String destinationLocation =
       ''; // variable to store destination location address
 
-static const int _startLocationIndex = 0;
-static const int _destinationIndex = 1;
-static const int _minimumWaypoints = 2;
-
+  static const int _startLocationIndex = 0;
+  static const int _destinationIndex = 1;
 
   @override
   void initState() {
     super.initState();
+    itineraryManager = ItineraryManager(itinerary: []);
+
     if (widget.initialDestination != null) {
       destinationLocation = widget.initialDestination!;
+      itineraryManager.setDestination(destinationLocation);
+    }
 
-      if (itinerary.length > 1) {
-        itinerary[1] = widget.initialDestination!;
-      } else if (itinerary.length == 1) {
-        itinerary.add(widget.initialDestination!);
-      } else {
-        itinerary.add(widget.initialDestination!);
-      }
-    }
-    if (itinerary.isEmpty) {
-      itinerary.add(defaultYourLocationString);
-    }
+    startLocation = itineraryManager.getStart();
+
   }
 
   @override
@@ -106,7 +100,7 @@ static const int _minimumWaypoints = 2;
     );
   }
 
-Widget _buildLocationInput() {
+  Widget _buildLocationInput() {
     return Column(
       children: [
         LocationField(
@@ -140,9 +134,8 @@ Widget _buildLocationInput() {
     );
   }
 
-
   void _confirmRoute() {
-    if (itinerary.length < _minimumWaypoints) {
+    if (!itineraryManager.isValid()) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
             content: Text("You must have at least a start and destination.")),
@@ -150,9 +143,7 @@ Widget _buildLocationInput() {
       return;
     }
 
-    List<String> selectedWaypoints = List.from(itinerary);
-
-    widget.onConfirmRoute(selectedWaypoints, selectedMode);
+    widget.onConfirmRoute(itineraryManager.getWaypoints(), selectedMode);
   }
 
   void _showLocationSuggestions(bool isStart) {
@@ -185,29 +176,21 @@ Widget _buildLocationInput() {
 
   void _setStartLocation(String selectedLocation) {
     startLocation = selectedLocation;
-
-    if (itinerary.isEmpty) {
-      itinerary.add(selectedLocation);
-    } else {
-      itinerary.insert(_startLocationIndex, selectedLocation);
-      itinerary.removeAt(_destinationIndex);
-    }
+    itineraryManager.setStart(selectedLocation);
   }
 
   void _setDestinationLocation(String selectedLocation) {
-    if (itinerary.length < _minimumWaypoints) {
-      destinationLocation = selectedLocation;
-      itinerary.add(selectedLocation);
-    }
+    destinationLocation = selectedLocation;
+    itineraryManager.setDestination(selectedLocation);
   }
 
   void _removeStop(int index) {
     setState(() {
-      itinerary.removeAt(index);
+      itineraryManager.removeAt(index);
       widget.onLocationChanged?.call();
     });
 
-    if (index == _startLocationIndex || itinerary.length < _minimumWaypoints) {
+    if (index == ItineraryManager.startIndex || !itineraryManager.isValid()) {
       widget.onTransportModeChange?.call("clear_cache");
     }
   }
@@ -219,21 +202,12 @@ Widget _buildLocationInput() {
 
   void setStartLocation(String selectedLocation) {
     startLocation = selectedLocation;
-
-    if (itinerary.isEmpty) {
-      itinerary.add(selectedLocation);
-    } else {
-      itinerary.insert(_startLocationIndex, selectedLocation);
-    }
+    itineraryManager.setStart(selectedLocation);
   }
 
   void setDestinationLocation(String selectedLocation) {
     destinationLocation = selectedLocation;
-    if (itinerary.length < _minimumWaypoints) {
-      itinerary.add(selectedLocation);
-    } else if (itinerary.length == _minimumWaypoints) {
-      itinerary[1] = selectedLocation;
-    }
+    itineraryManager.setDestination(selectedLocation);
   }
 
   Widget _buildTransportModeSelection() {
@@ -247,6 +221,7 @@ Widget _buildLocationInput() {
       ],
     );
   }
+
   Widget _buildNearbyAndTimeSelector() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -267,11 +242,7 @@ Widget _buildLocationInput() {
                   onSetDestination: (name, lat, lng) {
                     setState(() {
                       destinationLocation = name;
-                      if (itinerary.length < _minimumWaypoints) {
-                        itinerary.add(name);
-                      } else {
-                        itinerary[_destinationIndex] = name;
-                      }
+                      itineraryManager.setDestination(name);
                     });
                     widget.onLocationChanged?.call();
                   },
@@ -319,7 +290,6 @@ Widget _buildLocationInput() {
     );
   }
 
-
   Widget _buildTransportMode(String label, IconData icon,
       {bool isSelected = false}) {
     return GestureDetector(
@@ -332,8 +302,8 @@ Widget _buildLocationInput() {
           widget.onTransportModeChange!(label);
         }
         // Otherwise use the confirm route handler if we have waypoints
-        else if (itinerary.length >= _minimumWaypoints) {
-          widget.onConfirmRoute(List.from(itinerary), selectedMode);
+        else if (itineraryManager.isValid()) {
+          widget.onConfirmRoute(itineraryManager.getWaypoints(), selectedMode);
         }
       },
       child: Column(
