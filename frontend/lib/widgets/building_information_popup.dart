@@ -64,6 +64,23 @@ class BuildingInformationPopup extends StatelessWidget {
     }
   }
 
+  Widget _buildBuildingInfo(String name, String address) {
+    return Column(
+      children: [
+        Text(
+          name,
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 5),
+        Text(
+          address,
+          style: const TextStyle(fontSize: 12, color: Colors.black54),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+
   void openWaypointSelection(BuildContext context) async {
     final container = ProviderScope.containerOf(context);
     final routeService = container.read(routeServiceProvider);
@@ -107,17 +124,7 @@ class BuildingInformationPopup extends StatelessWidget {
             children: [
               _buildImage(),
               const SizedBox(height: 10),
-              Text(
-                abbreviatedName,
-                style:
-                    const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 5),
-              Text(
-                buildingAddress,
-                style: const TextStyle(fontSize: 12, color: Colors.black54),
-                textAlign: TextAlign.center,
-              ),
+              _buildBuildingInfo(abbreviatedName, buildingAddress),
             ],
           ),
           Positioned(
