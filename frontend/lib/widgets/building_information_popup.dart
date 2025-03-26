@@ -26,6 +26,44 @@ class BuildingInformationPopup extends StatelessWidget {
     }
   }
 
+  Widget _buildImage() {
+    const double imageWidth = 200;
+    const double imageHeight = 100;
+    const String fallbackAsset = "assets/images/buildings/hall.png";
+
+    if (photoUrl != null) {
+      return Image.network(
+        photoUrl!,
+        fit: BoxFit.cover,
+        width: imageWidth,
+        height: imageHeight,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return const SizedBox(
+            width: imageWidth,
+            height: imageHeight,
+            child: Center(child: CircularProgressIndicator()),
+          );
+        },
+        errorBuilder: (context, error, stackTrace) {
+          return Image.asset(
+            fallbackAsset,
+            fit: BoxFit.cover,
+            width: imageWidth,
+            height: imageHeight,
+          );
+        },
+      );
+    } else {
+      return Image.asset(
+        fallbackAsset,
+        fit: BoxFit.cover,
+        width: imageWidth,
+        height: imageHeight,
+      );
+    }
+  }
+
   void openWaypointSelection(BuildContext context) async {
     final container = ProviderScope.containerOf(context);
     final routeService = container.read(routeServiceProvider);
@@ -67,35 +105,7 @@ class BuildingInformationPopup extends StatelessWidget {
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              photoUrl != null
-                  ? Image.network(
-                      photoUrl!,
-                      fit: BoxFit.cover,
-                      width: 200,
-                      height: 100,
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null) return child;
-                        return const SizedBox(
-                          width: 200,
-                          height: 100,
-                          child: Center(child: CircularProgressIndicator()),
-                        );
-                      },
-                      errorBuilder: (context, error, stackTrace) {
-                        return Image.asset(
-                          "assets/images/buildings/hall.png",
-                          fit: BoxFit.cover,
-                          width: 200,
-                          height: 100,
-                        );
-                      },
-                    )
-                  : Image.asset(
-                      "assets/images/buildings/hall.png",
-                      fit: BoxFit.cover,
-                      width: 200,
-                      height: 100,
-                    ),
+              _buildImage(),
               const SizedBox(height: 10),
               Text(
                 abbreviatedName,
