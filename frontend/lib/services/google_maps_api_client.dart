@@ -2,7 +2,6 @@ import 'package:soen_390/services/interfaces/maps_api_client.dart';
 import 'package:soen_390/services/interfaces/base_google_service.dart';
 import 'package:soen_390/utils/place_details_mapper.dart';
 
-
 /// A client for interacting with the Google Maps and Places APIs.
 ///
 /// This class extends [BaseGoogleService] and implements the [MapsApiClient] interface,
@@ -68,7 +67,7 @@ class GoogleMapsApiClient extends BaseGoogleService implements MapsApiClient {
   /// - [latitude]: Latitude of the location.
   /// - [longitude]: Longitude of the location.
   /// - [locationName]: The custom display name to assign in the returned map.
-@override
+  @override
   Future<Map<String, dynamic>> fetchBuildingInformation(
     double latitude,
     double longitude,
@@ -103,7 +102,6 @@ class GoogleMapsApiClient extends BaseGoogleService implements MapsApiClient {
       apiKey,
     );
   }
-
 
   /// Fetches detailed information about a place using its [placeId].
   ///

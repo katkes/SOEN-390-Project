@@ -1,5 +1,3 @@
-import 'package:latlong2/latlong.dart';
-
 /// A utility class for mapping Google Places API JSON responses into
 /// a simplified, application-specific format.
 ///

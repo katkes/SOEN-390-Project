@@ -169,7 +169,7 @@ void main() {
     ///
     /// **Expected Outcome:**
     /// - The function should throw an `Exception`.
-test('should throw if API key is missing during construction', () {
+    test('should throw if API key is missing during construction', () {
       expect(
         () => GoogleMapsApiClient(apiKey: '', httpClient: mockHttpClient),
         throwsA(isA<Exception>().having(
@@ -179,7 +179,6 @@ test('should throw if API key is missing during construction', () {
         )),
       );
     });
-
   });
 
   /// **Tests for fetchPlaceDetailsById**

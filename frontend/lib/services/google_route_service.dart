@@ -109,6 +109,7 @@ class GoogleRouteService extends BaseGoogleService implements IRouteService {
 
     return (fromLOY && toSGW) || (fromSGW && toLOY);
   }
+
   /// Fetches routes from Google Maps API.
   ///
   /// - [from]: The starting location as `LatLng`.
