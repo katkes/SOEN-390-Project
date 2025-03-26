@@ -24,32 +24,12 @@ class GoogleSignInButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: _googleButtonStyle(),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: kGoogleButtonPadding),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Image.asset(
-                'assets/images/Google_G_logo.png',
-                height: kGoogleIconSize,
-                width: kGoogleIconSize,
-              ),
-              const SizedBox(width: 16),
-              const Text(
-                'Sign in with Google',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-        ),
+        child: _buildGoogleButtonContent(),
       ),
     );
   }
 
-  /// Extracted helper to style the button consistently.
+  /// Helper method to style the button consistently.
   ButtonStyle _googleButtonStyle() {
     return ElevatedButton.styleFrom(
       backgroundColor: kGoogleButtonBackground,
@@ -60,6 +40,31 @@ class GoogleSignInButton extends StatelessWidget {
         side: BorderSide(color: kGoogleButtonBorderColor),
       ),
       elevation: 1,
+    );
+  }
+
+  /// Extracted helper method for the logo + label layout.
+  Widget _buildGoogleButtonContent() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: kGoogleButtonPadding),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Image.asset(
+            'assets/images/Google_G_logo.png',
+            height: kGoogleIconSize,
+            width: kGoogleIconSize,
+          ),
+          const SizedBox(width: 16),
+          const Text(
+            'Sign in with Google',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
