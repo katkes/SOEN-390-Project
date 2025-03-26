@@ -169,7 +169,7 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
     expect(state.itineraryManager.getWaypoints().first, equals('Restaurant'));
   });
 
-testWidgets(
+  testWidgets(
       '_setStartLocation inserts at position 0 when itinerary not empty',
       (WidgetTester tester) async {
     await tester.pumpWidget(createWidgetUnderTest());
@@ -188,7 +188,6 @@ testWidgets(
 
     expect(manager.getWaypoints(), ['Start', 'Destination']);
   });
-
 
   testWidgets(
       'Transport mode fallback triggers onConfirmRoute when onTransportModeChange is null',

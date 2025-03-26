@@ -39,6 +39,12 @@ class LocationTransportSelector extends StatefulWidget {
 }
 
 class LocationTransportSelectorState extends State<LocationTransportSelector> {
+  final List<Map<String, dynamic>> _transportOptions = [
+    {"label": "Car", "icon": Icons.directions_car},
+    {"label": "Bike", "icon": Icons.directions_bike},
+    {"label": "Train or Bus", "icon": Icons.train},
+    {"label": "Walk", "icon": Icons.directions_walk},
+  ];
   late ItineraryManager itineraryManager;
   String selectedMode = "Train or Bus";
   String selectedTimeOption = "Leave Now"; // Default time selection
@@ -63,7 +69,6 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
     }
 
     startLocation = itineraryManager.getStart();
-
   }
 
   @override
@@ -213,12 +218,13 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   Widget _buildTransportModeSelection() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        _buildTransportMode("Car", Icons.directions_car),
-        _buildTransportMode("Bike", Icons.directions_bike),
-        _buildTransportMode("Train or Bus", Icons.train, isSelected: true),
-        _buildTransportMode("Walk", Icons.directions_walk),
-      ],
+      children: _transportOptions.map((option) {
+        return _buildTransportMode(
+          option["label"],
+          option["icon"],
+          isSelected: selectedMode == option["label"],
+        );
+      }).toList(),
     );
   }
 
@@ -300,28 +306,25 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
 
         if (widget.onTransportModeChange != null) {
           widget.onTransportModeChange!(label);
-        }
-        // Otherwise use the confirm route handler if we have waypoints
-        else if (itineraryManager.isValid()) {
+        } else if (itineraryManager.isValid()) {
           widget.onConfirmRoute(itineraryManager.getWaypoints(), selectedMode);
         }
       },
       child: Column(
         children: [
-          Icon(icon,
-              size: 28,
-              color: selectedMode == label
-                  ? const Color(0xFF912338)
-                  : Colors.black54),
+          Icon(
+            icon,
+            size: 28,
+            color: isSelected ? const Color(0xFF912338) : Colors.black54,
+          ),
           const SizedBox(height: 5),
           Text(
             label,
             style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                color: selectedMode == label
-                    ? const Color(0xFF912338)
-                    : Colors.black54),
+              fontSize: 14,
+              fontWeight: FontWeight.w400,
+              color: isSelected ? const Color(0xFF912338) : Colors.black54,
+            ),
           ),
         ],
       ),
