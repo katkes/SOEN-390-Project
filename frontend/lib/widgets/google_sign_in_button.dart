@@ -23,16 +23,7 @@ class GoogleSignInButton extends StatelessWidget {
       label: 'Sign in with Google',
       child: ElevatedButton(
         onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: kGoogleButtonBackground,
-          foregroundColor: kGoogleButtonForeground,
-          minimumSize: const Size(double.infinity, kGoogleButtonHeight),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(kGoogleButtonBorderRadius),
-            side: BorderSide(color: kGoogleButtonBorderColor),
-          ),
-          elevation: 1,
-        ),
+        style: _googleButtonStyle(),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: kGoogleButtonPadding),
           child: Row(
@@ -55,6 +46,20 @@ class GoogleSignInButton extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  /// Extracted helper to style the button consistently.
+  ButtonStyle _googleButtonStyle() {
+    return ElevatedButton.styleFrom(
+      backgroundColor: kGoogleButtonBackground,
+      foregroundColor: kGoogleButtonForeground,
+      minimumSize: const Size(double.infinity, kGoogleButtonHeight),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(kGoogleButtonBorderRadius),
+        side: BorderSide(color: kGoogleButtonBorderColor),
+      ),
+      elevation: 1,
     );
   }
 }
