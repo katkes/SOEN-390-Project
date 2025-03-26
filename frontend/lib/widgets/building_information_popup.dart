@@ -18,7 +18,6 @@ class BuildingInformationPopup extends StatelessWidget {
     this.navigationHandler,
   });
 
-  
   String abbreviateBuildingName(String name) {
     if (name.length > 27) {
       return "${name.split(" ")[0]} Bldg";

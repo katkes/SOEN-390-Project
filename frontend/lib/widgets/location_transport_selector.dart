@@ -9,6 +9,7 @@ import 'package:soen_390/services/google_poi_service.dart';
 import 'package:soen_390/services/poi_factory.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'package:soen_390/widgets/suggestions.dart';
+import 'package:soen_390/widgets/location_field.dart';
 
 class LocationTransportSelector extends StatefulWidget {
   final Function(List<String>, String) onConfirmRoute;
@@ -106,13 +107,33 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   Widget _buildLocationInput() {
     return Column(
       children: [
-        _buildLocationField(
-            startLocation == defaultYourLocationString
-                ? defaultYourLocationString
-                : 'Start Location',
-            true),
+        LocationField(
+          text: startLocation,
+          placeholder: defaultYourLocationString,
+          onTap: () => _showLocationSuggestions(true),
+          onDelete: () {
+            setState(() {
+              startLocation = '';
+              _removeStop(0);
+            });
+          },
+          showDelete: startLocation != defaultYourLocationString,
+        ),
+
         const SizedBox(height: 10),
-        _buildLocationField("Destination", false),
+        LocationField(
+          text: destinationLocation,
+          placeholder: "Destination",
+          onTap: () => _showLocationSuggestions(false),
+          onDelete: () {
+            setState(() {
+              destinationLocation = '';
+              _removeStop(1);
+            });
+          },
+          showDelete: destinationLocation.isNotEmpty,
+        ),
+
         const SizedBox(height: 10),
 
         // Add Stop & "Leave Now" Dropdown in Row
@@ -201,55 +222,6 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
     List<String> selectedWaypoints = List.from(itinerary);
 
     widget.onConfirmRoute(selectedWaypoints, selectedMode);
-  }
-
-  Widget _buildLocationField(String placeholder, bool isStart) {
-    String locationText = isStart ? startLocation : destinationLocation;
-    locationText = locationText.isEmpty
-        ? placeholder
-        : locationText
-            .replaceAll(RegExp(r'[^\w\s]'), '') // Remove punctuation
-            .split(' ') // Split by spaces
-            .take(2) // Get only the first two words
-            .join(' '); // Join them back to a string
-
-    return GestureDetector(
-      onTap: () {
-        _showLocationSuggestions(isStart);
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-        decoration: BoxDecoration(
-          color: Colors.grey[100],
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Colors.black26),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(locationText,
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
-            if (locationText != placeholder)
-              IconButton(
-                icon: const Icon(Icons.delete, size: 20, color: Colors.red),
-                onPressed: () {
-                  setState(() {
-                    if (isStart) {
-                      startLocation = '';
-                      _removeStop(0);
-                    } else {
-                      destinationLocation = '';
-                      _removeStop(1);
-                    }
-                  });
-                },
-              ),
-            const Icon(Icons.arrow_drop_down, color: Colors.black54),
-          ],
-        ),
-      ),
-    );
   }
 
   void _showLocationSuggestions(bool isStart) {
