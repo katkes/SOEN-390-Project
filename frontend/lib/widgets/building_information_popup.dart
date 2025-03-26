@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:soen_390/providers/service_providers.dart';
-import 'package:soen_390/screens/waypoint/waypoint_selection_screens.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart'; // <-- new import
 import 'package:soen_390/services/interfaces/route_service_interface.dart';
+import 'package:soen_390/utils/waypoint_navigation_handler.dart';
 
 class BuildingInformationPopup extends StatelessWidget {
   final String buildingName;
@@ -10,6 +9,7 @@ class BuildingInformationPopup extends StatelessWidget {
   final String? photoUrl;
 
   final Function(RouteResult)? onRouteSelected;
+
   const BuildingInformationPopup({
     super.key,
     required this.buildingName,
@@ -81,32 +81,13 @@ class BuildingInformationPopup extends StatelessWidget {
     );
   }
 
-  void openWaypointSelection(BuildContext context) async {
-    final container = ProviderScope.containerOf(context);
-    final routeService = container.read(routeServiceProvider);
-    final locationService = container.read(locationServiceProvider);
-    final buildingToCoordinatesService =
-        container.read(buildingToCoordinatesProvider);
-
-    final sentDestination =
-        "$buildingName, $buildingAddress, Montreal, Quebec, Canada";
-
-    final RouteResult? result = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => WaypointSelectionScreen(
-          routeService: routeService,
-          geocodingService: buildingToCoordinatesService,
-          locationService: locationService,
-          initialDestination: sentDestination,
-        ),
-      ),
-    );
-
-    if (result != null && context.mounted) {
-      onRouteSelected?.call(result);
-      Navigator.pop(context, result);
-    }
+  void _handleOpenWaypointSelection(BuildContext context) {
+    WaypointNavigationHandler(
+      context: context,
+      buildingName: buildingName,
+      buildingAddress: buildingAddress,
+      onRouteSelected: onRouteSelected,
+    ).openWaypointSelection();
   }
 
   @override
@@ -131,7 +112,7 @@ class BuildingInformationPopup extends StatelessWidget {
             bottom: -10,
             right: 2,
             child: ElevatedButton(
-              onPressed: () => openWaypointSelection(context),
+              onPressed: () => _handleOpenWaypointSelection(context),
               style: ElevatedButton.styleFrom(
                 backgroundColor: burgundyColor,
                 shape: RoundedRectangleBorder(
