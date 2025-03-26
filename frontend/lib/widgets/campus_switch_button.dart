@@ -4,6 +4,9 @@ import 'package:latlong2/latlong.dart';
 import 'package:soen_390/utils/location_service.dart' as location_service;
 import 'package:soen_390/utils/campus_locator.dart';
 
+const String kCampusSGW = 'SGW';
+const String kCampusLoyola = 'Loyola';
+
 class CampusSwitch extends StatefulWidget {
   final Function(String) onSelectionChanged;
   final Function(LatLng) onLocationChanged;
@@ -17,8 +20,8 @@ class CampusSwitch extends StatefulWidget {
     required this.selectedCampus,
     this.campusLocator,
   }) : assert(
-          selectedCampus == 'SGW' || selectedCampus == 'Loyola',
-          'selectedCampus must be either "SGW" or "Loyola"',
+          selectedCampus == kCampusSGW || selectedCampus == kCampusLoyola,
+          'selectedCampus must be either "$kCampusSGW" or "$kCampusLoyola"',
         );
 
   @override
@@ -28,15 +31,15 @@ class CampusSwitch extends StatefulWidget {
 class CampusSwitchState extends State<CampusSwitch> {
   late String selectedBuilding;
   final Map<String, LatLng> _campusLocations = {
-    'SGW': const LatLng(45.497856, -73.579588),
-    'Loyola': const LatLng(45.4581, -73.6391),
+    kCampusSGW: const LatLng(45.497856, -73.579588),
+    kCampusLoyola: const LatLng(45.4581, -73.6391),
   };
 
   final Map<String, Widget> _campusOptions = {
-    'SGW': const Text('SGW',
+    kCampusSGW: const Text(kCampusSGW,
         style: TextStyle(
             fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),
-    'Loyola': const Text('Loyola',
+    kCampusLoyola: const Text(kCampusLoyola,
         style: TextStyle(
             fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),
   };
