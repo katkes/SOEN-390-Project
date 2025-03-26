@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart'; // <-- new import
 import 'package:soen_390/services/interfaces/route_service_interface.dart';
-import 'package:soen_390/utils/waypoint_navigation_handler.dart';
+import 'package:soen_390/utils/waypoint_navigation_handler.dart'; // Make sure this path is correct
 
 class BuildingInformationPopup extends StatelessWidget {
   final String buildingName;
   final String buildingAddress;
   final String? photoUrl;
-
   final Function(RouteResult)? onRouteSelected;
+  final WaypointNavigationHandler? navigationHandler;
 
   const BuildingInformationPopup({
     super.key,
@@ -16,6 +15,7 @@ class BuildingInformationPopup extends StatelessWidget {
     required this.buildingAddress,
     this.photoUrl,
     this.onRouteSelected,
+    this.navigationHandler,
   });
 
   String _getAbbreviatedName(String name) {
@@ -82,12 +82,14 @@ class BuildingInformationPopup extends StatelessWidget {
   }
 
   void _handleOpenWaypointSelection(BuildContext context) {
-    WaypointNavigationHandler(
-      context: context,
-      buildingName: buildingName,
-      buildingAddress: buildingAddress,
-      onRouteSelected: onRouteSelected,
-    ).openWaypointSelection();
+    (navigationHandler ??
+            WaypointNavigationHandler(
+              context: context,
+              buildingName: buildingName,
+              buildingAddress: buildingAddress,
+              onRouteSelected: onRouteSelected,
+            ))
+        .openWaypointSelection();
   }
 
   @override
