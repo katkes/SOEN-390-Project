@@ -8,12 +8,14 @@ class CampusSwitch extends StatefulWidget {
   final Function(String) onSelectionChanged;
   final Function(LatLng) onLocationChanged;
   final String selectedCampus;
+  final CampusLocator? campusLocator;
 
   const CampusSwitch({
     super.key,
     required this.onSelectionChanged,
     required this.onLocationChanged,
     required this.selectedCampus,
+    this.campusLocator,
   }) : assert(
           selectedCampus == 'SGW' || selectedCampus == 'Loyola',
           'selectedCampus must be either "SGW" or "Loyola"',
@@ -58,8 +60,9 @@ class CampusSwitchState extends State<CampusSwitch> {
 
   // Initializes the closest campus based on the user's current location.
   Future<void> _initClosestCampus() async {
-    final locator = CampusLocator(
-        locationService: location_service.LocationService.instance);
+    final locator = widget.campusLocator ??
+        CampusLocator(
+            locationService: location_service.LocationService.instance);
 
     final newCampus = await locator.findClosestCampus();
 
@@ -68,8 +71,7 @@ class CampusSwitchState extends State<CampusSwitch> {
       widget.onSelectionChanged(newCampus);
       widget.onLocationChanged(locator.getCoordinates(newCampus));
     }
-}
-
+  }
 
   @override
   Widget build(BuildContext context) {
