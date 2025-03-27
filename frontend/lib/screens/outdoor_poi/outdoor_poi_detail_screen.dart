@@ -56,6 +56,35 @@ class PoiDetailScreen extends StatefulWidget {
 class _PoiDetailScreenState extends State<PoiDetailScreen> {
   /// Tracks whether the full description text is being shown.
   bool _showFullDescription = false;
+  Widget _buildDescriptionSection() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'About',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          buildExpandableDescription(
+            widget.poi.description,
+            _showFullDescription,
+            () {
+              setState(() {
+                _showFullDescription = !_showFullDescription;
+              });
+            },
+            context,
+          ),
+        ],
+      ),
+    );
+  }
+
 
   Widget _buildSetDestinationButton() {
     return Padding(
@@ -193,32 +222,8 @@ class _PoiDetailScreenState extends State<PoiDetailScreen> {
               _buildSetDestinationButton(),
 
               // Expandable Description
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'About',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    buildExpandableDescription(
-                      widget.poi.description,
-                      _showFullDescription,
-                      () {
-                        setState(() {
-                          _showFullDescription = !_showFullDescription;
-                        });
-                      },
-                      context,
-                    ),
-                  ],
-                ),
-              ),
+              _buildDescriptionSection(),
+
 
               // Contact Info: Address, Phone, Website
               buildInfoSection(
