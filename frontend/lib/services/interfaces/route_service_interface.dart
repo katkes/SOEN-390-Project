@@ -1,4 +1,5 @@
 import 'package:latlong2/latlong.dart';
+import 'package:soen_390/models/route_result.dart';
 
 /// An abstract class that defines the contract for a routing service.
 ///
@@ -15,34 +16,4 @@ abstract class IRouteService {
   });
 }
 
-class StepResult {
-  final double distance;
-  final double duration;
-  final String instruction;
-  final String maneuver;
-  final LatLng startLocation;
-  final LatLng endLocation;
 
-  StepResult({
-    required this.distance,
-    required this.duration,
-    required this.instruction,
-    required this.maneuver,
-    required this.startLocation,
-    required this.endLocation,
-  });
-}
-
-class RouteResult {
-  final double distance;
-  final double duration;
-  final List<LatLng> routePoints;
-  final List<StepResult> steps;
-
-  RouteResult({
-    required this.distance,
-    required this.duration,
-    required this.routePoints,
-    required this.steps,
-  });
-}

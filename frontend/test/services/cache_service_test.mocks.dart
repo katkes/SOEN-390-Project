@@ -25,49 +25,49 @@ import 'package:shared_preferences/src/shared_preferences_legacy.dart' as _i3;
 
 class _FakeAclResource_0 extends _i1.SmartFake implements _i2.AclResource {
   _FakeAclResource_0(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
+    : super(parent, parentInvocation);
 }
 
 class _FakeCalendarListResource_1 extends _i1.SmartFake
     implements _i2.CalendarListResource {
   _FakeCalendarListResource_1(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
+    : super(parent, parentInvocation);
 }
 
 class _FakeCalendarsResource_2 extends _i1.SmartFake
     implements _i2.CalendarsResource {
   _FakeCalendarsResource_2(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
+    : super(parent, parentInvocation);
 }
 
 class _FakeChannelsResource_3 extends _i1.SmartFake
     implements _i2.ChannelsResource {
   _FakeChannelsResource_3(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
+    : super(parent, parentInvocation);
 }
 
 class _FakeColorsResource_4 extends _i1.SmartFake
     implements _i2.ColorsResource {
   _FakeColorsResource_4(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
+    : super(parent, parentInvocation);
 }
 
 class _FakeEventsResource_5 extends _i1.SmartFake
     implements _i2.EventsResource {
   _FakeEventsResource_5(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
+    : super(parent, parentInvocation);
 }
 
 class _FakeFreebusyResource_6 extends _i1.SmartFake
     implements _i2.FreebusyResource {
   _FakeFreebusyResource_6(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
+    : super(parent, parentInvocation);
 }
 
 class _FakeSettingsResource_7 extends _i1.SmartFake
     implements _i2.SettingsResource {
   _FakeSettingsResource_7(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
+    : super(parent, parentInvocation);
 }
 
 /// A class which mocks [SharedPreferences].
@@ -75,118 +75,151 @@ class _FakeSettingsResource_7 extends _i1.SmartFake
 /// See the documentation for Mockito's code generation for more information.
 class MockSharedPreferences extends _i1.Mock implements _i3.SharedPreferences {
   @override
-  Set<String> getKeys() => (super.noSuchMethod(
-        Invocation.method(#getKeys, []),
-        returnValue: <String>{},
-        returnValueForMissingStub: <String>{},
-      ) as Set<String>);
+  Set<String> getKeys() =>
+      (super.noSuchMethod(
+            Invocation.method(#getKeys, []),
+            returnValue: <String>{},
+            returnValueForMissingStub: <String>{},
+          )
+          as Set<String>);
 
   @override
-  Object? get(String? key) => (super.noSuchMethod(
-        Invocation.method(#get, [key]),
-        returnValueForMissingStub: null,
-      ) as Object?);
+  Object? get(String? key) =>
+      (super.noSuchMethod(
+            Invocation.method(#get, [key]),
+            returnValueForMissingStub: null,
+          )
+          as Object?);
 
   @override
-  bool? getBool(String? key) => (super.noSuchMethod(
-        Invocation.method(#getBool, [key]),
-        returnValueForMissingStub: null,
-      ) as bool?);
+  bool? getBool(String? key) =>
+      (super.noSuchMethod(
+            Invocation.method(#getBool, [key]),
+            returnValueForMissingStub: null,
+          )
+          as bool?);
 
   @override
-  int? getInt(String? key) => (super.noSuchMethod(
-        Invocation.method(#getInt, [key]),
-        returnValueForMissingStub: null,
-      ) as int?);
+  int? getInt(String? key) =>
+      (super.noSuchMethod(
+            Invocation.method(#getInt, [key]),
+            returnValueForMissingStub: null,
+          )
+          as int?);
 
   @override
-  double? getDouble(String? key) => (super.noSuchMethod(
-        Invocation.method(#getDouble, [key]),
-        returnValueForMissingStub: null,
-      ) as double?);
+  double? getDouble(String? key) =>
+      (super.noSuchMethod(
+            Invocation.method(#getDouble, [key]),
+            returnValueForMissingStub: null,
+          )
+          as double?);
 
   @override
-  String? getString(String? key) => (super.noSuchMethod(
-        Invocation.method(#getString, [key]),
-        returnValueForMissingStub: null,
-      ) as String?);
+  String? getString(String? key) =>
+      (super.noSuchMethod(
+            Invocation.method(#getString, [key]),
+            returnValueForMissingStub: null,
+          )
+          as String?);
 
   @override
-  bool containsKey(String? key) => (super.noSuchMethod(
-        Invocation.method(#containsKey, [key]),
-        returnValue: false,
-        returnValueForMissingStub: false,
-      ) as bool);
+  bool containsKey(String? key) =>
+      (super.noSuchMethod(
+            Invocation.method(#containsKey, [key]),
+            returnValue: false,
+            returnValueForMissingStub: false,
+          )
+          as bool);
 
   @override
-  List<String>? getStringList(String? key) => (super.noSuchMethod(
-        Invocation.method(#getStringList, [key]),
-        returnValueForMissingStub: null,
-      ) as List<String>?);
+  List<String>? getStringList(String? key) =>
+      (super.noSuchMethod(
+            Invocation.method(#getStringList, [key]),
+            returnValueForMissingStub: null,
+          )
+          as List<String>?);
 
   @override
-  _i4.Future<bool> setBool(String? key, bool? value) => (super.noSuchMethod(
-        Invocation.method(#setBool, [key, value]),
-        returnValue: _i4.Future<bool>.value(false),
-        returnValueForMissingStub: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
+  _i4.Future<bool> setBool(String? key, bool? value) =>
+      (super.noSuchMethod(
+            Invocation.method(#setBool, [key, value]),
+            returnValue: _i4.Future<bool>.value(false),
+            returnValueForMissingStub: _i4.Future<bool>.value(false),
+          )
+          as _i4.Future<bool>);
 
   @override
-  _i4.Future<bool> setInt(String? key, int? value) => (super.noSuchMethod(
-        Invocation.method(#setInt, [key, value]),
-        returnValue: _i4.Future<bool>.value(false),
-        returnValueForMissingStub: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
+  _i4.Future<bool> setInt(String? key, int? value) =>
+      (super.noSuchMethod(
+            Invocation.method(#setInt, [key, value]),
+            returnValue: _i4.Future<bool>.value(false),
+            returnValueForMissingStub: _i4.Future<bool>.value(false),
+          )
+          as _i4.Future<bool>);
 
   @override
-  _i4.Future<bool> setDouble(String? key, double? value) => (super.noSuchMethod(
-        Invocation.method(#setDouble, [key, value]),
-        returnValue: _i4.Future<bool>.value(false),
-        returnValueForMissingStub: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
+  _i4.Future<bool> setDouble(String? key, double? value) =>
+      (super.noSuchMethod(
+            Invocation.method(#setDouble, [key, value]),
+            returnValue: _i4.Future<bool>.value(false),
+            returnValueForMissingStub: _i4.Future<bool>.value(false),
+          )
+          as _i4.Future<bool>);
 
   @override
-  _i4.Future<bool> setString(String? key, String? value) => (super.noSuchMethod(
-        Invocation.method(#setString, [key, value]),
-        returnValue: _i4.Future<bool>.value(false),
-        returnValueForMissingStub: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
+  _i4.Future<bool> setString(String? key, String? value) =>
+      (super.noSuchMethod(
+            Invocation.method(#setString, [key, value]),
+            returnValue: _i4.Future<bool>.value(false),
+            returnValueForMissingStub: _i4.Future<bool>.value(false),
+          )
+          as _i4.Future<bool>);
 
   @override
   _i4.Future<bool> setStringList(String? key, List<String>? value) =>
       (super.noSuchMethod(
-        Invocation.method(#setStringList, [key, value]),
-        returnValue: _i4.Future<bool>.value(false),
-        returnValueForMissingStub: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
+            Invocation.method(#setStringList, [key, value]),
+            returnValue: _i4.Future<bool>.value(false),
+            returnValueForMissingStub: _i4.Future<bool>.value(false),
+          )
+          as _i4.Future<bool>);
 
   @override
-  _i4.Future<bool> remove(String? key) => (super.noSuchMethod(
-        Invocation.method(#remove, [key]),
-        returnValue: _i4.Future<bool>.value(false),
-        returnValueForMissingStub: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
+  _i4.Future<bool> remove(String? key) =>
+      (super.noSuchMethod(
+            Invocation.method(#remove, [key]),
+            returnValue: _i4.Future<bool>.value(false),
+            returnValueForMissingStub: _i4.Future<bool>.value(false),
+          )
+          as _i4.Future<bool>);
 
   @override
-  _i4.Future<bool> commit() => (super.noSuchMethod(
-        Invocation.method(#commit, []),
-        returnValue: _i4.Future<bool>.value(false),
-        returnValueForMissingStub: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
+  _i4.Future<bool> commit() =>
+      (super.noSuchMethod(
+            Invocation.method(#commit, []),
+            returnValue: _i4.Future<bool>.value(false),
+            returnValueForMissingStub: _i4.Future<bool>.value(false),
+          )
+          as _i4.Future<bool>);
 
   @override
-  _i4.Future<bool> clear() => (super.noSuchMethod(
-        Invocation.method(#clear, []),
-        returnValue: _i4.Future<bool>.value(false),
-        returnValueForMissingStub: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
+  _i4.Future<bool> clear() =>
+      (super.noSuchMethod(
+            Invocation.method(#clear, []),
+            returnValue: _i4.Future<bool>.value(false),
+            returnValueForMissingStub: _i4.Future<bool>.value(false),
+          )
+          as _i4.Future<bool>);
 
   @override
-  _i4.Future<void> reload() => (super.noSuchMethod(
-        Invocation.method(#reload, []),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+  _i4.Future<void> reload() =>
+      (super.noSuchMethod(
+            Invocation.method(#reload, []),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 }
 
 /// A class which mocks [CalendarApi].
@@ -194,103 +227,119 @@ class MockSharedPreferences extends _i1.Mock implements _i3.SharedPreferences {
 /// See the documentation for Mockito's code generation for more information.
 class MockCalendarApi extends _i1.Mock implements _i2.CalendarApi {
   @override
-  _i2.AclResource get acl => (super.noSuchMethod(
-        Invocation.getter(#acl),
-        returnValue: _FakeAclResource_0(this, Invocation.getter(#acl)),
-        returnValueForMissingStub: _FakeAclResource_0(
-          this,
-          Invocation.getter(#acl),
-        ),
-      ) as _i2.AclResource);
+  _i2.AclResource get acl =>
+      (super.noSuchMethod(
+            Invocation.getter(#acl),
+            returnValue: _FakeAclResource_0(this, Invocation.getter(#acl)),
+            returnValueForMissingStub: _FakeAclResource_0(
+              this,
+              Invocation.getter(#acl),
+            ),
+          )
+          as _i2.AclResource);
 
   @override
-  _i2.CalendarListResource get calendarList => (super.noSuchMethod(
-        Invocation.getter(#calendarList),
-        returnValue: _FakeCalendarListResource_1(
-          this,
-          Invocation.getter(#calendarList),
-        ),
-        returnValueForMissingStub: _FakeCalendarListResource_1(
-          this,
-          Invocation.getter(#calendarList),
-        ),
-      ) as _i2.CalendarListResource);
+  _i2.CalendarListResource get calendarList =>
+      (super.noSuchMethod(
+            Invocation.getter(#calendarList),
+            returnValue: _FakeCalendarListResource_1(
+              this,
+              Invocation.getter(#calendarList),
+            ),
+            returnValueForMissingStub: _FakeCalendarListResource_1(
+              this,
+              Invocation.getter(#calendarList),
+            ),
+          )
+          as _i2.CalendarListResource);
 
   @override
-  _i2.CalendarsResource get calendars => (super.noSuchMethod(
-        Invocation.getter(#calendars),
-        returnValue: _FakeCalendarsResource_2(
-          this,
-          Invocation.getter(#calendars),
-        ),
-        returnValueForMissingStub: _FakeCalendarsResource_2(
-          this,
-          Invocation.getter(#calendars),
-        ),
-      ) as _i2.CalendarsResource);
+  _i2.CalendarsResource get calendars =>
+      (super.noSuchMethod(
+            Invocation.getter(#calendars),
+            returnValue: _FakeCalendarsResource_2(
+              this,
+              Invocation.getter(#calendars),
+            ),
+            returnValueForMissingStub: _FakeCalendarsResource_2(
+              this,
+              Invocation.getter(#calendars),
+            ),
+          )
+          as _i2.CalendarsResource);
 
   @override
-  _i2.ChannelsResource get channels => (super.noSuchMethod(
-        Invocation.getter(#channels),
-        returnValue: _FakeChannelsResource_3(
-          this,
-          Invocation.getter(#channels),
-        ),
-        returnValueForMissingStub: _FakeChannelsResource_3(
-          this,
-          Invocation.getter(#channels),
-        ),
-      ) as _i2.ChannelsResource);
+  _i2.ChannelsResource get channels =>
+      (super.noSuchMethod(
+            Invocation.getter(#channels),
+            returnValue: _FakeChannelsResource_3(
+              this,
+              Invocation.getter(#channels),
+            ),
+            returnValueForMissingStub: _FakeChannelsResource_3(
+              this,
+              Invocation.getter(#channels),
+            ),
+          )
+          as _i2.ChannelsResource);
 
   @override
-  _i2.ColorsResource get colors => (super.noSuchMethod(
-        Invocation.getter(#colors),
-        returnValue: _FakeColorsResource_4(
-          this,
-          Invocation.getter(#colors),
-        ),
-        returnValueForMissingStub: _FakeColorsResource_4(
-          this,
-          Invocation.getter(#colors),
-        ),
-      ) as _i2.ColorsResource);
+  _i2.ColorsResource get colors =>
+      (super.noSuchMethod(
+            Invocation.getter(#colors),
+            returnValue: _FakeColorsResource_4(
+              this,
+              Invocation.getter(#colors),
+            ),
+            returnValueForMissingStub: _FakeColorsResource_4(
+              this,
+              Invocation.getter(#colors),
+            ),
+          )
+          as _i2.ColorsResource);
 
   @override
-  _i2.EventsResource get events => (super.noSuchMethod(
-        Invocation.getter(#events),
-        returnValue: _FakeEventsResource_5(
-          this,
-          Invocation.getter(#events),
-        ),
-        returnValueForMissingStub: _FakeEventsResource_5(
-          this,
-          Invocation.getter(#events),
-        ),
-      ) as _i2.EventsResource);
+  _i2.EventsResource get events =>
+      (super.noSuchMethod(
+            Invocation.getter(#events),
+            returnValue: _FakeEventsResource_5(
+              this,
+              Invocation.getter(#events),
+            ),
+            returnValueForMissingStub: _FakeEventsResource_5(
+              this,
+              Invocation.getter(#events),
+            ),
+          )
+          as _i2.EventsResource);
 
   @override
-  _i2.FreebusyResource get freebusy => (super.noSuchMethod(
-        Invocation.getter(#freebusy),
-        returnValue: _FakeFreebusyResource_6(
-          this,
-          Invocation.getter(#freebusy),
-        ),
-        returnValueForMissingStub: _FakeFreebusyResource_6(
-          this,
-          Invocation.getter(#freebusy),
-        ),
-      ) as _i2.FreebusyResource);
+  _i2.FreebusyResource get freebusy =>
+      (super.noSuchMethod(
+            Invocation.getter(#freebusy),
+            returnValue: _FakeFreebusyResource_6(
+              this,
+              Invocation.getter(#freebusy),
+            ),
+            returnValueForMissingStub: _FakeFreebusyResource_6(
+              this,
+              Invocation.getter(#freebusy),
+            ),
+          )
+          as _i2.FreebusyResource);
 
   @override
-  _i2.SettingsResource get settings => (super.noSuchMethod(
-        Invocation.getter(#settings),
-        returnValue: _FakeSettingsResource_7(
-          this,
-          Invocation.getter(#settings),
-        ),
-        returnValueForMissingStub: _FakeSettingsResource_7(
-          this,
-          Invocation.getter(#settings),
-        ),
-      ) as _i2.SettingsResource);
+  _i2.SettingsResource get settings =>
+      (super.noSuchMethod(
+            Invocation.getter(#settings),
+            returnValue: _FakeSettingsResource_7(
+              this,
+              Invocation.getter(#settings),
+            ),
+            returnValueForMissingStub: _FakeSettingsResource_7(
+              this,
+              Invocation.getter(#settings),
+            ),
+          )
+          as _i2.SettingsResource);
 }

@@ -25,7 +25,7 @@ import 'package:soen_390/utils/geojson_loader.dart' as _i3;
 
 class _FakeAssetBundle_0 extends _i1.SmartFake implements _i2.AssetBundle {
   _FakeAssetBundle_0(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
+    : super(parent, parentInvocation);
 }
 
 /// A class which mocks [GeoJsonLoader].
@@ -37,19 +37,23 @@ class MockGeoJsonLoader extends _i1.Mock implements _i3.GeoJsonLoader {
   }
 
   @override
-  _i2.AssetBundle get assetBundle => (super.noSuchMethod(
-        Invocation.getter(#assetBundle),
-        returnValue: _FakeAssetBundle_0(
-          this,
-          Invocation.getter(#assetBundle),
-        ),
-      ) as _i2.AssetBundle);
+  _i2.AssetBundle get assetBundle =>
+      (super.noSuchMethod(
+            Invocation.getter(#assetBundle),
+            returnValue: _FakeAssetBundle_0(
+              this,
+              Invocation.getter(#assetBundle),
+            ),
+          )
+          as _i2.AssetBundle);
 
   @override
-  _i4.Future<Map<String, dynamic>> load(String? path) => (super.noSuchMethod(
-        Invocation.method(#load, [path]),
-        returnValue: _i4.Future<Map<String, dynamic>>.value(
-          <String, dynamic>{},
-        ),
-      ) as _i4.Future<Map<String, dynamic>>);
+  _i4.Future<Map<String, dynamic>> load(String? path) =>
+      (super.noSuchMethod(
+            Invocation.method(#load, [path]),
+            returnValue: _i4.Future<Map<String, dynamic>>.value(
+              <String, dynamic>{},
+            ),
+          )
+          as _i4.Future<Map<String, dynamic>>);
 }

@@ -6,7 +6,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:mockito/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:soen_390/services/interfaces/route_service_interface.dart';
+import 'package:soen_390/models/route_result.dart';
 import 'package:soen_390/widgets/building_information_popup.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'package:soen_390/services/google_route_service.dart';

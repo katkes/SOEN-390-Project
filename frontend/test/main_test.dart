@@ -8,6 +8,8 @@ import 'dart:typed_data';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:soen_390/core/secure_storage.dart';
 import 'package:soen_390/main.dart';
+import 'package:soen_390/models/route_result.dart';
+import 'package:soen_390/models/step_result.dart';
 import 'package:soen_390/providers/service_providers.dart';
 import 'package:soen_390/services/http_service.dart';
 import 'package:soen_390/services/interfaces/route_service_interface.dart';

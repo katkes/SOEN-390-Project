@@ -38,26 +38,30 @@ class MockCalendarRepository extends _i1.Mock
     bool? useCache = true,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(#getEvents, [], {
-          #calendarId: calendarId,
-          #useCache: useCache,
-        }),
-        returnValue: _i3.Future<List<_i4.Event>>.value(<_i4.Event>[]),
-      ) as _i3.Future<List<_i4.Event>>);
+            Invocation.method(#getEvents, [], {
+              #calendarId: calendarId,
+              #useCache: useCache,
+            }),
+            returnValue: _i3.Future<List<_i4.Event>>.value(<_i4.Event>[]),
+          )
+          as _i3.Future<List<_i4.Event>>);
 
   @override
   _i3.Future<void> removeEventFromCache(String? eventId, String? calendarId) =>
       (super.noSuchMethod(
-        Invocation.method(#removeEventFromCache, [eventId, calendarId]),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+            Invocation.method(#removeEventFromCache, [eventId, calendarId]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
 
   @override
-  _i3.Future<List<_i4.CalendarListEntry>> getCalendars() => (super.noSuchMethod(
-        Invocation.method(#getCalendars, []),
-        returnValue: _i3.Future<List<_i4.CalendarListEntry>>.value(
-          <_i4.CalendarListEntry>[],
-        ),
-      ) as _i3.Future<List<_i4.CalendarListEntry>>);
+  _i3.Future<List<_i4.CalendarListEntry>> getCalendars() =>
+      (super.noSuchMethod(
+            Invocation.method(#getCalendars, []),
+            returnValue: _i3.Future<List<_i4.CalendarListEntry>>.value(
+              <_i4.CalendarListEntry>[],
+            ),
+          )
+          as _i3.Future<List<_i4.CalendarListEntry>>);
 }

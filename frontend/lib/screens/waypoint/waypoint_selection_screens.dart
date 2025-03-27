@@ -5,6 +5,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:soen_390/models/route_result.dart';
 import 'package:soen_390/services/google_maps_api_client.dart';
 import 'package:soen_390/services/google_poi_service.dart';
 import 'package:soen_390/services/http_service.dart';

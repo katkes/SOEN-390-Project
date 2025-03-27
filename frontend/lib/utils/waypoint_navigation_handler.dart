@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:soen_390/models/route_result.dart';
 import 'package:soen_390/screens/waypoint/waypoint_selection_screens.dart';
-import 'package:soen_390/services/interfaces/route_service_interface.dart';
 import 'package:soen_390/providers/service_providers.dart';
 
 /// A handler class responsible for opening the waypoint selection screen

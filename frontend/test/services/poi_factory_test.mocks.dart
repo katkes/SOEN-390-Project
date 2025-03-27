@@ -27,13 +27,13 @@ import 'package:soen_390/utils/google_api_helper.dart' as _i3;
 
 class _FakeIHttpClient_0 extends _i1.SmartFake implements _i2.IHttpClient {
   _FakeIHttpClient_0(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
+    : super(parent, parentInvocation);
 }
 
 class _FakeGoogleApiHelper_1 extends _i1.SmartFake
     implements _i3.GoogleApiHelper {
   _FakeGoogleApiHelper_1(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
+    : super(parent, parentInvocation);
 }
 
 /// A class which mocks [GoogleMapsApiClient].
@@ -46,31 +46,37 @@ class MockGoogleMapsApiClient extends _i1.Mock
   }
 
   @override
-  String get apiKey => (super.noSuchMethod(
-        Invocation.getter(#apiKey),
-        returnValue: _i5.dummyValue<String>(
-          this,
-          Invocation.getter(#apiKey),
-        ),
-      ) as String);
+  String get apiKey =>
+      (super.noSuchMethod(
+            Invocation.getter(#apiKey),
+            returnValue: _i5.dummyValue<String>(
+              this,
+              Invocation.getter(#apiKey),
+            ),
+          )
+          as String);
 
   @override
-  _i2.IHttpClient get httpClient => (super.noSuchMethod(
-        Invocation.getter(#httpClient),
-        returnValue: _FakeIHttpClient_0(
-          this,
-          Invocation.getter(#httpClient),
-        ),
-      ) as _i2.IHttpClient);
+  _i2.IHttpClient get httpClient =>
+      (super.noSuchMethod(
+            Invocation.getter(#httpClient),
+            returnValue: _FakeIHttpClient_0(
+              this,
+              Invocation.getter(#httpClient),
+            ),
+          )
+          as _i2.IHttpClient);
 
   @override
-  _i3.GoogleApiHelper get apiHelper => (super.noSuchMethod(
-        Invocation.getter(#apiHelper),
-        returnValue: _FakeGoogleApiHelper_1(
-          this,
-          Invocation.getter(#apiHelper),
-        ),
-      ) as _i3.GoogleApiHelper);
+  _i3.GoogleApiHelper get apiHelper =>
+      (super.noSuchMethod(
+            Invocation.getter(#apiHelper),
+            returnValue: _FakeGoogleApiHelper_1(
+              this,
+              Invocation.getter(#apiHelper),
+            ),
+          )
+          as _i3.GoogleApiHelper);
 
   @override
   _i6.Future<Map<String, dynamic>> fetchBuildingInformation(
@@ -79,22 +85,24 @@ class MockGoogleMapsApiClient extends _i1.Mock
     String? locationName,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(#fetchBuildingInformation, [
-          latitude,
-          longitude,
-          locationName,
-        ]),
-        returnValue: _i6.Future<Map<String, dynamic>>.value(
-          <String, dynamic>{},
-        ),
-      ) as _i6.Future<Map<String, dynamic>>);
+            Invocation.method(#fetchBuildingInformation, [
+              latitude,
+              longitude,
+              locationName,
+            ]),
+            returnValue: _i6.Future<Map<String, dynamic>>.value(
+              <String, dynamic>{},
+            ),
+          )
+          as _i6.Future<Map<String, dynamic>>);
 
   @override
   _i6.Future<Map<String, dynamic>> fetchPlaceDetailsById(String? placeId) =>
       (super.noSuchMethod(
-        Invocation.method(#fetchPlaceDetailsById, [placeId]),
-        returnValue: _i6.Future<Map<String, dynamic>>.value(
-          <String, dynamic>{},
-        ),
-      ) as _i6.Future<Map<String, dynamic>>);
+            Invocation.method(#fetchPlaceDetailsById, [placeId]),
+            returnValue: _i6.Future<Map<String, dynamic>>.value(
+              <String, dynamic>{},
+            ),
+          )
+          as _i6.Future<Map<String, dynamic>>);
 }

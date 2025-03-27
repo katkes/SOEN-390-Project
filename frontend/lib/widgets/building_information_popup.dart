@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:soen_390/services/interfaces/route_service_interface.dart';
+import 'package:soen_390/models/route_result.dart';
 import 'package:soen_390/utils/waypoint_navigation_handler.dart';
 
 class BuildingInformationPopup extends StatelessWidget {

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:soen_390/models/route_result.dart';
+import 'package:soen_390/models/step_result.dart';
 import 'package:soen_390/services/google_route_service.dart';
 import 'package:soen_390/services/geocoding_service.dart';
 import 'package:soen_390/utils/location_service.dart';
@@ -8,7 +10,6 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:soen_390/screens/waypoint/waypoint_selection_screens.dart';
-import 'package:soen_390/services/interfaces/route_service_interface.dart';
 import 'package:soen_390/widgets/location_transport_selector.dart';
 import 'package:soen_390/widgets/route_card.dart';
 import 'package:soen_390/screens/indoor_accessibility/indoor_accessibility_preference.dart';

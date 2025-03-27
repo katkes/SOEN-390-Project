@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:soen_390/models/route_result.dart';
+import 'package:soen_390/models/step_result.dart';
 import 'package:soen_390/services/interfaces/base_google_service.dart';
 import 'package:soen_390/utils/google_directions_url_builder.dart';
 import 'package:soen_390/utils/location_service.dart';

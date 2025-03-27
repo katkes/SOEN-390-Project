@@ -32,27 +32,27 @@ import 'package:soen_390/services/http_service.dart' as _i3;
 
 class _FakeSecureStorage_0 extends _i1.SmartFake implements _i2.SecureStorage {
   _FakeSecureStorage_0(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
+    : super(parent, parentInvocation);
 }
 
 class _FakeHttpService_1 extends _i1.SmartFake implements _i3.HttpService {
   _FakeHttpService_1(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
+    : super(parent, parentInvocation);
 }
 
 class _FakeGoogleSignIn_2 extends _i1.SmartFake implements _i4.GoogleSignIn {
   _FakeGoogleSignIn_2(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
+    : super(parent, parentInvocation);
 }
 
 class _FakeClient_3 extends _i1.SmartFake implements _i5.Client {
   _FakeClient_3(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
+    : super(parent, parentInvocation);
 }
 
 class _FakeResponse_4 extends _i1.SmartFake implements _i5.Response {
   _FakeResponse_4(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
+    : super(parent, parentInvocation);
 }
 
 /// A class which mocks [AuthService].
@@ -64,50 +64,60 @@ class MockAuthService extends _i1.Mock implements _i6.AuthService {
   }
 
   @override
-  _i2.SecureStorage get secureStorage => (super.noSuchMethod(
-        Invocation.getter(#secureStorage),
-        returnValue: _FakeSecureStorage_0(
-          this,
-          Invocation.getter(#secureStorage),
-        ),
-      ) as _i2.SecureStorage);
+  _i2.SecureStorage get secureStorage =>
+      (super.noSuchMethod(
+            Invocation.getter(#secureStorage),
+            returnValue: _FakeSecureStorage_0(
+              this,
+              Invocation.getter(#secureStorage),
+            ),
+          )
+          as _i2.SecureStorage);
 
   @override
-  _i3.HttpService get httpService => (super.noSuchMethod(
-        Invocation.getter(#httpService),
-        returnValue: _FakeHttpService_1(
-          this,
-          Invocation.getter(#httpService),
-        ),
-      ) as _i3.HttpService);
+  _i3.HttpService get httpService =>
+      (super.noSuchMethod(
+            Invocation.getter(#httpService),
+            returnValue: _FakeHttpService_1(
+              this,
+              Invocation.getter(#httpService),
+            ),
+          )
+          as _i3.HttpService);
 
   @override
-  _i4.GoogleSignIn get googleSignIn => (super.noSuchMethod(
-        Invocation.getter(#googleSignIn),
-        returnValue: _FakeGoogleSignIn_2(
-          this,
-          Invocation.getter(#googleSignIn),
-        ),
-      ) as _i4.GoogleSignIn);
+  _i4.GoogleSignIn get googleSignIn =>
+      (super.noSuchMethod(
+            Invocation.getter(#googleSignIn),
+            returnValue: _FakeGoogleSignIn_2(
+              this,
+              Invocation.getter(#googleSignIn),
+            ),
+          )
+          as _i4.GoogleSignIn);
 
   @override
-  _i7.Future<_i8.AuthClient?> signIn() => (super.noSuchMethod(
-        Invocation.method(#signIn, []),
-        returnValue: _i7.Future<_i8.AuthClient?>.value(),
-      ) as _i7.Future<_i8.AuthClient?>);
+  _i7.Future<_i8.AuthClient?> signIn() =>
+      (super.noSuchMethod(
+            Invocation.method(#signIn, []),
+            returnValue: _i7.Future<_i8.AuthClient?>.value(),
+          )
+          as _i7.Future<_i8.AuthClient?>);
 
   @override
-  _i7.Future<void> signOut() => (super.noSuchMethod(
-        Invocation.method(#signOut, []),
-        returnValue: _i7.Future<void>.value(),
-        returnValueForMissingStub: _i7.Future<void>.value(),
-      ) as _i7.Future<void>);
+  _i7.Future<void> signOut() =>
+      (super.noSuchMethod(
+            Invocation.method(#signOut, []),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
+          )
+          as _i7.Future<void>);
 
   @override
   void dispose() => super.noSuchMethod(
-        Invocation.method(#dispose, []),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#dispose, []),
+    returnValueForMissingStub: null,
+  );
 }
 
 /// A class which mocks [CalendarService].
@@ -121,25 +131,28 @@ class MockCalendarService extends _i1.Mock implements _i9.CalendarService {
   @override
   _i7.Future<List<_i10.Event>> fetchEvents([String? calendarId = 'primary']) =>
       (super.noSuchMethod(
-        Invocation.method(#fetchEvents, [calendarId]),
-        returnValue: _i7.Future<List<_i10.Event>>.value(<_i10.Event>[]),
-      ) as _i7.Future<List<_i10.Event>>);
+            Invocation.method(#fetchEvents, [calendarId]),
+            returnValue: _i7.Future<List<_i10.Event>>.value(<_i10.Event>[]),
+          )
+          as _i7.Future<List<_i10.Event>>);
 
   @override
   _i7.Future<List<_i10.CalendarListEntry>> fetchCalendars() =>
       (super.noSuchMethod(
-        Invocation.method(#fetchCalendars, []),
-        returnValue: _i7.Future<List<_i10.CalendarListEntry>>.value(
-          <_i10.CalendarListEntry>[],
-        ),
-      ) as _i7.Future<List<_i10.CalendarListEntry>>);
+            Invocation.method(#fetchCalendars, []),
+            returnValue: _i7.Future<List<_i10.CalendarListEntry>>.value(
+              <_i10.CalendarListEntry>[],
+            ),
+          )
+          as _i7.Future<List<_i10.CalendarListEntry>>);
 
   @override
   _i7.Future<_i10.Event?> createEvent(String? calendarId, _i10.Event? event) =>
       (super.noSuchMethod(
-        Invocation.method(#createEvent, [calendarId, event]),
-        returnValue: _i7.Future<_i10.Event?>.value(),
-      ) as _i7.Future<_i10.Event?>);
+            Invocation.method(#createEvent, [calendarId, event]),
+            returnValue: _i7.Future<_i10.Event?>.value(),
+          )
+          as _i7.Future<_i10.Event?>);
 
   @override
   _i7.Future<_i10.Event?> updateEvent(
@@ -148,21 +161,23 @@ class MockCalendarService extends _i1.Mock implements _i9.CalendarService {
     _i10.Event? updatedEvent,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(#updateEvent, [
-          calendarId,
-          eventId,
-          updatedEvent,
-        ]),
-        returnValue: _i7.Future<_i10.Event?>.value(),
-      ) as _i7.Future<_i10.Event?>);
+            Invocation.method(#updateEvent, [
+              calendarId,
+              eventId,
+              updatedEvent,
+            ]),
+            returnValue: _i7.Future<_i10.Event?>.value(),
+          )
+          as _i7.Future<_i10.Event?>);
 
   @override
   _i7.Future<void> deleteEvent(String? calendarId, String? eventId) =>
       (super.noSuchMethod(
-        Invocation.method(#deleteEvent, [calendarId, eventId]),
-        returnValue: _i7.Future<void>.value(),
-        returnValueForMissingStub: _i7.Future<void>.value(),
-      ) as _i7.Future<void>);
+            Invocation.method(#deleteEvent, [calendarId, eventId]),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
+          )
+          as _i7.Future<void>);
 }
 
 /// A class which mocks [HttpService].
@@ -174,24 +189,28 @@ class MockHttpService extends _i1.Mock implements _i3.HttpService {
   }
 
   @override
-  _i5.Client get client => (super.noSuchMethod(
-        Invocation.getter(#client),
-        returnValue: _FakeClient_3(this, Invocation.getter(#client)),
-      ) as _i5.Client);
+  _i5.Client get client =>
+      (super.noSuchMethod(
+            Invocation.getter(#client),
+            returnValue: _FakeClient_3(this, Invocation.getter(#client)),
+          )
+          as _i5.Client);
 
   @override
-  _i7.Future<_i5.Response> get(Uri? url) => (super.noSuchMethod(
-        Invocation.method(#get, [url]),
-        returnValue: _i7.Future<_i5.Response>.value(
-          _FakeResponse_4(this, Invocation.method(#get, [url])),
-        ),
-      ) as _i7.Future<_i5.Response>);
+  _i7.Future<_i5.Response> get(Uri? url) =>
+      (super.noSuchMethod(
+            Invocation.method(#get, [url]),
+            returnValue: _i7.Future<_i5.Response>.value(
+              _FakeResponse_4(this, Invocation.method(#get, [url])),
+            ),
+          )
+          as _i7.Future<_i5.Response>);
 
   @override
   void dispose() => super.noSuchMethod(
-        Invocation.method(#dispose, []),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#dispose, []),
+    returnValueForMissingStub: null,
+  );
 }
 
 /// A class which mocks [SecureStorage].
@@ -205,23 +224,28 @@ class MockSecureStorage extends _i1.Mock implements _i2.SecureStorage {
   @override
   _i7.Future<void> storeToken(String? key, String? value) =>
       (super.noSuchMethod(
-        Invocation.method(#storeToken, [key, value]),
-        returnValue: _i7.Future<void>.value(),
-        returnValueForMissingStub: _i7.Future<void>.value(),
-      ) as _i7.Future<void>);
+            Invocation.method(#storeToken, [key, value]),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
+          )
+          as _i7.Future<void>);
 
   @override
-  _i7.Future<String?> getToken(String? key) => (super.noSuchMethod(
-        Invocation.method(#getToken, [key]),
-        returnValue: _i7.Future<String?>.value(),
-      ) as _i7.Future<String?>);
+  _i7.Future<String?> getToken(String? key) =>
+      (super.noSuchMethod(
+            Invocation.method(#getToken, [key]),
+            returnValue: _i7.Future<String?>.value(),
+          )
+          as _i7.Future<String?>);
 
   @override
-  _i7.Future<void> deleteToken(String? key) => (super.noSuchMethod(
-        Invocation.method(#deleteToken, [key]),
-        returnValue: _i7.Future<void>.value(),
-        returnValueForMissingStub: _i7.Future<void>.value(),
-      ) as _i7.Future<void>);
+  _i7.Future<void> deleteToken(String? key) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteToken, [key]),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
+          )
+          as _i7.Future<void>);
 }
 
 /// A class which mocks [AuthRepository].
@@ -233,15 +257,19 @@ class MockAuthRepository extends _i1.Mock implements _i11.AuthRepository {
   }
 
   @override
-  _i7.Future<_i8.AuthClient?> getAuthClient() => (super.noSuchMethod(
-        Invocation.method(#getAuthClient, []),
-        returnValue: _i7.Future<_i8.AuthClient?>.value(),
-      ) as _i7.Future<_i8.AuthClient?>);
+  _i7.Future<_i8.AuthClient?> getAuthClient() =>
+      (super.noSuchMethod(
+            Invocation.method(#getAuthClient, []),
+            returnValue: _i7.Future<_i8.AuthClient?>.value(),
+          )
+          as _i7.Future<_i8.AuthClient?>);
 
   @override
-  _i7.Future<void> signOut() => (super.noSuchMethod(
-        Invocation.method(#signOut, []),
-        returnValue: _i7.Future<void>.value(),
-        returnValueForMissingStub: _i7.Future<void>.value(),
-      ) as _i7.Future<void>);
+  _i7.Future<void> signOut() =>
+      (super.noSuchMethod(
+            Invocation.method(#signOut, []),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
+          )
+          as _i7.Future<void>);
 }

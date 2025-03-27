@@ -25,7 +25,7 @@ import 'package:soen_390/utils/geojson_loader.dart' as _i2;
 
 class _FakeGeoJsonLoader_0 extends _i1.SmartFake implements _i2.GeoJsonLoader {
   _FakeGeoJsonLoader_0(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
+    : super(parent, parentInvocation);
 }
 
 /// A class which mocks [GeoJsonRepository].
@@ -33,47 +33,53 @@ class _FakeGeoJsonLoader_0 extends _i1.SmartFake implements _i2.GeoJsonLoader {
 /// See the documentation for Mockito's code generation for more information.
 class MockGeoJsonRepository extends _i1.Mock implements _i3.GeoJsonRepository {
   @override
-  _i2.GeoJsonLoader get loader => (super.noSuchMethod(
-        Invocation.getter(#loader),
-        returnValue: _FakeGeoJsonLoader_0(this, Invocation.getter(#loader)),
-        returnValueForMissingStub: _FakeGeoJsonLoader_0(
-          this,
-          Invocation.getter(#loader),
-        ),
-      ) as _i2.GeoJsonLoader);
+  _i2.GeoJsonLoader get loader =>
+      (super.noSuchMethod(
+            Invocation.getter(#loader),
+            returnValue: _FakeGeoJsonLoader_0(this, Invocation.getter(#loader)),
+            returnValueForMissingStub: _FakeGeoJsonLoader_0(
+              this,
+              Invocation.getter(#loader),
+            ),
+          )
+          as _i2.GeoJsonLoader);
 
   @override
-  _i4.Future<Map<String, dynamic>> loadBuildingList() => (super.noSuchMethod(
-        Invocation.method(#loadBuildingList, []),
-        returnValue: _i4.Future<Map<String, dynamic>>.value(
-          <String, dynamic>{},
-        ),
-        returnValueForMissingStub: _i4.Future<Map<String, dynamic>>.value(
-          <String, dynamic>{},
-        ),
-      ) as _i4.Future<Map<String, dynamic>>);
+  _i4.Future<Map<String, dynamic>> loadBuildingList() =>
+      (super.noSuchMethod(
+            Invocation.method(#loadBuildingList, []),
+            returnValue: _i4.Future<Map<String, dynamic>>.value(
+              <String, dynamic>{},
+            ),
+            returnValueForMissingStub: _i4.Future<Map<String, dynamic>>.value(
+              <String, dynamic>{},
+            ),
+          )
+          as _i4.Future<Map<String, dynamic>>);
 
   @override
   _i4.Future<Map<String, dynamic>> loadBuildingBoundaries() =>
       (super.noSuchMethod(
-        Invocation.method(#loadBuildingBoundaries, []),
-        returnValue: _i4.Future<Map<String, dynamic>>.value(
-          <String, dynamic>{},
-        ),
-        returnValueForMissingStub: _i4.Future<Map<String, dynamic>>.value(
-          <String, dynamic>{},
-        ),
-      ) as _i4.Future<Map<String, dynamic>>);
+            Invocation.method(#loadBuildingBoundaries, []),
+            returnValue: _i4.Future<Map<String, dynamic>>.value(
+              <String, dynamic>{},
+            ),
+            returnValueForMissingStub: _i4.Future<Map<String, dynamic>>.value(
+              <String, dynamic>{},
+            ),
+          )
+          as _i4.Future<Map<String, dynamic>>);
 
   @override
   _i4.Future<Map<String, dynamic>> loadCampusBoundaries() =>
       (super.noSuchMethod(
-        Invocation.method(#loadCampusBoundaries, []),
-        returnValue: _i4.Future<Map<String, dynamic>>.value(
-          <String, dynamic>{},
-        ),
-        returnValueForMissingStub: _i4.Future<Map<String, dynamic>>.value(
-          <String, dynamic>{},
-        ),
-      ) as _i4.Future<Map<String, dynamic>>);
+            Invocation.method(#loadCampusBoundaries, []),
+            returnValue: _i4.Future<Map<String, dynamic>>.value(
+              <String, dynamic>{},
+            ),
+            returnValueForMissingStub: _i4.Future<Map<String, dynamic>>.value(
+              <String, dynamic>{},
+            ),
+          )
+          as _i4.Future<Map<String, dynamic>>);
 }

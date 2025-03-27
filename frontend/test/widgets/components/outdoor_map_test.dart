@@ -4,6 +4,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:soen_390/models/route_result.dart';
+import 'package:soen_390/models/step_result.dart';
 import 'package:soen_390/services/google_maps_api_client.dart';
 import 'package:soen_390/services/interfaces/http_client_interface.dart';
 import 'package:soen_390/services/interfaces/route_service_interface.dart';

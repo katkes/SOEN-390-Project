@@ -25,7 +25,7 @@ import 'package:soen_390/services/interfaces/http_client_interface.dart' as _i3;
 
 class _FakeResponse_0 extends _i1.SmartFake implements _i2.Response {
   _FakeResponse_0(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
+    : super(parent, parentInvocation);
 }
 
 /// A class which mocks [IHttpClient].
@@ -37,10 +37,12 @@ class MockIHttpClient extends _i1.Mock implements _i3.IHttpClient {
   }
 
   @override
-  _i4.Future<_i2.Response> get(Uri? url) => (super.noSuchMethod(
-        Invocation.method(#get, [url]),
-        returnValue: _i4.Future<_i2.Response>.value(
-          _FakeResponse_0(this, Invocation.method(#get, [url])),
-        ),
-      ) as _i4.Future<_i2.Response>);
+  _i4.Future<_i2.Response> get(Uri? url) =>
+      (super.noSuchMethod(
+            Invocation.method(#get, [url]),
+            returnValue: _i4.Future<_i2.Response>.value(
+              _FakeResponse_0(this, Invocation.method(#get, [url])),
+            ),
+          )
+          as _i4.Future<_i2.Response>);
 }

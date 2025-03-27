@@ -4,12 +4,12 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
+import 'package:soen_390/models/route_result.dart';
 import 'dart:convert';
 
 import 'package:soen_390/services/interfaces/http_client_interface.dart';
 import 'package:soen_390/services/google_route_service.dart';
 import 'package:soen_390/utils/location_service.dart';
-import 'package:soen_390/services/interfaces/route_service_interface.dart';
 import 'package:soen_390/utils/google_directions_url_builder.dart';
 
 import 'google_route_service_test.mocks.dart';

@@ -26,7 +26,7 @@ import 'package:soen_390/utils/google_api_helper.dart' as _i5;
 
 class _FakeResponse_0 extends _i1.SmartFake implements _i2.Response {
   _FakeResponse_0(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
+    : super(parent, parentInvocation);
 }
 
 /// A class which mocks [IHttpClient].
@@ -34,15 +34,17 @@ class _FakeResponse_0 extends _i1.SmartFake implements _i2.Response {
 /// See the documentation for Mockito's code generation for more information.
 class MockIHttpClient extends _i1.Mock implements _i3.IHttpClient {
   @override
-  _i4.Future<_i2.Response> get(Uri? url) => (super.noSuchMethod(
-        Invocation.method(#get, [url]),
-        returnValue: _i4.Future<_i2.Response>.value(
-          _FakeResponse_0(this, Invocation.method(#get, [url])),
-        ),
-        returnValueForMissingStub: _i4.Future<_i2.Response>.value(
-          _FakeResponse_0(this, Invocation.method(#get, [url])),
-        ),
-      ) as _i4.Future<_i2.Response>);
+  _i4.Future<_i2.Response> get(Uri? url) =>
+      (super.noSuchMethod(
+            Invocation.method(#get, [url]),
+            returnValue: _i4.Future<_i2.Response>.value(
+              _FakeResponse_0(this, Invocation.method(#get, [url])),
+            ),
+            returnValueForMissingStub: _i4.Future<_i2.Response>.value(
+              _FakeResponse_0(this, Invocation.method(#get, [url])),
+            ),
+          )
+          as _i4.Future<_i2.Response>);
 }
 
 /// A class which mocks [GoogleApiHelper].
@@ -56,16 +58,17 @@ class MockGoogleApiHelper extends _i1.Mock implements _i5.GoogleApiHelper {
     String? expectedStatus = 'OK',
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #fetchJson,
-          [client, url],
-          {#expectedStatus: expectedStatus},
-        ),
-        returnValue: _i4.Future<Map<String, dynamic>>.value(
-          <String, dynamic>{},
-        ),
-        returnValueForMissingStub: _i4.Future<Map<String, dynamic>>.value(
-          <String, dynamic>{},
-        ),
-      ) as _i4.Future<Map<String, dynamic>>);
+            Invocation.method(
+              #fetchJson,
+              [client, url],
+              {#expectedStatus: expectedStatus},
+            ),
+            returnValue: _i4.Future<Map<String, dynamic>>.value(
+              <String, dynamic>{},
+            ),
+            returnValueForMissingStub: _i4.Future<Map<String, dynamic>>.value(
+              <String, dynamic>{},
+            ),
+          )
+          as _i4.Future<Map<String, dynamic>>);
 }
