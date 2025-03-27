@@ -56,6 +56,32 @@ class PoiDetailScreen extends StatefulWidget {
 class _PoiDetailScreenState extends State<PoiDetailScreen> {
   /// Tracks whether the full description text is being shown.
   bool _showFullDescription = false;
+
+  Widget _buildReviewsSection() {
+    if (widget.poi.reviews == null || widget.poi.reviews!.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Reviews',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 16),
+          ...widget.poi.reviews!.map((review) => ReviewCard(review: review)),
+          const SizedBox(height: 24),
+        ],
+      ),
+    );
+  }
+
   Widget _buildDescriptionSection() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -84,7 +110,6 @@ class _PoiDetailScreenState extends State<PoiDetailScreen> {
       ),
     );
   }
-
 
   Widget _buildSetDestinationButton() {
     return Padding(
@@ -224,7 +249,6 @@ class _PoiDetailScreenState extends State<PoiDetailScreen> {
               // Expandable Description
               _buildDescriptionSection(),
 
-
               // Contact Info: Address, Phone, Website
               buildInfoSection(
                 widget.poi.address,
@@ -246,26 +270,7 @@ class _PoiDetailScreenState extends State<PoiDetailScreen> {
               const SizedBox(height: 24),
 
               // Reviews
-              if (widget.poi.reviews != null && widget.poi.reviews!.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Reviews',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      ...widget.poi.reviews!
-                          .map((review) => ReviewCard(review: review)),
-                      const SizedBox(height: 24),
-                    ],
-                  ),
-                ),
+              _buildReviewsSection(),
             ]),
           ),
         ],
