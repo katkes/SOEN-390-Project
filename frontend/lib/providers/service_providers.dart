@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:soen_390/services/http_service.dart';
 import 'package:soen_390/services/google_route_service.dart';
 import 'package:soen_390/utils/google_directions_url_builder.dart';
+import 'package:soen_390/utils/route_cache_manager.dart';
 import 'package:soen_390/utils/route_result_parser.dart';
 import 'package:soen_390/utils/waypoint_validator.dart';
 import '../services/interfaces/route_service_interface.dart';
@@ -93,4 +94,9 @@ final campusRouteCheckerProvider = Provider<CampusRouteChecker>((ref) {
 /// Provides an instance of [WaypointValidator] for validating waypoint inputs.
 final waypointValidatorProvider = Provider<WaypointValidator>((ref) {
   return WaypointValidator();
+});
+
+/// Provides a singleton instance of [RouteCacheManager] for route result caching.
+final routeCacheManagerProvider = Provider<RouteCacheManager>((ref) {
+  return RouteCacheManager();
 });

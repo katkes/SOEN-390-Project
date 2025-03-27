@@ -11,6 +11,7 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:soen_390/screens/waypoint/waypoint_selection_screens.dart';
+import 'package:soen_390/utils/route_cache_manager.dart';
 import 'package:soen_390/utils/waypoint_validator.dart';
 import 'package:soen_390/widgets/location_transport_selector.dart';
 import 'package:soen_390/widgets/route_card.dart';
@@ -62,6 +63,7 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
         locationService: mockLocationService,
         campusRouteChecker: mockCampusRouteChecker,
         waypointValidator: WaypointValidator(),
+        routeCacheManager: RouteCacheManager(),
       ),
     );
   }
@@ -112,6 +114,7 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
         locationService: mockLocationService,
         campusRouteChecker: mockCampusRouteChecker,
         waypointValidator: WaypointValidator(),
+        routeCacheManager: RouteCacheManager(),
       ),
     ));
 
@@ -437,6 +440,7 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
         locationService: mockLocationService,
         campusRouteChecker: mockCampusRouteChecker,
         waypointValidator: WaypointValidator(),
+        routeCacheManager: RouteCacheManager(),
       ),
     ));
 
@@ -458,6 +462,7 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
         locationService: mockLocationService,
         campusRouteChecker: mockCampusRouteChecker,
         waypointValidator: WaypointValidator(),
+        routeCacheManager: RouteCacheManager(),
       ),
     ));
 

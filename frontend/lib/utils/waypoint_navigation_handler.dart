@@ -74,6 +74,7 @@ class WaypointNavigationHandler {
         container.read(buildingToCoordinatesProvider);
     final campusRouteChecker = container.read(campusRouteCheckerProvider);
     final waypointValidator = container.read(waypointValidatorProvider);
+    final routeCacheManager = container.read(routeCacheManagerProvider);
 
     final sentDestination =
         "$buildingName, $buildingAddress, Montreal, Quebec, Canada";
@@ -88,6 +89,7 @@ class WaypointNavigationHandler {
           initialDestination: sentDestination,
           campusRouteChecker: campusRouteChecker,
           waypointValidator: waypointValidator,
+          routeCacheManager: routeCacheManager,
         ),
       ),
     );

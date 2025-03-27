@@ -11,6 +11,7 @@ import 'package:soen_390/services/google_poi_service.dart';
 import 'package:soen_390/services/http_service.dart';
 import 'package:soen_390/services/poi_factory.dart';
 import 'package:soen_390/utils/campus_route_checker.dart';
+import 'package:soen_390/utils/route_cache_manager.dart';
 import 'package:soen_390/widgets/location_transport_selector.dart';
 import 'package:soen_390/widgets/nav_bar.dart';
 import 'package:soen_390/widgets/route_card.dart';
@@ -33,6 +34,7 @@ class WaypointSelectionScreen extends StatefulWidget {
   final double? destinationLng;
   final CampusRouteChecker campusRouteChecker;
   final WaypointValidator waypointValidator;
+  final RouteCacheManager routeCacheManager;
 
   const WaypointSelectionScreen({
     super.key,
@@ -41,6 +43,7 @@ class WaypointSelectionScreen extends StatefulWidget {
     required this.locationService,
     required this.campusRouteChecker,
     required this.waypointValidator,
+    required this.routeCacheManager,
     this.initialDestination,
     this.destinationLat,
     this.destinationLng,
@@ -61,13 +64,12 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
   List<Map<String, dynamic>> confirmedRoutes = [];
   bool _locationsChanged =
       false; //adding boolean flag to track whether the locations have been updated.
-  final Map<String, Map<String, List<RouteResult>>> _routeCache =
-      {}; //cache for routes
 
   // Injected services for route and geocoding functionality
   late GoogleRouteService routeService;
   late GeocodingService geocodingService;
   late LocationService locationService;
+  late RouteCacheManager _routeCacheManager;
 
   @override
   void initState() {
@@ -75,6 +77,7 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
     routeService = widget.routeService as GoogleRouteService;
     geocodingService = widget.geocodingService;
     locationService = widget.locationService;
+    _routeCacheManager = widget.routeCacheManager;
   }
 
   void _handleShuttleBusSelection() {
@@ -88,11 +91,12 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
 
   bool _tryDisplayFromCache(String googleTransportMode, String waypointKey,
       List<String> waypoints, String transportMode) {
-    if (!_locationsChanged &&
-        _routeCache.containsKey(googleTransportMode) &&
-        _routeCache[googleTransportMode]!.containsKey(waypointKey)) {
-      print("Cache hit for $waypointKey using $googleTransportMode mode");
-      final cachedRoutes = _routeCache[googleTransportMode]![waypointKey]!;
+if (!_locationsChanged &&
+        _routeCacheManager.hasCached(googleTransportMode, waypointKey)) {
+      final cachedRoutes =
+          _routeCacheManager.getCached(googleTransportMode, waypointKey)!;
+
+
 
       // Routes are cached, filter and display
       print("Routes are cached for $googleTransportMode, filtering...");
@@ -243,12 +247,10 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
     final selectedRoutes = routes[googleTransportMode]!;
     final topRoutes = selectedRoutes.take(_maxRoutes).toList();
 
-    // Cache the routes
-    if (!_routeCache.containsKey(googleTransportMode)) {
-      _routeCache[googleTransportMode] = {};
-    }
     String waypointKey = "${waypoints.first}-${waypoints.last}";
-    _routeCache[googleTransportMode]![waypointKey] = selectedRoutes;
+    _routeCacheManager.setCache(
+        googleTransportMode, waypointKey, selectedRoutes);
+
 
     return topRoutes;
   }
@@ -286,7 +288,7 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
   void _setLocationChanged() {
     setState(() {
       _locationsChanged = true;
-      _routeCache.clear();
+      _routeCacheManager.clear();
     });
   }
 
