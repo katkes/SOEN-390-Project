@@ -90,12 +90,10 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
 
   bool _tryDisplayFromCache(String googleTransportMode, String waypointKey,
       List<String> waypoints, String transportMode) {
-if (!_locationsChanged &&
+    if (!_locationsChanged &&
         _routeCacheManager.hasCached(googleTransportMode, waypointKey)) {
       final cachedRoutes =
           _routeCacheManager.getCached(googleTransportMode, waypointKey)!;
-
-
 
       // Routes are cached, filter and display
       print("Routes are cached for $googleTransportMode, filtering...");
@@ -112,28 +110,26 @@ if (!_locationsChanged &&
   }
 
 // Main method with extracted helper methods
-  void _handleRouteConfirmation(
-      List<String> waypoints, String transportMode) async {
-    // Early validation
+  void _handleRouteConfirmation(List<String> waypoints, String transportMode) {
     if (!widget.waypointValidator.validate(context, waypoints, _minRoutes)) {
       return;
     }
 
-    // Setup and cache checking
     final String googleTransportMode =
         utils.mapTransportModeToApiMode(transportMode);
-    String waypointKey = "${waypoints.first}-${waypoints.last}";
+    final String waypointKey = "${waypoints.first}-${waypoints.last}";
 
-    // Return early if route found in cache
     if (_tryDisplayFromCache(
         googleTransportMode, waypointKey, waypoints, transportMode)) {
       return;
     }
 
-    // Handle transport mode changes
-    _handleTransportModeChange(transportMode);
+    _prepareAndFetchRoute(waypoints, transportMode);
+  }
 
-    // Update state before API call
+  void _prepareAndFetchRoute(
+      List<String> waypoints, String transportMode) async {
+    _handleTransportModeChange(transportMode);
     _setLoadingState(transportMode);
 
     try {
@@ -150,8 +146,8 @@ if (!_locationsChanged &&
         cacheManager: _routeCacheManager,
       );
 
-      final topRoutes = await fetcher.fetchRoutes(
-          waypoints, googleTransportMode, transportMode);
+      final topRoutes = await fetcher.fetchRoutes(waypoints,
+          utils.mapTransportModeToApiMode(transportMode), transportMode);
 
       if (topRoutes == null) return;
 
@@ -162,7 +158,6 @@ if (!_locationsChanged &&
       _handleRouteError(e);
     }
   }
-
 
   void _handleTransportModeChange(String transportMode) {
     if (selectedMode != transportMode) {
@@ -179,8 +174,6 @@ if (!_locationsChanged &&
       _locationsChanged = false;
     });
   }
-
-
 
   void _handleRouteError(dynamic error) {
     if (!mounted) return;
