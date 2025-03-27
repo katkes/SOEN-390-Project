@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:soen_390/models/outdoor_poi.dart';
 import 'package:soen_390/widgets/poi_description_section.dart';
 import 'package:soen_390/widgets/poi_detail_app_bar.dart';
+import 'package:soen_390/widgets/poi_rating_row.dart';
 import 'package:soen_390/widgets/poi_reviews_section.dart';
 import 'package:soen_390/screens/outdoor_poi/widgets/outdoor_poi_detail_widgets.dart';
 import 'package:soen_390/widgets/set_destination_button.dart';
@@ -61,35 +62,6 @@ class _PoiDetailScreenState extends State<PoiDetailScreen> {
   bool _showFullDescription = false;
 
 
-  Widget _buildRatingRow() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-      child: Row(
-        children: [
-          if (widget.poi.rating != null) ...[
-            buildRatingStars(widget.poi.rating!),
-            const SizedBox(width: 8),
-            Text(
-              widget.poi.rating!.toStringAsFixed(1),
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
-            ),
-            const SizedBox(width: 16),
-          ],
-          if (widget.poi.priceRange != null)
-            Text(
-              widget.poi.priceRange!,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
-            ),
-        ],
-      ),
-    );
-  }
 
 
   @override
@@ -113,7 +85,10 @@ class _PoiDetailScreenState extends State<PoiDetailScreen> {
                 ),
 
               // Rating stars and price range
-              _buildRatingRow(),
+              PoiRatingRow(
+                rating: widget.poi.rating,
+                priceRange: widget.poi.priceRange,
+              ),
 
               // Navigate to Waypoint Selection
               SetDestinationButton(
