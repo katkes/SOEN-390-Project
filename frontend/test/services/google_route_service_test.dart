@@ -10,6 +10,7 @@ import 'package:soen_390/services/interfaces/http_client_interface.dart';
 import 'package:soen_390/services/google_route_service.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'package:soen_390/services/interfaces/route_service_interface.dart';
+import 'package:soen_390/utils/google_directions_url_builder.dart';
 
 import 'google_route_service_test.mocks.dart';
 
@@ -60,6 +61,7 @@ void main() {
       locationService: mockLocationService,
       httpClient: mockHttpClient,
       apiKey: apiKey,
+      urlBuilder: GoogleDirectionsUrlBuilder(apiKey: apiKey),
     );
   });
 

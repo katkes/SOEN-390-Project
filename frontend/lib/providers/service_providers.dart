@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:soen_390/services/http_service.dart';
 import 'package:soen_390/services/google_route_service.dart';
+import 'package:soen_390/utils/google_directions_url_builder.dart';
 import '../services/interfaces/route_service_interface.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'package:soen_390/services/geocoding_service.dart';
@@ -30,10 +31,12 @@ final httpServiceProvider = Provider<HttpService>((ref) {
 final routeServiceProvider = Provider<IRouteService>((ref) {
   final locationService = ref.read(locationServiceProvider);
   final httpService = ref.read(httpServiceProvider);
+  final apiKey = dotenv.env['GOOGLE_MAPS_API_KEY'];
 
   return GoogleRouteService(
     locationService: locationService,
     httpClient: httpService,
+    urlBuilder: GoogleDirectionsUrlBuilder(apiKey: apiKey!),
   );
 });
 

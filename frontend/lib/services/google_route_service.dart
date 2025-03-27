@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:soen_390/services/interfaces/base_google_service.dart';
+import 'package:soen_390/utils/google_directions_url_builder.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'interfaces/route_service_interface.dart';
 
@@ -15,6 +16,8 @@ class GoogleRouteService extends BaseGoogleService implements IRouteService {
 
   /// Handles device location tracking and permissions.
   final LocationService locationService;
+  // Handles the URL building
+  final GoogleDirectionsUrlBuilder urlBuilder;
 
   /// Creates a new instance of `GoogleRouteService`.
   ///
@@ -25,6 +28,7 @@ class GoogleRouteService extends BaseGoogleService implements IRouteService {
   /// Throws an exception if the API key is missing.
   GoogleRouteService({
     required this.locationService,
+    required this.urlBuilder, // Add this line
     required super.httpClient,
     super.apiHelper,
     super.apiKey,
@@ -128,7 +132,7 @@ class GoogleRouteService extends BaseGoogleService implements IRouteService {
     DateTime? arrivalTime,
     bool alternatives = false,
   }) async {
-    final url = _buildRequestUrl(
+    final url = urlBuilder.buildRequestUrl(
       from: from,
       to: to,
       mode: mode,
@@ -144,45 +148,6 @@ class GoogleRouteService extends BaseGoogleService implements IRouteService {
       print("Exception during route fetch: $e");
       return null;
     }
-  }
-
-  /// Builds a Google Maps Directions API request URL with the specified parameters.
-  ///
-  /// - [from]: Starting location coordinates.
-  /// - [to]: Destination location coordinates.
-  /// - [mode]: Transportation mode such as `driving`, `walking`, `bicycling`, or `transit`.
-  /// - [departureTime]: Optional departure time for transit directions.
-  ///   Only applied for non-walking modes.
-  /// - [arrivalTime]: Optional arrival time for transit directions.
-  ///   Only applied for transit mode.
-  /// - [alternatives]: Whether to request alternative routes.
-  ///
-  /// Returns a properly formatted URL string for the Google Maps Directions API.
-  String _buildRequestUrl({
-    required LatLng from,
-    required LatLng to,
-    required String mode,
-    DateTime? departureTime,
-    DateTime? arrivalTime,
-    bool alternatives = false,
-  }) {
-    String url = "https://maps.googleapis.com/maps/api/directions/json?"
-        "origin=${from.latitude},${from.longitude}"
-        "&destination=${to.latitude},${to.longitude}"
-        "&mode=$mode"
-        "&key=$apiKey";
-
-    if (alternatives) {
-      url += "&alternatives=true";
-    }
-
-    if (departureTime != null && mode != "walking") {
-      url += "&departure_time=${departureTime.millisecondsSinceEpoch ~/ 1000}";
-    } else if (arrivalTime != null && mode == "transit") {
-      url += "&arrival_time=${arrivalTime.millisecondsSinceEpoch ~/ 1000}";
-    }
-
-    return url;
   }
 
   /// Extracts and transforms route data from parsed API response.
