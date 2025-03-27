@@ -146,5 +146,4 @@ class GoogleRouteService extends BaseGoogleService implements IRouteService {
   Future<List<RouteResult>?> getRoutesFromOptions(RouteQueryOptions options) {
     return _fetchRoute(options);
   }
-
 }

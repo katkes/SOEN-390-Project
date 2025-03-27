@@ -28,13 +28,13 @@ import 'package:soen_390/services/poi_factory.dart' as _i4;
 class _FakeGoogleMapsApiClient_0 extends _i1.SmartFake
     implements _i2.GoogleMapsApiClient {
   _FakeGoogleMapsApiClient_0(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 class _FakePointOfInterest_1 extends _i1.SmartFake
     implements _i3.PointOfInterest {
   _FakePointOfInterest_1(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 /// A class which mocks [PointOfInterestFactory].
@@ -43,19 +43,17 @@ class _FakePointOfInterest_1 extends _i1.SmartFake
 class MockPointOfInterestFactory extends _i1.Mock
     implements _i4.PointOfInterestFactory {
   @override
-  _i2.GoogleMapsApiClient get apiClient =>
-      (super.noSuchMethod(
-            Invocation.getter(#apiClient),
-            returnValue: _FakeGoogleMapsApiClient_0(
-              this,
-              Invocation.getter(#apiClient),
-            ),
-            returnValueForMissingStub: _FakeGoogleMapsApiClient_0(
-              this,
-              Invocation.getter(#apiClient),
-            ),
-          )
-          as _i2.GoogleMapsApiClient);
+  _i2.GoogleMapsApiClient get apiClient => (super.noSuchMethod(
+        Invocation.getter(#apiClient),
+        returnValue: _FakeGoogleMapsApiClient_0(
+          this,
+          Invocation.getter(#apiClient),
+        ),
+        returnValueForMissingStub: _FakeGoogleMapsApiClient_0(
+          this,
+          Invocation.getter(#apiClient),
+        ),
+      ) as _i2.GoogleMapsApiClient);
 
   @override
   _i5.Future<_i3.PointOfInterest> createPointOfInterest({
@@ -63,30 +61,29 @@ class MockPointOfInterestFactory extends _i1.Mock
     required String? imageUrl,
   }) =>
       (super.noSuchMethod(
+        Invocation.method(#createPointOfInterest, [], {
+          #placeId: placeId,
+          #imageUrl: imageUrl,
+        }),
+        returnValue: _i5.Future<_i3.PointOfInterest>.value(
+          _FakePointOfInterest_1(
+            this,
             Invocation.method(#createPointOfInterest, [], {
               #placeId: placeId,
               #imageUrl: imageUrl,
             }),
-            returnValue: _i5.Future<_i3.PointOfInterest>.value(
-              _FakePointOfInterest_1(
-                this,
-                Invocation.method(#createPointOfInterest, [], {
-                  #placeId: placeId,
-                  #imageUrl: imageUrl,
-                }),
-              ),
-            ),
-            returnValueForMissingStub: _i5.Future<_i3.PointOfInterest>.value(
-              _FakePointOfInterest_1(
-                this,
-                Invocation.method(#createPointOfInterest, [], {
-                  #placeId: placeId,
-                  #imageUrl: imageUrl,
-                }),
-              ),
-            ),
-          )
-          as _i5.Future<_i3.PointOfInterest>);
+          ),
+        ),
+        returnValueForMissingStub: _i5.Future<_i3.PointOfInterest>.value(
+          _FakePointOfInterest_1(
+            this,
+            Invocation.method(#createPointOfInterest, [], {
+              #placeId: placeId,
+              #imageUrl: imageUrl,
+            }),
+          ),
+        ),
+      ) as _i5.Future<_i3.PointOfInterest>);
 }
 
 /// A class which mocks [NavigatorObserver].
@@ -111,44 +108,48 @@ class MockNavigatorObserver extends _i1.Mock implements _i6.NavigatorObserver {
   void didRemove(
     _i6.Route<dynamic>? route,
     _i6.Route<dynamic>? previousRoute,
-  ) => super.noSuchMethod(
-    Invocation.method(#didRemove, [route, previousRoute]),
-    returnValueForMissingStub: null,
-  );
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(#didRemove, [route, previousRoute]),
+        returnValueForMissingStub: null,
+      );
 
   @override
   void didReplace({
     _i6.Route<dynamic>? newRoute,
     _i6.Route<dynamic>? oldRoute,
-  }) => super.noSuchMethod(
-    Invocation.method(#didReplace, [], {
-      #newRoute: newRoute,
-      #oldRoute: oldRoute,
-    }),
-    returnValueForMissingStub: null,
-  );
+  }) =>
+      super.noSuchMethod(
+        Invocation.method(#didReplace, [], {
+          #newRoute: newRoute,
+          #oldRoute: oldRoute,
+        }),
+        returnValueForMissingStub: null,
+      );
 
   @override
   void didChangeTop(
     _i6.Route<dynamic>? topRoute,
     _i6.Route<dynamic>? previousTopRoute,
-  ) => super.noSuchMethod(
-    Invocation.method(#didChangeTop, [topRoute, previousTopRoute]),
-    returnValueForMissingStub: null,
-  );
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(#didChangeTop, [topRoute, previousTopRoute]),
+        returnValueForMissingStub: null,
+      );
 
   @override
   void didStartUserGesture(
     _i6.Route<dynamic>? route,
     _i6.Route<dynamic>? previousRoute,
-  ) => super.noSuchMethod(
-    Invocation.method(#didStartUserGesture, [route, previousRoute]),
-    returnValueForMissingStub: null,
-  );
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(#didStartUserGesture, [route, previousRoute]),
+        returnValueForMissingStub: null,
+      );
 
   @override
   void didStopUserGesture() => super.noSuchMethod(
-    Invocation.method(#didStopUserGesture, []),
-    returnValueForMissingStub: null,
-  );
+        Invocation.method(#didStopUserGesture, []),
+        returnValueForMissingStub: null,
+      );
 }

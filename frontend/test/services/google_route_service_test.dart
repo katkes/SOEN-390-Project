@@ -96,8 +96,6 @@ void main() {
     });
   });
 
-  
-
   group('GoogleRouteService - getRoutes', () {
     test('should return multiple routes for different transport modes',
         () async {

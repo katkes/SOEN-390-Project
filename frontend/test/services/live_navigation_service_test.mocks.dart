@@ -35,52 +35,52 @@ import 'package:soen_390/utils/route_result_parser.dart' as _i6;
 class _FakeGeolocatorPlatform_0 extends _i1.SmartFake
     implements _i2.GeolocatorPlatform {
   _FakeGeolocatorPlatform_0(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 class _FakePosition_1 extends _i1.SmartFake implements _i2.Position {
   _FakePosition_1(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 class _FakeLocationSettings_2 extends _i1.SmartFake
     implements _i2.LocationSettings {
   _FakeLocationSettings_2(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 class _FakeLatLng_3 extends _i1.SmartFake implements _i3.LatLng {
   _FakeLatLng_3(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 class _FakeLocationService_4 extends _i1.SmartFake
     implements _i4.LocationService {
   _FakeLocationService_4(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 class _FakeGoogleDirectionsUrlBuilder_5 extends _i1.SmartFake
     implements _i5.GoogleDirectionsUrlBuilder {
   _FakeGoogleDirectionsUrlBuilder_5(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 class _FakeRouteResultParser_6 extends _i1.SmartFake
     implements _i6.RouteResultParser {
   _FakeRouteResultParser_6(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 class _FakeIHttpClient_7 extends _i1.SmartFake implements _i7.IHttpClient {
   _FakeIHttpClient_7(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 class _FakeGoogleApiHelper_8 extends _i1.SmartFake
     implements _i8.GoogleApiHelper {
   _FakeGoogleApiHelper_8(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 /// A class which mocks [LocationService].
@@ -92,210 +92,177 @@ class MockLocationService extends _i1.Mock implements _i4.LocationService {
   }
 
   @override
-  _i2.GeolocatorPlatform get geolocator =>
-      (super.noSuchMethod(
-            Invocation.getter(#geolocator),
-            returnValue: _FakeGeolocatorPlatform_0(
-              this,
-              Invocation.getter(#geolocator),
-            ),
-          )
-          as _i2.GeolocatorPlatform);
+  _i2.GeolocatorPlatform get geolocator => (super.noSuchMethod(
+        Invocation.getter(#geolocator),
+        returnValue: _FakeGeolocatorPlatform_0(
+          this,
+          Invocation.getter(#geolocator),
+        ),
+      ) as _i2.GeolocatorPlatform);
 
   @override
-  _i2.Position get currentPosition =>
-      (super.noSuchMethod(
-            Invocation.getter(#currentPosition),
-            returnValue: _FakePosition_1(
-              this,
-              Invocation.getter(#currentPosition),
-            ),
-          )
-          as _i2.Position);
+  _i2.Position get currentPosition => (super.noSuchMethod(
+        Invocation.getter(#currentPosition),
+        returnValue: _FakePosition_1(
+          this,
+          Invocation.getter(#currentPosition),
+        ),
+      ) as _i2.Position);
 
   @override
   set currentPosition(_i2.Position? _currentPosition) => super.noSuchMethod(
-    Invocation.setter(#currentPosition, _currentPosition),
-    returnValueForMissingStub: null,
-  );
+        Invocation.setter(#currentPosition, _currentPosition),
+        returnValueForMissingStub: null,
+      );
 
   @override
-  _i2.LocationSettings get locSetting =>
-      (super.noSuchMethod(
-            Invocation.getter(#locSetting),
-            returnValue: _FakeLocationSettings_2(
-              this,
-              Invocation.getter(#locSetting),
-            ),
-          )
-          as _i2.LocationSettings);
+  _i2.LocationSettings get locSetting => (super.noSuchMethod(
+        Invocation.getter(#locSetting),
+        returnValue: _FakeLocationSettings_2(
+          this,
+          Invocation.getter(#locSetting),
+        ),
+      ) as _i2.LocationSettings);
 
   @override
   set locSetting(_i2.LocationSettings? _locSetting) => super.noSuchMethod(
-    Invocation.setter(#locSetting, _locSetting),
-    returnValueForMissingStub: null,
-  );
+        Invocation.setter(#locSetting, _locSetting),
+        returnValueForMissingStub: null,
+      );
 
   @override
-  bool get serviceEnabled =>
-      (super.noSuchMethod(
-            Invocation.getter(#serviceEnabled),
-            returnValue: false,
-          )
-          as bool);
+  bool get serviceEnabled => (super.noSuchMethod(
+        Invocation.getter(#serviceEnabled),
+        returnValue: false,
+      ) as bool);
 
   @override
   set serviceEnabled(bool? _serviceEnabled) => super.noSuchMethod(
-    Invocation.setter(#serviceEnabled, _serviceEnabled),
-    returnValueForMissingStub: null,
-  );
+        Invocation.setter(#serviceEnabled, _serviceEnabled),
+        returnValueForMissingStub: null,
+      );
 
   @override
-  _i2.LocationPermission get permission =>
-      (super.noSuchMethod(
-            Invocation.getter(#permission),
-            returnValue: _i2.LocationPermission.denied,
-          )
-          as _i2.LocationPermission);
+  _i2.LocationPermission get permission => (super.noSuchMethod(
+        Invocation.getter(#permission),
+        returnValue: _i2.LocationPermission.denied,
+      ) as _i2.LocationPermission);
 
   @override
   set permission(_i2.LocationPermission? _permission) => super.noSuchMethod(
-    Invocation.setter(#permission, _permission),
-    returnValueForMissingStub: null,
-  );
+        Invocation.setter(#permission, _permission),
+        returnValueForMissingStub: null,
+      );
 
   @override
-  _i9.Future<bool> isLocationEnabled() =>
-      (super.noSuchMethod(
-            Invocation.method(#isLocationEnabled, []),
-            returnValue: _i9.Future<bool>.value(false),
-          )
-          as _i9.Future<bool>);
+  _i9.Future<bool> isLocationEnabled() => (super.noSuchMethod(
+        Invocation.method(#isLocationEnabled, []),
+        returnValue: _i9.Future<bool>.value(false),
+      ) as _i9.Future<bool>);
 
   @override
-  _i9.Future<bool> determinePermissions() =>
-      (super.noSuchMethod(
-            Invocation.method(#determinePermissions, []),
-            returnValue: _i9.Future<bool>.value(false),
-          )
-          as _i9.Future<bool>);
+  _i9.Future<bool> determinePermissions() => (super.noSuchMethod(
+        Invocation.method(#determinePermissions, []),
+        returnValue: _i9.Future<bool>.value(false),
+      ) as _i9.Future<bool>);
 
   @override
-  _i9.Future<_i2.Position> getCurrentLocation() =>
-      (super.noSuchMethod(
-            Invocation.method(#getCurrentLocation, []),
-            returnValue: _i9.Future<_i2.Position>.value(
-              _FakePosition_1(this, Invocation.method(#getCurrentLocation, [])),
-            ),
-          )
-          as _i9.Future<_i2.Position>);
+  _i9.Future<_i2.Position> getCurrentLocation() => (super.noSuchMethod(
+        Invocation.method(#getCurrentLocation, []),
+        returnValue: _i9.Future<_i2.Position>.value(
+          _FakePosition_1(this, Invocation.method(#getCurrentLocation, [])),
+        ),
+      ) as _i9.Future<_i2.Position>);
 
   @override
-  _i9.Future<void> updateCurrentLocation() =>
-      (super.noSuchMethod(
-            Invocation.method(#updateCurrentLocation, []),
-            returnValue: _i9.Future<void>.value(),
-            returnValueForMissingStub: _i9.Future<void>.value(),
-          )
-          as _i9.Future<void>);
+  _i9.Future<void> updateCurrentLocation() => (super.noSuchMethod(
+        Invocation.method(#updateCurrentLocation, []),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
 
   @override
   _i9.Future<_i2.Position> getCurrentLocationAccurately() =>
       (super.noSuchMethod(
+        Invocation.method(#getCurrentLocationAccurately, []),
+        returnValue: _i9.Future<_i2.Position>.value(
+          _FakePosition_1(
+            this,
             Invocation.method(#getCurrentLocationAccurately, []),
-            returnValue: _i9.Future<_i2.Position>.value(
-              _FakePosition_1(
-                this,
-                Invocation.method(#getCurrentLocationAccurately, []),
-              ),
-            ),
-          )
-          as _i9.Future<_i2.Position>);
+          ),
+        ),
+      ) as _i9.Future<_i2.Position>);
 
   @override
-  _i9.Future<void> updateCurrentLocationAccurately() =>
-      (super.noSuchMethod(
-            Invocation.method(#updateCurrentLocationAccurately, []),
-            returnValue: _i9.Future<void>.value(),
-            returnValueForMissingStub: _i9.Future<void>.value(),
-          )
-          as _i9.Future<void>);
+  _i9.Future<void> updateCurrentLocationAccurately() => (super.noSuchMethod(
+        Invocation.method(#updateCurrentLocationAccurately, []),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
 
   @override
   void takePosition(_i2.Position? p) => super.noSuchMethod(
-    Invocation.method(#takePosition, [p]),
-    returnValueForMissingStub: null,
-  );
+        Invocation.method(#takePosition, [p]),
+        returnValueForMissingStub: null,
+      );
 
   @override
   void setPlatformSpecificLocationSettings() => super.noSuchMethod(
-    Invocation.method(#setPlatformSpecificLocationSettings, []),
-    returnValueForMissingStub: null,
-  );
+        Invocation.method(#setPlatformSpecificLocationSettings, []),
+        returnValueForMissingStub: null,
+      );
 
   @override
   void createLocationStream() => super.noSuchMethod(
-    Invocation.method(#createLocationStream, []),
-    returnValueForMissingStub: null,
-  );
+        Invocation.method(#createLocationStream, []),
+        returnValueForMissingStub: null,
+      );
 
   @override
-  _i9.Future<void> startUp() =>
-      (super.noSuchMethod(
-            Invocation.method(#startUp, []),
-            returnValue: _i9.Future<void>.value(),
-            returnValueForMissingStub: _i9.Future<void>.value(),
-          )
-          as _i9.Future<void>);
+  _i9.Future<void> startUp() => (super.noSuchMethod(
+        Invocation.method(#startUp, []),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
 
   @override
   void stopListening() => super.noSuchMethod(
-    Invocation.method(#stopListening, []),
-    returnValueForMissingStub: null,
-  );
+        Invocation.method(#stopListening, []),
+        returnValueForMissingStub: null,
+      );
 
   @override
-  bool checkIfPositionIsAtSGW(_i3.LatLng? coordinates) =>
-      (super.noSuchMethod(
-            Invocation.method(#checkIfPositionIsAtSGW, [coordinates]),
-            returnValue: false,
-          )
-          as bool);
+  bool checkIfPositionIsAtSGW(_i3.LatLng? coordinates) => (super.noSuchMethod(
+        Invocation.method(#checkIfPositionIsAtSGW, [coordinates]),
+        returnValue: false,
+      ) as bool);
 
   @override
-  bool checkIfPositionIsAtLOY(_i3.LatLng? coordinates) =>
-      (super.noSuchMethod(
-            Invocation.method(#checkIfPositionIsAtLOY, [coordinates]),
-            returnValue: false,
-          )
-          as bool);
+  bool checkIfPositionIsAtLOY(_i3.LatLng? coordinates) => (super.noSuchMethod(
+        Invocation.method(#checkIfPositionIsAtLOY, [coordinates]),
+        returnValue: false,
+      ) as bool);
 
   @override
-  _i9.Stream<_i2.Position> getPositionStream() =>
-      (super.noSuchMethod(
-            Invocation.method(#getPositionStream, []),
-            returnValue: _i9.Stream<_i2.Position>.empty(),
-          )
-          as _i9.Stream<_i2.Position>);
+  _i9.Stream<_i2.Position> getPositionStream() => (super.noSuchMethod(
+        Invocation.method(#getPositionStream, []),
+        returnValue: _i9.Stream<_i2.Position>.empty(),
+      ) as _i9.Stream<_i2.Position>);
 
   @override
-  _i3.LatLng convertPositionToLatLng(_i2.Position? p) =>
-      (super.noSuchMethod(
-            Invocation.method(#convertPositionToLatLng, [p]),
-            returnValue: _FakeLatLng_3(
-              this,
-              Invocation.method(#convertPositionToLatLng, [p]),
-            ),
-          )
-          as _i3.LatLng);
+  _i3.LatLng convertPositionToLatLng(_i2.Position? p) => (super.noSuchMethod(
+        Invocation.method(#convertPositionToLatLng, [p]),
+        returnValue: _FakeLatLng_3(
+          this,
+          Invocation.method(#convertPositionToLatLng, [p]),
+        ),
+      ) as _i3.LatLng);
 
   @override
-  _i9.Stream<_i3.LatLng> getLatLngStream() =>
-      (super.noSuchMethod(
-            Invocation.method(#getLatLngStream, []),
-            returnValue: _i9.Stream<_i3.LatLng>.empty(),
-          )
-          as _i9.Stream<_i3.LatLng>);
+  _i9.Stream<_i3.LatLng> getLatLngStream() => (super.noSuchMethod(
+        Invocation.method(#getLatLngStream, []),
+        returnValue: _i9.Stream<_i3.LatLng>.empty(),
+      ) as _i9.Stream<_i3.LatLng>);
 }
 
 /// A class which mocks [GoogleRouteService].
@@ -308,70 +275,58 @@ class MockGoogleRouteService extends _i1.Mock
   }
 
   @override
-  _i4.LocationService get locationService =>
-      (super.noSuchMethod(
-            Invocation.getter(#locationService),
-            returnValue: _FakeLocationService_4(
-              this,
-              Invocation.getter(#locationService),
-            ),
-          )
-          as _i4.LocationService);
+  _i4.LocationService get locationService => (super.noSuchMethod(
+        Invocation.getter(#locationService),
+        returnValue: _FakeLocationService_4(
+          this,
+          Invocation.getter(#locationService),
+        ),
+      ) as _i4.LocationService);
 
   @override
-  _i5.GoogleDirectionsUrlBuilder get urlBuilder =>
-      (super.noSuchMethod(
-            Invocation.getter(#urlBuilder),
-            returnValue: _FakeGoogleDirectionsUrlBuilder_5(
-              this,
-              Invocation.getter(#urlBuilder),
-            ),
-          )
-          as _i5.GoogleDirectionsUrlBuilder);
+  _i5.GoogleDirectionsUrlBuilder get urlBuilder => (super.noSuchMethod(
+        Invocation.getter(#urlBuilder),
+        returnValue: _FakeGoogleDirectionsUrlBuilder_5(
+          this,
+          Invocation.getter(#urlBuilder),
+        ),
+      ) as _i5.GoogleDirectionsUrlBuilder);
 
   @override
-  _i6.RouteResultParser get parser =>
-      (super.noSuchMethod(
-            Invocation.getter(#parser),
-            returnValue: _FakeRouteResultParser_6(
-              this,
-              Invocation.getter(#parser),
-            ),
-          )
-          as _i6.RouteResultParser);
+  _i6.RouteResultParser get parser => (super.noSuchMethod(
+        Invocation.getter(#parser),
+        returnValue: _FakeRouteResultParser_6(
+          this,
+          Invocation.getter(#parser),
+        ),
+      ) as _i6.RouteResultParser);
 
   @override
-  String get apiKey =>
-      (super.noSuchMethod(
-            Invocation.getter(#apiKey),
-            returnValue: _i11.dummyValue<String>(
-              this,
-              Invocation.getter(#apiKey),
-            ),
-          )
-          as String);
+  String get apiKey => (super.noSuchMethod(
+        Invocation.getter(#apiKey),
+        returnValue: _i11.dummyValue<String>(
+          this,
+          Invocation.getter(#apiKey),
+        ),
+      ) as String);
 
   @override
-  _i7.IHttpClient get httpClient =>
-      (super.noSuchMethod(
-            Invocation.getter(#httpClient),
-            returnValue: _FakeIHttpClient_7(
-              this,
-              Invocation.getter(#httpClient),
-            ),
-          )
-          as _i7.IHttpClient);
+  _i7.IHttpClient get httpClient => (super.noSuchMethod(
+        Invocation.getter(#httpClient),
+        returnValue: _FakeIHttpClient_7(
+          this,
+          Invocation.getter(#httpClient),
+        ),
+      ) as _i7.IHttpClient);
 
   @override
-  _i8.GoogleApiHelper get apiHelper =>
-      (super.noSuchMethod(
-            Invocation.getter(#apiHelper),
-            returnValue: _FakeGoogleApiHelper_8(
-              this,
-              Invocation.getter(#apiHelper),
-            ),
-          )
-          as _i8.GoogleApiHelper);
+  _i8.GoogleApiHelper get apiHelper => (super.noSuchMethod(
+        Invocation.getter(#apiHelper),
+        returnValue: _FakeGoogleApiHelper_8(
+          this,
+          Invocation.getter(#apiHelper),
+        ),
+      ) as _i8.GoogleApiHelper);
 
   @override
   _i9.Future<_i12.RouteResult?> getRoute({
@@ -379,10 +334,9 @@ class MockGoogleRouteService extends _i1.Mock
     required _i3.LatLng? to,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(#getRoute, [], {#from: from, #to: to}),
-            returnValue: _i9.Future<_i12.RouteResult?>.value(),
-          )
-          as _i9.Future<_i12.RouteResult?>);
+        Invocation.method(#getRoute, [], {#from: from, #to: to}),
+        returnValue: _i9.Future<_i12.RouteResult?>.value(),
+      ) as _i9.Future<_i12.RouteResult?>);
 
   @override
   _i9.Future<Map<String, List<_i12.RouteResult>>> getRoutes({
@@ -392,17 +346,16 @@ class MockGoogleRouteService extends _i1.Mock
     DateTime? arrivalTime,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(#getRoutes, [], {
-              #from: from,
-              #to: to,
-              #departureTime: departureTime,
-              #arrivalTime: arrivalTime,
-            }),
-            returnValue: _i9.Future<Map<String, List<_i12.RouteResult>>>.value(
-              <String, List<_i12.RouteResult>>{},
-            ),
-          )
-          as _i9.Future<Map<String, List<_i12.RouteResult>>>);
+        Invocation.method(#getRoutes, [], {
+          #from: from,
+          #to: to,
+          #departureTime: departureTime,
+          #arrivalTime: arrivalTime,
+        }),
+        returnValue: _i9.Future<Map<String, List<_i12.RouteResult>>>.value(
+          <String, List<_i12.RouteResult>>{},
+        ),
+      ) as _i9.Future<Map<String, List<_i12.RouteResult>>>);
 
   @override
   _i12.RouteResult? selectRoute(List<_i12.RouteResult>? routes, int? index) =>
@@ -414,8 +367,7 @@ class MockGoogleRouteService extends _i1.Mock
     _i13.RouteQueryOptions? options,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#getRoutesFromOptions, [options]),
-            returnValue: _i9.Future<List<_i12.RouteResult>?>.value(),
-          )
-          as _i9.Future<List<_i12.RouteResult>?>);
+        Invocation.method(#getRoutesFromOptions, [options]),
+        returnValue: _i9.Future<List<_i12.RouteResult>?>.value(),
+      ) as _i9.Future<List<_i12.RouteResult>?>);
 }

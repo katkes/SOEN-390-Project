@@ -174,7 +174,6 @@ class _PlaceSearchScreenState extends State<PlaceSearchScreen> {
     if (mounted) setState(() => _isLoading = false);
   }
 
-
   /// For testing purposes: Allows setting the places manually.
   void testSetPlaces(List<Place> places) {
     setState(() {

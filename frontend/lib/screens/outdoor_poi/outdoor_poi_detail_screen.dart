@@ -61,9 +61,6 @@ class _PoiDetailScreenState extends State<PoiDetailScreen> {
   /// Tracks whether the full description text is being shown.
   bool _showFullDescription = false;
 
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,7 +68,6 @@ class _PoiDetailScreenState extends State<PoiDetailScreen> {
         slivers: [
           /// Displays a collapsible AppBar with the POI's name and image.
           PoiDetailAppBar(poi: widget.poi, onBack: widget.onBack),
-
 
           /// Main content list: includes chips, rating, description, contact, hours, amenities, and reviews.
           SliverList(
