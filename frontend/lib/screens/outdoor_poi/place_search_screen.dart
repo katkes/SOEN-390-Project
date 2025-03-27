@@ -121,10 +121,9 @@ class _PlaceSearchScreenState extends State<PlaceSearchScreen> {
 
   /// Fetches places of the selected [type] near the current location.
   Future<void> _onTypeSelected(String type) async {
-    if (_latitude == null || _longitude == null) {
-      print("Location not set. Cannot fetch POIs.");
-      return;
-    }
+    final lat = _latitude;
+    final lng = _longitude;
+    if (lat == null || lng == null) return;
 
     setState(() {
       _isLoading = true;
@@ -132,29 +131,19 @@ class _PlaceSearchScreenState extends State<PlaceSearchScreen> {
     });
 
     try {
-      final fetchedPlaces = await poiService.getNearbyPlaces(
-        latitude: _latitude!,
-        longitude: _longitude!,
+      final places = await poiService.getNearbyPlaces(
+        latitude: lat,
+        longitude: lng,
         type: type,
         radius: 1500,
       );
 
-      setState(() {
-        _places = fetchedPlaces;
-      });
-
-      if (fetchedPlaces.isEmpty) {
-        print("No places found for type: $type");
-      }
+      setState(() => _places = places);
     } catch (e) {
       _handleError("Error fetching POIs: $e", "Failed to fetch places");
-      setState(() {
-        _places = [];
-      });
+      setState(() => _places = []);
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
