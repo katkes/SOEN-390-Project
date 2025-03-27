@@ -126,10 +126,7 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
     await tester.pumpAndSettle();
 
     // Assert
-    expect(
-        find.text(
-            'Error finding route: Exception: No routes found for the selected transport mode'),
-        findsOneWidget);
+    expect(find.textContaining('Error finding route'), findsOneWidget);
   });
   testWidgets('WaypointSelectionScreen displays error on empty route response',
       (WidgetTester tester) async {

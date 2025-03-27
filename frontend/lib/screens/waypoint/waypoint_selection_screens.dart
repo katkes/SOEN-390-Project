@@ -5,20 +5,19 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:soen_390/models/route_result.dart';
 import 'package:soen_390/services/google_maps_api_client.dart';
 import 'package:soen_390/services/google_poi_service.dart';
 import 'package:soen_390/services/http_service.dart';
 import 'package:soen_390/services/poi_factory.dart';
 import 'package:soen_390/utils/campus_route_checker.dart';
 import 'package:soen_390/utils/route_cache_manager.dart';
+import 'package:soen_390/utils/route_fetcher.dart';
 import 'package:soen_390/widgets/location_transport_selector.dart';
 import 'package:soen_390/widgets/nav_bar.dart';
 import 'package:soen_390/widgets/route_card.dart';
 import 'package:soen_390/services/google_route_service.dart';
 import 'package:soen_390/services/geocoding_service.dart';
 import 'package:soen_390/utils/location_service.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:soen_390/services/interfaces/route_service_interface.dart';
 import 'package:soen_390/utils/route_display.dart' as display;
 import 'package:soen_390/utils/route_utils.dart' as utils;
@@ -138,13 +137,32 @@ if (!_locationsChanged &&
     _setLoadingState(transportMode);
 
     try {
-      // Fetch and display routes
-      await _fetchAndDisplayRoutes(
+      final fetcher = RouteFetcher(
+        context: context,
+        routeService: routeService,
+        geocodingService: geocodingService,
+        locationService: locationService,
+        campusRouteChecker: widget.campusRouteChecker,
+        overrideDestLat: widget.destinationLat,
+        overrideDestLng: widget.destinationLng,
+        updateRoutes: (routes) => setState(() => confirmedRoutes = routes),
+        setCrossCampus: (value) => isCrossCampus = value,
+        cacheManager: _routeCacheManager,
+      );
+
+      final topRoutes = await fetcher.fetchRoutes(
           waypoints, googleTransportMode, transportMode);
+
+      if (topRoutes == null) return;
+
+      setState(() => _locationsChanged = false);
+
+      fetcher.displayRoutes(waypoints, topRoutes, transportMode);
     } catch (e) {
       _handleRouteError(e);
     }
   }
+
 
   void _handleTransportModeChange(String transportMode) {
     if (selectedMode != transportMode) {
@@ -162,113 +180,7 @@ if (!_locationsChanged &&
     });
   }
 
-  Future<void> _fetchAndDisplayRoutes(List<String> waypoints,
-      String googleTransportMode, String transportMode) async {
-    // Resolve start and end coordinates
-    final coordinates = await _resolveCoordinates(waypoints);
-    if (coordinates == null) return;
 
-    final startPoint = coordinates['start']!;
-    final endPoint = coordinates['end']!;
-
-    // Get routes from service
-    final routes = await routeService.getRoutes(from: startPoint, to: endPoint);
-
-    // Check for cross-campus route
-    isCrossCampus =
-        widget.campusRouteChecker.isInterCampus(from: startPoint, to: endPoint);
-
-    print("Route involves campus switch: $isCrossCampus");
-
-    // Validate and process routes
-    if (!_validateRoutes(routes, googleTransportMode)) return;
-
-    // Get and cache the routes
-    final topRoutes =
-        _processAndCacheRoutes(routes, googleTransportMode, waypoints);
-    if (topRoutes == null) return;
-
-    // Update UI state
-    if (!mounted) return;
-    setState(() => _locationsChanged = false);
-
-    // Display the routes
-    _displayRoutesAndLogDetails(waypoints, topRoutes, transportMode);
-  }
-
-  Future<Map<String, LatLng>?> _resolveCoordinates(
-      List<String> waypoints) async {
-    LatLng? startPoint;
-
-    // Check if "Your Location" is used and get current GPS location
-    if (waypoints.first == 'Your Location') {
-      try {
-        final position = await locationService.getCurrentLocation();
-        startPoint = LatLng(position.latitude, position.longitude);
-      } catch (e) {
-        throw Exception("Failed to fetch current location: $e");
-      }
-    } else {
-      startPoint = await geocodingService.getCoordinates(waypoints.first);
-    }
-
-    LatLng? endPoint;
-
-    if (widget.destinationLat != null && widget.destinationLng != null) {
-      endPoint = LatLng(widget.destinationLat!, widget.destinationLng!);
-    } else {
-      endPoint = await geocodingService.getCoordinates(waypoints.last);
-    }
-
-    if (startPoint == null) {
-      throw Exception("Failed to resolve start point coordinates.");
-    }
-    if (endPoint == null) {
-      throw Exception("Failed to resolve end point coordinates.");
-    }
-
-    return {'start': startPoint, 'end': endPoint};
-  }
-
-  bool _validateRoutes(
-      Map<String, List<RouteResult>> routes, String googleTransportMode) {
-    if (routes.isEmpty ||
-        !routes.containsKey(googleTransportMode) ||
-        routes[googleTransportMode]!.isEmpty) {
-      throw Exception("No routes found for the selected transport mode");
-    }
-    return true;
-  }
-
-  List<RouteResult>? _processAndCacheRoutes(
-      Map<String, List<RouteResult>> routes,
-      String googleTransportMode,
-      List<String> waypoints) {
-    final selectedRoutes = routes[googleTransportMode]!;
-    final topRoutes = selectedRoutes.take(_maxRoutes).toList();
-
-    String waypointKey = "${waypoints.first}-${waypoints.last}";
-    _routeCacheManager.setCache(
-        googleTransportMode, waypointKey, selectedRoutes);
-
-
-    return topRoutes;
-  }
-
-  void _displayRoutesAndLogDetails(
-      List<String> waypoints, List<RouteResult> routes, String transportMode) {
-    display.displayRoutes(
-      context: context,
-      updateRoutes: (routes) => setState(() => confirmedRoutes = routes),
-      waypoints: waypoints,
-      routes: routes,
-      transportMode: transportMode,
-    );
-
-    print("Final confirmed route: $waypoints, Mode: $transportMode");
-    print(
-        "Route details: ${routes.first.distance} meters, ${routes.first.duration} seconds");
-  }
 
   void _handleRouteError(dynamic error) {
     if (!mounted) return;
