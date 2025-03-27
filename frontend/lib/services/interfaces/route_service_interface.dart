@@ -1,4 +1,5 @@
 import 'package:latlong2/latlong.dart';
+import 'package:soen_390/models/route_query_options.dart';
 import 'package:soen_390/models/route_result.dart';
 
 /// An abstract class that defines the contract for a routing service.
@@ -14,4 +15,14 @@ abstract class IRouteService {
     required LatLng from,
     required LatLng to,
   });
+  Future<Map<String, List<RouteResult>>> getRoutes({
+    required LatLng from,
+    required LatLng to,
+    DateTime? departureTime,
+    DateTime? arrivalTime,
+  });
+
+  RouteResult? selectRoute(List<RouteResult> routes, int index);
+
+  Future<List<RouteResult>?> getRoutesFromOptions(RouteQueryOptions options);
 }

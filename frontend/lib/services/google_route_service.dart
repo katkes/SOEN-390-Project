@@ -66,6 +66,7 @@ class GoogleRouteService extends BaseGoogleService implements IRouteService {
   ///
   /// Returns a map where keys are transport modes (`driving`, `walking`, etc.)
   /// and values are lists of `RouteResult` options for that mode.
+  @override
   Future<Map<String, List<RouteResult>>> getRoutes({
     required LatLng from,
     required LatLng to,
@@ -126,6 +127,7 @@ class GoogleRouteService extends BaseGoogleService implements IRouteService {
   /// - [index]: The index of the chosen route.
   ///
   /// Returns the selected `RouteResult`, or `null` if the index is invalid.
+  @override
   RouteResult? selectRoute(List<RouteResult> routes, int index) {
     if (routes.isEmpty) {
       print("ERROR: No routes available.");
@@ -140,6 +142,7 @@ class GoogleRouteService extends BaseGoogleService implements IRouteService {
     return _selectedRoute;
   }
 
+  @override
   Future<List<RouteResult>?> getRoutesFromOptions(RouteQueryOptions options) {
     return _fetchRoute(options);
   }
