@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:soen_390/models/places.dart';
-import 'package:soen_390/screens/outdoor_poi/outdoor_poi_detail_screen.dart';
 import 'package:soen_390/services/google_poi_service.dart';
+import 'package:soen_390/services/place_tap_handler.dart';
 import 'package:soen_390/services/poi_factory.dart';
 import 'package:soen_390/styles/theme.dart';
 import 'package:soen_390/utils/location_service.dart';
@@ -160,47 +160,20 @@ class _PlaceSearchScreenState extends State<PlaceSearchScreen> {
 
   /// Handles tapping a place to view details and potentially set it as a destination.
   Future<void> _handlePlaceTap(Place place) async {
-    print('--- _handlePlaceTap started ---');
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
-    try {
-      final imageUrl = place.thumbnailPhotoUrl(_googleApiKey) ?? '';
-      final poi = await widget.poiFactory.createPointOfInterest(
-        placeId: place.placeId,
-        imageUrl: imageUrl,
-      );
+    final handler = PlaceTapHandler(
+      context: context,
+      apiKey: _googleApiKey,
+      poiFactory: widget.poiFactory,
+      onSetDestination: widget.onSetDestination,
+    );
 
-      if (!mounted) return;
+    await handler.handle(place);
 
-      final result = await Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => PoiDetailScreen(poi: poi)),
-      );
-
-      if (result != null && result is Map<String, dynamic>) {
-        widget.onSetDestination?.call(
-          result['name'] as String,
-          result['lat'] as double,
-          result['lng'] as double,
-        );
-        if (mounted) {
-          Navigator.pop(context);
-        }
-      }
-    } catch (e) {
-      _handleError('Error creating POI: $e', "Failed to load place details.");
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
-
-    print('--- _handlePlaceTap completed ---');
+    if (mounted) setState(() => _isLoading = false);
   }
+
 
   /// For testing purposes: Allows setting the places manually.
   void testSetPlaces(List<Place> places) {
