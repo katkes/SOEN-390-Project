@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:soen_390/models/outdoor_poi.dart';
 import 'package:soen_390/widgets/poi_description_section.dart';
 import 'package:soen_390/widgets/poi_detail_app_bar.dart';
+import 'package:soen_390/widgets/poi_reviews_section.dart';
 import 'package:soen_390/widgets/review_card.dart';
 import 'package:soen_390/screens/outdoor_poi/widgets/outdoor_poi_detail_widgets.dart';
 
@@ -58,31 +59,6 @@ class PoiDetailScreen extends StatefulWidget {
 class _PoiDetailScreenState extends State<PoiDetailScreen> {
   /// Tracks whether the full description text is being shown.
   bool _showFullDescription = false;
-
-  Widget _buildReviewsSection() {
-    if (widget.poi.reviews == null || widget.poi.reviews!.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Reviews',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 16),
-          ...widget.poi.reviews!.map((review) => ReviewCard(review: review)),
-          const SizedBox(height: 24),
-        ],
-      ),
-    );
-  }
 
 
   Widget _buildSetDestinationButton() {
@@ -199,7 +175,7 @@ class _PoiDetailScreenState extends State<PoiDetailScreen> {
               const SizedBox(height: 24),
 
               // Reviews
-              _buildReviewsSection(),
+              PoiReviewsSection(reviews: widget.poi.reviews),
             ]),
           ),
         ],
