@@ -17,6 +17,7 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:soen_390/models/outdoor_poi.dart';
+import 'package:soen_390/widgets/poi_description_section.dart';
 import 'package:soen_390/widgets/poi_detail_app_bar.dart';
 import 'package:soen_390/widgets/review_card.dart';
 import 'package:soen_390/screens/outdoor_poi/widgets/outdoor_poi_detail_widgets.dart';
@@ -83,34 +84,6 @@ class _PoiDetailScreenState extends State<PoiDetailScreen> {
     );
   }
 
-  Widget _buildDescriptionSection() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'About',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          buildExpandableDescription(
-            widget.poi.description,
-            _showFullDescription,
-            () {
-              setState(() {
-                _showFullDescription = !_showFullDescription;
-              });
-            },
-            context,
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildSetDestinationButton() {
     return Padding(
@@ -195,7 +168,15 @@ class _PoiDetailScreenState extends State<PoiDetailScreen> {
               _buildSetDestinationButton(),
 
               // Expandable Description
-              _buildDescriptionSection(),
+              PoiDescriptionSection(
+                description: widget.poi.description,
+                showFull: _showFullDescription,
+                onToggle: () {
+                  setState(() {
+                    _showFullDescription = !_showFullDescription;
+                  });
+                },
+              ),
 
               // Contact Info: Address, Phone, Website
               buildInfoSection(
