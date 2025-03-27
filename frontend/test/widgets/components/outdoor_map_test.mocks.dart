@@ -34,23 +34,23 @@ import 'package:soen_390/widgets/building_popup.dart' as _i10;
 
 class _FakeResponse_0 extends _i1.SmartFake implements _i2.Response {
   _FakeResponse_0(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
+    : super(parent, parentInvocation);
 }
 
 class _FakeMapsApiClient_1 extends _i1.SmartFake implements _i3.MapsApiClient {
   _FakeMapsApiClient_1(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
+    : super(parent, parentInvocation);
 }
 
 class _FakeIHttpClient_2 extends _i1.SmartFake implements _i4.IHttpClient {
   _FakeIHttpClient_2(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
+    : super(parent, parentInvocation);
 }
 
 class _FakeGoogleApiHelper_3 extends _i1.SmartFake
     implements _i5.GoogleApiHelper {
   _FakeGoogleApiHelper_3(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
+    : super(parent, parentInvocation);
 }
 
 /// A class which mocks [IRouteService].
@@ -63,10 +63,11 @@ class MockIRouteService extends _i1.Mock implements _i6.IRouteService {
     required _i9.LatLng? to,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(#getRoute, [], {#from: from, #to: to}),
-        returnValue: _i7.Future<_i8.RouteResult?>.value(),
-        returnValueForMissingStub: _i7.Future<_i8.RouteResult?>.value(),
-      ) as _i7.Future<_i8.RouteResult?>);
+            Invocation.method(#getRoute, [], {#from: from, #to: to}),
+            returnValue: _i7.Future<_i8.RouteResult?>.value(),
+            returnValueForMissingStub: _i7.Future<_i8.RouteResult?>.value(),
+          )
+          as _i7.Future<_i8.RouteResult?>);
 }
 
 /// A class which mocks [IHttpClient].
@@ -74,15 +75,17 @@ class MockIRouteService extends _i1.Mock implements _i6.IRouteService {
 /// See the documentation for Mockito's code generation for more information.
 class MockIHttpClient extends _i1.Mock implements _i4.IHttpClient {
   @override
-  _i7.Future<_i2.Response> get(Uri? url) => (super.noSuchMethod(
-        Invocation.method(#get, [url]),
-        returnValue: _i7.Future<_i2.Response>.value(
-          _FakeResponse_0(this, Invocation.method(#get, [url])),
-        ),
-        returnValueForMissingStub: _i7.Future<_i2.Response>.value(
-          _FakeResponse_0(this, Invocation.method(#get, [url])),
-        ),
-      ) as _i7.Future<_i2.Response>);
+  _i7.Future<_i2.Response> get(Uri? url) =>
+      (super.noSuchMethod(
+            Invocation.method(#get, [url]),
+            returnValue: _i7.Future<_i2.Response>.value(
+              _FakeResponse_0(this, Invocation.method(#get, [url])),
+            ),
+            returnValueForMissingStub: _i7.Future<_i2.Response>.value(
+              _FakeResponse_0(this, Invocation.method(#get, [url])),
+            ),
+          )
+          as _i7.Future<_i2.Response>);
 }
 
 /// A class which mocks [BuildingPopUps].
@@ -90,17 +93,19 @@ class MockIHttpClient extends _i1.Mock implements _i4.IHttpClient {
 /// See the documentation for Mockito's code generation for more information.
 class MockBuildingPopUps extends _i1.Mock implements _i10.BuildingPopUps {
   @override
-  _i3.MapsApiClient get mapsApiClient => (super.noSuchMethod(
-        Invocation.getter(#mapsApiClient),
-        returnValue: _FakeMapsApiClient_1(
-          this,
-          Invocation.getter(#mapsApiClient),
-        ),
-        returnValueForMissingStub: _FakeMapsApiClient_1(
-          this,
-          Invocation.getter(#mapsApiClient),
-        ),
-      ) as _i3.MapsApiClient);
+  _i3.MapsApiClient get mapsApiClient =>
+      (super.noSuchMethod(
+            Invocation.getter(#mapsApiClient),
+            returnValue: _FakeMapsApiClient_1(
+              this,
+              Invocation.getter(#mapsApiClient),
+            ),
+            returnValueForMissingStub: _FakeMapsApiClient_1(
+              this,
+              Invocation.getter(#mapsApiClient),
+            ),
+          )
+          as _i3.MapsApiClient);
 
   @override
   _i7.Future<Map<String, dynamic>> fetchBuildingInformation(
@@ -109,18 +114,19 @@ class MockBuildingPopUps extends _i1.Mock implements _i10.BuildingPopUps {
     String? locationName,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(#fetchBuildingInformation, [
-          latitude,
-          longitude,
-          locationName,
-        ]),
-        returnValue: _i7.Future<Map<String, dynamic>>.value(
-          <String, dynamic>{},
-        ),
-        returnValueForMissingStub: _i7.Future<Map<String, dynamic>>.value(
-          <String, dynamic>{},
-        ),
-      ) as _i7.Future<Map<String, dynamic>>);
+            Invocation.method(#fetchBuildingInformation, [
+              latitude,
+              longitude,
+              locationName,
+            ]),
+            returnValue: _i7.Future<Map<String, dynamic>>.value(
+              <String, dynamic>{},
+            ),
+            returnValueForMissingStub: _i7.Future<Map<String, dynamic>>.value(
+              <String, dynamic>{},
+            ),
+          )
+          as _i7.Future<Map<String, dynamic>>);
 }
 
 /// A class which mocks [GoogleMapsApiClient].
@@ -129,43 +135,49 @@ class MockBuildingPopUps extends _i1.Mock implements _i10.BuildingPopUps {
 class MockGoogleMapsApiClient extends _i1.Mock
     implements _i11.GoogleMapsApiClient {
   @override
-  String get apiKey => (super.noSuchMethod(
-        Invocation.getter(#apiKey),
-        returnValue: _i12.dummyValue<String>(
-          this,
-          Invocation.getter(#apiKey),
-        ),
-        returnValueForMissingStub: _i12.dummyValue<String>(
-          this,
-          Invocation.getter(#apiKey),
-        ),
-      ) as String);
+  String get apiKey =>
+      (super.noSuchMethod(
+            Invocation.getter(#apiKey),
+            returnValue: _i12.dummyValue<String>(
+              this,
+              Invocation.getter(#apiKey),
+            ),
+            returnValueForMissingStub: _i12.dummyValue<String>(
+              this,
+              Invocation.getter(#apiKey),
+            ),
+          )
+          as String);
 
   @override
-  _i4.IHttpClient get httpClient => (super.noSuchMethod(
-        Invocation.getter(#httpClient),
-        returnValue: _FakeIHttpClient_2(
-          this,
-          Invocation.getter(#httpClient),
-        ),
-        returnValueForMissingStub: _FakeIHttpClient_2(
-          this,
-          Invocation.getter(#httpClient),
-        ),
-      ) as _i4.IHttpClient);
+  _i4.IHttpClient get httpClient =>
+      (super.noSuchMethod(
+            Invocation.getter(#httpClient),
+            returnValue: _FakeIHttpClient_2(
+              this,
+              Invocation.getter(#httpClient),
+            ),
+            returnValueForMissingStub: _FakeIHttpClient_2(
+              this,
+              Invocation.getter(#httpClient),
+            ),
+          )
+          as _i4.IHttpClient);
 
   @override
-  _i5.GoogleApiHelper get apiHelper => (super.noSuchMethod(
-        Invocation.getter(#apiHelper),
-        returnValue: _FakeGoogleApiHelper_3(
-          this,
-          Invocation.getter(#apiHelper),
-        ),
-        returnValueForMissingStub: _FakeGoogleApiHelper_3(
-          this,
-          Invocation.getter(#apiHelper),
-        ),
-      ) as _i5.GoogleApiHelper);
+  _i5.GoogleApiHelper get apiHelper =>
+      (super.noSuchMethod(
+            Invocation.getter(#apiHelper),
+            returnValue: _FakeGoogleApiHelper_3(
+              this,
+              Invocation.getter(#apiHelper),
+            ),
+            returnValueForMissingStub: _FakeGoogleApiHelper_3(
+              this,
+              Invocation.getter(#apiHelper),
+            ),
+          )
+          as _i5.GoogleApiHelper);
 
   @override
   _i7.Future<Map<String, dynamic>> fetchBuildingInformation(
@@ -174,28 +186,30 @@ class MockGoogleMapsApiClient extends _i1.Mock
     String? locationName,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(#fetchBuildingInformation, [
-          latitude,
-          longitude,
-          locationName,
-        ]),
-        returnValue: _i7.Future<Map<String, dynamic>>.value(
-          <String, dynamic>{},
-        ),
-        returnValueForMissingStub: _i7.Future<Map<String, dynamic>>.value(
-          <String, dynamic>{},
-        ),
-      ) as _i7.Future<Map<String, dynamic>>);
+            Invocation.method(#fetchBuildingInformation, [
+              latitude,
+              longitude,
+              locationName,
+            ]),
+            returnValue: _i7.Future<Map<String, dynamic>>.value(
+              <String, dynamic>{},
+            ),
+            returnValueForMissingStub: _i7.Future<Map<String, dynamic>>.value(
+              <String, dynamic>{},
+            ),
+          )
+          as _i7.Future<Map<String, dynamic>>);
 
   @override
   _i7.Future<Map<String, dynamic>> fetchPlaceDetailsById(String? placeId) =>
       (super.noSuchMethod(
-        Invocation.method(#fetchPlaceDetailsById, [placeId]),
-        returnValue: _i7.Future<Map<String, dynamic>>.value(
-          <String, dynamic>{},
-        ),
-        returnValueForMissingStub: _i7.Future<Map<String, dynamic>>.value(
-          <String, dynamic>{},
-        ),
-      ) as _i7.Future<Map<String, dynamic>>);
+            Invocation.method(#fetchPlaceDetailsById, [placeId]),
+            returnValue: _i7.Future<Map<String, dynamic>>.value(
+              <String, dynamic>{},
+            ),
+            returnValueForMissingStub: _i7.Future<Map<String, dynamic>>.value(
+              <String, dynamic>{},
+            ),
+          )
+          as _i7.Future<Map<String, dynamic>>);
 }

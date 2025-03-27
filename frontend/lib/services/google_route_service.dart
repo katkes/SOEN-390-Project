@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:latlong2/latlong.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:soen_390/models/route_query_options.dart';
 import 'package:soen_390/models/route_result.dart';
 import 'package:soen_390/services/interfaces/base_google_service.dart';
@@ -141,61 +140,8 @@ class GoogleRouteService extends BaseGoogleService implements IRouteService {
     return _selectedRoute;
   }
 
-  /// Starts live navigation with dynamic rerouting.
-  ///
-  /// - [to]: The destination `LatLng`.
-  /// - [mode]: The selected transport mode.
-  /// - [onUpdate]: Callback that provides updated route information when rerouted.
-  ///
-  /// This function continuously checks the user's position. If they go off-route,
-  /// it recalculates the best path.
-  Future<void> startLiveNavigation({
-    required LatLng to,
-    required String mode,
-    required Function(RouteResult) onUpdate,
-  }) async {
-    if (_selectedRoute == null) {
-      print("ERROR: No route selected! Call `selectRoute()` first.");
-      return;
-    }
-
-    // Check if location services are enabled BEFORE starting navigation
-    final isLocationEnabled = await locationService.isLocationEnabled();
-
-    if (!isLocationEnabled) {
-      print("ERROR: Location services are disabled. Cannot start navigation.");
-      return;
-    }
-
-    RouteResult route = _selectedRoute!;
-    locationService.createLocationStream();
-
-    locationService.getPositionStream().listen((Position position) async {
-      LatLng newUserLocation = LatLng(position.latitude, position.longitude);
-
-      if (!_isUserOnRoute(newUserLocation, route.routePoints)) {
-        print("User off route! Recalculating...");
-        RouteResult? updatedRoute = await _fetchRoute(
-                RouteQueryOptions(from: newUserLocation, to: to, mode: mode))
-            .then((value) =>
-                (value != null && value.isNotEmpty) ? value.first : null);
-
-        if (updatedRoute != null) {
-          route = updatedRoute;
-          onUpdate(updatedRoute);
-        }
-      } else {
-        onUpdate(route);
-      }
-    });
+  Future<List<RouteResult>?> getRoutesFromOptions(RouteQueryOptions options) {
+    return _fetchRoute(options);
   }
 
-  /// Checks if the user is still following the route.
-  bool _isUserOnRoute(LatLng userLocation, List<LatLng> routePoints) {
-    const double deviationThreshold = 30;
-    return routePoints.any((point) =>
-        Geolocator.distanceBetween(userLocation.latitude,
-            userLocation.longitude, point.latitude, point.longitude) <
-        deviationThreshold);
-  }
 }

@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:geolocator_platform_interface/geolocator_platform_interface.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:latlong2/latlong.dart';
@@ -97,84 +96,7 @@ void main() {
     });
   });
 
-  test('should not start navigation if no route is selected', () async {
-    final to = const LatLng(45.5087, -73.554);
-    final mode = 'driving';
-
-    await googleRouteService.startLiveNavigation(
-      to: to,
-      mode: mode,
-      onUpdate: (_) {},
-    );
-
-    verifyNever(mockLocationService.createLocationStream());
-  });
-
-  test('should not start navigation if location services are disabled',
-      () async {
-    when(mockLocationService.isLocationEnabled())
-        .thenAnswer((_) async => false);
-
-    final to = const LatLng(45.5087, -73.554);
-
-    await googleRouteService.startLiveNavigation(
-      to: to,
-      mode: 'driving',
-      onUpdate: (_) {},
-    );
-
-    verifyNever(mockLocationService.createLocationStream());
-  });
-
-  test('should start navigation and trigger updates on location change',
-      () async {
-    final destination = const LatLng(45.5087, -73.554);
-    final mode = 'driving';
-    final route = RouteResult(
-      distance: 1000,
-      duration: 600,
-      routePoints: [const LatLng(45.5017, -73.5673)],
-      steps: [],
-    );
-
-    googleRouteService.selectRoute([route], 0);
-
-    when(mockLocationService.isLocationEnabled()).thenAnswer((_) async => true);
-
-    when(mockLocationService.getPositionStream()).thenAnswer(
-      (_) => Stream.fromIterable([
-        Position(
-          latitude: 45.5025,
-          longitude: -73.5700,
-          timestamp: DateTime.now(),
-          altitude: 0,
-          accuracy: 0,
-          heading: 0,
-          speed: 0,
-          speedAccuracy: 0,
-          altitudeAccuracy: 0,
-          headingAccuracy: 0,
-        )
-      ]),
-    );
-
-    when(mockHttpClient.get(any)).thenAnswer(
-      (_) async => http.Response(jsonEncode(mockResponseData), 200),
-    );
-
-    bool updateCalled = false;
-
-    await googleRouteService.startLiveNavigation(
-      to: destination,
-      mode: mode,
-      onUpdate: (_) {
-        updateCalled = true;
-      },
-    );
-
-    await Future.delayed(const Duration(milliseconds: 100));
-    expect(updateCalled, isTrue);
-  });
+  
 
   group('GoogleRouteService - getRoutes', () {
     test('should return multiple routes for different transport modes',
