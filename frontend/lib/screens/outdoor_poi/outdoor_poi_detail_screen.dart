@@ -20,8 +20,8 @@ import 'package:soen_390/models/outdoor_poi.dart';
 import 'package:soen_390/widgets/poi_description_section.dart';
 import 'package:soen_390/widgets/poi_detail_app_bar.dart';
 import 'package:soen_390/widgets/poi_reviews_section.dart';
-import 'package:soen_390/widgets/review_card.dart';
 import 'package:soen_390/screens/outdoor_poi/widgets/outdoor_poi_detail_widgets.dart';
+import 'package:soen_390/widgets/set_destination_button.dart';
 
 /// A stateful widget that displays detailed information about a specific
 /// [PointOfInterest] object.
@@ -60,31 +60,6 @@ class _PoiDetailScreenState extends State<PoiDetailScreen> {
   /// Tracks whether the full description text is being shown.
   bool _showFullDescription = false;
 
-
-  Widget _buildSetDestinationButton() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: ElevatedButton.icon(
-        icon: const Icon(Icons.directions),
-        label: const Text("Set Destination"),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).primaryColor,
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-        onPressed: () {
-          Navigator.pop(context, {
-            'name': widget.poi.name,
-            'lat': widget.poi.latitude,
-            'lng': widget.poi.longitude,
-          });
-        },
-      ),
-    );
-  }
 
   Widget _buildRatingRow() {
     return Padding(
@@ -141,7 +116,11 @@ class _PoiDetailScreenState extends State<PoiDetailScreen> {
               _buildRatingRow(),
 
               // Navigate to Waypoint Selection
-              _buildSetDestinationButton(),
+              SetDestinationButton(
+                name: widget.poi.name,
+                latitude: widget.poi.latitude,
+                longitude: widget.poi.longitude,
+              ),
 
               // Expandable Description
               PoiDescriptionSection(
