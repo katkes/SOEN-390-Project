@@ -2,10 +2,10 @@ import 'dart:async';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:soen_390/models/route_result.dart';
-import 'package:soen_390/models/step_result.dart';
 import 'package:soen_390/services/interfaces/base_google_service.dart';
 import 'package:soen_390/utils/google_directions_url_builder.dart';
 import 'package:soen_390/utils/location_service.dart';
+import 'package:soen_390/utils/route_result_parser.dart';
 import 'interfaces/route_service_interface.dart';
 
 /// A service to retrieve routes from the Google Maps Directions API.
@@ -20,6 +20,8 @@ class GoogleRouteService extends BaseGoogleService implements IRouteService {
   final LocationService locationService;
   // Handles the URL building
   final GoogleDirectionsUrlBuilder urlBuilder;
+  //handles the parsing
+  final RouteResultParser parser;
 
   /// Creates a new instance of `GoogleRouteService`.
   ///
@@ -28,9 +30,10 @@ class GoogleRouteService extends BaseGoogleService implements IRouteService {
   /// - [apiKey]: Optional API key for requests. Defaults to the value in `..env`.
   ///
   /// Throws an exception if the API key is missing.
-  GoogleRouteService({
+GoogleRouteService({
     required this.locationService,
-    required this.urlBuilder, // Add this line
+    required this.urlBuilder,
+    required this.parser, // <-- new
     required super.httpClient,
     super.apiHelper,
     super.apiKey,
@@ -145,50 +148,11 @@ class GoogleRouteService extends BaseGoogleService implements IRouteService {
 
     try {
       final data = await apiHelper.fetchJson(httpClient, Uri.parse(url));
-      return _extractRouteResults(data);
+      return parser.parseRouteResults(data);
     } catch (e) {
       print("Exception during route fetch: $e");
       return null;
     }
-  }
-
-  /// Extracts and transforms route data from parsed API response.
-  ///
-  /// This function takes the parsed JSON data from the Google Maps Directions API
-  /// and transforms it into a list of RouteResult objects containing information about
-  /// each possible route.
-  ///
-  /// - [data]: The parsed JSON data from the Directions API response.
-  ///
-  /// For each route in the response:
-  /// - Extracts distance and duration values
-  /// - Decodes polyline points for map display
-  /// - Processes navigation steps using _extractSteps
-  ///
-  /// Returns a list of RouteResult objects representing each possible route.
-  List<RouteResult> _extractRouteResults(Map<String, dynamic> data) {
-    List<RouteResult> results = [];
-
-    for (var route in data['routes']) {
-      for (var leg in route['legs']) {
-        final distance = leg['distance']['value'].toDouble();
-        final duration = leg['duration']['value'].toDouble();
-        final polylinePoints = route.containsKey('overview_polyline')
-            ? _decodePolyline(route['overview_polyline']['points'])
-            : <LatLng>[];
-
-        List<StepResult> steps = _extractSteps(leg['steps']);
-
-        results.add(RouteResult(
-          distance: distance,
-          duration: duration,
-          routePoints: polylinePoints,
-          steps: steps,
-        ));
-      }
-    }
-
-    return results;
   }
 
   /// Allows the UI to select a route from the retrieved options.
@@ -260,57 +224,6 @@ class GoogleRouteService extends BaseGoogleService implements IRouteService {
         onUpdate(route);
       }
     });
-  }
-
-  List<StepResult> _extractSteps(List<dynamic> stepsData) {
-    List<StepResult> steps = [];
-
-    for (var step in stepsData) {
-      steps.add(StepResult(
-        distance: step['distance']['value'].toDouble(),
-        duration: step['duration']['value'].toDouble(),
-        instruction: step['html_instructions'] ?? "No instruction available",
-        maneuver: step.containsKey('maneuver') ? step['maneuver'] : "unknown",
-        startLocation: LatLng(
-            step['start_location']['lat'], step['start_location']['lng']),
-        endLocation:
-            LatLng(step['end_location']['lat'], step['end_location']['lng']),
-      ));
-    }
-    return steps;
-  }
-
-  /// Decodes a Google Maps polyline string into a list of `LatLng` points.
-  List<LatLng> _decodePolyline(String encoded) {
-    List<LatLng> points = [];
-    if (encoded.isEmpty) return points;
-
-    int index = 0, len = encoded.length;
-    int lat = 0, lng = 0;
-
-    while (index < len) {
-      int b, shift = 0, result = 0;
-      do {
-        b = encoded.codeUnitAt(index++) - 63;
-        result |= (b & 0x1F) << shift;
-        shift += 5;
-      } while (b >= 0x20);
-      int dlat = (result & 1) != 0 ? ~(result >> 1) : (result >> 1);
-      lat += dlat;
-
-      shift = 0;
-      result = 0;
-      do {
-        b = encoded.codeUnitAt(index++) - 63;
-        result |= (b & 0x1F) << shift;
-        shift += 5;
-      } while (b >= 0x20);
-      int dlng = (result & 1) != 0 ? ~(result >> 1) : (result >> 1);
-      lng += dlng;
-
-      points.add(LatLng(lat / 1E5, lng / 1E5));
-    }
-    return points;
   }
 
   /// Checks if the user is still following the route.

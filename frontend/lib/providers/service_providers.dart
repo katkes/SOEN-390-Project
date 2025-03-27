@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:soen_390/services/http_service.dart';
 import 'package:soen_390/services/google_route_service.dart';
 import 'package:soen_390/utils/google_directions_url_builder.dart';
+import 'package:soen_390/utils/route_result_parser.dart';
 import '../services/interfaces/route_service_interface.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'package:soen_390/services/geocoding_service.dart';
@@ -37,6 +38,7 @@ final routeServiceProvider = Provider<IRouteService>((ref) {
     locationService: locationService,
     httpClient: httpService,
     urlBuilder: GoogleDirectionsUrlBuilder(apiKey: apiKey!),
+    parser: RouteResultParser(),
   );
 });
 
@@ -78,4 +80,6 @@ final authServiceProvider = Provider<AuthService>((ref) {
     secureStorage: ref.watch(secureStorageProvider),
     authClientFactory: ref.watch(authClientFactoryProvider),
   );
+
+  
 });
