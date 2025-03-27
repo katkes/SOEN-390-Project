@@ -11,7 +11,6 @@ import 'package:soen_390/services/poi_factory.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'package:soen_390/widgets/suggestions.dart';
 
-
 @GenerateNiceMocks([
   MockSpec<LocationService>(),
   MockSpec<GooglePOIService>(),
@@ -19,7 +18,6 @@ import 'package:soen_390/widgets/suggestions.dart';
   MockSpec<LocationUpdater>(),
   MockSpec<NavigatorObserver>(),
 ])
-
 import 'location_transport_selector_test.mocks.dart';
 
 void main() {

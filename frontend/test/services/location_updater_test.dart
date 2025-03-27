@@ -36,7 +36,7 @@ void main() {
         speedAccuracy: 0,
       );
 
-      final expectedLatLng = LatLng(45.5017, -73.5673);
+      final expectedLatLng = const LatLng(45.5017, -73.5673);
 
       when(mockService.startUp()).thenAnswer((_) async {});
       when(mockService.getCurrentLocationAccurately())

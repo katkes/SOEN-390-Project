@@ -212,7 +212,7 @@ GOOGLE_PLACES_API_KEY=TEST_API_KEY
     expect(find.text('Failed to fetch places'), findsOneWidget);
   });
 
-testWidgets('shows SnackBar on location fetch error',
+  testWidgets('shows SnackBar on location fetch error',
       (WidgetTester tester) async {
     when(mockLocationUpdater.getCurrentLatLng())
         .thenThrow(Exception('Location error'));
@@ -220,14 +220,13 @@ testWidgets('shows SnackBar on location fetch error',
     await tester.pumpWidget(createTestWidget());
 
     await tester.tap(find.byIcon(Icons.my_location));
-  
+
     // Explicit pumping for SnackBar to appear
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
 
     expect(find.text('Unable to fetch current location'), findsOneWidget);
   });
-
 
   testWidgets('shows loading indicator while fetching POIs',
       (WidgetTester tester) async {
