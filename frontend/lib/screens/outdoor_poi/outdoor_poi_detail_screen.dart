@@ -57,7 +57,35 @@ class _PoiDetailScreenState extends State<PoiDetailScreen> {
   /// Tracks whether the full description text is being shown.
   bool _showFullDescription = false;
 
-  
+  Widget _buildRatingRow() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      child: Row(
+        children: [
+          if (widget.poi.rating != null) ...[
+            buildRatingStars(widget.poi.rating!),
+            const SizedBox(width: 8),
+            Text(
+              widget.poi.rating!.toStringAsFixed(1),
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
+            const SizedBox(width: 16),
+          ],
+          if (widget.poi.priceRange != null)
+            Text(
+              widget.poi.priceRange!,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
 
   SliverAppBar _buildAppBar(BuildContext context) {
     return SliverAppBar(
@@ -134,33 +162,8 @@ class _PoiDetailScreenState extends State<PoiDetailScreen> {
                 ),
 
               // Rating stars and price range
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                child: Row(
-                  children: [
-                    if (widget.poi.rating != null) ...[
-                      buildRatingStars(widget.poi.rating!),
-                      const SizedBox(width: 8),
-                      Text(
-                        widget.poi.rating!.toStringAsFixed(1),
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                    ],
-                    if (widget.poi.priceRange != null)
-                      Text(
-                        widget.poi.priceRange!,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
+              _buildRatingRow(),
+
               // Navigate to Waypoint Selection
               Padding(
                 padding:
