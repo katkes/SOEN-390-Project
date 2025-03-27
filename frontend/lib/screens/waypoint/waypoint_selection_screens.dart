@@ -22,6 +22,7 @@ import 'package:soen_390/services/interfaces/route_service_interface.dart';
 import 'package:soen_390/utils/route_display.dart' as display;
 import 'package:soen_390/utils/route_utils.dart' as utils;
 import "package:soen_390/screens/indoor_accessibility/indoor_accessibility_preference.dart";
+import 'package:soen_390/utils/waypoint_validator.dart';
 
 class WaypointSelectionScreen extends StatefulWidget {
   final IRouteService routeService;
@@ -31,6 +32,7 @@ class WaypointSelectionScreen extends StatefulWidget {
   final double? destinationLat;
   final double? destinationLng;
   final CampusRouteChecker campusRouteChecker;
+  final WaypointValidator waypointValidator;
 
   const WaypointSelectionScreen({
     super.key,
@@ -38,6 +40,7 @@ class WaypointSelectionScreen extends StatefulWidget {
     required this.geocodingService,
     required this.locationService,
     required this.campusRouteChecker,
+    required this.waypointValidator,
     this.initialDestination,
     this.destinationLat,
     this.destinationLng,
@@ -109,7 +112,9 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
   void _handleRouteConfirmation(
       List<String> waypoints, String transportMode) async {
     // Early validation
-    if (!_validateWaypoints(waypoints)) return;
+    if (!widget.waypointValidator.validate(context, waypoints, _minRoutes)) {
+      return;
+    }
 
     // Setup and cache checking
     final String googleTransportMode =
@@ -135,18 +140,6 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
     } catch (e) {
       _handleRouteError(e);
     }
-  }
-
-// Helper methods
-  bool _validateWaypoints(List<String> waypoints) {
-    if (waypoints.length < _minRoutes) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text("You must have at least a start and destination.")),
-      );
-      return false;
-    }
-    return true;
   }
 
   void _handleTransportModeChange(String transportMode) {

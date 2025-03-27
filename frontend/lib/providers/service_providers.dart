@@ -3,6 +3,7 @@ import 'package:soen_390/services/http_service.dart';
 import 'package:soen_390/services/google_route_service.dart';
 import 'package:soen_390/utils/google_directions_url_builder.dart';
 import 'package:soen_390/utils/route_result_parser.dart';
+import 'package:soen_390/utils/waypoint_validator.dart';
 import '../services/interfaces/route_service_interface.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'package:soen_390/services/geocoding_service.dart';
@@ -87,4 +88,9 @@ final authServiceProvider = Provider<AuthService>((ref) {
 final campusRouteCheckerProvider = Provider<CampusRouteChecker>((ref) {
   return CampusRouteChecker(
       locationService: ref.watch(locationServiceProvider));
+});
+
+/// Provides an instance of [WaypointValidator] for validating waypoint inputs.
+final waypointValidatorProvider = Provider<WaypointValidator>((ref) {
+  return WaypointValidator();
 });
