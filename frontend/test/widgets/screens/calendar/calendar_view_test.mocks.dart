@@ -38,28 +38,28 @@ import 'package:soen_390/services/http_service.dart' as _i9;
 
 class _FakeClient_0 extends _i1.SmartFake implements _i2.Client {
   _FakeClient_0(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 class _FakeResponse_1 extends _i1.SmartFake implements _i2.Response {
   _FakeResponse_1(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 class _FakeAuthClient_2 extends _i1.SmartFake implements _i3.AuthClient {
   _FakeAuthClient_2(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 class _FakeCalendarApi_3 extends _i1.SmartFake implements _i4.CalendarApi {
   _FakeCalendarApi_3(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 class _FakeCalendarRepository_4 extends _i1.SmartFake
     implements _i5.CalendarRepository {
   _FakeCalendarRepository_4(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 /// A class which mocks [GoogleSignIn].
@@ -71,12 +71,10 @@ class MockGoogleSignIn extends _i1.Mock implements _i6.GoogleSignIn {
   }
 
   @override
-  _i7.SignInOption get signInOption =>
-      (super.noSuchMethod(
-            Invocation.getter(#signInOption),
-            returnValue: _i7.SignInOption.standard,
-          )
-          as _i7.SignInOption);
+  _i7.SignInOption get signInOption => (super.noSuchMethod(
+        Invocation.getter(#signInOption),
+        returnValue: _i7.SignInOption.standard,
+      ) as _i7.SignInOption);
 
   @override
   List<String> get scopes =>
@@ -84,20 +82,17 @@ class MockGoogleSignIn extends _i1.Mock implements _i6.GoogleSignIn {
           as List<String>);
 
   @override
-  bool get forceCodeForRefreshToken =>
-      (super.noSuchMethod(
-            Invocation.getter(#forceCodeForRefreshToken),
-            returnValue: false,
-          )
-          as bool);
+  bool get forceCodeForRefreshToken => (super.noSuchMethod(
+        Invocation.getter(#forceCodeForRefreshToken),
+        returnValue: false,
+      ) as bool);
 
   @override
   _i8.Stream<_i6.GoogleSignInAccount?> get onCurrentUserChanged =>
       (super.noSuchMethod(
-            Invocation.getter(#onCurrentUserChanged),
-            returnValue: _i8.Stream<_i6.GoogleSignInAccount?>.empty(),
-          )
-          as _i8.Stream<_i6.GoogleSignInAccount?>);
+        Invocation.getter(#onCurrentUserChanged),
+        returnValue: _i8.Stream<_i6.GoogleSignInAccount?>.empty(),
+      ) as _i8.Stream<_i6.GoogleSignInAccount?>);
 
   @override
   _i8.Future<_i6.GoogleSignInAccount?> signInSilently({
@@ -105,53 +100,42 @@ class MockGoogleSignIn extends _i1.Mock implements _i6.GoogleSignIn {
     bool? reAuthenticate = false,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(#signInSilently, [], {
-              #suppressErrors: suppressErrors,
-              #reAuthenticate: reAuthenticate,
-            }),
-            returnValue: _i8.Future<_i6.GoogleSignInAccount?>.value(),
-          )
-          as _i8.Future<_i6.GoogleSignInAccount?>);
+        Invocation.method(#signInSilently, [], {
+          #suppressErrors: suppressErrors,
+          #reAuthenticate: reAuthenticate,
+        }),
+        returnValue: _i8.Future<_i6.GoogleSignInAccount?>.value(),
+      ) as _i8.Future<_i6.GoogleSignInAccount?>);
 
   @override
-  _i8.Future<bool> isSignedIn() =>
-      (super.noSuchMethod(
-            Invocation.method(#isSignedIn, []),
-            returnValue: _i8.Future<bool>.value(false),
-          )
-          as _i8.Future<bool>);
+  _i8.Future<bool> isSignedIn() => (super.noSuchMethod(
+        Invocation.method(#isSignedIn, []),
+        returnValue: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
 
   @override
-  _i8.Future<_i6.GoogleSignInAccount?> signIn() =>
-      (super.noSuchMethod(
-            Invocation.method(#signIn, []),
-            returnValue: _i8.Future<_i6.GoogleSignInAccount?>.value(),
-          )
-          as _i8.Future<_i6.GoogleSignInAccount?>);
+  _i8.Future<_i6.GoogleSignInAccount?> signIn() => (super.noSuchMethod(
+        Invocation.method(#signIn, []),
+        returnValue: _i8.Future<_i6.GoogleSignInAccount?>.value(),
+      ) as _i8.Future<_i6.GoogleSignInAccount?>);
 
   @override
-  _i8.Future<_i6.GoogleSignInAccount?> signOut() =>
-      (super.noSuchMethod(
-            Invocation.method(#signOut, []),
-            returnValue: _i8.Future<_i6.GoogleSignInAccount?>.value(),
-          )
-          as _i8.Future<_i6.GoogleSignInAccount?>);
+  _i8.Future<_i6.GoogleSignInAccount?> signOut() => (super.noSuchMethod(
+        Invocation.method(#signOut, []),
+        returnValue: _i8.Future<_i6.GoogleSignInAccount?>.value(),
+      ) as _i8.Future<_i6.GoogleSignInAccount?>);
 
   @override
-  _i8.Future<_i6.GoogleSignInAccount?> disconnect() =>
-      (super.noSuchMethod(
-            Invocation.method(#disconnect, []),
-            returnValue: _i8.Future<_i6.GoogleSignInAccount?>.value(),
-          )
-          as _i8.Future<_i6.GoogleSignInAccount?>);
+  _i8.Future<_i6.GoogleSignInAccount?> disconnect() => (super.noSuchMethod(
+        Invocation.method(#disconnect, []),
+        returnValue: _i8.Future<_i6.GoogleSignInAccount?>.value(),
+      ) as _i8.Future<_i6.GoogleSignInAccount?>);
 
   @override
-  _i8.Future<bool> requestScopes(List<String>? scopes) =>
-      (super.noSuchMethod(
-            Invocation.method(#requestScopes, [scopes]),
-            returnValue: _i8.Future<bool>.value(false),
-          )
-          as _i8.Future<bool>);
+  _i8.Future<bool> requestScopes(List<String>? scopes) => (super.noSuchMethod(
+        Invocation.method(#requestScopes, [scopes]),
+        returnValue: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
 
   @override
   _i8.Future<bool> canAccessScopes(
@@ -159,14 +143,13 @@ class MockGoogleSignIn extends _i1.Mock implements _i6.GoogleSignIn {
     String? accessToken,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(
-              #canAccessScopes,
-              [scopes],
-              {#accessToken: accessToken},
-            ),
-            returnValue: _i8.Future<bool>.value(false),
-          )
-          as _i8.Future<bool>);
+        Invocation.method(
+          #canAccessScopes,
+          [scopes],
+          {#accessToken: accessToken},
+        ),
+        returnValue: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
 }
 
 /// A class which mocks [HttpService].
@@ -178,28 +161,24 @@ class MockHttpService extends _i1.Mock implements _i9.HttpService {
   }
 
   @override
-  _i2.Client get client =>
-      (super.noSuchMethod(
-            Invocation.getter(#client),
-            returnValue: _FakeClient_0(this, Invocation.getter(#client)),
-          )
-          as _i2.Client);
+  _i2.Client get client => (super.noSuchMethod(
+        Invocation.getter(#client),
+        returnValue: _FakeClient_0(this, Invocation.getter(#client)),
+      ) as _i2.Client);
 
   @override
-  _i8.Future<_i2.Response> get(Uri? url) =>
-      (super.noSuchMethod(
-            Invocation.method(#get, [url]),
-            returnValue: _i8.Future<_i2.Response>.value(
-              _FakeResponse_1(this, Invocation.method(#get, [url])),
-            ),
-          )
-          as _i8.Future<_i2.Response>);
+  _i8.Future<_i2.Response> get(Uri? url) => (super.noSuchMethod(
+        Invocation.method(#get, [url]),
+        returnValue: _i8.Future<_i2.Response>.value(
+          _FakeResponse_1(this, Invocation.method(#get, [url])),
+        ),
+      ) as _i8.Future<_i2.Response>);
 
   @override
   void dispose() => super.noSuchMethod(
-    Invocation.method(#dispose, []),
-    returnValueForMissingStub: null,
-  );
+        Invocation.method(#dispose, []),
+        returnValueForMissingStub: null,
+      );
 }
 
 /// A class which mocks [SecureStorage].
@@ -213,28 +192,23 @@ class MockSecureStorage extends _i1.Mock implements _i10.SecureStorage {
   @override
   _i8.Future<void> storeToken(String? key, String? value) =>
       (super.noSuchMethod(
-            Invocation.method(#storeToken, [key, value]),
-            returnValue: _i8.Future<void>.value(),
-            returnValueForMissingStub: _i8.Future<void>.value(),
-          )
-          as _i8.Future<void>);
+        Invocation.method(#storeToken, [key, value]),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
 
   @override
-  _i8.Future<String?> getToken(String? key) =>
-      (super.noSuchMethod(
-            Invocation.method(#getToken, [key]),
-            returnValue: _i8.Future<String?>.value(),
-          )
-          as _i8.Future<String?>);
+  _i8.Future<String?> getToken(String? key) => (super.noSuchMethod(
+        Invocation.method(#getToken, [key]),
+        returnValue: _i8.Future<String?>.value(),
+      ) as _i8.Future<String?>);
 
   @override
-  _i8.Future<void> deleteToken(String? key) =>
-      (super.noSuchMethod(
-            Invocation.method(#deleteToken, [key]),
-            returnValue: _i8.Future<void>.value(),
-            returnValueForMissingStub: _i8.Future<void>.value(),
-          )
-          as _i8.Future<void>);
+  _i8.Future<void> deleteToken(String? key) => (super.noSuchMethod(
+        Invocation.method(#deleteToken, [key]),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
 }
 
 /// A class which mocks [AuthClientFactory].
@@ -251,13 +225,12 @@ class MockAuthClientFactory extends _i1.Mock implements _i11.AuthClientFactory {
     _i3.AccessCredentials? credentials,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#createAuthClient, [baseClient, credentials]),
-            returnValue: _FakeAuthClient_2(
-              this,
-              Invocation.method(#createAuthClient, [baseClient, credentials]),
-            ),
-          )
-          as _i3.AuthClient);
+        Invocation.method(#createAuthClient, [baseClient, credentials]),
+        returnValue: _FakeAuthClient_2(
+          this,
+          Invocation.method(#createAuthClient, [baseClient, credentials]),
+        ),
+      ) as _i3.AuthClient);
 }
 
 /// A class which mocks [AuthRepository].
@@ -269,21 +242,17 @@ class MockAuthRepository extends _i1.Mock implements _i12.AuthRepository {
   }
 
   @override
-  _i8.Future<_i3.AuthClient?> getAuthClient() =>
-      (super.noSuchMethod(
-            Invocation.method(#getAuthClient, []),
-            returnValue: _i8.Future<_i3.AuthClient?>.value(),
-          )
-          as _i8.Future<_i3.AuthClient?>);
+  _i8.Future<_i3.AuthClient?> getAuthClient() => (super.noSuchMethod(
+        Invocation.method(#getAuthClient, []),
+        returnValue: _i8.Future<_i3.AuthClient?>.value(),
+      ) as _i8.Future<_i3.AuthClient?>);
 
   @override
-  _i8.Future<void> signOut() =>
-      (super.noSuchMethod(
-            Invocation.method(#signOut, []),
-            returnValue: _i8.Future<void>.value(),
-            returnValueForMissingStub: _i8.Future<void>.value(),
-          )
-          as _i8.Future<void>);
+  _i8.Future<void> signOut() => (super.noSuchMethod(
+        Invocation.method(#signOut, []),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
 }
 
 /// A class which mocks [CalendarService].
@@ -297,28 +266,25 @@ class MockCalendarService extends _i1.Mock implements _i13.CalendarService {
   @override
   _i8.Future<List<_i4.Event>> fetchEvents([String? calendarId = 'primary']) =>
       (super.noSuchMethod(
-            Invocation.method(#fetchEvents, [calendarId]),
-            returnValue: _i8.Future<List<_i4.Event>>.value(<_i4.Event>[]),
-          )
-          as _i8.Future<List<_i4.Event>>);
+        Invocation.method(#fetchEvents, [calendarId]),
+        returnValue: _i8.Future<List<_i4.Event>>.value(<_i4.Event>[]),
+      ) as _i8.Future<List<_i4.Event>>);
 
   @override
   _i8.Future<List<_i4.CalendarListEntry>> fetchCalendars() =>
       (super.noSuchMethod(
-            Invocation.method(#fetchCalendars, []),
-            returnValue: _i8.Future<List<_i4.CalendarListEntry>>.value(
-              <_i4.CalendarListEntry>[],
-            ),
-          )
-          as _i8.Future<List<_i4.CalendarListEntry>>);
+        Invocation.method(#fetchCalendars, []),
+        returnValue: _i8.Future<List<_i4.CalendarListEntry>>.value(
+          <_i4.CalendarListEntry>[],
+        ),
+      ) as _i8.Future<List<_i4.CalendarListEntry>>);
 
   @override
   _i8.Future<_i4.Event?> createEvent(String? calendarId, _i4.Event? event) =>
       (super.noSuchMethod(
-            Invocation.method(#createEvent, [calendarId, event]),
-            returnValue: _i8.Future<_i4.Event?>.value(),
-          )
-          as _i8.Future<_i4.Event?>);
+        Invocation.method(#createEvent, [calendarId, event]),
+        returnValue: _i8.Future<_i4.Event?>.value(),
+      ) as _i8.Future<_i4.Event?>);
 
   @override
   _i8.Future<_i4.Event?> updateEvent(
@@ -327,23 +293,21 @@ class MockCalendarService extends _i1.Mock implements _i13.CalendarService {
     _i4.Event? updatedEvent,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#updateEvent, [
-              calendarId,
-              eventId,
-              updatedEvent,
-            ]),
-            returnValue: _i8.Future<_i4.Event?>.value(),
-          )
-          as _i8.Future<_i4.Event?>);
+        Invocation.method(#updateEvent, [
+          calendarId,
+          eventId,
+          updatedEvent,
+        ]),
+        returnValue: _i8.Future<_i4.Event?>.value(),
+      ) as _i8.Future<_i4.Event?>);
 
   @override
   _i8.Future<void> deleteEvent(String? calendarId, String? eventId) =>
       (super.noSuchMethod(
-            Invocation.method(#deleteEvent, [calendarId, eventId]),
-            returnValue: _i8.Future<void>.value(),
-            returnValueForMissingStub: _i8.Future<void>.value(),
-          )
-          as _i8.Future<void>);
+        Invocation.method(#deleteEvent, [calendarId, eventId]),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
 }
 
 /// A class which mocks [CalendarRepository].
@@ -361,32 +325,28 @@ class MockCalendarRepository extends _i1.Mock
     bool? useCache = true,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(#getEvents, [], {
-              #calendarId: calendarId,
-              #useCache: useCache,
-            }),
-            returnValue: _i8.Future<List<_i4.Event>>.value(<_i4.Event>[]),
-          )
-          as _i8.Future<List<_i4.Event>>);
+        Invocation.method(#getEvents, [], {
+          #calendarId: calendarId,
+          #useCache: useCache,
+        }),
+        returnValue: _i8.Future<List<_i4.Event>>.value(<_i4.Event>[]),
+      ) as _i8.Future<List<_i4.Event>>);
 
   @override
   _i8.Future<void> removeEventFromCache(String? eventId, String? calendarId) =>
       (super.noSuchMethod(
-            Invocation.method(#removeEventFromCache, [eventId, calendarId]),
-            returnValue: _i8.Future<void>.value(),
-            returnValueForMissingStub: _i8.Future<void>.value(),
-          )
-          as _i8.Future<void>);
+        Invocation.method(#removeEventFromCache, [eventId, calendarId]),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
 
   @override
-  _i8.Future<List<_i4.CalendarListEntry>> getCalendars() =>
-      (super.noSuchMethod(
-            Invocation.method(#getCalendars, []),
-            returnValue: _i8.Future<List<_i4.CalendarListEntry>>.value(
-              <_i4.CalendarListEntry>[],
-            ),
-          )
-          as _i8.Future<List<_i4.CalendarListEntry>>);
+  _i8.Future<List<_i4.CalendarListEntry>> getCalendars() => (super.noSuchMethod(
+        Invocation.method(#getCalendars, []),
+        returnValue: _i8.Future<List<_i4.CalendarListEntry>>.value(
+          <_i4.CalendarListEntry>[],
+        ),
+      ) as _i8.Future<List<_i4.CalendarListEntry>>);
 }
 
 /// A class which mocks [CacheService].
@@ -398,15 +358,13 @@ class MockCacheService extends _i1.Mock implements _i14.CacheService {
   }
 
   @override
-  _i4.CalendarApi get calendarApi =>
-      (super.noSuchMethod(
-            Invocation.getter(#calendarApi),
-            returnValue: _FakeCalendarApi_3(
-              this,
-              Invocation.getter(#calendarApi),
-            ),
-          )
-          as _i4.CalendarApi);
+  _i4.CalendarApi get calendarApi => (super.noSuchMethod(
+        Invocation.getter(#calendarApi),
+        returnValue: _FakeCalendarApi_3(
+          this,
+          Invocation.getter(#calendarApi),
+        ),
+      ) as _i4.CalendarApi);
 
   @override
   _i8.Future<void> storeEvents(
@@ -414,23 +372,21 @@ class MockCacheService extends _i1.Mock implements _i14.CacheService {
     required String? calendarId,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(
-              #storeEvents,
-              [events],
-              {#calendarId: calendarId},
-            ),
-            returnValue: _i8.Future<void>.value(),
-            returnValueForMissingStub: _i8.Future<void>.value(),
-          )
-          as _i8.Future<void>);
+        Invocation.method(
+          #storeEvents,
+          [events],
+          {#calendarId: calendarId},
+        ),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
 
   @override
   _i8.Future<List<_i4.Event>> getStoredEvents({required String? calendarId}) =>
       (super.noSuchMethod(
-            Invocation.method(#getStoredEvents, [], {#calendarId: calendarId}),
-            returnValue: _i8.Future<List<_i4.Event>>.value(<_i4.Event>[]),
-          )
-          as _i8.Future<List<_i4.Event>>);
+        Invocation.method(#getStoredEvents, [], {#calendarId: calendarId}),
+        returnValue: _i8.Future<List<_i4.Event>>.value(<_i4.Event>[]),
+      ) as _i8.Future<List<_i4.Event>>);
 
   @override
   _i8.Future<void> removeEventFromCache(
@@ -438,15 +394,14 @@ class MockCacheService extends _i1.Mock implements _i14.CacheService {
     required String? calendarId,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(
-              #removeEventFromCache,
-              [eventId],
-              {#calendarId: calendarId},
-            ),
-            returnValue: _i8.Future<void>.value(),
-            returnValueForMissingStub: _i8.Future<void>.value(),
-          )
-          as _i8.Future<void>);
+        Invocation.method(
+          #removeEventFromCache,
+          [eventId],
+          {#calendarId: calendarId},
+        ),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
 }
 
 /// A class which mocks [CalendarEventService].
@@ -459,15 +414,13 @@ class MockCalendarEventService extends _i1.Mock
   }
 
   @override
-  _i5.CalendarRepository get calendarRepository =>
-      (super.noSuchMethod(
-            Invocation.getter(#calendarRepository),
-            returnValue: _FakeCalendarRepository_4(
-              this,
-              Invocation.getter(#calendarRepository),
-            ),
-          )
-          as _i5.CalendarRepository);
+  _i5.CalendarRepository get calendarRepository => (super.noSuchMethod(
+        Invocation.getter(#calendarRepository),
+        returnValue: _FakeCalendarRepository_4(
+          this,
+          Invocation.getter(#calendarRepository),
+        ),
+      ) as _i5.CalendarRepository);
 
   @override
   _i8.Future<Map<DateTime, List<_i4.Event>>> fetchCalendarEvents(
@@ -475,16 +428,15 @@ class MockCalendarEventService extends _i1.Mock
     bool? useCache = true,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(
-              #fetchCalendarEvents,
-              [calendarId],
-              {#useCache: useCache},
-            ),
-            returnValue: _i8.Future<Map<DateTime, List<_i4.Event>>>.value(
-              <DateTime, List<_i4.Event>>{},
-            ),
-          )
-          as _i8.Future<Map<DateTime, List<_i4.Event>>>);
+        Invocation.method(
+          #fetchCalendarEvents,
+          [calendarId],
+          {#useCache: useCache},
+        ),
+        returnValue: _i8.Future<Map<DateTime, List<_i4.Event>>>.value(
+          <DateTime, List<_i4.Event>>{},
+        ),
+      ) as _i8.Future<Map<DateTime, List<_i4.Event>>>);
 
   @override
   List<_i4.Event> getEventsForDay(
@@ -492,29 +444,26 @@ class MockCalendarEventService extends _i1.Mock
     Map<DateTime, List<_i4.Event>>? eventsByDay,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#getEventsForDay, [day, eventsByDay]),
-            returnValue: <_i4.Event>[],
-          )
-          as List<_i4.Event>);
+        Invocation.method(#getEventsForDay, [day, eventsByDay]),
+        returnValue: <_i4.Event>[],
+      ) as List<_i4.Event>);
 
   @override
   _i8.Future<List<_i4.CalendarListEntry>> fetchCalendars() =>
       (super.noSuchMethod(
-            Invocation.method(#fetchCalendars, []),
-            returnValue: _i8.Future<List<_i4.CalendarListEntry>>.value(
-              <_i4.CalendarListEntry>[],
-            ),
-          )
-          as _i8.Future<List<_i4.CalendarListEntry>>);
+        Invocation.method(#fetchCalendars, []),
+        returnValue: _i8.Future<List<_i4.CalendarListEntry>>.value(
+          <_i4.CalendarListEntry>[],
+        ),
+      ) as _i8.Future<List<_i4.CalendarListEntry>>);
 
   @override
   _i8.Future<void> deleteEventFromCache(String? eventId, String? calendarId) =>
       (super.noSuchMethod(
-            Invocation.method(#deleteEventFromCache, [eventId, calendarId]),
-            returnValue: _i8.Future<void>.value(),
-            returnValueForMissingStub: _i8.Future<void>.value(),
-          )
-          as _i8.Future<void>);
+        Invocation.method(#deleteEventFromCache, [eventId, calendarId]),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
 }
 
 /// A class which mocks [SharedPreferences].
@@ -526,12 +475,10 @@ class MockSharedPreferences extends _i1.Mock implements _i16.SharedPreferences {
   }
 
   @override
-  Set<String> getKeys() =>
-      (super.noSuchMethod(
-            Invocation.method(#getKeys, []),
-            returnValue: <String>{},
-          )
-          as Set<String>);
+  Set<String> getKeys() => (super.noSuchMethod(
+        Invocation.method(#getKeys, []),
+        returnValue: <String>{},
+      ) as Set<String>);
 
   @override
   Object? get(String? key) =>
@@ -554,12 +501,10 @@ class MockSharedPreferences extends _i1.Mock implements _i16.SharedPreferences {
       (super.noSuchMethod(Invocation.method(#getString, [key])) as String?);
 
   @override
-  bool containsKey(String? key) =>
-      (super.noSuchMethod(
-            Invocation.method(#containsKey, [key]),
-            returnValue: false,
-          )
-          as bool);
+  bool containsKey(String? key) => (super.noSuchMethod(
+        Invocation.method(#containsKey, [key]),
+        returnValue: false,
+      ) as bool);
 
   @override
   List<String>? getStringList(String? key) =>
@@ -567,75 +512,58 @@ class MockSharedPreferences extends _i1.Mock implements _i16.SharedPreferences {
           as List<String>?);
 
   @override
-  _i8.Future<bool> setBool(String? key, bool? value) =>
-      (super.noSuchMethod(
-            Invocation.method(#setBool, [key, value]),
-            returnValue: _i8.Future<bool>.value(false),
-          )
-          as _i8.Future<bool>);
+  _i8.Future<bool> setBool(String? key, bool? value) => (super.noSuchMethod(
+        Invocation.method(#setBool, [key, value]),
+        returnValue: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
 
   @override
-  _i8.Future<bool> setInt(String? key, int? value) =>
-      (super.noSuchMethod(
-            Invocation.method(#setInt, [key, value]),
-            returnValue: _i8.Future<bool>.value(false),
-          )
-          as _i8.Future<bool>);
+  _i8.Future<bool> setInt(String? key, int? value) => (super.noSuchMethod(
+        Invocation.method(#setInt, [key, value]),
+        returnValue: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
 
   @override
-  _i8.Future<bool> setDouble(String? key, double? value) =>
-      (super.noSuchMethod(
-            Invocation.method(#setDouble, [key, value]),
-            returnValue: _i8.Future<bool>.value(false),
-          )
-          as _i8.Future<bool>);
+  _i8.Future<bool> setDouble(String? key, double? value) => (super.noSuchMethod(
+        Invocation.method(#setDouble, [key, value]),
+        returnValue: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
 
   @override
-  _i8.Future<bool> setString(String? key, String? value) =>
-      (super.noSuchMethod(
-            Invocation.method(#setString, [key, value]),
-            returnValue: _i8.Future<bool>.value(false),
-          )
-          as _i8.Future<bool>);
+  _i8.Future<bool> setString(String? key, String? value) => (super.noSuchMethod(
+        Invocation.method(#setString, [key, value]),
+        returnValue: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
 
   @override
   _i8.Future<bool> setStringList(String? key, List<String>? value) =>
       (super.noSuchMethod(
-            Invocation.method(#setStringList, [key, value]),
-            returnValue: _i8.Future<bool>.value(false),
-          )
-          as _i8.Future<bool>);
+        Invocation.method(#setStringList, [key, value]),
+        returnValue: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
 
   @override
-  _i8.Future<bool> remove(String? key) =>
-      (super.noSuchMethod(
-            Invocation.method(#remove, [key]),
-            returnValue: _i8.Future<bool>.value(false),
-          )
-          as _i8.Future<bool>);
+  _i8.Future<bool> remove(String? key) => (super.noSuchMethod(
+        Invocation.method(#remove, [key]),
+        returnValue: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
 
   @override
-  _i8.Future<bool> commit() =>
-      (super.noSuchMethod(
-            Invocation.method(#commit, []),
-            returnValue: _i8.Future<bool>.value(false),
-          )
-          as _i8.Future<bool>);
+  _i8.Future<bool> commit() => (super.noSuchMethod(
+        Invocation.method(#commit, []),
+        returnValue: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
 
   @override
-  _i8.Future<bool> clear() =>
-      (super.noSuchMethod(
-            Invocation.method(#clear, []),
-            returnValue: _i8.Future<bool>.value(false),
-          )
-          as _i8.Future<bool>);
+  _i8.Future<bool> clear() => (super.noSuchMethod(
+        Invocation.method(#clear, []),
+        returnValue: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
 
   @override
-  _i8.Future<void> reload() =>
-      (super.noSuchMethod(
-            Invocation.method(#reload, []),
-            returnValue: _i8.Future<void>.value(),
-            returnValueForMissingStub: _i8.Future<void>.value(),
-          )
-          as _i8.Future<void>);
+  _i8.Future<void> reload() => (super.noSuchMethod(
+        Invocation.method(#reload, []),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
 }

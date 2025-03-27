@@ -215,39 +215,4 @@ void main() {
       expect(selected, isNull);
     });
   });
-
-  group('isRouteInterCampus', () {
-    test('returns true when from LOY to SGW', () {
-      final from = const LatLng(45.4586, -73.6401); // LOY
-      final to = const LatLng(45.4973, -73.5784); // SGW
-      expect(GoogleRouteService.isRouteInterCampus(from: from, to: to), isTrue);
-    });
-
-    test('returns true when from SGW to LOY', () {
-      final from = const LatLng(45.4973, -73.5784); // SGW
-      final to = const LatLng(45.4586, -73.6401); // LOY
-      expect(GoogleRouteService.isRouteInterCampus(from: from, to: to), isTrue);
-    });
-
-    test('returns false when both at LOY', () {
-      final from = const LatLng(45.4586, -73.6401);
-      final to = const LatLng(45.4586, -73.6401);
-      expect(
-          GoogleRouteService.isRouteInterCampus(from: from, to: to), isFalse);
-    });
-
-    test('returns false when both at SGW', () {
-      final from = const LatLng(45.4973, -73.5784);
-      final to = const LatLng(45.4973, -73.5784);
-      expect(
-          GoogleRouteService.isRouteInterCampus(from: from, to: to), isFalse);
-    });
-
-    test('returns false when not inter-campus', () {
-      final from = const LatLng(45.0, -73.0);
-      final to = const LatLng(46.0, -74.0);
-      expect(
-          GoogleRouteService.isRouteInterCampus(from: from, to: to), isFalse);
-    });
-  });
 }

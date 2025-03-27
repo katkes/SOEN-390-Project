@@ -215,6 +215,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
         ref.watch(buildingToCoordinatesProvider);
     final locationService = ref.watch(locationServiceProvider);
     final routeService = ref.watch(routeServiceProvider);
+    final campusRouteChecker = ref.watch(campusRouteCheckerProvider);
 
     final RouteResult selectedRouteData = await Navigator.push(
       context,
@@ -223,6 +224,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
           routeService: routeService,
           geocodingService: buildingToCoordinatesService,
           locationService: locationService,
+          campusRouteChecker: campusRouteChecker,
         ),
       ),
     );

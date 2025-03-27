@@ -26,7 +26,7 @@ import 'package:soen_390/services/calendar_service.dart' as _i3;
 
 class _FakeCalendarApi_0 extends _i1.SmartFake implements _i2.CalendarApi {
   _FakeCalendarApi_0(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 /// A class which mocks [CalendarService].
@@ -36,36 +36,33 @@ class MockCalendarService extends _i1.Mock implements _i3.CalendarService {
   @override
   _i4.Future<List<_i2.Event>> fetchEvents([String? calendarId = 'primary']) =>
       (super.noSuchMethod(
-            Invocation.method(#fetchEvents, [calendarId]),
-            returnValue: _i4.Future<List<_i2.Event>>.value(<_i2.Event>[]),
-            returnValueForMissingStub: _i4.Future<List<_i2.Event>>.value(
-              <_i2.Event>[],
-            ),
-          )
-          as _i4.Future<List<_i2.Event>>);
+        Invocation.method(#fetchEvents, [calendarId]),
+        returnValue: _i4.Future<List<_i2.Event>>.value(<_i2.Event>[]),
+        returnValueForMissingStub: _i4.Future<List<_i2.Event>>.value(
+          <_i2.Event>[],
+        ),
+      ) as _i4.Future<List<_i2.Event>>);
 
   @override
   _i4.Future<List<_i2.CalendarListEntry>> fetchCalendars() =>
       (super.noSuchMethod(
-            Invocation.method(#fetchCalendars, []),
-            returnValue: _i4.Future<List<_i2.CalendarListEntry>>.value(
-              <_i2.CalendarListEntry>[],
-            ),
-            returnValueForMissingStub:
-                _i4.Future<List<_i2.CalendarListEntry>>.value(
-                  <_i2.CalendarListEntry>[],
-                ),
-          )
-          as _i4.Future<List<_i2.CalendarListEntry>>);
+        Invocation.method(#fetchCalendars, []),
+        returnValue: _i4.Future<List<_i2.CalendarListEntry>>.value(
+          <_i2.CalendarListEntry>[],
+        ),
+        returnValueForMissingStub:
+            _i4.Future<List<_i2.CalendarListEntry>>.value(
+          <_i2.CalendarListEntry>[],
+        ),
+      ) as _i4.Future<List<_i2.CalendarListEntry>>);
 
   @override
   _i4.Future<_i2.Event?> createEvent(String? calendarId, _i2.Event? event) =>
       (super.noSuchMethod(
-            Invocation.method(#createEvent, [calendarId, event]),
-            returnValue: _i4.Future<_i2.Event?>.value(),
-            returnValueForMissingStub: _i4.Future<_i2.Event?>.value(),
-          )
-          as _i4.Future<_i2.Event?>);
+        Invocation.method(#createEvent, [calendarId, event]),
+        returnValue: _i4.Future<_i2.Event?>.value(),
+        returnValueForMissingStub: _i4.Future<_i2.Event?>.value(),
+      ) as _i4.Future<_i2.Event?>);
 
   @override
   _i4.Future<_i2.Event?> updateEvent(
@@ -74,24 +71,22 @@ class MockCalendarService extends _i1.Mock implements _i3.CalendarService {
     _i2.Event? updatedEvent,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#updateEvent, [
-              calendarId,
-              eventId,
-              updatedEvent,
-            ]),
-            returnValue: _i4.Future<_i2.Event?>.value(),
-            returnValueForMissingStub: _i4.Future<_i2.Event?>.value(),
-          )
-          as _i4.Future<_i2.Event?>);
+        Invocation.method(#updateEvent, [
+          calendarId,
+          eventId,
+          updatedEvent,
+        ]),
+        returnValue: _i4.Future<_i2.Event?>.value(),
+        returnValueForMissingStub: _i4.Future<_i2.Event?>.value(),
+      ) as _i4.Future<_i2.Event?>);
 
   @override
   _i4.Future<void> deleteEvent(String? calendarId, String? eventId) =>
       (super.noSuchMethod(
-            Invocation.method(#deleteEvent, [calendarId, eventId]),
-            returnValue: _i4.Future<void>.value(),
-            returnValueForMissingStub: _i4.Future<void>.value(),
-          )
-          as _i4.Future<void>);
+        Invocation.method(#deleteEvent, [calendarId, eventId]),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 }
 
 /// A class which mocks [CacheService].
@@ -99,19 +94,17 @@ class MockCalendarService extends _i1.Mock implements _i3.CalendarService {
 /// See the documentation for Mockito's code generation for more information.
 class MockCacheService extends _i1.Mock implements _i5.CacheService {
   @override
-  _i2.CalendarApi get calendarApi =>
-      (super.noSuchMethod(
-            Invocation.getter(#calendarApi),
-            returnValue: _FakeCalendarApi_0(
-              this,
-              Invocation.getter(#calendarApi),
-            ),
-            returnValueForMissingStub: _FakeCalendarApi_0(
-              this,
-              Invocation.getter(#calendarApi),
-            ),
-          )
-          as _i2.CalendarApi);
+  _i2.CalendarApi get calendarApi => (super.noSuchMethod(
+        Invocation.getter(#calendarApi),
+        returnValue: _FakeCalendarApi_0(
+          this,
+          Invocation.getter(#calendarApi),
+        ),
+        returnValueForMissingStub: _FakeCalendarApi_0(
+          this,
+          Invocation.getter(#calendarApi),
+        ),
+      ) as _i2.CalendarApi);
 
   @override
   _i4.Future<void> storeEvents(
@@ -119,26 +112,24 @@ class MockCacheService extends _i1.Mock implements _i5.CacheService {
     required String? calendarId,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(
-              #storeEvents,
-              [events],
-              {#calendarId: calendarId},
-            ),
-            returnValue: _i4.Future<void>.value(),
-            returnValueForMissingStub: _i4.Future<void>.value(),
-          )
-          as _i4.Future<void>);
+        Invocation.method(
+          #storeEvents,
+          [events],
+          {#calendarId: calendarId},
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
   _i4.Future<List<_i2.Event>> getStoredEvents({required String? calendarId}) =>
       (super.noSuchMethod(
-            Invocation.method(#getStoredEvents, [], {#calendarId: calendarId}),
-            returnValue: _i4.Future<List<_i2.Event>>.value(<_i2.Event>[]),
-            returnValueForMissingStub: _i4.Future<List<_i2.Event>>.value(
-              <_i2.Event>[],
-            ),
-          )
-          as _i4.Future<List<_i2.Event>>);
+        Invocation.method(#getStoredEvents, [], {#calendarId: calendarId}),
+        returnValue: _i4.Future<List<_i2.Event>>.value(<_i2.Event>[]),
+        returnValueForMissingStub: _i4.Future<List<_i2.Event>>.value(
+          <_i2.Event>[],
+        ),
+      ) as _i4.Future<List<_i2.Event>>);
 
   @override
   _i4.Future<void> removeEventFromCache(
@@ -146,13 +137,12 @@ class MockCacheService extends _i1.Mock implements _i5.CacheService {
     required String? calendarId,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(
-              #removeEventFromCache,
-              [eventId],
-              {#calendarId: calendarId},
-            ),
-            returnValue: _i4.Future<void>.value(),
-            returnValueForMissingStub: _i4.Future<void>.value(),
-          )
-          as _i4.Future<void>);
+        Invocation.method(
+          #removeEventFromCache,
+          [eventId],
+          {#calendarId: calendarId},
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 }

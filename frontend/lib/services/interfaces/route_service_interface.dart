@@ -15,5 +15,3 @@ abstract class IRouteService {
     required LatLng to,
   });
 }
-
-

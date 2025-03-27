@@ -10,6 +10,7 @@ import 'package:soen_390/services/google_maps_api_client.dart';
 import 'package:soen_390/services/google_poi_service.dart';
 import 'package:soen_390/services/http_service.dart';
 import 'package:soen_390/services/poi_factory.dart';
+import 'package:soen_390/utils/campus_route_checker.dart';
 import 'package:soen_390/widgets/location_transport_selector.dart';
 import 'package:soen_390/widgets/nav_bar.dart';
 import 'package:soen_390/widgets/route_card.dart';
@@ -29,12 +30,14 @@ class WaypointSelectionScreen extends StatefulWidget {
   final String? initialDestination;
   final double? destinationLat;
   final double? destinationLng;
+  final CampusRouteChecker campusRouteChecker;
 
   const WaypointSelectionScreen({
     super.key,
     required this.routeService,
     required this.geocodingService,
     required this.locationService,
+    required this.campusRouteChecker,
     this.initialDestination,
     this.destinationLat,
     this.destinationLng,
@@ -176,7 +179,8 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
 
     // Check for cross-campus route
     isCrossCampus =
-        GoogleRouteService.isRouteInterCampus(from: startPoint, to: endPoint);
+        widget.campusRouteChecker.isInterCampus(from: startPoint, to: endPoint);
+
     print("Route involves campus switch: $isCrossCampus");
 
     // Validate and process routes

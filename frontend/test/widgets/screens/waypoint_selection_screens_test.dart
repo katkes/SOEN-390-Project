@@ -5,6 +5,7 @@ import 'package:soen_390/models/route_result.dart';
 import 'package:soen_390/models/step_result.dart';
 import 'package:soen_390/services/google_route_service.dart';
 import 'package:soen_390/services/geocoding_service.dart';
+import 'package:soen_390/utils/campus_route_checker.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -31,6 +32,7 @@ import 'package:soen_390/screens/indoor_accessibility/indoor_accessibility_prefe
   MockSpec<GoogleRouteService>(),
   MockSpec<GeocodingService>(),
   MockSpec<LocationService>(),
+  MockSpec<CampusRouteChecker>()
 ])
 import 'waypoint_selection_screens_test.mocks.dart';
 
@@ -38,6 +40,7 @@ void main() {
   late MockGoogleRouteService mockGoogleRouteService;
   late MockGeocodingService mockGeocodingService;
   late MockLocationService mockLocationService;
+  late MockCampusRouteChecker mockCampusRouteChecker;
   TestWidgetsFlutterBinding.ensureInitialized();
 
   dotenv.testLoad(fileInput: '''
@@ -48,6 +51,7 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
     mockGoogleRouteService = MockGoogleRouteService();
     mockGeocodingService = MockGeocodingService();
     mockLocationService = MockLocationService();
+    mockCampusRouteChecker = MockCampusRouteChecker();
   });
   Widget createWidgetUnderTest() {
     return MaterialApp(
@@ -55,6 +59,7 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
         routeService: mockGoogleRouteService,
         geocodingService: mockGeocodingService,
         locationService: mockLocationService,
+        campusRouteChecker: mockCampusRouteChecker,
       ),
     );
   }
@@ -103,6 +108,7 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
         routeService: mockGoogleRouteService,
         geocodingService: mockGeocodingService,
         locationService: mockLocationService,
+        campusRouteChecker: mockCampusRouteChecker,
       ),
     ));
 
@@ -426,6 +432,7 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
         routeService: mockGoogleRouteService,
         geocodingService: mockGeocodingService,
         locationService: mockLocationService,
+        campusRouteChecker: mockCampusRouteChecker,
       ),
     ));
 
@@ -445,6 +452,7 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
         routeService: mockGoogleRouteService,
         geocodingService: mockGeocodingService,
         locationService: mockLocationService,
+        campusRouteChecker: mockCampusRouteChecker,
       ),
     ));
 

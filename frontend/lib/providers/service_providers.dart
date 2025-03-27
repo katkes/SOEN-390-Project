@@ -11,6 +11,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:soen_390/services/auth_service.dart';
 import 'package:soen_390/core/secure_storage.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:soen_390/utils/campus_route_checker.dart';
 
 final flutterSecureStorage = Provider<FlutterSecureStorage>((ref) {
   return const FlutterSecureStorage();
@@ -80,6 +81,10 @@ final authServiceProvider = Provider<AuthService>((ref) {
     secureStorage: ref.watch(secureStorageProvider),
     authClientFactory: ref.watch(authClientFactoryProvider),
   );
+});
 
-  
+/// Provides an instance of [CampusRouteChecker] to detect inter-campus routes.
+final campusRouteCheckerProvider = Provider<CampusRouteChecker>((ref) {
+  return CampusRouteChecker(
+      locationService: ref.watch(locationServiceProvider));
 });

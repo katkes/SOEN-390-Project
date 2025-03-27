@@ -30,76 +30,69 @@ import 'package:soen_390/services/map_service.dart' as _i2;
 class MockMapService extends _i1.Mock implements _i2.MapService {
   @override
   set onMarkerCleared(Function? _onMarkerCleared) => super.noSuchMethod(
-    Invocation.setter(#onMarkerCleared, _onMarkerCleared),
-    returnValueForMissingStub: null,
-  );
+        Invocation.setter(#onMarkerCleared, _onMarkerCleared),
+        returnValueForMissingStub: null,
+      );
 
   @override
   void selectMarker(_i3.LatLng? location) => super.noSuchMethod(
-    Invocation.method(#selectMarker, [location]),
-    returnValueForMissingStub: null,
-  );
+        Invocation.method(#selectMarker, [location]),
+        returnValueForMissingStub: null,
+      );
 
   @override
   void startClearTimer() => super.noSuchMethod(
-    Invocation.method(#startClearTimer, []),
-    returnValueForMissingStub: null,
-  );
+        Invocation.method(#startClearTimer, []),
+        returnValueForMissingStub: null,
+      );
 
   @override
   _i4.Future<List<_i5.Marker>> loadBuildingMarkers(Function? onMarkerTapped) =>
       (super.noSuchMethod(
-            Invocation.method(#loadBuildingMarkers, [onMarkerTapped]),
-            returnValue: _i4.Future<List<_i5.Marker>>.value(<_i5.Marker>[]),
-            returnValueForMissingStub: _i4.Future<List<_i5.Marker>>.value(
-              <_i5.Marker>[],
-            ),
-          )
-          as _i4.Future<List<_i5.Marker>>);
+        Invocation.method(#loadBuildingMarkers, [onMarkerTapped]),
+        returnValue: _i4.Future<List<_i5.Marker>>.value(<_i5.Marker>[]),
+        returnValueForMissingStub: _i4.Future<List<_i5.Marker>>.value(
+          <_i5.Marker>[],
+        ),
+      ) as _i4.Future<List<_i5.Marker>>);
 
   @override
   _i4.Future<List<_i5.Polygon<Object>>> loadBuildingPolygons() =>
       (super.noSuchMethod(
-            Invocation.method(#loadBuildingPolygons, []),
-            returnValue: _i4.Future<List<_i5.Polygon<Object>>>.value(
-              <_i5.Polygon<Object>>[],
-            ),
-            returnValueForMissingStub:
-                _i4.Future<List<_i5.Polygon<Object>>>.value(
-                  <_i5.Polygon<Object>>[],
-                ),
-          )
-          as _i4.Future<List<_i5.Polygon<Object>>>);
+        Invocation.method(#loadBuildingPolygons, []),
+        returnValue: _i4.Future<List<_i5.Polygon<Object>>>.value(
+          <_i5.Polygon<Object>>[],
+        ),
+        returnValueForMissingStub: _i4.Future<List<_i5.Polygon<Object>>>.value(
+          <_i5.Polygon<Object>>[],
+        ),
+      ) as _i4.Future<List<_i5.Polygon<Object>>>);
 
   @override
   _i4.Future<List<String>> getBuildingSuggestions(String? query) =>
       (super.noSuchMethod(
-            Invocation.method(#getBuildingSuggestions, [query]),
-            returnValue: _i4.Future<List<String>>.value(<String>[]),
-            returnValueForMissingStub: _i4.Future<List<String>>.value(
-              <String>[],
-            ),
-          )
-          as _i4.Future<List<String>>);
+        Invocation.method(#getBuildingSuggestions, [query]),
+        returnValue: _i4.Future<List<String>>.value(<String>[]),
+        returnValueForMissingStub: _i4.Future<List<String>>.value(
+          <String>[],
+        ),
+      ) as _i4.Future<List<String>>);
 
   @override
   _i4.Future<Map<String, dynamic>?> searchBuildingWithDetails(
     String? buildingName,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#searchBuildingWithDetails, [buildingName]),
-            returnValue: _i4.Future<Map<String, dynamic>?>.value(),
-            returnValueForMissingStub:
-                _i4.Future<Map<String, dynamic>?>.value(),
-          )
-          as _i4.Future<Map<String, dynamic>?>);
+        Invocation.method(#searchBuildingWithDetails, [buildingName]),
+        returnValue: _i4.Future<Map<String, dynamic>?>.value(),
+        returnValueForMissingStub: _i4.Future<Map<String, dynamic>?>.value(),
+      ) as _i4.Future<Map<String, dynamic>?>);
 
   @override
   _i4.Future<String?> findCampusForBuilding(String? buildingName) =>
       (super.noSuchMethod(
-            Invocation.method(#findCampusForBuilding, [buildingName]),
-            returnValue: _i4.Future<String?>.value(),
-            returnValueForMissingStub: _i4.Future<String?>.value(),
-          )
-          as _i4.Future<String?>);
+        Invocation.method(#findCampusForBuilding, [buildingName]),
+        returnValue: _i4.Future<String?>.value(),
+        returnValueForMissingStub: _i4.Future<String?>.value(),
+      ) as _i4.Future<String?>);
 }
