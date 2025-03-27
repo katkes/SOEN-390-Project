@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:soen_390/models/route_query_options.dart';
 import 'package:soen_390/models/route_result.dart';
 import 'package:soen_390/services/interfaces/base_google_service.dart';
 import 'package:soen_390/utils/google_directions_url_builder.dart';
@@ -51,8 +52,8 @@ class GoogleRouteService extends BaseGoogleService implements IRouteService {
     required LatLng from,
     required LatLng to,
   }) async {
-    final List<RouteResult>? routes =
-        await _fetchRoute(from: from, to: to, mode: 'driving');
+    final List<RouteResult>? routes = await _fetchRoute(
+        RouteQueryOptions(from: from, to: to, mode: 'driving'));
     if (routes == null || routes.isEmpty) return null;
     return routes.first;
   }
@@ -81,14 +82,15 @@ class GoogleRouteService extends BaseGoogleService implements IRouteService {
     ];
 
     for (String mode in transportModes) {
-      final List<RouteResult>? results = await _fetchRoute(
+      final List<RouteResult>? results = await _fetchRoute(RouteQueryOptions(
         from: from,
         to: to,
         mode: mode,
         departureTime: departureTime,
         arrivalTime: arrivalTime,
         alternatives: true,
-      );
+      ));
+
       if (results != null) {
         routes[mode] = results;
       }
@@ -107,22 +109,8 @@ class GoogleRouteService extends BaseGoogleService implements IRouteService {
   /// - [alternatives]: If `true`, fetches alternative routes.
   ///
   /// Returns a list of `RouteResult` containing multiple possible routes.
-  Future<List<RouteResult>?> _fetchRoute({
-    required LatLng from,
-    required LatLng to,
-    required String mode,
-    DateTime? departureTime,
-    DateTime? arrivalTime,
-    bool alternatives = false,
-  }) async {
-    final url = urlBuilder.buildRequestUrl(
-      from: from,
-      to: to,
-      mode: mode,
-      departureTime: departureTime,
-      arrivalTime: arrivalTime,
-      alternatives: alternatives,
-    );
+  Future<List<RouteResult>?> _fetchRoute(RouteQueryOptions options) async {
+    final url = urlBuilder.buildRequestUrl(options);
 
     try {
       final data = await apiHelper.fetchJson(httpClient, Uri.parse(url));
@@ -188,11 +176,9 @@ class GoogleRouteService extends BaseGoogleService implements IRouteService {
       if (!_isUserOnRoute(newUserLocation, route.routePoints)) {
         print("User off route! Recalculating...");
         RouteResult? updatedRoute = await _fetchRoute(
-          from: newUserLocation,
-          to: to,
-          mode: mode,
-        ).then((value) =>
-            (value != null && value.isNotEmpty) ? value.first : null);
+                RouteQueryOptions(from: newUserLocation, to: to, mode: mode))
+            .then((value) =>
+                (value != null && value.isNotEmpty) ? value.first : null);
 
         if (updatedRoute != null) {
           route = updatedRoute;

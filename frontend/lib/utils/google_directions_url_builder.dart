@@ -1,4 +1,5 @@
 import 'package:latlong2/latlong.dart';
+import 'package:soen_390/models/route_query_options.dart';
 
 /// A utility class for constructing request URLs to the Google Directions API.
 ///
@@ -40,28 +41,23 @@ class GoogleDirectionsUrlBuilder {
   /// Notes:
   /// - If [departureTime] is provided (and mode is not walking), it's used.
   /// - If [departureTime] is null and [arrivalTime] is provided (and mode is `transit`), it's used instead.
-  String buildRequestUrl({
-    required LatLng from,
-    required LatLng to,
-    required String mode,
-    DateTime? departureTime,
-    DateTime? arrivalTime,
-    bool alternatives = false,
-  }) {
+  String buildRequestUrl(RouteQueryOptions options) {
     String url = "https://maps.googleapis.com/maps/api/directions/json?"
-        "origin=${from.latitude},${from.longitude}"
-        "&destination=${to.latitude},${to.longitude}"
-        "&mode=$mode"
+        "origin=${options.from.latitude},${options.from.longitude}"
+        "&destination=${options.to.latitude},${options.to.longitude}"
+        "&mode=${options.mode}"
         "&key=$apiKey";
 
-    if (alternatives) {
+    if (options.alternatives) {
       url += "&alternatives=true";
     }
 
-    if (departureTime != null && mode != "walking") {
-      url += "&departure_time=${departureTime.millisecondsSinceEpoch ~/ 1000}";
-    } else if (arrivalTime != null && mode == "transit") {
-      url += "&arrival_time=${arrivalTime.millisecondsSinceEpoch ~/ 1000}";
+    if (options.departureTime != null && options.mode != "walking") {
+      url +=
+          "&departure_time=${options.departureTime!.millisecondsSinceEpoch ~/ 1000}";
+    } else if (options.arrivalTime != null && options.mode == "transit") {
+      url +=
+          "&arrival_time=${options.arrivalTime!.millisecondsSinceEpoch ~/ 1000}";
     }
 
     return url;
