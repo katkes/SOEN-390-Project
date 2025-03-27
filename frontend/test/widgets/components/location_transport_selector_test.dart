@@ -3,23 +3,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:soen_390/screens/outdoor_poi/place_search_screen.dart';
+import 'package:soen_390/services/location_updater.dart';
 import 'package:soen_390/widgets/location_transport_selector.dart';
 import 'package:mockito/annotations.dart';
 import 'package:soen_390/services/google_poi_service.dart';
 import 'package:soen_390/services/poi_factory.dart';
 import 'package:soen_390/utils/location_service.dart';
-import 'package:mockito/mockito.dart';
 import 'package:soen_390/widgets/suggestions.dart';
 
-@GenerateMocks([LocationService, GooglePOIService, PointOfInterestFactory])
-import 'location_transport_selector_test.mocks.dart';
 
-class MockNavigatorObserver extends Mock implements NavigatorObserver {}
+@GenerateNiceMocks([
+  MockSpec<LocationService>(),
+  MockSpec<GooglePOIService>(),
+  MockSpec<PointOfInterestFactory>(),
+  MockSpec<LocationUpdater>(),
+  MockSpec<NavigatorObserver>(),
+])
+
+import 'location_transport_selector_test.mocks.dart';
 
 void main() {
   late MockLocationService mockLocationService;
   late MockGooglePOIService mockPoiService;
   late MockPointOfInterestFactory mockPoiFactory;
+  late MockLocationUpdater mockLocationUpdater;
   TestWidgetsFlutterBinding.ensureInitialized();
 
   dotenv.testLoad(fileInput: '''
@@ -30,6 +37,7 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
     mockLocationService = MockLocationService();
     mockPoiService = MockGooglePOIService();
     mockPoiFactory = MockPointOfInterestFactory();
+    mockLocationUpdater = MockLocationUpdater();
   });
 
   Widget createWidgetUnderTest({
@@ -48,6 +56,7 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
           onConfirmRoute: onConfirmRoute ?? (_, __) {},
           onTransportModeChange: onTransportModeChange,
           onLocationChanged: onLocationChanged,
+          locationUpdater: mockLocationUpdater,
         ),
       ),
     );
@@ -246,6 +255,7 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
           onLocationChanged: () {
             locationChangedCalled = true;
           },
+          locationUpdater: mockLocationUpdater,
         ),
       ),
     ));

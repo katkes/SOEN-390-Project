@@ -11,6 +11,7 @@ import 'package:soen_390/models/places.dart';
 import 'package:soen_390/screens/outdoor_poi/outdoor_poi_detail_screen.dart';
 import 'package:soen_390/screens/outdoor_poi/place_search_screen.dart';
 import 'package:soen_390/services/google_poi_service.dart';
+import 'package:soen_390/services/location_updater.dart';
 import 'package:soen_390/services/poi_factory.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'package:soen_390/widgets/poi_search_bar.dart';
@@ -19,7 +20,12 @@ import 'package:latlong2/latlong.dart';
 
 import 'place_search_screen_test.mocks.dart';
 
-@GenerateMocks([GooglePOIService, LocationService, PointOfInterestFactory])
+@GenerateMocks([
+  GooglePOIService,
+  LocationService,
+  PointOfInterestFactory,
+  LocationUpdater
+])
 void main() {
   dotenv.testLoad(fileInput: '''
 GOOGLE_PLACES_API_KEY=TEST_API_KEY
@@ -28,11 +34,17 @@ GOOGLE_PLACES_API_KEY=TEST_API_KEY
   late MockLocationService mockLocationService;
   late MockGooglePOIService mockPoiService;
   late MockPointOfInterestFactory mockPoiFactory;
+  late MockLocationUpdater mockLocationUpdater;
 
   setUp(() {
     mockLocationService = MockLocationService();
     mockPoiService = MockGooglePOIService();
     mockPoiFactory = MockPointOfInterestFactory();
+    mockLocationUpdater = MockLocationUpdater();
+
+    when(mockLocationUpdater.getCurrentLatLng()).thenAnswer(
+      (_) async => const LatLng(45.0, -73.0),
+    );
   });
 
   Widget createTestWidget() {
@@ -41,6 +53,7 @@ GOOGLE_PLACES_API_KEY=TEST_API_KEY
         locationService: mockLocationService,
         poiService: mockPoiService,
         poiFactory: mockPoiFactory,
+        locationUpdater: mockLocationUpdater,
       ),
     );
   }
@@ -69,16 +82,16 @@ GOOGLE_PLACES_API_KEY=TEST_API_KEY
         isMocked: false,
       ),
     );
-    when(mockLocationService.convertPositionToLatLng(any))
-        .thenReturn(const LatLng(45.0, -73.0));
+    when(mockLocationUpdater.getCurrentLatLng())
+        .thenAnswer((_) async => const LatLng(45.0, -73.0));
 
     await tester.pumpWidget(createTestWidget());
 
     await tester.tap(find.byIcon(Icons.my_location));
     await tester.pumpAndSettle();
 
-    verify(mockLocationService.startUp()).called(1);
-    verify(mockLocationService.getCurrentLocationAccurately()).called(1);
+    // Verify the correct method was called
+    verify(mockLocationUpdater.getCurrentLatLng()).called(1);
   });
 
   testWidgets('uses current location and loads POIs into UI',
@@ -199,19 +212,22 @@ GOOGLE_PLACES_API_KEY=TEST_API_KEY
     expect(find.text('Failed to fetch places'), findsOneWidget);
   });
 
-  testWidgets('shows SnackBar on location fetch error',
+testWidgets('shows SnackBar on location fetch error',
       (WidgetTester tester) async {
-    when(mockLocationService.startUp()).thenAnswer((_) async {});
-    when(mockLocationService.getCurrentLocationAccurately())
+    when(mockLocationUpdater.getCurrentLatLng())
         .thenThrow(Exception('Location error'));
 
     await tester.pumpWidget(createTestWidget());
 
     await tester.tap(find.byIcon(Icons.my_location));
-    await tester.pumpAndSettle();
+  
+    // Explicit pumping for SnackBar to appear
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
 
     expect(find.text('Unable to fetch current location'), findsOneWidget);
   });
+
 
   testWidgets('shows loading indicator while fetching POIs',
       (WidgetTester tester) async {

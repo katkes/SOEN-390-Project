@@ -6,6 +6,7 @@
 import 'package:flutter/material.dart';
 import 'package:soen_390/screens/outdoor_poi/place_search_screen.dart';
 import 'package:soen_390/services/google_poi_service.dart';
+import 'package:soen_390/services/location_updater.dart';
 import 'package:soen_390/services/poi_factory.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'package:soen_390/widgets/suggestions.dart';
@@ -21,12 +22,14 @@ class LocationTransportSelector extends StatefulWidget {
   final LocationService locationService;
   final GooglePOIService poiService;
   final PointOfInterestFactory poiFactory;
+  final LocationUpdater locationUpdater;
 
   const LocationTransportSelector({
     super.key,
     required this.locationService,
     required this.poiService,
     required this.poiFactory,
+    required this.locationUpdater,
     this.onLocationChanged,
     required this.onConfirmRoute,
     this.onTransportModeChange,
@@ -237,6 +240,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
             final locationService = widget.locationService;
             final poiService = widget.poiService;
             final poiFactory = widget.poiFactory;
+            final locationUpdater = widget.locationUpdater;
 
             await Navigator.push(
               context,
@@ -252,6 +256,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
                     });
                     widget.onLocationChanged?.call();
                   },
+                  locationUpdater: locationUpdater,
                 ),
               ),
             );

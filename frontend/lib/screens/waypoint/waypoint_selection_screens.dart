@@ -8,6 +8,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:soen_390/services/google_maps_api_client.dart';
 import 'package:soen_390/services/google_poi_service.dart';
 import 'package:soen_390/services/http_service.dart';
+import 'package:soen_390/services/location_updater.dart';
 import 'package:soen_390/services/poi_factory.dart';
 import 'package:soen_390/utils/campus_route_checker.dart';
 import 'package:soen_390/utils/route_cache_manager.dart';
@@ -272,6 +273,7 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
               initialDestination: widget.initialDestination,
               onConfirmRoute: _handleRouteConfirmation,
               onLocationChanged: _setLocationChanged,
+              locationUpdater: LocationUpdater(locationService),
             ),
             const SizedBox(height: 10),
             ElevatedButton(
