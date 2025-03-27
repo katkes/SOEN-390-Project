@@ -57,6 +57,31 @@ class _PoiDetailScreenState extends State<PoiDetailScreen> {
   /// Tracks whether the full description text is being shown.
   bool _showFullDescription = false;
 
+  Widget _buildSetDestinationButton() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: ElevatedButton.icon(
+        icon: const Icon(Icons.directions),
+        label: const Text("Set Destination"),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Theme.of(context).primaryColor,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+        onPressed: () {
+          Navigator.pop(context, {
+            'name': widget.poi.name,
+            'lat': widget.poi.latitude,
+            'lng': widget.poi.longitude,
+          });
+        },
+      ),
+    );
+  }
+
   Widget _buildRatingRow() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
@@ -165,29 +190,7 @@ class _PoiDetailScreenState extends State<PoiDetailScreen> {
               _buildRatingRow(),
 
               // Navigate to Waypoint Selection
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                child: ElevatedButton.icon(
-                  icon: const Icon(Icons.directions),
-                  label: const Text("Set Destination"),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).primaryColor,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context, {
-                      'name': widget.poi.name,
-                      'lat': widget.poi.latitude,
-                      'lng': widget.poi.longitude,
-                    });
-                    // Pop back to OutdoorMap
-                  },
-                ),
-              ),
+              _buildSetDestinationButton(),
 
               // Expandable Description
               Padding(
