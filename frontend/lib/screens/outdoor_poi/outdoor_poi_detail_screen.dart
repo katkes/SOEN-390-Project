@@ -57,64 +57,70 @@ class _PoiDetailScreenState extends State<PoiDetailScreen> {
   /// Tracks whether the full description text is being shown.
   bool _showFullDescription = false;
 
+  
+
+  SliverAppBar _buildAppBar(BuildContext context) {
+    return SliverAppBar(
+      backgroundColor: Theme.of(context).primaryColor,
+      expandedHeight: 200.0,
+      pinned: true,
+      flexibleSpace: FlexibleSpaceBar(
+        title: Text(
+          widget.poi.name,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            shadows: [
+              Shadow(
+                offset: Offset(0, 1),
+                blurRadius: 3.0,
+                color: Color.fromARGB(255, 0, 0, 0),
+              ),
+            ],
+          ),
+        ),
+        background: widget.poi.imageUrl != null
+            ? Image.network(
+                widget.poi.imageUrl!,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: Theme.of(context).primaryColor,
+                    child: const Center(
+                      child: Icon(
+                        Icons.location_pin,
+                        size: 64,
+                        color: Color(0xFF912338),
+                      ),
+                    ),
+                  );
+                },
+              )
+            : Container(
+                color: Theme.of(context).primaryColor,
+                child: const Center(
+                  child: Icon(
+                    Icons.location_pin,
+                    size: 64,
+                    color: Colors.white70,
+                  ),
+                ),
+              ),
+      ),
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back, color: Colors.white),
+        onPressed: widget.onBack ?? () => Navigator.of(context).pop(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
           /// Displays a collapsible AppBar with the POI's name and image.
-          SliverAppBar(
-            backgroundColor: Theme.of(context).primaryColor,
-            expandedHeight: 200.0,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              title: Text(
-                widget.poi.name,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  shadows: [
-                    Shadow(
-                      offset: Offset(0, 1),
-                      blurRadius: 3.0,
-                      color: Color.fromARGB(255, 0, 0, 0),
-                    ),
-                  ],
-                ),
-              ),
-              background: widget.poi.imageUrl != null
-                  ? Image.network(
-                      widget.poi.imageUrl!,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: Theme.of(context).primaryColor,
-                          child: const Center(
-                            child: Icon(
-                              Icons.location_pin,
-                              size: 64,
-                              color: Color(0xFF912338),
-                            ),
-                          ),
-                        );
-                      },
-                    )
-                  : Container(
-                      color: Theme.of(context).primaryColor,
-                      child: const Center(
-                        child: Icon(
-                          Icons.location_pin,
-                          size: 64,
-                          color: Colors.white70,
-                        ),
-                      ),
-                    ),
-            ),
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: widget.onBack ?? () => Navigator.of(context).pop(),
-            ),
-          ),
+          _buildAppBar(context),
 
           /// Main content list: includes chips, rating, description, contact, hours, amenities, and reviews.
           SliverList(
