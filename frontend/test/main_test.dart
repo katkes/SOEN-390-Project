@@ -8,16 +8,19 @@ import 'dart:typed_data';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:soen_390/core/secure_storage.dart';
 import 'package:soen_390/main.dart';
+import 'package:soen_390/models/route_result.dart';
+import 'package:soen_390/models/step_result.dart';
 import 'package:soen_390/providers/service_providers.dart';
 import 'package:soen_390/services/http_service.dart';
 import 'package:soen_390/services/interfaces/route_service_interface.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:soen_390/services/building_info_api.dart';
+import 'package:soen_390/services/google_maps_api_client.dart';
 import 'package:soen_390/utils/location_service.dart';
-import 'package:soen_390/services/building_to_coordinates.dart';
+import 'package:soen_390/services/geocoding_service.dart';
 import 'package:soen_390/services/auth_service.dart';
 import 'package:googleapis_auth/googleapis_auth.dart' as auth;
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:soen_390/widgets/building_popup.dart';
 
 /// Test suite for the main application and services in the SOEN-390 project.
 ///

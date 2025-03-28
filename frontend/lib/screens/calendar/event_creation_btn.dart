@@ -26,9 +26,9 @@ class EventCreationButton extends StatelessWidget {
     return FloatingActionButton(
       onPressed: handlePressed,
       tooltip: 'Create Event',
-      child: const Icon(Icons.add),
       backgroundColor: const Color(0xFF004085),
       mini: true,
+      child: const Icon(Icons.add),
     );
   }
 

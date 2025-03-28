@@ -2,6 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:google_places_autocomplete_text_field/google_places_autocomplete_text_field.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+/// Symbolic constants for default suggestions
+const List<String> kDefaultSuggestions = [
+  "Restaurant",
+  "Fast Food",
+  "Coffee",
+  "Dessert",
+  "Shopping",
+  "Bar",
+];
+
+/// Pure filtering function
+List<String> filterSuggestions(List<String> source, String input) {
+  return source
+      .where((s) => s.toLowerCase().contains(input.toLowerCase()))
+      .toList();
+}
+
 class SuggestionsPopup extends StatefulWidget {
   final Function(String) onSelect;
 
@@ -14,14 +31,7 @@ class SuggestionsPopup extends StatefulWidget {
 class SuggestionsPopupState extends State<SuggestionsPopup> {
   final TextEditingController _searchController = TextEditingController();
 
-  List<String> suggestions = [
-    "Restaurant",
-    "Fast Food",
-    "Coffee",
-    "Dessert",
-    "Shopping",
-    "Bar"
-  ];
+  List<String> suggestions = kDefaultSuggestions;
   List<String> filteredSuggestions = [];
 
   @override
@@ -32,19 +42,33 @@ class SuggestionsPopupState extends State<SuggestionsPopup> {
 
   void _filterSuggestions(String input) {
     setState(() {
-      filteredSuggestions = suggestions
-          .where((suggestion) =>
-              suggestion.toLowerCase().contains(input.toLowerCase()))
-          .toList();
+      filteredSuggestions = filterSuggestions(suggestions, input);
     });
+  }
+
+  Widget _buildSuggestionList() {
+    return Flexible(
+      child: ListView.builder(
+        shrinkWrap: true,
+        itemCount: filteredSuggestions.length,
+        itemBuilder: (context, index) {
+          final suggestion = filteredSuggestions[index];
+          return ListTile(
+            title: Text(suggestion),
+            onTap: () {
+              widget.onSelect(suggestion);
+              Navigator.pop(context);
+            },
+          );
+        },
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -67,12 +91,11 @@ class SuggestionsPopupState extends State<SuggestionsPopup> {
               onSuggestionClicked: (prediction) {
                 _searchController.text = prediction.description ?? "";
                 _searchController.selection = TextSelection.fromPosition(
-                    TextPosition(offset: prediction.description?.length ?? 0));
+                  TextPosition(offset: prediction.description?.length ?? 0),
+                );
                 Navigator.pop(context);
               },
-              onChanged: (input) {
-                _filterSuggestions(input);
-              },
+              onChanged: _filterSuggestions,
               decoration: InputDecoration(
                 hintText: "Type address...",
                 border: OutlineInputBorder(
@@ -82,21 +105,7 @@ class SuggestionsPopupState extends State<SuggestionsPopup> {
               ),
             ),
             const SizedBox(height: 10),
-            Flexible(
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: filteredSuggestions.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(filteredSuggestions[index]),
-                    onTap: () {
-                      widget.onSelect(filteredSuggestions[index]);
-                      Navigator.pop(context);
-                    },
-                  );
-                },
-              ),
-            ),
+            _buildSuggestionList(),
             ElevatedButton(
               onPressed: () {
                 if (_searchController.text.isNotEmpty) {

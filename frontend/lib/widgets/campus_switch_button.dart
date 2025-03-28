@@ -2,20 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:soen_390/utils/location_service.dart' as location_service;
+import 'package:soen_390/utils/campus_locator.dart';
+
+/// Symbolic constants for campus keys
+const String kCampusSGW = 'SGW';
+const String kCampusLoyola = 'Loyola';
 
 class CampusSwitch extends StatefulWidget {
   final Function(String) onSelectionChanged;
   final Function(LatLng) onLocationChanged;
   final String selectedCampus;
+  final CampusLocator? campusLocator;
 
   const CampusSwitch({
     super.key,
     required this.onSelectionChanged,
     required this.onLocationChanged,
     required this.selectedCampus,
+    this.campusLocator,
   }) : assert(
-          selectedCampus == 'SGW' || selectedCampus == 'Loyola',
-          'selectedCampus must be either "SGW" or "Loyola"',
+          selectedCampus == kCampusSGW || selectedCampus == kCampusLoyola,
+          'selectedCampus must be either "$kCampusSGW" or "$kCampusLoyola"',
         );
 
   @override
@@ -23,25 +30,30 @@ class CampusSwitch extends StatefulWidget {
 }
 
 class CampusSwitchState extends State<CampusSwitch> {
-  late String selectedBuilding;
+  late String selectedCampus;
+
+  // Private internal maps
   final Map<String, LatLng> _campusLocations = {
-    'SGW': const LatLng(45.497856, -73.579588),
-    'Loyola': const LatLng(45.4581, -73.6391),
+    kCampusSGW: const LatLng(45.497856, -73.579588),
+    kCampusLoyola: const LatLng(45.4581, -73.6391),
   };
 
   final Map<String, Widget> _campusOptions = {
-    'SGW': const Text('SGW',
+    kCampusSGW: const Text(kCampusSGW,
         style: TextStyle(
             fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),
-    'Loyola': const Text('Loyola',
+    kCampusLoyola: const Text(kCampusLoyola,
         style: TextStyle(
             fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),
   };
+
+  Map<String, LatLng> get campusLocations => Map.unmodifiable(_campusLocations);
+  Map<String, Widget> get campusOptions => Map.unmodifiable(_campusOptions);
 
   @override
   void initState() {
     super.initState();
-    selectedBuilding = widget.selectedCampus;
+    selectedCampus = widget.selectedCampus;
     _initClosestCampus();
   }
 
@@ -50,35 +62,24 @@ class CampusSwitchState extends State<CampusSwitch> {
     super.didUpdateWidget(oldWidget);
     if (widget.selectedCampus != oldWidget.selectedCampus) {
       setState(() {
-        selectedBuilding = widget.selectedCampus;
+        selectedCampus = widget.selectedCampus;
       });
     }
   }
 
-  // Initializes the closest campus based on the user's current location.
+  /// Initializes closest campus based on user's location.
   Future<void> _initClosestCampus() async {
-    // Get the singleton instance.
-    final locationService = location_service.LocationService.instance;
+    final locator = widget.campusLocator ??
+        CampusLocator(
+          locationService: location_service.LocationService.instance,
+        );
 
-    try {
-      // Retrieve the current location and determine the closest campus.
-      final newBuilding = (location_service.LocationService.getClosestCampus(
-                  await locationService.getCurrentLocation()) ==
-              "LOY")
-          ? "Loyola"
-          : "SGW";
+    final newCampus = await locator.findClosestCampus();
 
-      if (mounted) {
-        setState(() => selectedBuilding = newBuilding);
-        widget.onSelectionChanged(selectedBuilding);
-        widget.onLocationChanged(_campusLocations[selectedBuilding]!);
-      }
-    } catch (e) {
-      // For error handling (ex. location services disabled).
-      print('Error initializing closest campus: $e');
-
-      // Determine if location services are enabled.
-      if (!await locationService.determinePermissions()) {}
+    if (mounted) {
+      setState(() => selectedCampus = newCampus);
+      widget.onSelectionChanged(newCampus);
+      widget.onLocationChanged(locator.getCoordinates(newCampus));
     }
   }
 
@@ -94,14 +95,14 @@ class CampusSwitchState extends State<CampusSwitch> {
         ),
         child: CupertinoSegmentedControl<String>(
           padding: EdgeInsets.zero,
-          groupValue: selectedBuilding,
-          children: _campusOptions,
+          groupValue: selectedCampus,
+          children: campusOptions,
           onValueChanged: (String newValue) {
             setState(() {
-              selectedBuilding = newValue;
+              selectedCampus = newValue;
             });
             widget.onSelectionChanged(newValue);
-            widget.onLocationChanged(_campusLocations[newValue]!);
+            widget.onLocationChanged(campusLocations[newValue]!);
           },
           borderColor: Colors.transparent,
           selectedColor: Colors.white,

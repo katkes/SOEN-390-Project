@@ -4,15 +4,19 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:soen_390/services/building_info_api.dart';
+import 'package:soen_390/models/route_result.dart';
+import 'package:soen_390/models/step_result.dart';
+import 'package:soen_390/services/google_maps_api_client.dart';
+import 'package:soen_390/services/interfaces/http_client_interface.dart';
 import 'package:soen_390/services/interfaces/route_service_interface.dart';
 import 'package:http/http.dart' as http;
+import 'package:soen_390/widgets/building_popup.dart';
 import 'package:soen_390/widgets/outdoor_map.dart';
 import 'dart:typed_data';
 
 @GenerateNiceMocks([
   MockSpec<IRouteService>(),
-  MockSpec<http.Client>(),
+  MockSpec<IHttpClient>(),
   MockSpec<BuildingPopUps>(),
   MockSpec<GoogleMapsApiClient>()
 ])
@@ -21,14 +25,14 @@ import 'outdoor_map_test.mocks.dart';
 /// Unit tests for the [OutdoorMap] widget, testing route fetching and map rendering behavior.
 void main() {
   late MockIRouteService mockRouteService;
-  late MockClient mockHttpClient;
+  late MockIHttpClient mockHttpClient;
   late LatLng testLocation;
   late MockGoogleMapsApiClient mockMapsApiClient;
   late MockBuildingPopUps mockBuildingPopUps;
 
   setUp(() {
     mockRouteService = MockIRouteService();
-    mockHttpClient = MockClient();
+    mockHttpClient = MockIHttpClient();
     testLocation = const LatLng(45.5017, -73.5673);
     mockMapsApiClient = MockGoogleMapsApiClient();
     mockBuildingPopUps = MockBuildingPopUps();
@@ -129,15 +133,11 @@ void main() {
     ]);
 
     // Mock HTTP response for map tiles
-    when(mockHttpClient.get(any, headers: anyNamed('headers')))
-        .thenAnswer((_) async => http.Response.bytes(
-              transparentPixelPng,
-              200,
-              headers: {'content-type': 'image/png'},
-            ));
-
-    when(mockHttpClient.readBytes(any, headers: anyNamed('headers')))
-        .thenAnswer((_) async => transparentPixelPng);
+    when(mockHttpClient.get(any)).thenAnswer((_) async => http.Response.bytes(
+          transparentPixelPng,
+          200,
+          headers: {'content-type': 'image/png'},
+        ));
   });
   final LatLng userLocation = const LatLng(45.495, -73.577);
 

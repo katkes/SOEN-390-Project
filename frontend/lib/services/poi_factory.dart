@@ -1,5 +1,5 @@
 import 'package:soen_390/models/outdoor_poi.dart';
-import 'package:soen_390/services/building_info_api.dart';
+import 'package:soen_390/services/google_maps_api_client.dart';
 
 /// A factory class responsible for creating [PointOfInterest] instances
 /// by fetching place details from a remote API.

@@ -6,9 +6,12 @@
 import 'package:flutter/material.dart';
 import 'package:soen_390/screens/outdoor_poi/place_search_screen.dart';
 import 'package:soen_390/services/google_poi_service.dart';
+import 'package:soen_390/services/location_updater.dart';
 import 'package:soen_390/services/poi_factory.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'package:soen_390/widgets/suggestions.dart';
+import 'package:soen_390/widgets/location_field.dart';
+import 'package:soen_390/utils/itinerary_manager.dart';
 
 class LocationTransportSelector extends StatefulWidget {
   final Function(List<String>, String) onConfirmRoute;
@@ -19,12 +22,14 @@ class LocationTransportSelector extends StatefulWidget {
   final LocationService locationService;
   final GooglePOIService poiService;
   final PointOfInterestFactory poiFactory;
+  final LocationUpdater locationUpdater;
 
   const LocationTransportSelector({
     super.key,
     required this.locationService,
     required this.poiService,
     required this.poiFactory,
+    required this.locationUpdater,
     this.onLocationChanged,
     required this.onConfirmRoute,
     this.onTransportModeChange,
@@ -37,7 +42,13 @@ class LocationTransportSelector extends StatefulWidget {
 }
 
 class LocationTransportSelectorState extends State<LocationTransportSelector> {
-  List<String> itinerary = [];
+  final List<Map<String, dynamic>> _transportOptions = [
+    {"label": "Car", "icon": Icons.directions_car},
+    {"label": "Bike", "icon": Icons.directions_bike},
+    {"label": "Train or Bus", "icon": Icons.train},
+    {"label": "Walk", "icon": Icons.directions_walk},
+  ];
+  late ItineraryManager itineraryManager;
   String selectedMode = "Train or Bus";
   String selectedTimeOption = "Leave Now"; // Default time selection
   String selectedLocation = ''; //variable to store selected location address
@@ -47,26 +58,20 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   String destinationLocation =
       ''; // variable to store destination location address
 
+  static const int _startLocationIndex = 0;
   static const int _destinationIndex = 1;
-  static const int _minItineraryLength = 2;
 
   @override
   void initState() {
     super.initState();
+    itineraryManager = ItineraryManager(itinerary: []);
+
     if (widget.initialDestination != null) {
       destinationLocation = widget.initialDestination!;
+      itineraryManager.setDestination(destinationLocation);
+    }
 
-      if (itinerary.length > 1) {
-        itinerary[1] = widget.initialDestination!;
-      } else if (itinerary.length == 1) {
-        itinerary.add(widget.initialDestination!);
-      } else {
-        itinerary.add(widget.initialDestination!);
-      }
-    }
-    if (itinerary.isEmpty) {
-      itinerary.add(defaultYourLocationString);
-    }
+    startLocation = itineraryManager.getStart();
   }
 
   @override
@@ -106,91 +111,39 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   Widget _buildLocationInput() {
     return Column(
       children: [
-        _buildLocationField(
-            startLocation == defaultYourLocationString
-                ? defaultYourLocationString
-                : 'Start Location',
-            true),
-        const SizedBox(height: 10),
-        _buildLocationField("Destination", false),
-        const SizedBox(height: 10),
-
-        // Add Stop & "Leave Now" Dropdown in Row
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            ElevatedButton(
-              onPressed: () async {
-                final locationService = widget.locationService;
-                final poiService = widget.poiService;
-                final poiFactory = widget.poiFactory;
-
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PlaceSearchScreen(
-                      locationService: locationService,
-                      poiService: poiService,
-                      poiFactory: poiFactory,
-                      onSetDestination: (name, lat, lng) {
-                        setState(() {
-                          destinationLocation = name;
-                          if (itinerary.length < _minItineraryLength) {
-                            itinerary.add(name);
-                          } else if (itinerary.length >= _minItineraryLength) {
-                            itinerary[_destinationIndex] = name;
-                          }
-                        });
-                        widget.onLocationChanged?.call();
-                      },
-                    ),
-                  ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: const Color(0xff912338),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                  side: const BorderSide(color: Color(0xff912338)),
-                ),
-              ),
-              child: const Text("What's Nearby?"),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.black26),
-                color: Colors.white,
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                  value: selectedTimeOption, // Default value
-                  icon: const Icon(Icons.arrow_drop_down),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      selectedTimeOption = newValue!;
-                    });
-                  },
-                  items: <String>["Leave Now", "Depart At", "Arrive By"]
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
-              ),
-            ),
-          ],
+        LocationField(
+          text: startLocation,
+          placeholder: defaultYourLocationString,
+          onTap: () => _showLocationSuggestions(true),
+          onDelete: () {
+            setState(() {
+              startLocation = '';
+              _removeStop(_startLocationIndex);
+            });
+          },
+          showDelete: startLocation != defaultYourLocationString,
         ),
+        const SizedBox(height: 10),
+        LocationField(
+          text: destinationLocation,
+          placeholder: "Destination",
+          onTap: () => _showLocationSuggestions(false),
+          onDelete: () {
+            setState(() {
+              destinationLocation = '';
+              _removeStop(_destinationIndex);
+            });
+          },
+          showDelete: destinationLocation.isNotEmpty,
+        ),
+        const SizedBox(height: 10),
+        _buildNearbyAndTimeSelector(), //
       ],
     );
   }
 
   void _confirmRoute() {
-    if (itinerary.length < _minItineraryLength) {
+    if (!itineraryManager.isValid()) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
             content: Text("You must have at least a start and destination.")),
@@ -198,58 +151,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
       return;
     }
 
-    List<String> selectedWaypoints = List.from(itinerary);
-
-    widget.onConfirmRoute(selectedWaypoints, selectedMode);
-  }
-
-  Widget _buildLocationField(String placeholder, bool isStart) {
-    String locationText = isStart ? startLocation : destinationLocation;
-    locationText = locationText.isEmpty
-        ? placeholder
-        : locationText
-            .replaceAll(RegExp(r'[^\w\s]'), '') // Remove punctuation
-            .split(' ') // Split by spaces
-            .take(2) // Get only the first two words
-            .join(' '); // Join them back to a string
-
-    return GestureDetector(
-      onTap: () {
-        _showLocationSuggestions(isStart);
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-        decoration: BoxDecoration(
-          color: Colors.grey[100],
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Colors.black26),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(locationText,
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
-            if (locationText != placeholder)
-              IconButton(
-                icon: const Icon(Icons.delete, size: 20, color: Colors.red),
-                onPressed: () {
-                  setState(() {
-                    if (isStart) {
-                      startLocation = '';
-                      _removeStop(0);
-                    } else {
-                      destinationLocation = '';
-                      _removeStop(1);
-                    }
-                  });
-                },
-              ),
-            const Icon(Icons.arrow_drop_down, color: Colors.black54),
-          ],
-        ),
-      ),
-    );
+    widget.onConfirmRoute(itineraryManager.getWaypoints(), selectedMode);
   }
 
   void _showLocationSuggestions(bool isStart) {
@@ -282,32 +184,21 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
 
   void _setStartLocation(String selectedLocation) {
     startLocation = selectedLocation;
-
-    if (itinerary.isEmpty) {
-      itinerary.add(selectedLocation);
-    } else {
-      itinerary.insert(0, selectedLocation);
-      itinerary.removeAt(1);
-    }
+    itineraryManager.setStart(selectedLocation);
   }
 
   void _setDestinationLocation(String selectedLocation) {
-    if (itinerary.length < _minItineraryLength) {
-      destinationLocation = selectedLocation;
-      itinerary.add(selectedLocation);
-    }
+    destinationLocation = selectedLocation;
+    itineraryManager.setDestination(selectedLocation);
   }
-
-  static const int _startLocationIndex = 0;
-  static const int _minimumWaypoints = 2;
 
   void _removeStop(int index) {
     setState(() {
-      itinerary.removeAt(index);
+      itineraryManager.removeAt(index);
       widget.onLocationChanged?.call();
     });
 
-    if (index == _startLocationIndex || itinerary.length < _minimumWaypoints) {
+    if (index == ItineraryManager.startIndex || !itineraryManager.isValid()) {
       widget.onTransportModeChange?.call("clear_cache");
     }
   }
@@ -319,31 +210,93 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
 
   void setStartLocation(String selectedLocation) {
     startLocation = selectedLocation;
-
-    if (itinerary.isEmpty) {
-      itinerary.add(selectedLocation);
-    } else {
-      itinerary.insert(0, selectedLocation);
-    }
+    itineraryManager.setStart(selectedLocation);
   }
 
   void setDestinationLocation(String selectedLocation) {
     destinationLocation = selectedLocation;
-    if (itinerary.length < _minItineraryLength) {
-      itinerary.add(selectedLocation);
-    } else if (itinerary.length == _minItineraryLength) {
-      itinerary[1] = selectedLocation;
-    }
+    itineraryManager.setDestination(selectedLocation);
   }
 
   Widget _buildTransportModeSelection() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: _transportOptions.map((option) {
+        return _buildTransportMode(
+          option["label"],
+          option["icon"],
+          isSelected: selectedMode == option["label"],
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildNearbyAndTimeSelector() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _buildTransportMode("Car", Icons.directions_car),
-        _buildTransportMode("Bike", Icons.directions_bike),
-        _buildTransportMode("Train or Bus", Icons.train, isSelected: true),
-        _buildTransportMode("Walk", Icons.directions_walk),
+        ElevatedButton(
+          onPressed: () async {
+            final locationService = widget.locationService;
+            final poiService = widget.poiService;
+            final poiFactory = widget.poiFactory;
+            final locationUpdater = widget.locationUpdater;
+
+            await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PlaceSearchScreen(
+                  locationService: locationService,
+                  poiService: poiService,
+                  poiFactory: poiFactory,
+                  onSetDestination: (name, lat, lng) {
+                    setState(() {
+                      destinationLocation = name;
+                      itineraryManager.setDestination(name);
+                    });
+                    widget.onLocationChanged?.call();
+                  },
+                  locationUpdater: locationUpdater,
+                ),
+              ),
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.white,
+            foregroundColor: const Color(0xff912338),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+              side: const BorderSide(color: Color(0xff912338)),
+            ),
+          ),
+          child: const Text("What's Nearby?"),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: Colors.black26),
+            color: Colors.white,
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              value: selectedTimeOption,
+              icon: const Icon(Icons.arrow_drop_down),
+              onChanged: (String? newValue) {
+                setState(() {
+                  selectedTimeOption = newValue!;
+                });
+              },
+              items: <String>["Leave Now", "Depart At", "Arrive By"]
+                  .map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -358,28 +311,25 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
 
         if (widget.onTransportModeChange != null) {
           widget.onTransportModeChange!(label);
-        }
-        // Otherwise use the confirm route handler if we have waypoints
-        else if (itinerary.length >= _minItineraryLength) {
-          widget.onConfirmRoute(List.from(itinerary), selectedMode);
+        } else if (itineraryManager.isValid()) {
+          widget.onConfirmRoute(itineraryManager.getWaypoints(), selectedMode);
         }
       },
       child: Column(
         children: [
-          Icon(icon,
-              size: 28,
-              color: selectedMode == label
-                  ? const Color(0xFF912338)
-                  : Colors.black54),
+          Icon(
+            icon,
+            size: 28,
+            color: isSelected ? const Color(0xFF912338) : Colors.black54,
+          ),
           const SizedBox(height: 5),
           Text(
             label,
             style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                color: selectedMode == label
-                    ? const Color(0xFF912338)
-                    : Colors.black54),
+              fontSize: 14,
+              fontWeight: FontWeight.w400,
+              color: isSelected ? const Color(0xFF912338) : Colors.black54,
+            ),
           ),
         ],
       ),

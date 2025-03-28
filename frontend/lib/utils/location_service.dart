@@ -203,7 +203,7 @@ class LocationService {
   }
 
   /// Returns true if less than 2km to SGW campus
-  static bool checkIfPositionIsAtSGW(LatLng coordinates) {
+  bool checkIfPositionIsAtSGW(LatLng coordinates) {
     var sgwCoordinates = [45.4973, -73.5784];
 
     double distanceToSGW = geo.Geolocator.distanceBetween(
@@ -220,7 +220,7 @@ class LocationService {
   }
 
   /// Returns true if less than 2km to LOY campus
-  static bool checkIfPositionIsAtLOY(LatLng coordinates) {
+  bool checkIfPositionIsAtLOY(LatLng coordinates) {
     var loyCoordinates = [45.4586, -73.6401];
 
     double distanceToLOY = geo.Geolocator.distanceBetween(

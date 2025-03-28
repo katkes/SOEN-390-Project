@@ -17,8 +17,12 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:soen_390/models/outdoor_poi.dart';
-import 'package:soen_390/widgets/review_card.dart';
+import 'package:soen_390/widgets/poi_description_section.dart';
+import 'package:soen_390/widgets/poi_detail_app_bar.dart';
+import 'package:soen_390/widgets/poi_rating_row.dart';
+import 'package:soen_390/widgets/poi_reviews_section.dart';
 import 'package:soen_390/screens/outdoor_poi/widgets/outdoor_poi_detail_widgets.dart';
+import 'package:soen_390/widgets/set_destination_button.dart';
 
 /// A stateful widget that displays detailed information about a specific
 /// [PointOfInterest] object.
@@ -63,58 +67,7 @@ class _PoiDetailScreenState extends State<PoiDetailScreen> {
       body: CustomScrollView(
         slivers: [
           /// Displays a collapsible AppBar with the POI's name and image.
-          SliverAppBar(
-            backgroundColor: Theme.of(context).primaryColor,
-            expandedHeight: 200.0,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              title: Text(
-                widget.poi.name,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  shadows: [
-                    Shadow(
-                      offset: Offset(0, 1),
-                      blurRadius: 3.0,
-                      color: Color.fromARGB(255, 0, 0, 0),
-                    ),
-                  ],
-                ),
-              ),
-              background: widget.poi.imageUrl != null
-                  ? Image.network(
-                      widget.poi.imageUrl!,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: Theme.of(context).primaryColor,
-                          child: const Center(
-                            child: Icon(
-                              Icons.location_pin,
-                              size: 64,
-                              color: Color(0xFF912338),
-                            ),
-                          ),
-                        );
-                      },
-                    )
-                  : Container(
-                      color: Theme.of(context).primaryColor,
-                      child: const Center(
-                        child: Icon(
-                          Icons.location_pin,
-                          size: 64,
-                          color: Colors.white70,
-                        ),
-                      ),
-                    ),
-            ),
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: widget.onBack ?? () => Navigator.of(context).pop(),
-            ),
-          ),
+          PoiDetailAppBar(poi: widget.poi, onBack: widget.onBack),
 
           /// Main content list: includes chips, rating, description, contact, hours, amenities, and reviews.
           SliverList(
@@ -128,84 +81,27 @@ class _PoiDetailScreenState extends State<PoiDetailScreen> {
                 ),
 
               // Rating stars and price range
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                child: Row(
-                  children: [
-                    if (widget.poi.rating != null) ...[
-                      buildRatingStars(widget.poi.rating!),
-                      const SizedBox(width: 8),
-                      Text(
-                        widget.poi.rating!.toStringAsFixed(1),
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                    ],
-                    if (widget.poi.priceRange != null)
-                      Text(
-                        widget.poi.priceRange!,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                  ],
-                ),
+              PoiRatingRow(
+                rating: widget.poi.rating,
+                priceRange: widget.poi.priceRange,
               ),
+
               // Navigate to Waypoint Selection
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                child: ElevatedButton.icon(
-                  icon: const Icon(Icons.directions),
-                  label: const Text("Set Destination"),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).primaryColor,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context, {
-                      'name': widget.poi.name,
-                      'lat': widget.poi.latitude,
-                      'lng': widget.poi.longitude,
-                    });
-                    // Pop back to OutdoorMap
-                  },
-                ),
+              SetDestinationButton(
+                name: widget.poi.name,
+                latitude: widget.poi.latitude,
+                longitude: widget.poi.longitude,
               ),
 
               // Expandable Description
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'About',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    buildExpandableDescription(
-                      widget.poi.description,
-                      _showFullDescription,
-                      () {
-                        setState(() {
-                          _showFullDescription = !_showFullDescription;
-                        });
-                      },
-                      context,
-                    ),
-                  ],
-                ),
+              PoiDescriptionSection(
+                description: widget.poi.description,
+                showFull: _showFullDescription,
+                onToggle: () {
+                  setState(() {
+                    _showFullDescription = !_showFullDescription;
+                  });
+                },
               ),
 
               // Contact Info: Address, Phone, Website
@@ -229,26 +125,7 @@ class _PoiDetailScreenState extends State<PoiDetailScreen> {
               const SizedBox(height: 24),
 
               // Reviews
-              if (widget.poi.reviews != null && widget.poi.reviews!.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Reviews',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      ...widget.poi.reviews!
-                          .map((review) => ReviewCard(review: review)),
-                      const SizedBox(height: 24),
-                    ],
-                  ),
-                ),
+              PoiReviewsSection(reviews: widget.poi.reviews),
             ]),
           ),
         ],

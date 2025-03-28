@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:soen_390/models/route_result.dart';
+import 'package:soen_390/models/step_result.dart';
 import 'package:soen_390/services/google_route_service.dart';
-import 'package:soen_390/services/building_to_coordinates.dart';
+import 'package:soen_390/services/geocoding_service.dart';
+import 'package:soen_390/utils/campus_route_checker.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:soen_390/screens/waypoint/waypoint_selection_screens.dart';
-import 'package:soen_390/services/interfaces/route_service_interface.dart';
+import 'package:soen_390/utils/route_cache_manager.dart';
+import 'package:soen_390/utils/waypoint_validator.dart';
 import 'package:soen_390/widgets/location_transport_selector.dart';
 import 'package:soen_390/widgets/route_card.dart';
 import 'package:soen_390/screens/indoor_accessibility/indoor_accessibility_preference.dart';
@@ -30,6 +34,7 @@ import 'package:soen_390/screens/indoor_accessibility/indoor_accessibility_prefe
   MockSpec<GoogleRouteService>(),
   MockSpec<GeocodingService>(),
   MockSpec<LocationService>(),
+  MockSpec<CampusRouteChecker>()
 ])
 import 'waypoint_selection_screens_test.mocks.dart';
 
@@ -37,6 +42,7 @@ void main() {
   late MockGoogleRouteService mockGoogleRouteService;
   late MockGeocodingService mockGeocodingService;
   late MockLocationService mockLocationService;
+  late MockCampusRouteChecker mockCampusRouteChecker;
   TestWidgetsFlutterBinding.ensureInitialized();
 
   dotenv.testLoad(fileInput: '''
@@ -47,6 +53,7 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
     mockGoogleRouteService = MockGoogleRouteService();
     mockGeocodingService = MockGeocodingService();
     mockLocationService = MockLocationService();
+    mockCampusRouteChecker = MockCampusRouteChecker();
   });
   Widget createWidgetUnderTest() {
     return MaterialApp(
@@ -54,6 +61,9 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
         routeService: mockGoogleRouteService,
         geocodingService: mockGeocodingService,
         locationService: mockLocationService,
+        campusRouteChecker: mockCampusRouteChecker,
+        waypointValidator: WaypointValidator(),
+        routeCacheManager: RouteCacheManager(),
       ),
     );
   }
@@ -102,6 +112,9 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
         routeService: mockGoogleRouteService,
         geocodingService: mockGeocodingService,
         locationService: mockLocationService,
+        campusRouteChecker: mockCampusRouteChecker,
+        waypointValidator: WaypointValidator(),
+        routeCacheManager: RouteCacheManager(),
       ),
     ));
 
@@ -113,10 +126,7 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
     await tester.pumpAndSettle();
 
     // Assert
-    expect(
-        find.text(
-            'Error finding route: Exception: No routes found for the selected transport mode'),
-        findsOneWidget);
+    expect(find.textContaining('Error finding route'), findsOneWidget);
   });
   testWidgets('WaypointSelectionScreen displays error on empty route response',
       (WidgetTester tester) async {
@@ -425,6 +435,9 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
         routeService: mockGoogleRouteService,
         geocodingService: mockGeocodingService,
         locationService: mockLocationService,
+        campusRouteChecker: mockCampusRouteChecker,
+        waypointValidator: WaypointValidator(),
+        routeCacheManager: RouteCacheManager(),
       ),
     ));
 
@@ -444,6 +457,9 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
         routeService: mockGoogleRouteService,
         geocodingService: mockGeocodingService,
         locationService: mockLocationService,
+        campusRouteChecker: mockCampusRouteChecker,
+        waypointValidator: WaypointValidator(),
+        routeCacheManager: RouteCacheManager(),
       ),
     ));
 

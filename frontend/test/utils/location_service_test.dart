@@ -457,7 +457,7 @@ void main() {
       test('returns true when position is within 2km of SGW campus', () {
         // Using the exact SGW coordinates: 45.4973, -73.5784
         const position = LatLng(45.4973, -73.5784);
-        expect(LocationService.checkIfPositionIsAtSGW(position), isTrue);
+        expect(locationService.checkIfPositionIsAtSGW(position), isTrue);
       });
 
       test('returns false when position is more than 2km away from SGW campus',
@@ -465,7 +465,7 @@ void main() {
         // Coordinates far from SGW campus
         const position = LatLng(45.4500, -73.7000);
 
-        expect(LocationService.checkIfPositionIsAtSGW(position), isFalse);
+        expect(locationService.checkIfPositionIsAtSGW(position), isFalse);
       });
     });
 
@@ -473,14 +473,14 @@ void main() {
       test('returns true when position is within 2km of LOY campus', () {
         // Using the exact LOY coordinates: 45.4586, -73.6401
         const position = LatLng(45.4586, -73.6401);
-        expect(LocationService.checkIfPositionIsAtLOY(position), isTrue);
+        expect(locationService.checkIfPositionIsAtLOY(position), isTrue);
       });
 
       test('returns false when position is more than 2km away from LOY campus',
           () {
         // Coordinates far from LOY campus
         const position = LatLng(45.5000, -73.5500);
-        expect(LocationService.checkIfPositionIsAtLOY(position), isFalse);
+        expect(locationService.checkIfPositionIsAtLOY(position), isFalse);
       });
     });
   });

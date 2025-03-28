@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:soen_390/models/places.dart';
-import 'package:soen_390/screens/outdoor_poi/outdoor_poi_detail_screen.dart';
 import 'package:soen_390/services/google_poi_service.dart';
+import 'package:soen_390/services/location_updater.dart';
+import 'package:soen_390/services/place_tap_handler.dart';
 import 'package:soen_390/services/poi_factory.dart';
 import 'package:soen_390/styles/theme.dart';
 import 'package:soen_390/utils/location_service.dart';
@@ -25,12 +25,14 @@ class PlaceSearchScreen extends StatefulWidget {
   final LocationService locationService;
   final GooglePOIService poiService;
   final PointOfInterestFactory poiFactory;
+  final LocationUpdater locationUpdater;
   final void Function(String name, double lat, double lng)? onSetDestination;
 
   const PlaceSearchScreen({
     required this.locationService,
     required this.poiService,
     required this.poiFactory,
+    required this.locationUpdater,
     this.onSetDestination,
     super.key,
   });
@@ -96,18 +98,13 @@ class _PlaceSearchScreenState extends State<PlaceSearchScreen> {
   }
 
   /// Attempts to get the user's current location and updates the stored location.
-  Future<void> _useCurrentLocation(
-      Function(double lat, double lng)? onCoordsObtained) async {
-    try {
-      await locationService.startUp();
-      LatLng pos = locationService.convertPositionToLatLng(
-        await locationService.getCurrentLocationAccurately(),
-      );
-      _updateLocation(pos.latitude, pos.longitude);
 
-      if (onCoordsObtained != null) {
-        onCoordsObtained(pos.latitude, pos.longitude);
-      }
+  Future<void> _useCurrentLocation(Function(double, double)? callback) async {
+    try {
+      final pos = await widget.locationUpdater.getCurrentLatLng();
+
+      _updateLocation(pos.latitude, pos.longitude);
+      callback?.call(pos.latitude, pos.longitude);
     } catch (e) {
       _handleError("Error getting current location: $e",
           "Unable to fetch current location");
@@ -121,10 +118,9 @@ class _PlaceSearchScreenState extends State<PlaceSearchScreen> {
 
   /// Fetches places of the selected [type] near the current location.
   Future<void> _onTypeSelected(String type) async {
-    if (_latitude == null || _longitude == null) {
-      print("Location not set. Cannot fetch POIs.");
-      return;
-    }
+    final lat = _latitude;
+    final lng = _longitude;
+    if (lat == null || lng == null) return;
 
     setState(() {
       _isLoading = true;
@@ -132,74 +128,36 @@ class _PlaceSearchScreenState extends State<PlaceSearchScreen> {
     });
 
     try {
-      final fetchedPlaces = await poiService.getNearbyPlaces(
-        latitude: _latitude!,
-        longitude: _longitude!,
+      final places = await poiService.getNearbyPlaces(
+        latitude: lat,
+        longitude: lng,
         type: type,
         radius: 1500,
       );
 
-      setState(() {
-        _places = fetchedPlaces;
-      });
-
-      if (fetchedPlaces.isEmpty) {
-        print("No places found for type: $type");
-      }
+      setState(() => _places = places);
     } catch (e) {
       _handleError("Error fetching POIs: $e", "Failed to fetch places");
-      setState(() {
-        _places = [];
-      });
+      setState(() => _places = []);
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
   /// Handles tapping a place to view details and potentially set it as a destination.
   Future<void> _handlePlaceTap(Place place) async {
-    print('--- _handlePlaceTap started ---');
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
-    try {
-      final imageUrl = place.thumbnailPhotoUrl(_googleApiKey) ?? '';
-      final poi = await widget.poiFactory.createPointOfInterest(
-        placeId: place.placeId,
-        imageUrl: imageUrl,
-      );
+    final handler = PlaceTapHandler(
+      context: context,
+      apiKey: _googleApiKey,
+      poiFactory: widget.poiFactory,
+      onSetDestination: widget.onSetDestination,
+    );
 
-      if (!mounted) return;
+    await handler.handle(place);
 
-      final result = await Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => PoiDetailScreen(poi: poi)),
-      );
-
-      if (result != null && result is Map<String, dynamic>) {
-        widget.onSetDestination?.call(
-          result['name'] as String,
-          result['lat'] as double,
-          result['lng'] as double,
-        );
-        if (mounted) {
-          Navigator.pop(context);
-        }
-      }
-    } catch (e) {
-      _handleError('Error creating POI: $e', "Failed to load place details.");
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
-
-    print('--- _handlePlaceTap completed ---');
+    if (mounted) setState(() => _isLoading = false);
   }
 
   /// For testing purposes: Allows setting the places manually.

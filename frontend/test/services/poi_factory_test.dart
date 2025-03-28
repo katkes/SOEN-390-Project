@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:soen_390/services/building_info_api.dart';
+import 'package:soen_390/services/google_maps_api_client.dart';
 import 'package:soen_390/services/poi_factory.dart';
 
 import 'poi_factory_test.mocks.dart'; // Update to correct path

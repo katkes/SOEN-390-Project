@@ -2,11 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:soen_390/services/building_info_api.dart';
 import 'package:popover/popover.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:soen_390/models/route_result.dart';
 import 'package:soen_390/widgets/building_information_popup.dart';
-import 'package:soen_390/services/interfaces/route_service_interface.dart';
+import 'package:soen_390/widgets/building_popup.dart';
 
 /// Handles tap interactions with map markers representing buildings.
 ///

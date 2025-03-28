@@ -3,17 +3,17 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:soen_390/widgets/indoor_navigation_button.dart';
 
 void main() {
-  group('IndoorTrigger Widget Tests', () {
+  group('IndoorNavigationButton Widget Tests', () {
     testWidgets('renders correctly with default styling',
         (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData(primaryColor: Colors.red),
-          home: const Scaffold(body: Center(child: IndoorTrigger())),
+          home: const Scaffold(body: Center(child: IndoorNavigationButton())),
         ),
       );
 
-      expect(find.byType(IndoorTrigger), findsOneWidget);
+      expect(find.byType(IndoorNavigationButton), findsOneWidget);
       expect(find.byType(Container), findsOneWidget);
       expect(find.byType(Icon), findsOneWidget);
 
@@ -38,7 +38,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData(primaryColor: Colors.blue),
-          home: const Scaffold(body: Center(child: IndoorTrigger())),
+          home: const Scaffold(body: Center(child: IndoorNavigationButton())),
         ),
       );
 
@@ -54,7 +54,7 @@ void main() {
         MaterialApp(
           theme: ThemeData(
               primaryColor: const Color.fromRGBO(255, 0, 0, 1.0)), // Fully red
-          home: const Scaffold(body: Center(child: IndoorTrigger())),
+          home: const Scaffold(body: Center(child: IndoorNavigationButton())),
         ),
       );
 
@@ -71,7 +71,7 @@ void main() {
         MaterialApp(
           theme: ThemeData(
               primaryColor: const Color.fromRGBO(0, 0, 255, 1.0)), // Fully blue
-          home: const Scaffold(body: Center(child: IndoorTrigger())),
+          home: const Scaffold(body: Center(child: IndoorNavigationButton())),
         ),
       );
 

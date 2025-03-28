@@ -9,7 +9,8 @@ import 'dart:ui' as _i6;
 import 'package:flutter_map/flutter_map.dart' as _i2;
 import 'package:latlong2/latlong.dart' as _i5;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:soen_390/services/building_info_api.dart' as _i3;
+import 'package:soen_390/services/interfaces/maps_api_client.dart' as _i3;
+import 'package:soen_390/widgets/building_popup.dart' as _i7;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -136,7 +137,7 @@ class MockMapController extends _i1.Mock implements _i2.MapController {
 /// A class which mocks [BuildingPopUps].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockBuildingPopUps extends _i1.Mock implements _i3.BuildingPopUps {
+class MockBuildingPopUps extends _i1.Mock implements _i7.BuildingPopUps {
   @override
   _i3.MapsApiClient get mapsApiClient => (super.noSuchMethod(
         Invocation.getter(#mapsApiClient),

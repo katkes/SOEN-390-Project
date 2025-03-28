@@ -1,13 +1,16 @@
-/// This file defines a custom Google Sign-In button widget for Flutter applications.
-/// It uses the `flutter_svg` package to display the Google "G" logo and provides
-/// a clean, visually appealing button with accessibility features.
-///
-/// The button is designed to be easily integrated into authentication flows,
-/// triggering a provided `onPressed` callback when tapped.
-library;
-
 import 'package:flutter/material.dart';
 
+/// Google Sign-In Button Styling Constants
+const double kGoogleButtonHeight = 50;
+const double kGoogleIconSize = 36;
+const double kGoogleButtonPadding = 12.0;
+const double kGoogleButtonBorderRadius = 8.0;
+
+const Color kGoogleButtonBackground = Colors.white;
+const Color kGoogleButtonForeground = Colors.black87;
+final Color kGoogleButtonBorderColor = Colors.grey.shade300;
+
+/// A reusable Google Sign-In button with consistent styling and semantics.
 class GoogleSignInButton extends StatelessWidget {
   final VoidCallback onPressed;
 
@@ -20,37 +23,47 @@ class GoogleSignInButton extends StatelessWidget {
       label: 'Sign in with Google',
       child: ElevatedButton(
         onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black87,
-          minimumSize: const Size(double.infinity, 50),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-            side: BorderSide(color: Colors.grey.shade300),
+        style: _googleButtonStyle(),
+        child: _buildGoogleButtonContent(),
+      ),
+    );
+  }
+
+  /// Helper method to style the button consistently.
+  ButtonStyle _googleButtonStyle() {
+    return ElevatedButton.styleFrom(
+      backgroundColor: kGoogleButtonBackground,
+      foregroundColor: kGoogleButtonForeground,
+      minimumSize: const Size(double.infinity, kGoogleButtonHeight),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(kGoogleButtonBorderRadius),
+        side: BorderSide(color: kGoogleButtonBorderColor),
+      ),
+      elevation: 1,
+    );
+  }
+
+  /// Extracted helper method for the logo + label layout.
+  Widget _buildGoogleButtonContent() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: kGoogleButtonPadding),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Image.asset(
+            'assets/images/Google_G_logo.png',
+            height: kGoogleIconSize,
+            width: kGoogleIconSize,
           ),
-          elevation: 1,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Image.asset(
-                'assets/images/Google_G_logo.png',
-                height: 36,
-                width: 36,
-              ),
-              const SizedBox(width: 16),
-              const Text(
-                'Sign in with Google',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
+          const SizedBox(width: 16),
+          const Text(
+            'Sign in with Google',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

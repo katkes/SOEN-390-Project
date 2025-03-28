@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:soen_390/models/route_result.dart';
 import 'package:soen_390/screens/indoor/mappedin_map_screen.dart';
 import 'package:soen_390/screens/waypoint/waypoint_selection_screens.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:soen_390/services/auth_service.dart';
+import 'package:soen_390/widgets/building_popup.dart';
 import 'package:soen_390/widgets/nav_bar.dart';
 import 'package:soen_390/widgets/search_bar.dart';
 import 'package:soen_390/styles/theme.dart';
@@ -14,7 +16,7 @@ import 'package:soen_390/providers/service_providers.dart';
 import 'package:soen_390/services/http_service.dart';
 import 'package:soen_390/services/interfaces/route_service_interface.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:soen_390/services/building_info_api.dart';
+import 'package:soen_390/services/google_maps_api_client.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'package:soen_390/screens/login/login_screen.dart';
 import 'package:soen_390/screens/profile/profile_screen.dart';
@@ -137,7 +139,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
     super.initState();
     _mapsApiClient = GoogleMapsApiClient(
       apiKey: dotenv.env['GOOGLE_MAPS_API_KEY']!,
-      client: widget.httpService.client,
+      httpClient: widget.httpService,
     );
     _buildingPopUps = BuildingPopUps(mapsApiClient: _mapsApiClient);
 
@@ -213,6 +215,9 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
         ref.watch(buildingToCoordinatesProvider);
     final locationService = ref.watch(locationServiceProvider);
     final routeService = ref.watch(routeServiceProvider);
+    final campusRouteChecker = ref.watch(campusRouteCheckerProvider);
+    final waypointValidator = ref.watch(waypointValidatorProvider);
+    final routeCacheManager = ref.watch(routeCacheManagerProvider);
 
     final RouteResult selectedRouteData = await Navigator.push(
       context,
@@ -221,6 +226,9 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
           routeService: routeService,
           geocodingService: buildingToCoordinatesService,
           locationService: locationService,
+          campusRouteChecker: campusRouteChecker,
+          waypointValidator: waypointValidator,
+          routeCacheManager: routeCacheManager,
         ),
       ),
     );
@@ -271,7 +279,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
                             location: currentLocation,
                             userLocation: _userLiveLocation,
                             routeService: widget.routeService,
-                            httpClient: widget.httpService.client,
+                            httpClient: widget.httpService,
                             mapsApiClient: _mapsApiClient,
                             buildingPopUps: _buildingPopUps,
                             routePoints: polylinePoints,
@@ -310,7 +318,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
                   const Positioned(
                     bottom: 10,
                     right: 21,
-                    child: IndoorTrigger(),
+                    child: IndoorNavigationButton(),
                   ),
                   Positioned(
                     bottom: 80,

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:soen_390/services/map_service.dart';
 import 'package:soen_390/utils/building_search.dart';
 
+@GenerateNiceMocks([MockSpec<MapService>()])
 import 'building_search_test.mocks.dart';
 
 void main() {

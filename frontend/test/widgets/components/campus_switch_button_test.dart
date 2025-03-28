@@ -172,7 +172,7 @@ void main() {
             tester.state(find.byType(CampusSwitch)) as CampusSwitchState;
         // In this test, the new campus remains 'SGW' because the computed closest campus
         // from the mocked position is SGW.
-        expect(state.selectedBuilding, 'SGW');
+        expect(state.selectedCampus, 'SGW');
       });
 
       testWidgets('handles permission denied permanently',
@@ -202,7 +202,7 @@ void main() {
 
         final state =
             tester.state(find.byType(CampusSwitch)) as CampusSwitchState;
-        expect(state.selectedBuilding, 'SGW');
+        expect(state.selectedCampus, 'SGW');
       });
 
       testWidgets('retrieves location after permission is granted',
@@ -247,7 +247,7 @@ void main() {
 
         final state =
             tester.state(find.byType(CampusSwitch)) as CampusSwitchState;
-        expect(state.selectedBuilding, 'SGW');
+        expect(state.selectedCampus, 'SGW');
       });
 
       testWidgets('handles location services disabled',
@@ -277,7 +277,7 @@ void main() {
 
         final state =
             tester.state(find.byType(CampusSwitch)) as CampusSwitchState;
-        expect(state.selectedBuilding, 'SGW');
+        expect(state.selectedCampus, 'SGW');
       });
 
       testWidgets('handles error during location retrieval',
@@ -310,7 +310,7 @@ void main() {
 
         final state =
             tester.state(find.byType(CampusSwitch)) as CampusSwitchState;
-        expect(state.selectedBuilding, 'SGW');
+        expect(state.selectedCampus, 'SGW');
       });
     });
   });

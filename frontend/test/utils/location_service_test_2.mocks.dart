@@ -195,6 +195,18 @@ class MockLocationService extends _i1.Mock implements _i4.LocationService {
       );
 
   @override
+  bool checkIfPositionIsAtSGW(_i3.LatLng? coordinates) => (super.noSuchMethod(
+        Invocation.method(#checkIfPositionIsAtSGW, [coordinates]),
+        returnValue: false,
+      ) as bool);
+
+  @override
+  bool checkIfPositionIsAtLOY(_i3.LatLng? coordinates) => (super.noSuchMethod(
+        Invocation.method(#checkIfPositionIsAtLOY, [coordinates]),
+        returnValue: false,
+      ) as bool);
+
+  @override
   _i5.Stream<_i2.Position> getPositionStream() => (super.noSuchMethod(
         Invocation.method(#getPositionStream, []),
         returnValue: _i5.Stream<_i2.Position>.empty(),
