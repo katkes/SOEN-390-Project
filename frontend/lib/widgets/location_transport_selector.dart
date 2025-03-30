@@ -102,24 +102,14 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
           const SizedBox(height: 20),
           _buildTransportModeSelection(),
           const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: _confirmRoute,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: appTheme.primaryColor,
-              foregroundColor: appTheme.colorScheme.onPrimary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-            ),
-            child: const Text("Confirm Route"),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               ElevatedButton(
                 onPressed: _confirmRoute,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xff912338),
-                  foregroundColor: Colors.white,
+                  backgroundColor: appTheme.primaryColor,
+                  foregroundColor: appTheme.colorScheme.onPrimary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
