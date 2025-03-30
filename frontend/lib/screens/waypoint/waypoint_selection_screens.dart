@@ -24,6 +24,7 @@ import 'package:soen_390/utils/route_display.dart' as display;
 import 'package:soen_390/utils/route_utils.dart' as utils;
 import "package:soen_390/screens/indoor_accessibility/indoor_accessibility_preference.dart";
 import 'package:soen_390/utils/waypoint_validator.dart';
+import 'package:soen_390/styles/theme.dart';
 
 class WaypointSelectionScreen extends StatefulWidget {
   final IRouteService routeService;
@@ -208,9 +209,9 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: appTheme.colorScheme.onPrimary,
       appBar: AppBar(
-        backgroundColor: const Color(0xff912338),
+        backgroundColor: appTheme.primaryColor,
         title: const Text("Find my Way",
             style: TextStyle(
                 fontSize: 20,
@@ -221,13 +222,10 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
-          //const Icon(Icons.more_vert, color: Colors.white),
-
           Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: 8), // Adjust padding as needed
+            padding: const EdgeInsets.symmetric(horizontal: 8),
             child: SizedBox(
-              height: 40, // Control button height
+              height: 40,
               child: ElevatedButton(
                 onPressed: () {
                   Navigator.push(
@@ -238,12 +236,12 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white, // White button for contrast
-                  foregroundColor: const Color(0xff912338), // Text color
+                  backgroundColor: appTheme.colorScheme.onPrimary,
+                  foregroundColor: appTheme.primaryColor,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8), // Rounded edges
+                    borderRadius: BorderRadius.circular(8),
                   ),
                 ),
                 child: const Text(
@@ -288,9 +286,8 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
             ),
             const SizedBox(height: 10),
             ListView.builder(
-              shrinkWrap: true, // Ensures it only takes needed space
-              physics:
-                  const NeverScrollableScrollPhysics(), // Prevents nested scrolling issues
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
               itemCount: confirmedRoutes.length > _maxRoutes
                   ? _maxRoutes
                   : confirmedRoutes.length,
