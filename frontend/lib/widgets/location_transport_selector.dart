@@ -12,6 +12,7 @@ import 'package:soen_390/utils/location_service.dart';
 import 'package:soen_390/widgets/suggestions.dart';
 import 'package:soen_390/widgets/location_field.dart';
 import 'package:soen_390/utils/itinerary_manager.dart';
+import 'package:soen_390/styles/theme.dart';
 
 class LocationTransportSelector extends StatefulWidget {
   final Function(List<String>, String) onConfirmRoute;
@@ -91,7 +92,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        color: Colors.white,
+        color: appTheme.colorScheme.onPrimary,
         boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
       ),
       child: Column(
@@ -101,6 +102,16 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
           const SizedBox(height: 20),
           _buildTransportModeSelection(),
           const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: _confirmRoute,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: appTheme.primaryColor,
+              foregroundColor: appTheme.colorScheme.onPrimary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
+            child: const Text("Confirm Route"),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -145,7 +156,12 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
           onDelete: () {
             setState(() {
               startLocation = '';
-              _removeStop(_startLocationIndex);
+            });
+            // ignore: unused_local_variable
+            final currentLocation = widget.locationService.getCurrentLocation();
+            setState(() {
+              startLocation = 'Your Location';
+              itineraryManager.setStart('Your Location');
             });
           },
           showDelete: startLocation != defaultYourLocationString,
@@ -187,26 +203,20 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
       builder: (context) {
         return SuggestionsPopup(
           onSelect: (selectedLocation) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (mounted) {
-                _handleLocationSelection(selectedLocation, isStart);
-              }
-            });
+            if (mounted) {
+              setState(() {
+                if (isStart) {
+                  _setStartLocation(selectedLocation);
+                } else {
+                  _setDestinationLocation(selectedLocation);
+                }
+                widget.onLocationChanged?.call();
+              });
+            }
           },
         );
       },
-    );
-  }
-
-  void _handleLocationSelection(String selectedLocation, bool isStart) {
-    setState(() {
-      if (isStart) {
-        _setStartLocation(selectedLocation);
-      } else {
-        _setDestinationLocation(selectedLocation);
-      }
-      widget.onLocationChanged?.call();
-    });
+    ).then((_) {});
   }
 
   void _setStartLocation(String selectedLocation) {
@@ -222,6 +232,12 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   void _removeStop(int index) {
     setState(() {
       itineraryManager.removeAt(index);
+
+      if (index == _startLocationIndex) {
+        startLocation = defaultYourLocationString;
+        itineraryManager.setStart(defaultYourLocationString);
+      }
+
       widget.onLocationChanged?.call();
     });
 
