@@ -10,7 +10,7 @@ import 'package:soen_390/services/google_poi_service.dart';
 import 'package:soen_390/services/poi_factory.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'package:soen_390/widgets/suggestions.dart';
-import 'package:soen_390/utils/itinerary_manager.dart';
+
 import 'package:mockito/mockito.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:soen_390/widgets/location_field.dart';
@@ -23,8 +23,6 @@ import 'package:soen_390/widgets/location_field.dart';
   MockSpec<NavigatorObserver>(),
 ])
 import 'location_transport_selector_test.mocks.dart';
-
-class MockItineraryManager extends Mock implements ItineraryManager {}
 
 class TestLocationTransportSelectorState
     extends LocationTransportSelectorState {
@@ -57,7 +55,6 @@ void main() {
   late MockGooglePOIService mockPoiService;
   late MockPointOfInterestFactory mockPoiFactory;
   late MockLocationUpdater mockLocationUpdater;
-  late MockItineraryManager mockItineraryManager;
   TestWidgetsFlutterBinding.ensureInitialized();
 
   dotenv.testLoad(fileInput: '''
@@ -69,7 +66,6 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
     mockPoiService = MockGooglePOIService();
     mockPoiFactory = MockPointOfInterestFactory();
     mockLocationUpdater = MockLocationUpdater();
-    mockItineraryManager = MockItineraryManager();
   });
 
   Widget createWidgetUnderTest({
