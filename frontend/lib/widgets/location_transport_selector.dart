@@ -74,6 +74,15 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
     startLocation = itineraryManager.getStart();
   }
 
+  void _handleShuttleBusSelection() {
+    setState(() {
+      selectedMode = "Shuttle Bus";
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Shuttle Bus selected!")),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -92,16 +101,34 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
           const SizedBox(height: 20),
           _buildTransportModeSelection(),
           const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: _confirmRoute,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xff912338),
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              ElevatedButton(
+                onPressed: _confirmRoute,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xff912338),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                child: const Text("Confirm Route"),
               ),
-            ),
-            child: const Text("Confirm Route"),
+              ElevatedButton(
+                onPressed: () {
+                  _handleShuttleBusSelection();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.grey,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                child: const Text("Shuttle Bus"),
+              ),
+            ],
           ),
         ],
       ),
