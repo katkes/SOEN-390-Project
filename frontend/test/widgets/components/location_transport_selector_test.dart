@@ -10,6 +10,10 @@ import 'package:soen_390/services/google_poi_service.dart';
 import 'package:soen_390/services/poi_factory.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'package:soen_390/widgets/suggestions.dart';
+import 'package:soen_390/utils/itinerary_manager.dart';
+import 'package:mockito/mockito.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:soen_390/widgets/location_field.dart';
 
 @GenerateNiceMocks([
   MockSpec<LocationService>(),
@@ -20,11 +24,40 @@ import 'package:soen_390/widgets/suggestions.dart';
 ])
 import 'location_transport_selector_test.mocks.dart';
 
+class MockItineraryManager extends Mock implements ItineraryManager {}
+
+class TestLocationTransportSelectorState
+    extends LocationTransportSelectorState {
+  void updateStartLocationForTest(String newLocation) {
+    setState(() {
+      startLocation = newLocation;
+    });
+  }
+}
+
+class TestLocationTransportSelector extends LocationTransportSelector {
+  TestLocationTransportSelector({
+    required super.locationService,
+    required super.poiService,
+    required super.poiFactory,
+    required super.locationUpdater,
+    required super.onConfirmRoute,
+    super.onTransportModeChange,
+    super.onLocationChanged,
+    super.initialDestination,
+  });
+
+  @override
+  LocationTransportSelectorState createState() =>
+      TestLocationTransportSelectorState();
+}
+
 void main() {
   late MockLocationService mockLocationService;
   late MockGooglePOIService mockPoiService;
   late MockPointOfInterestFactory mockPoiFactory;
   late MockLocationUpdater mockLocationUpdater;
+  late MockItineraryManager mockItineraryManager;
   TestWidgetsFlutterBinding.ensureInitialized();
 
   dotenv.testLoad(fileInput: '''
@@ -36,6 +69,7 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
     mockPoiService = MockGooglePOIService();
     mockPoiFactory = MockPointOfInterestFactory();
     mockLocationUpdater = MockLocationUpdater();
+    mockItineraryManager = MockItineraryManager();
   });
 
   Widget createWidgetUnderTest({
@@ -277,5 +311,59 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
     expect(state.itineraryManager.getWaypoints(),
         contains('Selected Destination'));
     expect(locationChangedCalled, isTrue);
+  });
+
+  testWidgets('LocationField onDelete resets start location to Your Location',
+      (WidgetTester tester) async {
+    final mockPosition = Position(
+        latitude: 45.0,
+        longitude: -73.0,
+        timestamp: DateTime.now(),
+        accuracy: 0,
+        altitude: 0,
+        heading: 0,
+        speed: 0,
+        speedAccuracy: 0,
+        altitudeAccuracy: 0,
+        headingAccuracy: 0);
+
+    when(mockLocationService.getCurrentLocation())
+        .thenAnswer((_) => Future.value(mockPosition));
+
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(
+        body: TestLocationTransportSelector(
+          locationService: mockLocationService,
+          poiService: mockPoiService,
+          poiFactory: mockPoiFactory,
+          onConfirmRoute: (_, __) {},
+          locationUpdater: mockLocationUpdater,
+        ),
+      ),
+    ));
+
+    final state = tester.state(find.byType(TestLocationTransportSelector))
+        as TestLocationTransportSelectorState;
+
+    state.updateStartLocationForTest('Custom Start Location');
+    await tester.pumpAndSettle();
+
+    expect(state.startLocation, equals('Custom Start Location'));
+
+    final startLocationField = find.byType(LocationField).first;
+
+    final deleteButton = find.descendant(
+      of: startLocationField,
+      matching: find.byType(IconButton),
+    );
+
+    expect(deleteButton, findsOneWidget);
+
+    await tester.tap(deleteButton);
+    await tester.pumpAndSettle();
+
+    verify(mockLocationService.getCurrentLocation()).called(1);
+
+    expect(state.startLocation, equals('Your Location'));
   });
 }
