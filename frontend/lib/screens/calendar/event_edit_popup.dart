@@ -133,7 +133,7 @@ class EventEditPopupState extends State<EventEditPopup> {
                     ),
                     ElevatedButton.icon(
                       onPressed: () {
-                        // TODO: Add navigation logic for future task
+                        // TODO: 7.1.6 Add navigation logic to next class
                       },
                       icon: Icon(Icons.directions_walk,
                           color: appTheme.colorScheme.onPrimary),
