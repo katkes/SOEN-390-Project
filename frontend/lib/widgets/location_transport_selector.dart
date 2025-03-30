@@ -119,7 +119,12 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
           onDelete: () {
             setState(() {
               startLocation = '';
-              _removeStop(_startLocationIndex);
+            });
+            // ignore: unused_local_variable
+            final currentLocation = widget.locationService.getCurrentLocation();
+            setState(() {
+              startLocation = 'Your Location';
+              itineraryManager.setStart('Your Location');
             });
           },
           showDelete: startLocation != defaultYourLocationString,
