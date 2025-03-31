@@ -428,27 +428,6 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
         findsOneWidget);
   });
 
-  testWidgets('Shuttle Bus button updates mode and shows snackbar',
-      (WidgetTester tester) async {
-    await tester.pumpWidget(MaterialApp(
-      home: WaypointSelectionScreen(
-        routeService: mockGoogleRouteService,
-        geocodingService: mockGeocodingService,
-        locationService: mockLocationService,
-        campusRouteChecker: mockCampusRouteChecker,
-        waypointValidator: WaypointValidator(),
-        routeCacheManager: RouteCacheManager(),
-      ),
-    ));
-
-    expect(find.text('Use Shuttle Bus?'), findsOneWidget);
-
-    await tester.tap(find.text('Use Shuttle Bus?'));
-    await tester.pump();
-
-    expect(find.text('Shuttle Bus selected!'), findsOneWidget);
-  });
-
   testWidgets('Specify Disability button navigates to IndoorAccessibilityPage',
       (WidgetTester tester) async {
     // Arrange

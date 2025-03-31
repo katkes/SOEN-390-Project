@@ -362,4 +362,24 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
 
     expect(state.startLocation, equals('Your Location'));
   });
+  testWidgets('Shuttle Bus button updates mode and shows snackbar',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(
+        body: LocationTransportSelector(
+          locationService: mockLocationService,
+          poiService: mockPoiService,
+          poiFactory: mockPoiFactory,
+          locationUpdater: mockLocationUpdater,
+          onConfirmRoute: (waypoints, mode) {},
+        ),
+      ),
+    ));
+    expect(find.text('Shuttle Bus'), findsOneWidget);
+
+    await tester.tap(find.text('Shuttle Bus'));
+    await tester.pump();
+
+    expect(find.text('Shuttle Bus selected!'), findsOneWidget);
+  });
 }
