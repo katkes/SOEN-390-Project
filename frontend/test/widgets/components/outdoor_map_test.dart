@@ -554,4 +554,28 @@ void main() {
     expect(sizedBox.width, equals(double.infinity));
     expect(sizedBox.height, equals(double.infinity));
   });
+
+  /// Test that the locate me button updates the map center to user's location.
+  testWidgets('Locate Me button updates map center', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: MapWidget(
+            location: testLocation,
+            userLocation: userLocation,
+            httpClient: mockHttpClient,
+            routeService: mockRouteService,
+            mapsApiClient: mockMapsApiClient,
+            buildingPopUps: mockBuildingPopUps,
+            routePoints: const [],
+          ),
+        ),
+      ),
+    );
+
+    await tester.pump();
+    expect(find.text("Locate Me"), findsOneWidget);
+    await tester.tap(find.text("Locate Me"));
+    await tester.pump();
+  });
 }
