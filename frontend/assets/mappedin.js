@@ -36,21 +36,39 @@ mapView.Labels.all();
 //mapView.enableDebug();
 
 
-
 /**
- * Moves camera to the center of a named space.
- *
- * - [spaceName]: Name of the space to focus on.
+ * Moves camera to a specific room number
+ * 
+ * - [roomNumber]: The room number to focus on (e.g., "907")
+ * Returns true if successful, false otherwise
  */
-window.setCameraTo = function setCameraTo(spaceName) {
-    const space = mapData.getByType("space").find(s => s.name === spaceName);
-    if (space && mapView) {
+window.navigateToRoom = function navigateToRoom(roomNumber) {
+    try {
+        const spaces = mapData.getByType("space");
+        const room = spaces.find(s => s.name === roomNumber);
+        
+        if (!room) {
+            console.error(`Room ${roomNumber} not found`);
+            return false;
+        }
+
         mapView.Camera.animateTo({
-            center: space.geometry.center,
+            center: room.geometry.center,
             zoomLevel: 20,
             pitch: 45,
             bearing: 0,
         });
+
+        // Highlight the room
+        mapView.updateState(room, {
+            color: "#f26336", // TODO: change the color to the one from the theme
+            interactive: true,
+        });
+
+        return true;
+    } catch (error) {
+        console.error('Error navigating to room:', error);
+        return false;
     }
 };
 

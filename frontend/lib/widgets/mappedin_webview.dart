@@ -26,7 +26,13 @@ import "package:soen_390/screens/indoor_accessibility/indoor_accessibility_prefe
 class MappedinWebView extends StatefulWidget {
   /// Optional controller override for testing.
   final WebViewController? controllerOverride;
-  const MappedinWebView({super.key, this.controllerOverride});
+  /// Optional map ID. If not provided, defaults to '67968294965a13000bcdfe74'
+  final String? mapId;
+  const MappedinWebView({
+    super.key, 
+    this.controllerOverride,
+    this.mapId,
+  });
 
   @override
   MappedinWebViewState createState() => MappedinWebViewState();
@@ -36,10 +42,12 @@ class MappedinWebViewState extends State<MappedinWebView> {
   late final WebViewController controller;
   String statusMessage = "Nothing";
   String? _errorMessage;
+  String? _currentMapId;
 
   @override
   void initState() {
     super.initState();
+    _currentMapId = widget.mapId;
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted);
 
@@ -110,6 +118,14 @@ class MappedinWebViewState extends State<MappedinWebView> {
     loadHtmlFromAssets();
   }
 
+  /// Reloads the WebView with a new map ID
+  Future<void> reloadWithMapId(String mapId) async {
+    setState(() {
+      _currentMapId = mapId;
+    });
+    await loadHtmlFromAssets();
+  }
+
   /// Loads the HTML file into the WebView and injects JavaScript code and API keys.
   /// 
   /// Throws an exception if:
@@ -133,9 +149,9 @@ class MappedinWebViewState extends State<MappedinWebView> {
       // Validate environment variables
       final apiKey = dotenv.env['MAPPEDIN_API_KEY'];
       final apiSecret = dotenv.env['MAPPEDIN_API_SECRET'];
-      final mapId = dotenv.env['MAPPEDIN_API_MAP_ID'];
+      final mapId = _currentMapId ?? widget.mapId ?? '67968294965a13000bcdfe74';
 
-      if (apiKey == null || apiSecret == null || mapId == null) {
+      if (apiKey == null || apiSecret == null) {
         throw Exception('Missing required environment variables');
       }
 
@@ -191,6 +207,20 @@ class MappedinWebViewState extends State<MappedinWebView> {
       debugPrint('Error setting floor: $e');
       setState(() {
         statusMessage = 'Failed to change floor: $e';
+      });
+    }
+  }
+
+  /// Navigates to a specific room on the map
+  ///
+  /// - [roomNumber]: The room number to navigate to (e.g., "907")
+  Future<void> navigateToRoom(String roomNumber) async {
+    try {
+      await controller.runJavaScript("navigateToRoom('$roomNumber')");
+    } catch (e) {
+      debugPrint('Error navigating to room: $e');
+      setState(() {
+        statusMessage = 'Failed to navigate to room: $e';
       });
     }
   }

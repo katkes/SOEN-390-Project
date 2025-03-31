@@ -6,17 +6,99 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:soen_390/widgets/mappedin_webview.dart';
+import 'package:soen_390/models/building_config.dart';
 
-class MappedinMapScreen extends StatelessWidget {
+/// Controller class to manage the Mappedin map state and building selection
+class MappedinMapController {
+  final GlobalKey<MappedinWebViewState> webViewKey = GlobalKey<MappedinWebViewState>();
+  String? _currentMapId;
+  BuildingConfig? _currentBuilding;
+
+  /// The current map ID being displayed
+  String? get currentMapId => _currentMapId;
+
+  /// The current building being displayed
+  BuildingConfig? get currentBuilding => _currentBuilding;
+
+  /// Changes the current building map being displayed
+  /// 
+  /// [mapId] - The new map ID to display
+  /// Returns true if the map was successfully changed
+  Future<bool> switchBuilding(String mapId) async {
+    try {
+      _currentMapId = mapId;
+      // Reload the WebView with the new map ID
+      await webViewKey.currentState?.reloadWithMapId(mapId);
+      return true;
+    } catch (e) {
+      debugPrint('Error switching building: $e');
+      return false;
+    }
+  }
+
+  /// Navigates to a specific room in a building
+  /// 
+  /// [roomNumber] - The full room number including building prefix (e.g., "H907")
+  /// Returns true if navigation was successful
+  Future<bool> navigateToRoom(String roomNumber) async {
+    try {
+      final building = await BuildingConfigManager.findBuildingByRoom(roomNumber);
+      if (building == null) {
+        debugPrint('Building not found for room: $roomNumber');
+        return false;
+      }
+
+      // Switch to the building's map if we're not already there
+      if (_currentMapId != building.mapId) {
+        final success = await switchBuilding(building.mapId);
+        if (!success) return false;
+      }
+
+      _currentBuilding = building;
+      
+      // Set the default floor if available
+      if (building.defaultFloor != null) {
+        await webViewKey.currentState?.setFloor(building.defaultFloor!);
+      }
+
+      // TODO: Add camera movement to the room location
+      // This will require additional JavaScript functions in mappedin.js
+      // to handle camera positioning to specific rooms
+
+      return true;
+    } catch (e) {
+      debugPrint('Error navigating to room: $e');
+      return false;
+    }
+  }
+}
+
+class MappedinMapScreen extends StatefulWidget {
   /// To allow injection of a custom webView (for testing)
-  MappedinMapScreen({super.key, this.webView});
+  MappedinMapScreen({
+    super.key, 
+    this.webView,
+    this.controller,
+  });
 
   /// Optionally injected WebView.
   final Widget? webView;
 
-  /// GlobalKey to access the MappedinWebViewState.
-  final GlobalKey<MappedinWebViewState> _webViewKey =
-      GlobalKey<MappedinWebViewState>();
+  /// Optional controller for managing the map state
+  final MappedinMapController? controller;
+
+  @override
+  State<MappedinMapScreen> createState() => _MappedinMapScreenState();
+}
+
+class _MappedinMapScreenState extends State<MappedinMapScreen> {
+  late final MappedinMapController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = widget.controller ?? MappedinMapController();
+  }
 
   /// Helper method to build Floating Action Buttons with standard styling.
   Widget _buildFABButton(String text, VoidCallback onPressed) {
@@ -37,7 +119,10 @@ class MappedinMapScreen extends StatelessWidget {
         backgroundColor: const Color(0xff912338),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: webView ?? MappedinWebView(key: _webViewKey),
+      body: webView ?? MappedinWebView(
+        key: _controller.webViewKey,
+        mapId: _controller.currentMapId,
+      ),
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -50,7 +135,7 @@ class MappedinMapScreen extends StatelessWidget {
           /// - Accessible: true
           ElevatedButton(
             onPressed: () async {
-              await _webViewKey.currentState
+              await _controller.webViewKey.currentState
                   ?.showDirections("124", "Hrozzz", true);
             },
             child: const Text("Get Directions"),
@@ -64,7 +149,7 @@ class MappedinMapScreen extends StatelessWidget {
           ///
           /// - Floor: `"Level 9"`
           _buildFABButton("Set Floor", () async {
-            await _webViewKey.currentState?.setFloor("Level 9");
+            await _controller.webViewKey.currentState?.setFloor("Level 9");
           }),
         ],
       ),
