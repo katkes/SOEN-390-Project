@@ -11,6 +11,7 @@ import 'package:soen_390/services/map_service.dart';
 import 'package:soen_390/utils/marker_tap_handler.dart';
 import 'package:soen_390/widgets/building_popup.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
+import 'package:soen_390/widgets/indoor_navigation_button.dart';
 import 'package:http/http.dart' as http;
 
 /// A widget that displays an interactive map with routing functionality.
@@ -332,22 +333,11 @@ class MapWidgetState extends State<MapWidget> {
           ),
         ),
         Positioned(
-          top: 10,
-          right: 10,
-          child: ElevatedButton(
+          bottom: 10,
+          right: 21,
+          child: IndoorNavigationButton(
             onPressed: _centerMapOnUser,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            child: const Text(
-              "Locate Me",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
+            key: Key('indoor-navigation-buttons'),
           ),
         ),
       ],
@@ -356,13 +346,11 @@ class MapWidgetState extends State<MapWidget> {
 
   void _centerMapOnUser() {
     _mapController.move(
-      widget.userLocation, // Centers on the user's location
-      17.0, // Keeps zoom at a good level
+      widget.userLocation,
+      17.0,
     );
   }
-
 }
-//end of _MapWidgetState class
 
 /// Example usage of `MapWidget` inside a `MyPage` scaffold.
 class MyPage extends StatelessWidget {

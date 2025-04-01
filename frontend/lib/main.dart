@@ -9,7 +9,6 @@ import 'package:soen_390/widgets/nav_bar.dart';
 import 'package:soen_390/widgets/search_bar.dart';
 import 'package:soen_390/styles/theme.dart';
 import 'package:soen_390/widgets/campus_switch_button.dart';
-import 'package:soen_390/widgets/indoor_navigation_button.dart';
 import 'package:soen_390/widgets/outdoor_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:soen_390/providers/service_providers.dart';
@@ -314,11 +313,6 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
                       onLocationFound: handleLocationChanged,
                       onBuildingSelected: _handleBuildingSelected,
                     ),
-                  ),
-                  const Positioned(
-                    bottom: 10,
-                    right: 21,
-                    child: IndoorNavigationButton(),
                   ),
                   Positioned(
                     bottom: 80,

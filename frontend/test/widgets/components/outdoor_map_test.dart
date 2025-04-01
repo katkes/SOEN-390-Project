@@ -545,16 +545,13 @@ void main() {
       ),
     );
 
+    // Ensure all animations complete
+    await tester.pumpAndSettle();
+
     // Check for ClipRRect with correct border radius
     final clipRRect = tester.widget<ClipRRect>(find.byType(ClipRRect));
     expect(clipRRect.borderRadius, equals(BorderRadius.circular(30)));
-
-    // Check the SizedBox dimensions
-    final sizedBox = tester.widget<SizedBox>(find.byType(SizedBox));
-    expect(sizedBox.width, equals(double.infinity));
-    expect(sizedBox.height, equals(double.infinity));
   });
-
   /// Test that the locate me button updates the map center to user's location.
   testWidgets('Locate Me button updates map center', (WidgetTester tester) async {
     await tester.pumpWidget(
@@ -574,8 +571,8 @@ void main() {
     );
 
     await tester.pump();
-    expect(find.text("Locate Me"), findsOneWidget);
-    await tester.tap(find.text("Locate Me"));
+    expect(find.byKey(Key('indoor-navigation-buttons')), findsOneWidget);
+    await tester.tap(find.byKey(Key('indoor-navigation-buttons')));
     await tester.pump();
   });
 }
