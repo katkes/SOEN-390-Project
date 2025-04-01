@@ -337,7 +337,7 @@ class MapWidgetState extends State<MapWidget> {
           right: 21,
           child: IndoorNavigationButton(
             onPressed: _centerMapOnUser,
-            key: Key('indoor-navigation-buttons'),
+            key: const Key('indoor-navigation-buttons'),
           ),
         ),
       ],

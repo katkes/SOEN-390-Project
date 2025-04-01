@@ -552,8 +552,10 @@ void main() {
     final clipRRect = tester.widget<ClipRRect>(find.byType(ClipRRect));
     expect(clipRRect.borderRadius, equals(BorderRadius.circular(30)));
   });
+
   /// Test that the locate me button updates the map center to user's location.
-  testWidgets('Locate Me button updates map center', (WidgetTester tester) async {
+  testWidgets('Locate Me button updates map center',
+      (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -571,8 +573,8 @@ void main() {
     );
 
     await tester.pump();
-    expect(find.byKey(Key('indoor-navigation-buttons')), findsOneWidget);
-    await tester.tap(find.byKey(Key('indoor-navigation-buttons')));
+    expect(find.byKey(const Key('indoor-navigation-buttons')), findsOneWidget);
+    await tester.tap(find.byKey(const Key('indoor-navigation-buttons')));
     await tester.pump();
   });
 }
