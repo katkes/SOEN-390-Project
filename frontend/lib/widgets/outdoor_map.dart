@@ -317,14 +317,14 @@ class MapWidgetState extends State<MapWidget> {
                       Polyline(
                         points: animatedPoints,
                         strokeWidth: 10.0,
-                        color: const Color.fromARGB(
-                            100, 0, 0, 0), // Soft black shadow with transparency
+                        color: const Color.fromARGB(100, 0, 0,
+                            0), // Soft black shadow with transparency
                       ),
                       Polyline(
                         points: animatedPoints,
                         strokeWidth: 6.0,
-                        color: const Color.fromRGBO(
-                            54, 152, 244, 0.8), // Nice vivid blue with 80% opacity
+                        color: const Color.fromRGBO(54, 152, 244,
+                            0.8), // Nice vivid blue with 80% opacity
                       ),
                     ],
                   ),
