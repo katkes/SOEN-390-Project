@@ -21,9 +21,17 @@ class ThemeNotifier extends StateNotifier<ThemeData> {
     final isDark = prefs.getBool('isDarkMode') ?? false;
     state = isDark ? darkAppTheme : appTheme;
   }
+
+  // Future<bool> isDarkTheme() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final isDark = await prefs.getBool('isDarkMode') ?? false;
+  //   return isDark;
+  // }
 }
 
 // Create a Riverpod provider for the theme mode
 final themeProvider = StateNotifierProvider<ThemeNotifier, ThemeData>((ref) {
   return ThemeNotifier();
 });
+
+
