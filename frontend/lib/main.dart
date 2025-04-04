@@ -7,7 +7,7 @@ import 'package:soen_390/services/auth_service.dart';
 import 'package:soen_390/widgets/building_popup.dart';
 import 'package:soen_390/widgets/nav_bar.dart';
 import 'package:soen_390/widgets/search_bar.dart';
-import 'package:soen_390/styles/theme.dart';
+// import 'package:soen_390/styles/theme.dart';
 import 'package:soen_390/widgets/campus_switch_button.dart';
 import 'package:soen_390/widgets/indoor_navigation_button.dart';
 import 'package:soen_390/widgets/outdoor_map.dart';
@@ -22,7 +22,7 @@ import 'package:soen_390/screens/login/login_screen.dart';
 import 'package:soen_390/screens/profile/profile_screen.dart';
 import 'package:soen_390/screens/calendar/calendar_view.dart';
 import 'package:soen_390/providers/navigation_provider.dart';
-import "package:soen_390/styles/theme_provider.dart";
+import "package:soen_390/providers/theme_provider.dart";
 import "package:soen_390/widgets/dark_mode_toggle_button.dart";
 /// The entry point of the application.
 ///
@@ -257,7 +257,13 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
       body: IndexedStack(
         index: selectedIndex,
         children: [
+
+
           const Center(child: DarkModeToggleButton()),
+
+
+
+
           LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
               return Stack(

@@ -40,8 +40,7 @@ class CampusSwitchState extends State<CampusSwitch> {
 
   final Map<String, Widget> _campusOptions = {
     kCampusSGW: const Text(kCampusSGW,
-        style: TextStyle(
-            fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),
     kCampusLoyola: const Text(kCampusLoyola,
         style: TextStyle(
             fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),
@@ -90,7 +89,7 @@ class CampusSwitchState extends State<CampusSwitch> {
         width: 420,
         padding: const EdgeInsets.all(4),
         decoration: BoxDecoration(
-          color: Colors.grey.shade300,
+          // color: Colors.grey.shade300,
           borderRadius: BorderRadius.circular(12),
         ),
         child: CupertinoSegmentedControl<String>(
