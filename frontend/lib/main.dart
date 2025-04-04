@@ -160,13 +160,6 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
     _locationService.stopListening();
   }
 
-  // void _onItemTapped(int index) {
-  //   polylinePoints = [];
-  //   setState(() {
-  //     _selectedIndex = index;
-  //   });
-  // }
-
   Future<void> signIn() async {
     setState(() {
       isLoading = true;

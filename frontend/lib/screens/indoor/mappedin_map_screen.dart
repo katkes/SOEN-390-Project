@@ -34,7 +34,7 @@ class MappedinMapScreen extends StatelessWidget {
           'Indoor Navigation',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: const Color(0xff912338),
+        // backgroundColor: const Color(0xff912338),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: webView ?? MappedinWebView(key: _webViewKey),

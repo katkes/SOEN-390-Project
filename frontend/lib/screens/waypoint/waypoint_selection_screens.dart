@@ -200,9 +200,9 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: appTheme.colorScheme.onPrimary,
+      // backgroundColor: appTheme.colorScheme.onPrimary,
       appBar: AppBar(
-        backgroundColor: appTheme.primaryColor,
+        // backgroundColor: appTheme.primaryColor,
         title: const Text("Find my Way",
             style: TextStyle(
                 fontSize: 20,
