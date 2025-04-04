@@ -22,6 +22,7 @@ import 'package:soen_390/screens/login/login_screen.dart';
 import 'package:soen_390/screens/profile/profile_screen.dart';
 import 'package:soen_390/screens/calendar/calendar_view.dart';
 import 'package:soen_390/providers/navigation_provider.dart';
+import "package:soen_390/styles/theme_provider.dart";
 
 /// The entry point of the application.
 ///
@@ -54,9 +55,12 @@ class MyApp extends ConsumerWidget {
     final httpService = ref.watch(httpServiceProvider);
     final authService = ref.watch(authServiceProvider);
 
+    final themeData = ref.watch(themeProvider);
+
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: appTheme,
+      theme: themeData,
+      // darkTheme: darkAppTheme,
       home: MyHomePage(
         title: 'Campus Map',
         routeService: routeService,
