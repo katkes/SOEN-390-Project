@@ -34,7 +34,14 @@ class MappedinWebView extends StatefulWidget {
 
 class MappedinWebViewState extends State<MappedinWebView> {
   late final WebViewController controller;
+  final TextEditingController searchController = TextEditingController(); // Add this line
   String statusMessage = "Nothing";
+
+  @override
+  void dispose() {
+    searchController.dispose(); // Dispose the controller to prevent memory leaks
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -153,8 +160,42 @@ class MappedinWebViewState extends State<MappedinWebView> {
     await controller.runJavaScript("setFloor('$floorName')");
   }
 
+  /// Calls JavaScript function to highlight a room
+  searchRoom(String roomNumber) {
+    controller.runJavaScript("search('$roomNumber')");
+  }
+
   @override
   Widget build(BuildContext context) {
-    return WebViewWidget(controller: controller);
+    return Column(
+      children: [
+        /// Search Bar for Room Numbers
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextField(
+            controller: searchController,
+            decoration: InputDecoration(
+              hintText: "Search room number",
+              prefixIcon: const Icon(Icons.search),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              filled: true,
+              fillColor: Colors.white,
+            ),
+            onSubmitted: (value) {
+              if (value.isNotEmpty) {
+                searchRoom(value);
+              }
+            },
+          ),
+        ),
+
+        /// The Mappedin WebView
+        Expanded(
+          child: WebViewWidget(controller: controller),
+        ),
+      ],
+    );
   }
 }
