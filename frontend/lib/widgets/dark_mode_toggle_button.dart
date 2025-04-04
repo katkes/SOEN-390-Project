@@ -4,8 +4,8 @@ import 'package:soen_390/styles/theme.dart';
 import "package:soen_390/styles/theme_provider.dart";
 
 
-class HomeScreen extends ConsumerWidget {
-  const HomeScreen({super.key});
+class DarkModeToggleButton extends ConsumerWidget {
+  const DarkModeToggleButton({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
