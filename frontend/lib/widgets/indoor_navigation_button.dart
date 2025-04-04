@@ -18,23 +18,23 @@ final BoxShadow kIndoorButtonShadow = BoxShadow(
   offset: kShadowOffset,
 );
 
-class IndoorNavigationButton extends StatefulWidget {
-  const IndoorNavigationButton({super.key});
+class IndoorNavigationButton extends StatelessWidget {
+  final VoidCallback? onPressed;
 
-  @override
-  State<StatefulWidget> createState() => _IndoorNavigationButtonState();
-}
+  const IndoorNavigationButton({super.key, this.onPressed});
 
-class _IndoorNavigationButtonState extends State<IndoorNavigationButton> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: _buildIndoorButtonDecoration(context),
-      padding: const EdgeInsets.all(kIndoorButtonPadding),
-      child: const Icon(
-        Icons.location_on,
-        size: kIndoorButtonIconSize,
-        color: Colors.white,
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        decoration: _buildIndoorButtonDecoration(context),
+        padding: const EdgeInsets.all(kIndoorButtonPadding),
+        child: const Icon(
+          Icons.location_on,
+          size: kIndoorButtonIconSize,
+          color: Colors.white,
+        ),
       ),
     );
   }

@@ -81,15 +81,6 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
     _routeCacheManager = widget.routeCacheManager;
   }
 
-  void _handleShuttleBusSelection() {
-    setState(() {
-      selectedMode = "Shuttle Bus";
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Shuttle Bus selected!")),
-    );
-  }
-
   bool _tryDisplayFromCache(String googleTransportMode, String waypointKey,
       List<String> waypoints, String transportMode) {
     if (!_locationsChanged &&
@@ -274,16 +265,6 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
               locationUpdater: LocationUpdater(locationService),
             ),
             const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: _handleShuttleBusSelection,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              ),
-              child: const Text("Use Shuttle Bus?",
-                  style: TextStyle(color: Colors.white, fontSize: 16)),
-            ),
             const SizedBox(height: 10),
             ListView.builder(
               shrinkWrap: true,
