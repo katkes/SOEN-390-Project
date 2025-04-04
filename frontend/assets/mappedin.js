@@ -123,11 +123,11 @@
         }
     };
 
-    window.search = function search(identifier) {
-        console.log("Working search called with identifier:", identifier);
+    window.search = function zoomAndHighlightRoom(identifier) {
+        const spaces = mapData.getByType("space");
+        let space = spaces.find(s => s.name === identifier);
+        console.log("Working zoomAndHighlightRoom called with identifier:", identifier);
 
-        // Try to find the space by roomName
-        let space = mapData.getByType("space").find(s => s.name === identifier);
         if (space) {
             console.log("Room found by name:", space);
         } else {
@@ -138,38 +138,23 @@
             }
         }
 
-        if (space) {
-            // Log the entire space object as JSON for better inspection
-            console.log("Space object details:", JSON.stringify(space, null, 2)); // Pretty-print the object
+        if (space && mapView) {
+            console.log("Highlighting room:", space);
 
-            if (mapView) {
-                console.log("Highlighting room:", space);
-
-                // Highlight the selected room by changing its state
-                mapView.updateState(space, {
-                    interactive: true,
-                    hoverColor: "#f26336", // Changing the hover color
-                    opacity: 1.0,          // Full opacity for visibility
-                    border: "5px solid #FF4500", // Adding a red border for visibility
-                    boxShadow: "0 0 15px rgba(255, 99, 71, 0.8)", // Adding a glowing effect
-                });
-
-                const spaceElement = document.getElementById(space.id);
-                if (spaceElement) {
-                    console.log("Space element found:", spaceElement);
-                    spaceElement.style.backgroundColor = "#f26336"; // Example color
-                    spaceElement.style.border = "3px solid #FF4500";
-                    spaceElement.style.boxShadow = "0 0 10px rgba(255, 99, 71, 0.8)";
-                    spaceElement.style.animation = "pulseEffect 1s infinite";
-                } else {
-                    console.error("Space element not found for ID:", space.id);
-                }
-            }
+            // Highlight the selected room by changing its state
+            mapView.updateState(space, {
+                        interactive: true,
+                        opacity: 1.0,          // Full opacity for visibility
+                        backgroundColor: "#FF6347", // Set the background color of the room (Tomato Red)
+                        border: "8px solid #FF0000", // Thicker red border for emphasis
+                        boxShadow: "0 0 20px rgba(255, 0, 0, 0.7)", // Glowing red effect around the room
+                        transition: "all 0.3s ease-in-out" // Smooth transition for color change
+                    });
+            console.log("HELP");
         } else {
-            console.error("Room not found:", identifier);
+            console.error("Room not found: " + identifier);
         }
     };
-
 
 
 

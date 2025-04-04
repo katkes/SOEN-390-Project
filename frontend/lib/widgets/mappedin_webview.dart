@@ -163,6 +163,7 @@ class MappedinWebViewState extends State<MappedinWebView> {
   /// Calls JavaScript function to highlight a room
   searchRoom(String roomNumber) {
     controller.runJavaScript("search('$roomNumber')");
+    ///controller.runJavaScript("setCameraTo('$roomNumber')");
   }
 
   @override
