@@ -40,10 +40,10 @@ class CampusSwitchState extends State<CampusSwitch> {
 
   final Map<String, Widget> _campusOptions = {
     kCampusSGW: const Text(kCampusSGW,
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF912338))),
     kCampusLoyola: const Text(kCampusLoyola,
         style: TextStyle(
-            fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),
+            fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF912338))),
   };
 
   Map<String, LatLng> get campusLocations => Map.unmodifiable(_campusLocations);

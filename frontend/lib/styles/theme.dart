@@ -6,8 +6,8 @@ final ThemeData appTheme = ThemeData(
     brightness: Brightness.light,
     primary: Color(0xFF912338),
     onPrimary: Colors.white,
-    secondary: Color(0xFF912338),
-    onSecondary: Colors.white,
+    secondary: Colors.white,
+    onSecondary: Colors.black12,
     surface: Colors.white,
     onSurface: Colors.black,
     error: Colors.red,
@@ -19,13 +19,11 @@ final ThemeData appTheme = ThemeData(
   useMaterial3: true,
 );
 
-final darkModeColor = 0xFF1F2636;
-
 final ThemeData darkAppTheme = ThemeData(
   primaryColor: const Color(0xFF912338),
   colorScheme: const ColorScheme(
     brightness: Brightness.dark,
-    primary: Color(darkModeColor),
+    primary: Colors.white,
     onPrimary: Colors.white,
     secondary: Color(0xFF1F2636), // Slightly lighter shade for contrast
     onSecondary: Colors.white,
