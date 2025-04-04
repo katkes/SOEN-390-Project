@@ -34,12 +34,14 @@ class MappedinWebView extends StatefulWidget {
 
 class MappedinWebViewState extends State<MappedinWebView> {
   late final WebViewController controller;
-  final TextEditingController searchController = TextEditingController(); // Add this line
+  final TextEditingController searchController =
+      TextEditingController(); // Add this line
   String statusMessage = "Nothing";
 
   @override
   void dispose() {
-    searchController.dispose(); // Dispose the controller to prevent memory leaks
+    searchController
+        .dispose(); // Dispose the controller to prevent memory leaks
     super.dispose();
   }
 
@@ -163,7 +165,7 @@ class MappedinWebViewState extends State<MappedinWebView> {
   /// Calls JavaScript function to highlight a room
   searchRoom(String roomNumber) {
     controller.runJavaScript("search('$roomNumber')");
-    ///controller.runJavaScript("setCameraTo('$roomNumber')");
+    controller.runJavaScript("setCameraTo('$roomNumber')");
   }
 
   @override
