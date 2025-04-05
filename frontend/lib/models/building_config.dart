@@ -60,7 +60,7 @@ class BuildingConfigManager {
     
     for (final building in buildings.values) {
       if (roomNumber.startsWith(building.roomPrefix)) {
-        final roomWithoutPrefix = roomNumber.substring(building.roomPrefix.length);
+        final roomWithoutPrefix = getRoomNumber(roomNumber, building.roomPrefix);
         if (building.rooms.contains(roomWithoutPrefix)) {
           return building;
         }

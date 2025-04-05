@@ -93,6 +93,14 @@ class MappedinMapController {
       // This will require additional JavaScript functions in mappedin.js
       // to handle camera positioning to specific rooms
 
+      // Get the room number without the building prefix
+      final roomWithoutPrefix = BuildingConfigManager.getRoomNumber(roomNumber, building.roomPrefix);
+      
+      // Show directions to the room
+      await webViewKey.currentState?.navigateToRoom(roomWithoutPrefix);
+
+      debugPrint('Navigated to room: $roomWithoutPrefix');
+
       return true;
     } catch (e) {
       debugPrint('Error navigating to room: $e');

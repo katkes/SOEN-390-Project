@@ -228,7 +228,7 @@ class MappedinWebViewState extends State<MappedinWebView> {
   /// - [roomNumber]: The room number to navigate to (e.g., "907")
   Future<void> navigateToRoom(String roomNumber) async {
     try {
-      await controller.runJavaScript("navigateToRoom('$roomNumber')");
+      await showDirections("Entrance", roomNumber, false);
     } catch (e) {
       debugPrint('Error navigating to room: $e');
       setState(() {
