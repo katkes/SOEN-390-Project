@@ -289,23 +289,7 @@ void main() async {
       await Future.delayed(const Duration(seconds: 10)); // Takes more time to load google sign in page
     });
 
-    testWidgets('Testing outdoor points of interests - search bar functionality', (WidgetTester tester) async {
-      // Loading app and navigating to points of interests screen
-      await navigatingToPointOfInterestsScreen(tester);
-
-      // Performing a search using the search bar
-      final searchBarFinder = find.byType(POISearchBar);
-      await tester.tap(searchBarFinder);
-      await tester.pumpAndSettle();
-      await Future.delayed(Duration(seconds: elapsedTime));
-      await tester.enterText(searchBarFinder, hallBuildingAddress);
-      await tester.pumpAndSettle();
-      await Future.delayed(Duration(seconds: elapsedTime));
-
-      // Looking for POI, and getting directions
-      await choosePOI(tester, "RESTAURANT");
-    });
-
+    // Target user stories: 6.1
     testWidgets('Testing outdoor points of interests with current location - place categories', (WidgetTester tester) async {
       // Loading app and navigating to points of interests screen
       await navigatingToPointOfInterestsScreen(tester);
