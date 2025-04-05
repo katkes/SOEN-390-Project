@@ -32,7 +32,8 @@ class ScheduleList extends StatelessWidget {
           children: times
               .map((time) => Chip(
                     label: Text(time), // Display each time as a chip label.
-                    backgroundColor: appTheme.colorScheme.surfaceContainerHighest,
+                    backgroundColor:
+                        appTheme.colorScheme.surfaceContainerHighest,
                   ))
               .toList(),
         ),
@@ -73,8 +74,8 @@ class StopLocations extends StatelessWidget {
       children: [
         // Display the "Stop Locations" title with custom styling.
         Text("Stop Locations",
-            style: appTheme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold)),
+            style: appTheme.textTheme.titleMedium
+                ?.copyWith(fontWeight: FontWeight.bold)),
         const SizedBox(height: 10), // Add spacing below the title.
         // Generate a list of stop rows from the schedule's stops.
         ...schedule.stops.entries

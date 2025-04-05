@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:soen_390/services/shuttle_service.dart';
 import 'package:soen_390/styles/theme.dart';
-import 'package:soen_390/widgets/shuttle_schedule_display_widgets.dart'; 
+import 'package:soen_390/widgets/shuttle_schedule_display_widgets.dart';
 
 // Main widget to display the shuttle schedule
 class ShuttleScheduleDisplay extends StatefulWidget {
   final ShuttleSchedule fridaySchedule; // Schedule for Fridays
-  final ShuttleSchedule mondayThursdaySchedule; // Schedule for Monday to Thursday
+  final ShuttleSchedule
+      mondayThursdaySchedule; // Schedule for Monday to Thursday
 
   const ShuttleScheduleDisplay({
     super.key,
@@ -31,9 +32,8 @@ class _ShuttleScheduleDisplayState extends State<ShuttleScheduleDisplay> {
       : "Shuttle Bus Schedule (Mon-Thurs)";
 
   // Returns the text for the toggle button
-  String get _toggleButtonText => _isFridaySchedule
-      ? 'Show Mon-Thurs Schedule'
-      : 'Show Friday Schedule';
+  String get _toggleButtonText =>
+      _isFridaySchedule ? 'Show Mon-Thurs Schedule' : 'Show Friday Schedule';
 
   // Toggles between Friday and Mon-Thurs schedules
   void _toggleSchedule() {
@@ -50,10 +50,13 @@ class _ShuttleScheduleDisplayState extends State<ShuttleScheduleDisplay> {
       decoration: BoxDecoration(
         color: appTheme.colorScheme.onPrimary, // Background color
         borderRadius: BorderRadius.circular(20), // Rounded corners
-        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)], // Shadow effect
+        boxShadow: const [
+          BoxShadow(color: Colors.black12, blurRadius: 4)
+        ], // Shadow effect
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start, // Align children to the start
+        crossAxisAlignment:
+            CrossAxisAlignment.start, // Align children to the start
         children: [
           // Button to toggle between schedules
           ElevatedButton(

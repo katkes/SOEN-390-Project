@@ -18,9 +18,11 @@ void main() {
       expect(fridaySchedule.lastBus['SGW'], '18:15');
       expect(fridaySchedule.stops.length, 2);
       expect(fridaySchedule.stops['LOY']?.name, 'LOY');
-      expect(fridaySchedule.stops['LOY']?.coordinates, '45°27\'28.2"N 73°38\'20.3"W');
-      expect(fridaySchedule.stops['SGW']?.coordinates, '45°29\'49.6"N 73°34\'42.5"W');
-      
+      expect(fridaySchedule.stops['LOY']?.coordinates,
+          '45°27\'28.2"N 73°38\'20.3"W');
+      expect(fridaySchedule.stops['SGW']?.coordinates,
+          '45°29\'49.6"N 73°34\'42.5"W');
+
       // Check a few specific times
       expect(fridaySchedule.loyDepartures.first, '9:15');
       expect(fridaySchedule.loyDepartures.last, '18:15');
@@ -37,9 +39,11 @@ void main() {
       expect(mondayThursdaySchedule.lastBus['SGW'], '18:30');
       expect(mondayThursdaySchedule.stops.length, 2);
       expect(mondayThursdaySchedule.stops['LOY']?.name, 'LOY');
-      expect(mondayThursdaySchedule.stops['LOY']?.coordinates, '45°27\'28.2"N 73°38\'20.3"W');
-      expect(mondayThursdaySchedule.stops['SGW']?.coordinates, '45°29\'49.6"N 73°34\'42.5"W');
-      
+      expect(mondayThursdaySchedule.stops['LOY']?.coordinates,
+          '45°27\'28.2"N 73°38\'20.3"W');
+      expect(mondayThursdaySchedule.stops['SGW']?.coordinates,
+          '45°29\'49.6"N 73°34\'42.5"W');
+
       // Check a few specific times
       expect(mondayThursdaySchedule.loyDepartures.first, '9:15');
       expect(mondayThursdaySchedule.loyDepartures.last, '18:30');
@@ -52,9 +56,10 @@ void main() {
     test('should create a ShuttleStopLocation with correct values', () {
       const name = 'LOY';
       const coordinates = '45°27\'28.2"N 73°38\'20.3"W';
-      
-      final location = ShuttleStopLocation(name: name, coordinates: coordinates);
-      
+
+      final location =
+          ShuttleStopLocation(name: name, coordinates: coordinates);
+
       expect(location.name, name);
       expect(location.coordinates, coordinates);
     });
@@ -66,17 +71,19 @@ void main() {
       final sgwDepartures = ['9:45', '10:00'];
       final lastBus = {'LOY': '18:15', 'SGW': '18:15'};
       final stops = {
-        'LOY': ShuttleStopLocation(name: 'LOY', coordinates: '45°27\'28.2"N 73°38\'20.3"W'),
-        'SGW': ShuttleStopLocation(name: 'SGW', coordinates: '45°29\'49.6"N 73°34\'42.5"W')
+        'LOY': ShuttleStopLocation(
+            name: 'LOY', coordinates: '45°27\'28.2"N 73°38\'20.3"W'),
+        'SGW': ShuttleStopLocation(
+            name: 'SGW', coordinates: '45°29\'49.6"N 73°34\'42.5"W')
       };
-      
+
       final schedule = ShuttleSchedule(
         loyDepartures: loyDepartures,
         sgwDepartures: sgwDepartures,
         lastBus: lastBus,
         stops: stops,
       );
-      
+
       expect(schedule.loyDepartures, loyDepartures);
       expect(schedule.sgwDepartures, sgwDepartures);
       expect(schedule.lastBus, lastBus);

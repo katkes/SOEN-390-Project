@@ -36,8 +36,7 @@ class FakeMappedinWebViewState extends State<MappedinWebView>
   }
 
   @override
-  void searchRoom(String roomNumber) {
-  }
+  void searchRoom(String roomNumber) {}
 
   @override
   TextEditingController get searchController => TextEditingController();

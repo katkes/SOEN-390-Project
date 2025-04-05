@@ -76,15 +76,14 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
     startLocation = itineraryManager.getStart();
   }
 
-void _handleShuttleBusSelection() {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => const ShuttleScheduleScreen(),
-    ),
-  );
-}
-
+  void _handleShuttleBusSelection() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ShuttleScheduleScreen(),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
