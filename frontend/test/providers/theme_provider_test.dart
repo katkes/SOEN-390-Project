@@ -432,7 +432,7 @@ class TestThemeNotifier extends ThemeNotifier {
   }
 
   @override
-  Future<void> _loadTheme() async {
+  Future<void> loadTheme() async {
     try {
       final isDark = mockPrefs.getBool('isDarkMode') ?? false;
       state = isDark ? darkAppTheme : appTheme;
@@ -444,10 +444,11 @@ class TestThemeNotifier extends ThemeNotifier {
 
   // Expose protected method for testing
   Future<void> loadThemeExposed() async {
-    await _loadTheme();
+    await loadTheme();
   }
 
   // For testing internal state directly
+  @override
   ThemeData get debugState => state;
 
   // For testing error scenarios

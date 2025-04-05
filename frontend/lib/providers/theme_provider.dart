@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ThemeNotifier extends StateNotifier<ThemeData> {
   ThemeNotifier() : super(appTheme) {
-    _loadTheme();
+    loadTheme();
   }
 
   Future<void> toggleTheme() async {
@@ -16,7 +16,7 @@ class ThemeNotifier extends StateNotifier<ThemeData> {
     await prefs.setBool('isDarkMode', state == darkAppTheme);
   }
 
-  Future<void> _loadTheme() async {
+  Future<void> loadTheme() async {
     final prefs = await SharedPreferences.getInstance();
     final isDark = prefs.getBool('isDarkMode') ?? false;
     state = isDark ? darkAppTheme : appTheme;
