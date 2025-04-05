@@ -36,8 +36,7 @@ class FakeMappedinWebViewState extends State<MappedinWebView>
   }
 
   @override
-  void searchRoom(String roomNumber) {
-  }
+  void searchRoom(String roomNumber) {}
 
   @override
   TextEditingController get searchController => TextEditingController();
@@ -45,5 +44,17 @@ class FakeMappedinWebViewState extends State<MappedinWebView>
   @override
   Widget build(BuildContext context) {
     return Container();
+  }
+
+  @override
+  Future<void> navigateToRoom(String roomNumber) {
+    // TODO: implement navigateToRoom
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> reloadWithMapId(String mapId) {
+    // TODO: implement reloadWithMapId
+    throw UnimplementedError();
   }
 }

@@ -346,10 +346,13 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
                       children: [
                         ElevatedButton(
                           onPressed: () async {
-                            final success = await _mappedinController.selectBuildingByName("Hall");
+                            final success = await _mappedinController
+                                .selectBuildingByName("Hall");
                             if (!success) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Failed to switch to Hall Building')),
+                                const SnackBar(
+                                    content: Text(
+                                        'Failed to switch to Hall Building')),
                               );
                             }
                             _openMappedinMap();
@@ -359,10 +362,13 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
                         const SizedBox(height: 8),
                         ElevatedButton(
                           onPressed: () async {
-                            final success = await _mappedinController.navigateToRoom("MBS1.115");
+                            final success = await _mappedinController
+                                .navigateToRoom("MBS1.115");
                             if (!success) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Failed to navigate to MBS1.115')),
+                                const SnackBar(
+                                    content:
+                                        Text('Failed to navigate to MBS1.115')),
                               );
                             }
                             _openMappedinMap();

@@ -60,28 +60,10 @@ class _MappedinMapScreenState extends State<MappedinMapScreen> {
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          /// Triggers the `showDirections` method on the WebView with hardcoded IDs.
+
+          /// Triggers the `navigateToRoom` method on the WebView.
           /// This button mainly shows how to interact with the code.
           /// TODO: delete for the actual implementation, will be changed in 5.2.2
-          ///
-          /// - From location: `"124"`
-          /// - To location: `"817"`
-          /// - Accessible: true
-          ElevatedButton(
-            onPressed: () async {
-              await _controller.webViewKey.currentState
-                  ?.showDirections("124", "Hrozzz", true);
-            },
-            child: const Text("Get Directions"),
-          ),
-
-          const SizedBox(height: 8),
-
-          /// Triggers the `setFloor` method on the WebView.
-          /// This button mainly shows how to interact with the code.
-          /// TODO: delete for the actual implementation, will be changed in 5.2.2
-          ///
-          /// - Floor: `"Level 9"`
           _buildFABButton("Navigate to H813 from Outside", () async {
             await _controller.webViewKey.currentState?.navigateToRoom("813");
           }),

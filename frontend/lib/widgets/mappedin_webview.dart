@@ -27,7 +27,6 @@ class MappedinWebView extends StatefulWidget {
   /// Optional controller override for testing.
   final WebViewController? controllerOverride;
 
-  /// Optional map ID. If not provided, defaults to '67968294965a13000bcdfe74'
   final String? mapId;
   const MappedinWebView({
     super.key,
@@ -44,7 +43,6 @@ class MappedinWebViewState extends State<MappedinWebView> {
   final TextEditingController searchController =
       TextEditingController(); // Add this line
   String statusMessage = "Nothing";
-  String? _errorMessage;
   String? _currentMapId;
 
   @override
@@ -178,14 +176,10 @@ class MappedinWebViewState extends State<MappedinWebView> {
       );
 
       await controller.loadHtmlString(fileHtmlWithKeys);
-      setState(() {
-        _errorMessage = null;
-      });
+
     } catch (e) {
       debugPrint('Error loading HTML assets: $e');
-      setState(() {
-        _errorMessage = 'Failed to load map: $e';
-      });
+
     }
   }
 
@@ -245,49 +239,36 @@ class MappedinWebViewState extends State<MappedinWebView> {
 
   @override
   Widget build(BuildContext context) {
-      // return Center(
-      //   child: Column(
-      //     mainAxisAlignment: MainAxisAlignment.center,
-      //     children: [
-      //       const Icon(Icons.error_outline, color: Colors.red, size: 48),
-      //       const SizedBox(height: 16),
-      //         _errorMessage!,
-      //         textAlign: TextAlign.center,
-      //         style: const TextStyle(color: Colors.red),
-      //       ),
-      //     ],
-      //   ),
-      // );
-      return Column(
-        children: [
-          /// Search Bar for Room Numbers
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: searchController,
-              decoration: InputDecoration(
-                hintText: "Search room number",
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                filled: true,
-                fillColor: Colors.white,
+    return Column(
+      children: [
+        /// Search Bar for Room Numbers
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextField(
+            controller: searchController,
+            decoration: InputDecoration(
+              hintText: "Search room number",
+              prefixIcon: const Icon(Icons.search),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
               ),
-              onSubmitted: (value) {
-                if (value.isNotEmpty) {
-                  searchRoom(value);
-                }
-              },
+              filled: true,
+              fillColor: Colors.white,
             ),
+            onSubmitted: (value) {
+              if (value.isNotEmpty) {
+                searchRoom(value);
+              }
+            },
           ),
+        ),
 
-          /// The Mappedin WebView
-          Expanded(
-            child: WebViewWidget(controller: controller),
-          ),
-        ],
-      );
+        /// The Mappedin WebView
+        Expanded(
+          child: WebViewWidget(controller: controller),
+        ),
+      ],
+    );
 
     // return WebViewWidget(controller: controller);
   }
