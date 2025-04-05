@@ -183,3 +183,4 @@ class _MappedinMapScreenState extends State<MappedinMapScreen> {
       ),
     );
   }
+}

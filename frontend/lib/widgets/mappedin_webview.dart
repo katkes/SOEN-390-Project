@@ -26,10 +26,11 @@ import "package:soen_390/screens/indoor_accessibility/indoor_accessibility_prefe
 class MappedinWebView extends StatefulWidget {
   /// Optional controller override for testing.
   final WebViewController? controllerOverride;
+
   /// Optional map ID. If not provided, defaults to '67968294965a13000bcdfe74'
   final String? mapId;
   const MappedinWebView({
-    super.key, 
+    super.key,
     this.controllerOverride,
     this.mapId,
   });
@@ -136,16 +137,17 @@ class MappedinWebViewState extends State<MappedinWebView> {
   }
 
   /// Loads the HTML file into the WebView and injects JavaScript code and API keys.
-  /// 
+  ///
   /// Throws an exception if:
   /// - Required assets cannot be loaded
   /// - Environment variables are missing
   /// - API keys cannot be injected
   Future<void> loadHtmlFromAssets() async {
     try {
-      final fileHtmlContents = await rootBundle.loadString('assets/mappedin.html');
+      final fileHtmlContents =
+          await rootBundle.loadString('assets/mappedin.html');
       final fileJsContents = await rootBundle.loadString('assets/mappedin.js');
-      
+
       if (fileHtmlContents.isEmpty || fileJsContents.isEmpty) {
         throw Exception('Failed to load required assets');
       }
@@ -195,7 +197,8 @@ class MappedinWebViewState extends State<MappedinWebView> {
   Future<void> showDirections(
       String departure, String destination, bool accessibility) async {
     try {
-      final preference = await IndoorAccessibilityState.getMobilityStatusPreference();
+      final preference =
+          await IndoorAccessibilityState.getMobilityStatusPreference();
       await controller.runJavaScript(
           "getDirections('$departure', '$destination', '$preference')");
     } catch (e) {
@@ -242,23 +245,50 @@ class MappedinWebViewState extends State<MappedinWebView> {
 
   @override
   Widget build(BuildContext context) {
-    if (_errorMessage != null) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.error_outline, color: Colors.red, size: 48),
-            const SizedBox(height: 16),
-            Text(
-              _errorMessage!,
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.red),
+      // return Center(
+      //   child: Column(
+      //     mainAxisAlignment: MainAxisAlignment.center,
+      //     children: [
+      //       const Icon(Icons.error_outline, color: Colors.red, size: 48),
+      //       const SizedBox(height: 16),
+      //         _errorMessage!,
+      //         textAlign: TextAlign.center,
+      //         style: const TextStyle(color: Colors.red),
+      //       ),
+      //     ],
+      //   ),
+      // );
+      return Column(
+        children: [
+          /// Search Bar for Room Numbers
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: searchController,
+              decoration: InputDecoration(
+                hintText: "Search room number",
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                filled: true,
+                fillColor: Colors.white,
+              ),
+              onSubmitted: (value) {
+                if (value.isNotEmpty) {
+                  searchRoom(value);
+                }
+              },
             ),
-          ],
-        ),
-      );
-    }
+          ),
 
-    return WebViewWidget(controller: controller);
+          /// The Mappedin WebView
+          Expanded(
+            child: WebViewWidget(controller: controller),
+          ),
+        ],
+      );
+
+    // return WebViewWidget(controller: controller);
   }
 }
