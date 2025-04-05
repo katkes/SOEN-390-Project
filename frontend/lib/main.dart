@@ -5,7 +5,6 @@ import 'package:soen_390/screens/waypoint/waypoint_selection_screens.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:soen_390/services/auth_service.dart';
 import 'package:soen_390/widgets/building_popup.dart';
-import 'package:soen_390/widgets/indoor_navigation_button.dart';
 import 'package:soen_390/widgets/nav_bar.dart';
 import 'package:soen_390/widgets/search_bar.dart';
 import 'package:soen_390/styles/theme.dart';
@@ -346,11 +345,6 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         ElevatedButton(
-                          onPressed: _openMappedinMap,
-                          child: const Text("Open Mappedin Map"),
-                        ),
-                        const SizedBox(height: 8),
-                        ElevatedButton(
                           onPressed: () async {
                             final success = await _mappedinController.selectBuildingByName("Hall");
                             if (!success) {
@@ -365,19 +359,6 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
                         const SizedBox(height: 8),
                         ElevatedButton(
                           onPressed: () async {
-                            final success = await _mappedinController.selectBuildingByName("Library");
-                            if (!success) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Failed to switch to Library')),
-                              );
-                            }
-                            _openMappedinMap();
-                          },
-                          child: const Text("Show LB"),
-                        ),
-                        const SizedBox(height: 8),
-                        ElevatedButton(
-                          onPressed: () async {
                             final success = await _mappedinController.navigateToRoom("MBS1.115");
                             if (!success) {
                               ScaffoldMessenger.of(context).showSnackBar(
@@ -387,19 +368,6 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
                             _openMappedinMap();
                           },
                           child: const Text("Go to MBS1.115"),
-                        ),
-                        const SizedBox(height: 8),
-                        ElevatedButton(
-                          onPressed: () async {
-                            final success = await _mappedinController.navigateToRoom("H907");
-                            if (!success) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Failed to navigate to H907')),
-                              );
-                            }
-                            _openMappedinMap();
-                          },
-                          child: const Text("Go to H907"),
                         ),
                       ],
                     ),

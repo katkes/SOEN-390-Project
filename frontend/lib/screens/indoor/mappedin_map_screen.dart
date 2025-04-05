@@ -82,7 +82,7 @@ class _MappedinMapScreenState extends State<MappedinMapScreen> {
           /// TODO: delete for the actual implementation, will be changed in 5.2.2
           ///
           /// - Floor: `"Level 9"`
-          _buildFABButton("Set Room", () async {
+          _buildFABButton("Navigate to H813 from Outside", () async {
             await _controller.webViewKey.currentState?.navigateToRoom("813");
           }),
         ],
