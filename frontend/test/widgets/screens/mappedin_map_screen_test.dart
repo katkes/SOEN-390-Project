@@ -22,7 +22,6 @@ void main() {
     await tester.pumpWidget(const MaterialApp(home: TestMappedinMapScreen()));
 
     expect(find.text('Indoor Navigation'), findsOneWidget);
-    expect(find.text('Get Directions'), findsOneWidget);
-    expect(find.text('Set Floor'), findsOneWidget);
+    expect(find.text('Navigate to H813 from Outside'), findsOneWidget);
   });
 }
