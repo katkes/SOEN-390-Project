@@ -138,4 +138,5 @@ void main() {
     expect(find.byType(Column), findsAtLeast(3)); // At least 3 columns (main + 2 for schedule lists)
     expect(find.byType(Wrap), findsAtLeast(2)); // At least 2 wraps (one for each departure list)
   });
+
 }
