@@ -97,6 +97,7 @@ flutter:
     - assets/mappedin.html
     - assets/mappedin.js
     - assets/images/Google_G_logo.png
+    - assets/building_configs.json
     - .env
 
   # To add assets to your application, add an assets section, like this:
