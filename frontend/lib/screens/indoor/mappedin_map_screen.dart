@@ -53,10 +53,11 @@ class _MappedinMapScreenState extends State<MappedinMapScreen> {
         backgroundColor: const Color(0xff912338),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: MappedinWebView(
-        key: _controller.webViewKey,
-        mapId: _controller.currentMapId,
-      ),
+      body: widget.webView ??
+          MappedinWebView(
+            key: _controller.webViewKey,
+            mapId: _controller.currentMapId,
+          ),
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
