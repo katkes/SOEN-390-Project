@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:soen_390/widgets/shuttle_schedule_dispaly.dart';
+import 'package:soen_390/widgets/shuttle_schedule_display.dart';
 import 'package:soen_390/styles/theme.dart';
 import 'package:soen_390/screens/shuttle_bus/shuttle_schedule_screen.dart';
 
