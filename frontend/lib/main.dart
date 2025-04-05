@@ -22,6 +22,7 @@ import 'package:soen_390/screens/login/login_screen.dart';
 import 'package:soen_390/screens/profile/profile_screen.dart';
 import 'package:soen_390/screens/calendar/calendar_view.dart';
 import 'package:soen_390/providers/navigation_provider.dart';
+import 'package:soen_390/screens/indoor/mappedin_map_controller.dart';
 
 /// The entry point of the application.
 ///
