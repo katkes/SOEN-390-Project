@@ -9,7 +9,6 @@ import 'package:soen_390/widgets/nav_bar.dart';
 import 'package:soen_390/widgets/search_bar.dart';
 import 'package:soen_390/styles/theme.dart';
 import 'package:soen_390/widgets/campus_switch_button.dart';
-import 'package:soen_390/widgets/indoor_navigation_button.dart';
 import 'package:soen_390/widgets/outdoor_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:soen_390/providers/service_providers.dart';
@@ -22,6 +21,7 @@ import 'package:soen_390/screens/login/login_screen.dart';
 import 'package:soen_390/screens/profile/profile_screen.dart';
 import 'package:soen_390/screens/calendar/calendar_view.dart';
 import 'package:soen_390/providers/navigation_provider.dart';
+import 'package:soen_390/screens/indoor/mappedin_map_controller.dart';
 
 /// The entry point of the application.
 ///
@@ -100,6 +100,8 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
   // Set initial campus to SGW (default campus)
   String selectedCampus = 'SGW';
   TextEditingController searchController = TextEditingController();
+  late MappedinMapController _mappedinController;
+
   //int _selectedIndex = 0;
   LatLng currentLocation = const LatLng(45.497856, -73.579588);
   LatLng _userLiveLocation = const LatLng(5.497856, -73.579588);
@@ -137,6 +139,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    _mappedinController = MappedinMapController();
     _mapsApiClient = GoogleMapsApiClient(
       apiKey: dotenv.env['GOOGLE_MAPS_API_KEY']!,
       httpClient: widget.httpService,
@@ -238,136 +241,32 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
     });
   }
 
+  /// Opens the Mappedin map screen.
+  void _openMappedinMap() async {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MappedinMapScreen(
+          controller: _mappedinController,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final selectedIndex = ref.watch(navigationProvider).selectedIndex;
+
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.menu, color: Colors.white, size: 30),
-          onPressed: () {},
-        ),
-        backgroundColor: Theme.of(context).primaryColor,
-        title: Text(widget.title, style: const TextStyle(color: Colors.white)),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.more_vert, color: Colors.white, size: 30),
-            onPressed: () {},
-          ),
-        ],
-      ),
+      appBar: _buildAppBar(context),
       body: IndexedStack(
         index: selectedIndex,
         children: [
           const Center(child: Text('Home Page')),
-          LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints constraints) {
-              return Stack(
-                children: [
-                  Positioned(
-                    bottom: 5,
-                    left: 10,
-                    right: 10,
-                    child: Center(
-                      child: SizedBox(
-                        width: 460,
-                        height: 570,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(30),
-                          child: MapWidget(
-                            key: _mapWidgetKey,
-                            location: currentLocation,
-                            userLocation: _userLiveLocation,
-                            routeService: widget.routeService,
-                            httpClient: widget.httpService,
-                            mapsApiClient: _mapsApiClient,
-                            buildingPopUps: _buildingPopUps,
-                            routePoints: polylinePoints,
-                            onRouteSelected: (RouteResult result) {
-                              setState(() {
-                                polylinePoints = result.routePoints;
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: 10,
-                    left: 0,
-                    right: 0,
-                    child: Center(
-                      child: CampusSwitch(
-                        selectedCampus: selectedCampus,
-                        onSelectionChanged: handleCampusSelected,
-                        onLocationChanged: handleLocationChanged,
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: -80,
-                    left: 0,
-                    child: SearchBarWidget(
-                      controller: searchController,
-                      onCampusSelected: handleCampusSelected,
-                      onLocationFound: handleLocationChanged,
-                      onBuildingSelected: _handleBuildingSelected,
-                    ),
-                  ),
-                  const Positioned(
-                    bottom: 10,
-                    right: 21,
-                    child: IndoorNavigationButton(),
-                  ),
-                  Positioned(
-                    bottom: 80,
-                    right: 21,
-                    child: ElevatedButton(
-                      onPressed: _openWaypointSelection,
-                      child: const Text("Find My Way"),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 150,
-                    right: 21,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const MappedinMapScreen(),
-                          ),
-                        );
-                      },
-                      child: const Text("Open Mappedin Map"),
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
+          _buildMapScreen(context),
           isLoggedIn
-              ? UserProfileScreen(
-                  displayName: displayName,
-                  email: email,
-                  photoUrl: photoUrl,
-                  onSignOut: signOut,
-                  onViewCalendar: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            CalendarScreen(authService: widget.authService),
-                      ),
-                    );
-                  },
-                )
-              : LoginScreen(
-                  onGoogleSignIn: signIn,
-                  isLoading: isLoading,
-                  errorMessage: errorMessage,
-                ),
+              ? _buildUserProfileScreen(context)
+              : _buildLoginScreen(context),
         ],
       ),
       bottomNavigationBar: NavBar(
@@ -376,6 +275,185 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
           ref.read(navigationProvider.notifier).setSelectedIndex(index);
         },
       ),
+    );
+  }
+
+  AppBar _buildAppBar(BuildContext context) {
+    return AppBar(
+      leading: IconButton(
+        icon: const Icon(Icons.menu, color: Colors.white, size: 30),
+        onPressed: () {},
+      ),
+      backgroundColor: Theme.of(context).primaryColor,
+      title: Text(widget.title, style: const TextStyle(color: Colors.white)),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.more_vert, color: Colors.white, size: 30),
+          onPressed: () {},
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMapScreen(BuildContext context) {
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        return Stack(
+          children: [
+            _buildMapWidget(),
+            _buildCampusSwitch(),
+            _buildSearchBar(),
+            _buildWaypointButton(context),
+            _buildActionButtons(context),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildMapWidget() {
+    return Positioned(
+      bottom: 5,
+      left: 10,
+      right: 10,
+      child: Center(
+        child: SizedBox(
+          width: 460,
+          height: 570,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(30),
+            child: MapWidget(
+              key: _mapWidgetKey,
+              location: currentLocation,
+              userLocation: _userLiveLocation,
+              routeService: widget.routeService,
+              httpClient: widget.httpService,
+              mapsApiClient: _mapsApiClient,
+              buildingPopUps: _buildingPopUps,
+              routePoints: polylinePoints,
+              onRouteSelected: (RouteResult result) {
+                setState(() {
+                  polylinePoints = result.routePoints;
+                });
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCampusSwitch() {
+    return Positioned(
+      top: 10,
+      left: 0,
+      right: 0,
+      child: Center(
+        child: CampusSwitch(
+          selectedCampus: selectedCampus,
+          onSelectionChanged: handleCampusSelected,
+          onLocationChanged: handleLocationChanged,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchBar() {
+    return Positioned(
+      bottom: -80,
+      left: 0,
+      child: SearchBarWidget(
+        controller: searchController,
+        onCampusSelected: handleCampusSelected,
+        onLocationFound: handleLocationChanged,
+        onBuildingSelected: _handleBuildingSelected,
+      ),
+    );
+  }
+
+  Widget _buildWaypointButton(BuildContext context) {
+    return Positioned(
+      bottom: 80,
+      right: 21,
+      child: ElevatedButton(
+        onPressed: _openWaypointSelection,
+        child: const Text("Find My Way"),
+      ),
+    );
+  }
+
+  Widget _buildActionButtons(BuildContext context) {
+    return Positioned(
+      bottom: 150,
+      right: 21,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildShowHallButton(context),
+          const SizedBox(height: 8),
+          _buildNavigateToRoomButton(context),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildShowHallButton(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () async {
+        final messenger = ScaffoldMessenger.of(context);
+        final success = await _mappedinController.selectBuildingByName("Hall");
+        if (!success) {
+          messenger.showSnackBar(
+            const SnackBar(content: Text('Failed to switch to Hall Building')),
+          );
+          return;
+        }
+        _openMappedinMap();
+      },
+      child: const Text("Show Hall"),
+    );
+  }
+
+  Widget _buildNavigateToRoomButton(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () async {
+        final messenger = ScaffoldMessenger.of(context);
+        final success = await _mappedinController.navigateToRoom("MBS1.115");
+        if (!success) {
+          messenger.showSnackBar(
+            const SnackBar(content: Text('Failed to navigate to MBS1.115')),
+          );
+          return;
+        }
+        _openMappedinMap();
+      },
+      child: const Text("Go to MBS1.115"),
+    );
+  }
+
+  Widget _buildUserProfileScreen(BuildContext context) {
+    return UserProfileScreen(
+      displayName: displayName,
+      email: email,
+      photoUrl: photoUrl,
+      onSignOut: signOut,
+      onViewCalendar: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                CalendarScreen(authService: widget.authService),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildLoginScreen(BuildContext context) {
+    return LoginScreen(
+      onGoogleSignIn: signIn,
+      isLoading: isLoading,
+      errorMessage: errorMessage,
     );
   }
 }

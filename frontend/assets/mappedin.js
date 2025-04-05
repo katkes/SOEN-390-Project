@@ -11,8 +11,8 @@
  */
 
 import {
-      getMapData,
-      show3dMap,
+    getMapData,
+    show3dMap,
 } from "https://cdn.jsdelivr.net/npm/@mappedin/mappedin-js@beta/lib/esm/index.js";
 
 // Placeholder API credentials to be replaced at runtime
@@ -33,7 +33,7 @@ mapView.Labels.all();
 
 //This is the functionality which adds the "black box" at the top and allows us to access
 //a lot of the mappedIN SDK functionality for quick debugging and testing.
-//mapView.enableDebug();
+// mapView.enableDebug();
 
 
 
@@ -44,13 +44,17 @@ mapView.Labels.all();
  */
 window.setCameraTo = function setCameraTo(spaceName) {
     const space = mapData.getByType("space").find(s => s.name === spaceName);
-    if (space && mapView) {
+    console.log("Full space object:", JSON.stringify(space, null, 2));
+
+    if (space && space.center && mapView) {
         mapView.Camera.animateTo({
-            center: space.geometry.center,
-            zoomLevel: 20,
+            center: space.center,
+            zoomLevel: 19,
             pitch: 45,
             bearing: 0,
         });
+    } else {
+        console.warn("Cannot center camera: 'center' property not found on space:", space);
     }
 };
 
@@ -121,6 +125,86 @@ window.getDirections = async function getDirections(startName, destinationName, 
         };
         DirectionsChannel.postMessage(JSON.stringify(msg));
     }
+};
+
+let previouslyHighlightedRoom = null;
+
+let errorMessageElement = document.getElementById("roomErrorMessage");
+if (!errorMessageElement) {
+    errorMessageElement = document.createElement("div");
+    errorMessageElement.id = "roomErrorMessage";
+    errorMessageElement.style.position = "absolute";
+    errorMessageElement.style.top = "95px";
+    errorMessageElement.style.left = "50%";
+    errorMessageElement.style.transform = "translateX(-50%)";
+    errorMessageElement.style.padding = "10px 20px";
+    errorMessageElement.style.backgroundColor = "rgba(255, 0, 0, 0.8)";
+    errorMessageElement.style.color = "#ffffff";
+    errorMessageElement.style.borderRadius = "5px";
+    errorMessageElement.style.fontSize = "16px";
+    errorMessageElement.style.fontWeight = "bold";
+    errorMessageElement.style.display = "none"; // Initially hidden
+    document.body.appendChild(errorMessageElement);
+}
+
+window.search = function zoomAndHighlightRoom(identifier) {
+    const spaces = mapData.getByType("space");
+    let space = spaces.find(s => s.name === identifier);
+    console.log("Working zoomAndHighlightRoom called with identifier:", identifier);
+
+    if (space) {
+        console.log("Room found by name:", space);
+    } else {
+        console.log("Room not found by name, trying by number...");
+        space = spaces.find(s => s.number === identifier);
+        if (space) {
+            console.log("Room found by number:", space);
+        }
+    }
+
+    if (!space || !mapView) {
+        console.error("Room not found: " + identifier);
+
+        // Display error message
+        errorMessageElement.innerText = `Room "${identifier}" not found!`;
+        errorMessageElement.style.display = "block";
+
+        // Hide the message after 3 seconds
+        setTimeout(() => {
+            errorMessageElement.style.display = "none";
+        }, 3000);
+
+        return;
+    }
+
+    errorMessageElement.style.display = "none";
+
+    console.log("Highlighting room:", space);
+
+    if (previouslyHighlightedRoom) {
+        mapView.updateState(previouslyHighlightedRoom, {
+            interactive: false,
+            opacity: 0.6,
+            color: "#E1E1E1",
+            border: "none",
+            boxShadow: "none",
+            transition: "all 0.3s ease-in-out"
+        });
+        console.log("Previous room unhighlighted:", previouslyHighlightedRoom);
+    }
+
+    // Highlight the new selected room
+    mapView.updateState(space, {
+        interactive: true,
+        opacity: 1.0,
+        color: "#FF6347",
+        border: "8px solid #FF0000",
+        boxShadow: "0 0 20px rgba(255, 0, 0, 0.7)",
+        transition: "all 0.3s ease-in-out"
+    });
+
+    previouslyHighlightedRoom = space;
+    console.log("New room highlighted:", space);
 };
 
 // Populate floor dropdown UI

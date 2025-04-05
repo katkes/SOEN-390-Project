@@ -1,0 +1,39 @@
+{
+  "buildings": {
+    "hall": {
+      "keys": ["hall", "hall building", "hb", "hall building concordia", "h"],
+      "displayName": "Hall Building",
+      "mapId": "67968294965a13000bcdfe74",
+      "floors": ["Level 9", "Level 8", "Level 7", "Level 6", "Level 5", "Level 4", "Level 3", "Level 2", "Level 1", "Ground"],
+      "defaultFloor": "Ground",
+      "roomPrefix": "H",
+      "rooms": [
+        "115", "Entrance", "110", "118",
+        "201", "202", "203", "204", "205", "206", "207", "208", "209", "210",
+        "849", "847", "845", "841", "843"
+      ]
+    },
+    "library": {
+      "keys": ["library", "webster", "webster library", "concordia library", "lb"],
+      "displayName": "Webster Library",
+      "mapId": "67ba2570a39568000bc4b334",
+      "roomPrefix": "LB",
+      "rooms": [
+        "285", "245", "259", 
+        "385", "345", "322"
+      ]
+    },
+    "jmsb": {
+      "keys": ["jsmb", "mb"],
+      "displayName": "John Molson School of Business",
+      "mapId": "67e1ac8eaa7c59000baf8dcf",
+      "roomPrefix": "MB",
+      "rooms": [
+        "S1.230", "S1.115", "S1.430",
+        "S2.330", "S2.210", "S2.401",
+        "1.210", "1.437", "1.301",
+        "2.270", "2.210", "2.435"
+      ]
+    }
+  }
+} 
