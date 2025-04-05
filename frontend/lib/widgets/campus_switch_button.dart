@@ -103,7 +103,7 @@ class CampusSwitchState extends State<CampusSwitch> {
             widget.onSelectionChanged(newValue);
             widget.onLocationChanged(campusLocations[newValue]!);
           },
-          borderColor: Colors.transparent,
+          borderColor: Colors.grey,
           selectedColor: const Color(0xFFA9A9A9),
           unselectedColor: Colors.transparent,
           pressedColor: Colors.white.withValues(

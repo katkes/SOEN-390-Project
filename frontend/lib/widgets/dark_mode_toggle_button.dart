@@ -14,7 +14,6 @@ class DarkModeToggleButton extends ConsumerWidget {
     final themeNotifier = ref.read(themeProvider.notifier);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Dark Mode with Riverpod')),
       body: Center(
         child: ElevatedButton(
           onPressed: () => themeNotifier.toggleTheme(),

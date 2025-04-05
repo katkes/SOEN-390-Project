@@ -345,7 +345,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
                           ),
                         );
                       },
-                      child: const Text("Open Mappedin Map"),
+                      child: const Text("Indoor navigation"),
                     ),
                   ),
                 ],

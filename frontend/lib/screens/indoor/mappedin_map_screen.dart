@@ -32,10 +32,11 @@ class MappedinMapScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           'Indoor Navigation',
-          style: TextStyle(color: Colors.white),
+          // style: TextStyle(color: Colors.black),
         ),
         // backgroundColor: const Color(0xff912338),
-        iconTheme: const IconThemeData(color: Colors.white),
+        // iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(),
       ),
       body: webView ?? MappedinWebView(key: _webViewKey),
       floatingActionButton: Column(
