@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:soen_390/widgets/mappedin_webview.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:soen_390/screens/indoor/mappedin_map_controller.dart';
+
+class FakeMappedinMapController extends MappedinMapController {
+  FakeMappedinMapController() : super();
+
+  @override
+  String get currentMapId => 'test-map-id';
+}
 
 class FakeMappedinWebView extends MappedinWebView {
   FakeMappedinWebView({super.key});
@@ -36,7 +44,25 @@ class FakeMappedinWebViewState extends State<MappedinWebView>
   }
 
   @override
+  void searchRoom(String roomNumber) {}
+
+  @override
+  TextEditingController get searchController => TextEditingController();
+
+  @override
   Widget build(BuildContext context) {
-    return Container(); // Fake widget returns an empty container.
+    return Container();
+  }
+
+  @override
+  Future<void> navigateToRoom(String roomNumber) {
+    // TODO: implement navigateToRoom
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> reloadWithMapId(String mapId) {
+    // TODO: implement reloadWithMapId
+    throw UnimplementedError();
   }
 }

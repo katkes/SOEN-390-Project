@@ -11,6 +11,7 @@ import 'package:soen_390/services/map_service.dart';
 import 'package:soen_390/utils/marker_tap_handler.dart';
 import 'package:soen_390/widgets/building_popup.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
+import 'package:soen_390/widgets/indoor_navigation_button.dart';
 import 'package:http/http.dart' as http;
 // import "package:soen_390/providers/theme_provider.dart";
 
@@ -250,97 +251,107 @@ class MapWidgetState extends State<MapWidget> {
   /// Builds the map widget with the FlutterMap and its children
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    final tileUrl = isDark
-        ? "https://api.maptiler.com/maps/streets-v2-dark/{z}/{x}/{y}.png?key=dNrRaCzvW960GhB3n3bW"
-        : "https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=dNrRaCzvW960GhB3n3bW";
-
-    return SizedBox(
-      width: double.infinity,
-      height: double.infinity,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(30),
-        child: FlutterMap(
-          mapController: _mapController,
-          options: MapOptions(
-            initialCenter: widget.location,
-            initialZoom: 17.0,
-            minZoom: 11.0,
-            maxZoom: 20.0,
-            interactionOptions: const InteractionOptions(
-              flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
-            ),
-          ),
-          children: [
-            TileLayer(
-              // urlTemplate: "https://api.maptiler.com/maps/streets-v2-dark/{z}/{x}/{y}.png?key=dNrRaCzvW960GhB3n3bW",
-              // urlTemplate: "https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=dNrRaCzvW960GhB3n3bW",
-              urlTemplate: tileUrl,
-              additionalOptions: const {},
-              tileProvider: NetworkTileProvider(
-                httpClient: widget.httpClient is HttpService
-                    ? (widget.httpClient as HttpService).client
-                    : http.Client(), // fallback in test/mock mode
+    return Stack(
+      children: [
+        SizedBox(
+          width: double.infinity,
+          height: double.infinity,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(30),
+            child: FlutterMap(
+              mapController: _mapController,
+              options: MapOptions(
+                initialCenter: widget.location,
+                initialZoom: 17.0,
+                minZoom: 11.0,
+                maxZoom: 20.0,
+                interactionOptions: const InteractionOptions(
+                  flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
+                ),
               ),
-            ),
-            AnimatedLocationMarkerLayer(
-              position: LocationMarkerPosition(
-                latitude: widget.userLocation.latitude,
-                longitude: widget.userLocation.longitude,
-                accuracy: 50,
-              ),
-              style: const LocationMarkerStyle(
-                marker: DefaultLocationMarker(
-                  child: Icon(
-                    Icons.navigation,
-                    color: Colors.white,
-                    size: 20,
+              children: [
+                TileLayer(
+                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  additionalOptions: const {},
+                  tileProvider: NetworkTileProvider(
+                    httpClient: widget.httpClient is HttpService
+                        ? (widget.httpClient as HttpService).client
+                        : http.Client(), // fallback in test/mock mode
                   ),
                 ),
-                markerSize: Size(35, 35),
-                markerDirection: MarkerDirection.heading,
-                accuracyCircleColor: Color.fromARGB(78, 33, 149, 243),
-              ),
-              moveAnimationDuration: const Duration(milliseconds: 500),
-              moveAnimationCurve: Curves.fastOutSlowIn,
-              rotateAnimationDuration: const Duration(milliseconds: 300),
-              rotateAnimationCurve: Curves.easeInOut,
+                AnimatedLocationMarkerLayer(
+                  position: LocationMarkerPosition(
+                    latitude: widget.userLocation.latitude,
+                    longitude: widget.userLocation.longitude,
+                    accuracy: 50,
+                  ),
+                  style: const LocationMarkerStyle(
+                    marker: DefaultLocationMarker(
+                      child: Icon(
+                        Icons.navigation,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                    ),
+                    markerSize: Size(35, 35),
+                    markerDirection: MarkerDirection.heading,
+                    accuracyCircleColor: Color.fromARGB(78, 33, 149, 243),
+                  ),
+                  moveAnimationDuration: const Duration(milliseconds: 500),
+                  moveAnimationCurve: Curves.fastOutSlowIn,
+                  rotateAnimationDuration: const Duration(milliseconds: 300),
+                  rotateAnimationCurve: Curves.easeInOut,
+                ),
+                if (!widget.routePoints.isNotEmpty)
+                  PolygonLayer(
+                    polygons: _buildingPolygons,
+                  ),
+                if (!widget.routePoints.isNotEmpty)
+                  MarkerLayer(
+                    markers: [
+                      ..._buildingMarkers,
+                    ],
+                  ),
+                if (animatedPoints.isNotEmpty)
+                  PolylineLayer(
+                    polylines: [
+                      Polyline(
+                        points: animatedPoints,
+                        strokeWidth: 10.0,
+                        color: const Color.fromARGB(100, 0, 0,
+                            0), // Soft black shadow with transparency
+                      ),
+                      Polyline(
+                        points: animatedPoints,
+                        strokeWidth: 6.0,
+                        color: const Color.fromRGBO(54, 152, 244,
+                            0.8), // Nice vivid blue with 80% opacity
+                      ),
+                    ],
+                  ),
+              ],
             ),
-            if (!widget.routePoints.isNotEmpty)
-              PolygonLayer(
-                polygons: _buildingPolygons,
-              ),
-            if (!widget.routePoints.isNotEmpty)
-              MarkerLayer(
-                markers: [
-                  ..._buildingMarkers,
-                ],
-              ),
-            if (animatedPoints.isNotEmpty)
-              PolylineLayer(
-                polylines: [
-                  Polyline(
-                    points: animatedPoints,
-                    strokeWidth: 10.0,
-                    color: const Color.fromARGB(
-                        100, 0, 0, 0), // Soft black shadow with transparency
-                  ),
-                  Polyline(
-                    points: animatedPoints,
-                    strokeWidth: 6.0,
-                    color: const Color.fromRGBO(
-                        54, 152, 244, 0.8), // Nice vivid blue with 80% opacity
-                  ),
-                ],
-              ),
-          ],
+          ),
         ),
-      ),
+        Positioned(
+          bottom: 10,
+          right: 21,
+          child: IndoorNavigationButton(
+            onPressed: _centerMapOnUser,
+            key: const Key('indoor-navigation-buttons'),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _centerMapOnUser() {
+    _mapController.move(
+      widget.userLocation,
+      17.0,
     );
   }
 }
-//end of _MapWidgetState class
 
 /// Example usage of `MapWidget` inside a `MyPage` scaffold.
 class MyPage extends StatelessWidget {
