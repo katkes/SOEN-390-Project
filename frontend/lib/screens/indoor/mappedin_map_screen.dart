@@ -7,16 +7,30 @@ library;
 import 'package:flutter/material.dart';
 import 'package:soen_390/widgets/mappedin_webview.dart';
 
-class MappedinMapScreen extends StatelessWidget {
+class MappedinMapScreen extends StatefulWidget {
   /// To allow injection of a custom webView (for testing)
-  MappedinMapScreen({super.key, this.webView});
+  const MappedinMapScreen({super.key, this.webView});
 
   /// Optionally injected WebView.
   final Widget? webView;
 
-  /// GlobalKey to access the MappedinWebViewState.
+  @override
+  State<MappedinMapScreen> createState() => _MappedinMapScreenState();
+}
+
+class _MappedinMapScreenState extends State<MappedinMapScreen> {
   final GlobalKey<MappedinWebViewState> _webViewKey =
       GlobalKey<MappedinWebViewState>();
+  String? _selectedBuilding;
+
+  /// List of available building names and corresponding map IDs
+  final Map<String, String> buildingMapIds = {
+    "Hall Building": "67968294965a13000bcdfe74",
+    "JMSB": "67e1ac8eaa7c59000baf8dcf",
+    "Library Building": "67ba2570a39568000bc4b334",
+    "SP Building": "LOYO_MAP_ID_1",
+    "CC Building": "LOYO_MAP_ID_2",
+  };
 
   /// Helper method to build Floating Action Buttons with standard styling.
   Widget _buildFABButton(String text, VoidCallback onPressed) {
@@ -36,8 +50,34 @@ class MappedinMapScreen extends StatelessWidget {
         ),
         backgroundColor: const Color(0xff912338),
         iconTheme: const IconThemeData(color: Colors.white),
+        actions: [
+          /// Dropdown to switch buildings by map ID
+          DropdownButton<String>(
+            hint: const Text("Select Building",
+                style: TextStyle(color: Colors.white)),
+            value: _selectedBuilding,
+            dropdownColor: Colors.black,
+            style: const TextStyle(color: Colors.white),
+            underline: Container(),
+            iconEnabledColor: Colors.white,
+            onChanged: (String? buildingName) async {
+              if (buildingName != null) {
+                setState(() => _selectedBuilding = buildingName);
+                final mapId = buildingMapIds[buildingName]!;
+                await _webViewKey.currentState?.reloadWithMapId(mapId);
+              }
+            },
+            items: buildingMapIds.keys.map((name) {
+              return DropdownMenuItem<String>(
+                value: name,
+                child: Text(name),
+              );
+            }).toList(),
+          ),
+          const SizedBox(width: 12),
+        ],
       ),
-      body: webView ?? MappedinWebView(key: _webViewKey),
+      body: widget.webView ?? MappedinWebView(key: _webViewKey),
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

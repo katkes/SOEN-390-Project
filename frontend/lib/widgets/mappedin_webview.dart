@@ -157,4 +157,6 @@ class MappedinWebViewState extends State<MappedinWebView> {
   Widget build(BuildContext context) {
     return WebViewWidget(controller: controller);
   }
+
+  reloadWithMapId(String mapId) {}
 }
