@@ -4,7 +4,7 @@ import 'package:soen_390/models/building_config.dart';
 
 /// Controller class to manage the Mappedin map state and building selection
 class MappedinMapController {
-  final GlobalKey<MappedinWebViewState> webViewKey =
+  GlobalKey<MappedinWebViewState> webViewKey =
       GlobalKey<MappedinWebViewState>();
   String? _currentMapId;
   BuildingConfig? _currentBuilding;
@@ -22,9 +22,10 @@ class MappedinMapController {
   Future<bool> selectBuildingByName(String buildingName) async {
     try {
       debugPrint('Switching building: $buildingName');
-      final building = await BuildingConfigManager.findBuildingByName(buildingName);
+      final building =
+          await BuildingConfigManager.findBuildingByName(buildingName);
       debugPrint('Building found: ${building?.mapId}');
-      
+
       if (building == null) {
         debugPrint('Building not found: $buildingName');
         return false;
@@ -89,8 +90,9 @@ class MappedinMapController {
       // to handle camera positioning to specific rooms
 
       // Get the room number without the building prefix
-      final roomWithoutPrefix = BuildingConfigManager.getRoomNumber(roomNumber, building.roomPrefix);
-      
+      final roomWithoutPrefix =
+          BuildingConfigManager.getRoomNumber(roomNumber, building.roomPrefix);
+
       // Show directions to the room
       await webViewKey.currentState?.navigateToRoom(roomWithoutPrefix);
 
@@ -102,4 +104,4 @@ class MappedinMapController {
       return false;
     }
   }
-} 
+}

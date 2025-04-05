@@ -36,7 +36,7 @@ class BuildingConfig {
 
 class BuildingConfigManager {
   static Map<String, BuildingConfig>? _buildings;
-  
+
   static Future<Map<String, BuildingConfig>> get buildings async {
     if (_buildings == null) {
       await _loadConfigs();
@@ -45,9 +45,10 @@ class BuildingConfigManager {
   }
 
   static Future<void> _loadConfigs() async {
-    final jsonString = await rootBundle.loadString('assets/building_configs.json');
+    final jsonString =
+        await rootBundle.loadString('assets/building_configs.json');
     final json = jsonDecode(jsonString);
-    
+
     _buildings = {};
     (json['buildings'] as Map<String, dynamic>).forEach((key, value) {
       _buildings![key] = BuildingConfig.fromJson(value);
@@ -57,10 +58,11 @@ class BuildingConfigManager {
   /// Finds a building configuration by room number (e.g., "H907")
   static Future<BuildingConfig?> findBuildingByRoom(String roomNumber) async {
     final buildings = await BuildingConfigManager.buildings;
-    
+
     for (final building in buildings.values) {
       if (roomNumber.startsWith(building.roomPrefix)) {
-        final roomWithoutPrefix = getRoomNumber(roomNumber, building.roomPrefix);
+        final roomWithoutPrefix =
+            getRoomNumber!(roomNumber, building.roomPrefix);
         if (building.rooms.contains(roomWithoutPrefix)) {
           return building;
         }
@@ -90,14 +92,14 @@ class BuildingConfigManager {
       }
 
       final buildings = await BuildingConfigManager.buildings;
-      
+
       // Check if the map ID exists in any building
       for (final building in buildings.values) {
         if (building.mapId == mapId) {
           return building;
         }
       }
-      
+
       debugPrint('Error: No building found with map ID: $mapId');
       return null;
     } catch (e) {
@@ -110,4 +112,4 @@ class BuildingConfigManager {
   static String getRoomNumber(String fullRoomNumber, String roomPrefix) {
     return fullRoomNumber.substring(roomPrefix.length);
   }
-} 
+}
