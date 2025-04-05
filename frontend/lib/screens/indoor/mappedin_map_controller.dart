@@ -41,7 +41,6 @@ class MappedinMapController {
 
       return selectBuildingById(building.mapId);
     } catch (e) {
-      debugPrint('Error switching building: $e');
       return false;
     }
   }
@@ -57,7 +56,6 @@ class MappedinMapController {
       // await webViewKey.currentState?.reloadWithMapId(mapId);
       return true;
     } catch (e) {
-      debugPrint('Error switching building: $e');
       return false;
     }
   }
