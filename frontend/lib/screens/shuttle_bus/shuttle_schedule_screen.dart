@@ -18,7 +18,7 @@ class ShuttleScheduleScreen extends StatelessWidget {
       ),
       body: SafeArea(
           child: SingleChildScrollView(
-            physics: const ClampingScrollPhysics(),
+          physics: const ClampingScrollPhysics(),
           padding: const EdgeInsets.all(16.0),
           child: ShuttleScheduleDisplay(fridaySchedule: schedule),
         ),
