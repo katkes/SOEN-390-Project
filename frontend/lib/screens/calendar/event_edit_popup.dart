@@ -67,7 +67,8 @@ class EventEditPopupState extends State<EventEditPopup> {
     locationController.text = building;
     classroomController = TextEditingController(text: classroom);
   }
- /// Opens the Mappedin map screen.
+
+  /// Opens the Mappedin map screen.
   void openMappedinMap() async {
     Navigator.push(
       context,
@@ -147,13 +148,12 @@ class EventEditPopupState extends State<EventEditPopup> {
                           : const Text("Update"),
                     ),
                     ElevatedButton.icon(
-                      onPressed: () async{
+                      onPressed: () async {
                         // TODO: 7.1.6 Add navigation logic to next class
                         final success = await mappedinController
                             .navigateToRoom(classroomController.text);
-                            print(classroomController.text);
+                        print(classroomController.text);
                         if (success) {
-                        
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
@@ -162,7 +162,7 @@ class EventEditPopupState extends State<EventEditPopup> {
                             ),
                           );
                         }
-                          openMappedinMap();
+                        openMappedinMap();
                       },
                       icon: Icon(Icons.directions_walk,
                           color: appTheme.colorScheme.onPrimary),
