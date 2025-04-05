@@ -50,10 +50,27 @@ class MapService {
 
   List<Marker> _parseMarkers(
       Map<String, dynamic> jsonData, Function onMarkerTapped) {
+    List<String> _availableMapMarkers = [
+      'Henry F. Hall Building',
+      'Engineering, Computer Science and Visual Arts Integrated Complex',
+      'Webster Library Building',
+      'Faubourg Building',
+      'ER Building',
+      'Learning Square LS Building',
+      'John Molson Building',
+      'Stinger Dome',
+      'CC Building',
+      'PC Building',
+      'VL Building'
+    ];
     List<Marker> markers = [];
 
     if (jsonData['features'] is List) {
       for (var feature in jsonData['features']) {
+        if (!_availableMapMarkers
+            .contains(feature['properties']?[_buildingLongName])) {
+          continue;
+        }
         var geometry = feature['geometry'];
         var properties = feature['properties'];
 
@@ -72,6 +89,9 @@ class MapService {
           Color markerColor = isSelected
               ? MapService.secondaryMarkerColor
               : MapService.markerColor;
+
+          print(
+              'Building: $name, Address: $address, Coordinates: ($lat, $lon)');
 
           markers.add(
             Marker(
