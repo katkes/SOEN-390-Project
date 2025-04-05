@@ -40,9 +40,18 @@ class MappedinWebView extends StatefulWidget {
 
 class MappedinWebViewState extends State<MappedinWebView> {
   late final WebViewController controller;
+  final TextEditingController searchController =
+      TextEditingController(); // Add this line
   String statusMessage = "Nothing";
   String? _errorMessage;
   String? _currentMapId;
+
+  @override
+  void dispose() {
+    searchController
+        .dispose(); // Dispose the controller to prevent memory leaks
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -223,6 +232,12 @@ class MappedinWebViewState extends State<MappedinWebView> {
         statusMessage = 'Failed to navigate to room: $e';
       });
     }
+  }
+
+  /// Calls JavaScript function to highlight a room
+  searchRoom(String roomNumber) {
+    controller.runJavaScript("search('$roomNumber')");
+    controller.runJavaScript("setCameraTo('$roomNumber')");
   }
 
   @override
