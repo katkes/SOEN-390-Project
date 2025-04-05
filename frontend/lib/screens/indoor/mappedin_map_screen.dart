@@ -18,7 +18,8 @@ class MappedinMapScreen extends StatefulWidget {
   /// Optionally injected WebView.
   final Widget? webView;
 
-  /// Optional controller for managing the map state
+  /// Optional controller for managing the map state both for testing and if there's no need to modify it. 
+  /// If just opening mappedin screen by default, you don't need to update the controller's defaults.
   final MappedinMapController? controller;
 
   @override
@@ -53,16 +54,18 @@ class _MappedinMapScreenState extends State<MappedinMapScreen> {
         backgroundColor: const Color(0xff912338),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: MappedinWebView(
-        key: _controller.webViewKey,
-        mapId: _controller.currentMapId,
-      ),
+      body: widget.webView ??
+          MappedinWebView(
+            key: _controller.webViewKey,
+            mapId: _controller.currentMapId,
+          ),
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           /// Triggers the `navigateToRoom` method on the WebView.
           /// This button mainly shows how to interact with the code.
-          /// TODO: delete for the actual implementation, will be changed in 5.2.2
+          /// TODO: delete for the actual implementation, will be changed in 7.1.2
+          /// It is here for testing purposes.
           _buildFABButton("Navigate to H813 from Outside", () async {
             await _controller.webViewKey.currentState?.navigateToRoom("813");
           }),

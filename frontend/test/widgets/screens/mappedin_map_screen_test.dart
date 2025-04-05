@@ -13,6 +13,7 @@ class TestMappedinMapScreen extends StatelessWidget {
     final testKey = GlobalKey<MappedinWebViewState>();
     return MappedinMapScreen(
       webView: FakeMappedinWebView(key: testKey),
+      controller: FakeMappedinMapController(),
     );
   }
 }

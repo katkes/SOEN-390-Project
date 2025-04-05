@@ -1,7 +1,18 @@
+/// This file contains the data models and management logic for building configurations.
+/// It provides classes for representing building information and methods for loading
+/// and querying building data from a JSON configuration file.
+///
+/// The main components are:
+/// - BuildingConfig: A data class representing a single building's configuration
+/// - BuildingConfigManager: A utility class for managing and accessing building configurations
+library;
 import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/foundation.dart';
 
+/// Represents the configuration for a building in the application.
+/// This class holds information about a building's display name, map ID,
+/// room information, and other building-specific details.
 class BuildingConfig {
   final String displayName;
   final String mapId;
@@ -34,6 +45,10 @@ class BuildingConfig {
   }
 }
 
+/// Manages building configurations for the application.
+/// This class provides functionality to load and access building configurations
+/// from a JSON file, and includes methods to find buildings by room number,
+/// building name, or map ID.
 class BuildingConfigManager {
   static Map<String, BuildingConfig>? _buildings;
 

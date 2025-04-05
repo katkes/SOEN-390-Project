@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:soen_390/widgets/mappedin_webview.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:soen_390/screens/indoor/mappedin_map_controller.dart';
+
+class FakeMappedinMapController extends MappedinMapController {
+  FakeMappedinMapController() : super();
+
+  @override
+  String get currentMapId => 'test-map-id';
+}
 
 class FakeMappedinWebView extends MappedinWebView {
   FakeMappedinWebView({super.key});

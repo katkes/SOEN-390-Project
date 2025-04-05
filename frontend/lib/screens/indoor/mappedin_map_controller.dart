@@ -1,3 +1,11 @@
+/// This file contains the controller logic for managing the Mappedin indoor mapping functionality.
+/// It provides a centralized controller class that handles building selection, map navigation,
+/// and room finding features within the Mappedin WebView integration.
+///
+/// The MappedinMapController class manages the state of the map view and provides methods
+/// for interacting with the Mappedin SDK through a WebView interface.
+library;
+
 import 'package:flutter/material.dart';
 import 'package:soen_390/widgets/mappedin_webview.dart';
 import 'package:soen_390/models/building_config.dart';
@@ -33,7 +41,6 @@ class MappedinMapController {
 
       return selectBuildingById(building.mapId);
     } catch (e) {
-      debugPrint('Error switching building: $e');
       return false;
     }
   }
@@ -49,7 +56,6 @@ class MappedinMapController {
       // await webViewKey.currentState?.reloadWithMapId(mapId);
       return true;
     } catch (e) {
-      debugPrint('Error switching building: $e');
       return false;
     }
   }
