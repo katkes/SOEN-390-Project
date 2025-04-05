@@ -1,59 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:soen_390/services/shuttle_service.dart';
 import 'package:soen_390/styles/theme.dart';
+import 'package:soen_390/widgets/shuttle_schedule_dispaly_widgets.dart'; 
 
-class ShuttleScheduleDisplay extends StatelessWidget {
+class ShuttleScheduleDisplay extends StatefulWidget {
   final ShuttleSchedule fridaySchedule;
+  final ShuttleSchedule mondayThursdaySchedule;
 
-  const ShuttleScheduleDisplay({super.key, required this.fridaySchedule});
+  const ShuttleScheduleDisplay({
+    super.key,
+    required this.fridaySchedule,
+    required this.mondayThursdaySchedule,
+  });
 
-  Widget _buildScheduleList(BuildContext context, String title, List<String> times) {
+  @override
+  State<ShuttleScheduleDisplay> createState() => _ShuttleScheduleDisplayState();
+}
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: appTheme.textTheme.titleMedium?.copyWith(
-            color: appTheme.colorScheme.primary,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 6),
-        Wrap(
-          spacing: 10,
-          runSpacing: 6,
-          children: times
-              .map((time) => Chip(
-                    label: Text(time),
-                    backgroundColor: appTheme.colorScheme.surfaceContainerHighest,
-                  ))
-              .toList(),
-        ),
-      ],
-    );
-  }
+class _ShuttleScheduleDisplayState extends State<ShuttleScheduleDisplay> {
+  bool _isFridaySchedule = true;
 
-  Widget _buildStop(BuildContext context, String stop, String coordinates) {
-    final theme = Theme.of(context);
+  ShuttleSchedule get _currentSchedule =>
+      _isFridaySchedule ? widget.fridaySchedule : widget.mondayThursdaySchedule;
 
-    return Row(
-      children: [
-        Icon(Icons.location_on, color: theme.colorScheme.primary),
-        const SizedBox(width: 6),
-        Expanded(
-          child: Text(
-            "$stop: $coordinates",
-            style: const TextStyle(fontSize: 14),
-          ),
-        ),
-      ],
-    );
+  String get _scheduleTitle => _isFridaySchedule
+      ? "Shuttle Bus Schedule (Friday)"
+      : "Shuttle Bus Schedule (Mon-Thurs)";
+
+  String get _toggleButtonText => _isFridaySchedule
+      ? 'Show Mon-Thurs Schedule'
+      : 'Show Friday Schedule';
+
+  void _toggleSchedule() {
+    setState(() {
+      _isFridaySchedule = !_isFridaySchedule;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Container(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
@@ -65,30 +50,32 @@ class ShuttleScheduleDisplay extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          ElevatedButton(
+            onPressed: _toggleSchedule,
+            child: Text(_toggleButtonText),
+          ),
+          const SizedBox(height: 20),
           Text(
-            "Shuttle Bus Schedule (Friday)",
+            _scheduleTitle,
             style: appTheme.textTheme.titleLarge?.copyWith(
-              color: appTheme.colorScheme.primary,
-              fontWeight: FontWeight.bold,
-            ),
+                color: appTheme.colorScheme.primary,
+                fontWeight: FontWeight.bold,
+                fontSize: 20),
           ),
           const SizedBox(height: 20),
-          _buildScheduleList(context, "LOY Departures", fridaySchedule.loyDepartures),
-          const SizedBox(height: 20),
-          _buildScheduleList(context, "SGW Departures", fridaySchedule.sgwDepartures),
-          const SizedBox(height: 20),
-          Text(
-            "Stop Locations",
-            style: appTheme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+          ScheduleList(
+            title: "LOY Departures",
+            times: _currentSchedule.loyDepartures,
           ),
-          const SizedBox(height: 10),
-          ...fridaySchedule.stops.entries.map((entry) =>
-              _buildStop(context, entry.key, entry.value.coordinates)),
+          const SizedBox(height: 20),
+          ScheduleList(
+            title: "SGW Departures",
+            times: _currentSchedule.sgwDepartures,
+          ),
+          const SizedBox(height: 20),
+          StopLocations(schedule: _currentSchedule),
         ],
       ),
     );
   }
 }
-

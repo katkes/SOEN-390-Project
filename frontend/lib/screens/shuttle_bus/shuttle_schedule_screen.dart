@@ -8,7 +8,8 @@ class ShuttleScheduleScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final schedule = ShuttleService().getFridaySchedule();
+    final fridaySchedule = ShuttleService().getFridaySchedule();
+    final mondayThursdaySchedule = ShuttleService().getMondayThursdaySchedule();
 
     return Scaffold(
       appBar: AppBar(
@@ -17,10 +18,13 @@ class ShuttleScheduleScreen extends StatelessWidget {
         foregroundColor: appTheme.colorScheme.onPrimary,
       ),
       body: SafeArea(
-          child: SingleChildScrollView(
+        child: SingleChildScrollView(
           physics: const ClampingScrollPhysics(),
-          padding: const EdgeInsets.all(16.0),
-          child: ShuttleScheduleDisplay(fridaySchedule: schedule),
+          padding: const EdgeInsets.all(4.0),
+          child: ShuttleScheduleDisplay(
+            fridaySchedule: fridaySchedule,
+            mondayThursdaySchedule: mondayThursdaySchedule,
+          ),
         ),
       ),
     );

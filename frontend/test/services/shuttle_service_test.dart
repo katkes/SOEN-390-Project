@@ -2,40 +2,56 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:soen_390/services/shuttle_service.dart';
 
 void main() {
-  group('ShuttleService Tests', () {
-    test('getFridaySchedule returns correct data structure', () {
-      final service = ShuttleService();
-      final schedule = service.getFridaySchedule();
+  group('ShuttleService', () {
+    late ShuttleService shuttleService;
+
+    setUp(() {
+      shuttleService = ShuttleService();
+    });
+
+    test('getFridaySchedule returns correct schedule data', () {
+      final fridaySchedule = shuttleService.getFridaySchedule();
+
+      expect(fridaySchedule.loyDepartures.length, 23);
+      expect(fridaySchedule.sgwDepartures.length, 22);
+      expect(fridaySchedule.lastBus['LOY'], '18:15');
+      expect(fridaySchedule.lastBus['SGW'], '18:15');
+      expect(fridaySchedule.stops.length, 2);
+      expect(fridaySchedule.stops['LOY']?.name, 'LOY');
+      expect(fridaySchedule.stops['LOY']?.coordinates, '45°27\'28.2"N 73°38\'20.3"W');
+      expect(fridaySchedule.stops['SGW']?.coordinates, '45°29\'49.6"N 73°34\'42.5"W');
       
-      // Test departures lists
-      expect(schedule.loyDepartures, isA<List<String>>());
-      expect(schedule.loyDepartures.isNotEmpty, true);
-      expect(schedule.loyDepartures.first, '9:15');
-      expect(schedule.loyDepartures.last, '18:15');
+      // Check a few specific times
+      expect(fridaySchedule.loyDepartures.first, '9:15');
+      expect(fridaySchedule.loyDepartures.last, '18:15');
+      expect(fridaySchedule.sgwDepartures.first, '9:45');
+      expect(fridaySchedule.sgwDepartures.last, '18:15');
+    });
+
+    test('getMondayThursdaySchedule returns correct schedule data', () {
+      final mondayThursdaySchedule = shuttleService.getMondayThursdaySchedule();
+
+      expect(mondayThursdaySchedule.loyDepartures.length, 34);
+      expect(mondayThursdaySchedule.sgwDepartures.length, 33);
+      expect(mondayThursdaySchedule.lastBus['LOY'], '18:30');
+      expect(mondayThursdaySchedule.lastBus['SGW'], '18:30');
+      expect(mondayThursdaySchedule.stops.length, 2);
+      expect(mondayThursdaySchedule.stops['LOY']?.name, 'LOY');
+      expect(mondayThursdaySchedule.stops['LOY']?.coordinates, '45°27\'28.2"N 73°38\'20.3"W');
+      expect(mondayThursdaySchedule.stops['SGW']?.coordinates, '45°29\'49.6"N 73°34\'42.5"W');
       
-      expect(schedule.sgwDepartures, isA<List<String>>());
-      expect(schedule.sgwDepartures.isNotEmpty, true);
-      expect(schedule.sgwDepartures.first, '9:45');
-      expect(schedule.sgwDepartures.last, '18:15');
-      
-      // Test last bus info
-      expect(schedule.lastBus, isA<Map<String, String>>());
-      expect(schedule.lastBus['LOY'], '18:15');
-      expect(schedule.lastBus['SGW'], '18:15');
-      
-      // Test stops
-      expect(schedule.stops, isA<Map<String, ShuttleStopLocation>>());
-      expect(schedule.stops['LOY']?.coordinates, '45°27\'28.2"N 73°38\'20.3"W');
-      expect(schedule.stops['SGW']?.coordinates, '45°29\'49.6"N 73°34\'42.5"W');
-      expect(schedule.stops['LOY']?.name, 'LOY');
-      expect(schedule.stops['SGW']?.name, 'SGW');
+      // Check a few specific times
+      expect(mondayThursdaySchedule.loyDepartures.first, '9:15');
+      expect(mondayThursdaySchedule.loyDepartures.last, '18:30');
+      expect(mondayThursdaySchedule.sgwDepartures.first, '9:30');
+      expect(mondayThursdaySchedule.sgwDepartures.last, '18:30');
     });
   });
-  
-  group('ShuttleStopLocation Tests', () {
-    test('ShuttleStopLocation constructor creates instance with correct properties', () {
-      const name = 'Test Location';
-      const coordinates = '45°00\'00.0"N 73°00\'00.0"W';
+
+  group('ShuttleStopLocation', () {
+    test('should create a ShuttleStopLocation with correct values', () {
+      const name = 'LOY';
+      const coordinates = '45°27\'28.2"N 73°38\'20.3"W';
       
       final location = ShuttleStopLocation(name: name, coordinates: coordinates);
       
@@ -43,15 +59,15 @@ void main() {
       expect(location.coordinates, coordinates);
     });
   });
-  
-  group('ShuttleSchedule Tests', () {
-    test('ShuttleSchedule constructor creates instance with correct properties', () {
-      final loyDepartures = ['9:00', '10:00'];
-      final sgwDepartures = ['9:30', '10:30'];
-      final lastBus = {'LOY': '22:00', 'SGW': '22:30'};
+
+  group('ShuttleSchedule', () {
+    test('should create a ShuttleSchedule with correct values', () {
+      final loyDepartures = ['9:15', '9:30'];
+      final sgwDepartures = ['9:45', '10:00'];
+      final lastBus = {'LOY': '18:15', 'SGW': '18:15'};
       final stops = {
         'LOY': ShuttleStopLocation(name: 'LOY', coordinates: '45°27\'28.2"N 73°38\'20.3"W'),
-        'SGW': ShuttleStopLocation(name: 'SGW', coordinates: '45°29\'49.6"N 73°34\'42.5"W'),
+        'SGW': ShuttleStopLocation(name: 'SGW', coordinates: '45°29\'49.6"N 73°34\'42.5"W')
       };
       
       final schedule = ShuttleSchedule(
