@@ -1,4 +1,3 @@
-/// A screen that displays an indoor navigation map using the Mappedin WebView.
 ///
 /// Provides UI controls to trigger directions and floor selection via JS interop.
 /// Uses a [GlobalKey] to interact with the underlying [MappedinWebView] state.
@@ -10,7 +9,8 @@ import 'package:soen_390/models/building_config.dart';
 
 /// Controller class to manage the Mappedin map state and building selection
 class MappedinMapController {
-  final GlobalKey<MappedinWebViewState> webViewKey = GlobalKey<MappedinWebViewState>();
+  final GlobalKey<MappedinWebViewState> webViewKey =
+      GlobalKey<MappedinWebViewState>();
   String? _currentMapId;
   BuildingConfig? _currentBuilding;
 
@@ -20,15 +20,37 @@ class MappedinMapController {
   /// The current building being displayed
   BuildingConfig? get currentBuilding => _currentBuilding;
 
+  /// Changes the current building map being displayed by building name
+  ///
+  /// [buildingName] - The name of the building to switch to
+  /// Returns true if the building was found and switch was successful
+  Future<bool> selectBuildingByName(String buildingName) async {
+    try {
+      debugPrint('Switching building: $buildingName');
+      final building = await BuildingConfigManager.findBuildingByName(buildingName);
+      debugPrint('Building found: ${building?.mapId}');
+      
+      if (building == null) {
+        debugPrint('Building not found: $buildingName');
+        return false;
+      }
+
+      return selectBuildingById(building.mapId);
+    } catch (e) {
+      debugPrint('Error switching building: $e');
+      return false;
+    }
+  }
+
   /// Changes the current building map being displayed
-  /// 
+  ///
   /// [mapId] - The new map ID to display
   /// Returns true if the map was successfully changed
-  Future<bool> switchBuilding(String mapId) async {
+  Future<bool> selectBuildingById(String mapId) async {
     try {
       _currentMapId = mapId;
       // Reload the WebView with the new map ID
-      await webViewKey.currentState?.reloadWithMapId(mapId);
+      // await webViewKey.currentState?.reloadWithMapId(mapId);
       return true;
     } catch (e) {
       debugPrint('Error switching building: $e');
@@ -36,13 +58,20 @@ class MappedinMapController {
     }
   }
 
+  bool setMapId(String mapId) {
+    _currentMapId = mapId;
+    return true;
+    // TODO check if map id is valid
+  }
+
   /// Navigates to a specific room in a building
-  /// 
+  ///
   /// [roomNumber] - The full room number including building prefix (e.g., "H907")
   /// Returns true if navigation was successful
   Future<bool> navigateToRoom(String roomNumber) async {
     try {
-      final building = await BuildingConfigManager.findBuildingByRoom(roomNumber);
+      final building =
+          await BuildingConfigManager.findBuildingByRoom(roomNumber);
       if (building == null) {
         debugPrint('Building not found for room: $roomNumber');
         return false;
@@ -50,16 +79,15 @@ class MappedinMapController {
 
       // Switch to the building's map if we're not already there
       if (_currentMapId != building.mapId) {
-        final success = await switchBuilding(building.mapId);
+        final success = await selectBuildingById(building.mapId);
         if (!success) return false;
       }
 
       _currentBuilding = building;
-      
-      // Set the default floor if available
-      if (building.defaultFloor != null) {
-        await webViewKey.currentState?.setFloor(building.defaultFloor!);
-      }
+      _currentMapId = building.mapId;
+
+      // Navigate to the room
+      await webViewKey.currentState?.navigateToRoom(roomNumber);
 
       // TODO: Add camera movement to the room location
       // This will require additional JavaScript functions in mappedin.js
@@ -76,7 +104,7 @@ class MappedinMapController {
 class MappedinMapScreen extends StatefulWidget {
   /// To allow injection of a custom webView (for testing)
   MappedinMapScreen({
-    super.key, 
+    super.key,
     this.webView,
     this.controller,
   });
@@ -119,7 +147,7 @@ class _MappedinMapScreenState extends State<MappedinMapScreen> {
         backgroundColor: const Color(0xff912338),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: webView ?? MappedinWebView(
+      body: MappedinWebView(
         key: _controller.webViewKey,
         mapId: _controller.currentMapId,
       ),
@@ -148,8 +176,8 @@ class _MappedinMapScreenState extends State<MappedinMapScreen> {
           /// TODO: delete for the actual implementation, will be changed in 5.2.2
           ///
           /// - Floor: `"Level 9"`
-          _buildFABButton("Set Floor", () async {
-            await _controller.webViewKey.currentState?.setFloor("Level 9");
+          _buildFABButton("Set Room", () async {
+            await _controller.webViewKey.currentState?.navigateToRoom("813");
           }),
         ],
       ),

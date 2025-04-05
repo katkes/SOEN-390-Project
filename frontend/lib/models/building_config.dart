@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/foundation.dart';
 
 class BuildingConfig {
   final String displayName;
@@ -66,6 +67,43 @@ class BuildingConfigManager {
       }
     }
     return null;
+  }
+
+  /// Finds a building configuration by building name (e.g., "Hall")
+  static Future<BuildingConfig?> findBuildingByName(String buildingName) async {
+    final buildings = await BuildingConfigManager.buildings;
+    for (final building in buildings.values) {
+      if (building.keys.contains(buildingName.toLowerCase())) {
+        return building;
+      }
+    }
+    return null;
+  }
+
+  /// Finds a building configuration by map ID
+  /// Returns null if the building is not found or if there's an error
+  static Future<BuildingConfig?> findBuildingByMapId(String mapId) async {
+    try {
+      if (mapId.isEmpty) {
+        debugPrint('Error: Empty map ID provided');
+        return null;
+      }
+
+      final buildings = await BuildingConfigManager.buildings;
+      
+      // Check if the map ID exists in any building
+      for (final building in buildings.values) {
+        if (building.mapId == mapId) {
+          return building;
+        }
+      }
+      
+      debugPrint('Error: No building found with map ID: $mapId');
+      return null;
+    } catch (e) {
+      debugPrint('Error finding building by map ID: $e');
+      return null;
+    }
   }
 
   /// Gets the room number without the building prefix
