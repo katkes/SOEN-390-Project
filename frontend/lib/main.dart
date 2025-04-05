@@ -348,14 +348,16 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
                           onPressed: () async {
                             final success = await _mappedinController
                                 .selectBuildingByName("Hall");
-                            if (!success) {
+                            if (!success && mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                     content: Text(
                                         'Failed to switch to Hall Building')),
                               );
                             }
-                            _openMappedinMap();
+                            if (mounted) {
+                              _openMappedinMap();
+                            }
                           },
                           child: const Text("Show Hall"),
                         ),
@@ -366,14 +368,16 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
                           onPressed: () async {
                             final success = await _mappedinController
                                 .navigateToRoom("MBS1.115");
-                            if (!success) {
+                            if (!success && mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                     content:
                                         Text('Failed to navigate to MBS1.115')),
                               );
                             }
-                            _openMappedinMap();
+                            if (mounted) {
+                              _openMappedinMap();
+                            }
                           },
                           child: const Text("Go to MBS1.115"),
                         ),
