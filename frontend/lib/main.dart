@@ -24,6 +24,7 @@ import 'package:soen_390/screens/calendar/calendar_view.dart';
 import 'package:soen_390/providers/navigation_provider.dart';
 import "package:soen_390/providers/theme_provider.dart";
 import "package:soen_390/widgets/dark_mode_toggle_button.dart";
+
 /// The entry point of the application.
 ///
 /// This function initializes the Riverpod provider scope and starts the app.
@@ -246,7 +247,6 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
           onPressed: () {},
         ),
         backgroundColor: Theme.of(context).primaryColor,
-
         title: Text(widget.title, style: const TextStyle(color: Colors.white)),
         actions: [
           IconButton(
@@ -258,13 +258,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
       body: IndexedStack(
         index: selectedIndex,
         children: [
-
-
           const Center(child: DarkModeToggleButton()),
-
-
-
-
           LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
               return Stack(

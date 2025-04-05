@@ -100,29 +100,6 @@ class MappedinWebViewState extends State<MappedinWebView> {
         }
       },
     );
-
-    controller.addJavaScriptChannel(
-      "ThemeChannel",
-      onMessageReceived: (JavaScriptMessage message) {
-        try {
-          final Map<String, dynamic> msg = jsonDecode(message.message);
-          if (msg['type'] == 'error') {
-            setState(() {
-              statusMessage = "Theme Error: ${msg['payload']['message']}";
-            });
-          } else {
-            setState(() {
-              statusMessage = "Theme changed to ${msg['payload']['theme']}";
-            });
-          }
-        } catch (e) {
-          debugPrint("Error parsing Theme message: $e");
-        }
-      },
-    );
-
-
-
     loadHtmlFromAssets();
   }
 
@@ -176,14 +153,8 @@ class MappedinWebViewState extends State<MappedinWebView> {
     await controller.runJavaScript("setFloor('$floorName')");
   }
 
-  setTheme(bool isDark) async {
-    await controller.runJavaScript("setTheme('$isDark')");
-  }
-
   @override
   Widget build(BuildContext context) {
-     return WebViewWidget(controller: controller);
+    return WebViewWidget(controller: controller);
   }
 }
-
-
