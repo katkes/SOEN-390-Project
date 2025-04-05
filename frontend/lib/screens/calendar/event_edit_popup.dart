@@ -5,6 +5,8 @@ import 'package:soen_390/services/calendar_service.dart';
 import 'calendar_event_service.dart';
 import '../../utils/building_search.dart';
 import 'package:soen_390/styles/theme.dart';
+import 'package:soen_390/screens/indoor/mappedin_map_controller.dart';
+import 'package:soen_390/screens/indoor/mappedin_map_screen.dart';
 
 /// This widget displays a popup dialog for editing an event.
 /// The user can edit the event title, location, description, start time, and end time.
@@ -39,6 +41,7 @@ class EventEditPopupState extends State<EventEditPopup> {
   late TextEditingController locationController;
   late TextEditingController descriptionController;
   late TextEditingController classroomController;
+  late MappedinMapController mappedinController;
   late DateTime _startDate;
   late DateTime _endDate;
 
@@ -50,6 +53,7 @@ class EventEditPopupState extends State<EventEditPopup> {
     super.initState();
     titleController = TextEditingController(text: widget.event.summary);
     locationController = TextEditingController();
+    mappedinController = MappedinMapController();
     descriptionController =
         TextEditingController(text: widget.event.description);
     _startDate = widget.event.start?.dateTime ?? DateTime.now();
@@ -62,6 +66,17 @@ class EventEditPopupState extends State<EventEditPopup> {
 
     locationController.text = building;
     classroomController = TextEditingController(text: classroom);
+  }
+ /// Opens the Mappedin map screen.
+  void openMappedinMap() async {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MappedinMapScreen(
+          controller: mappedinController,
+        ),
+      ),
+    );
   }
 
   @override
@@ -132,8 +147,22 @@ class EventEditPopupState extends State<EventEditPopup> {
                           : const Text("Update"),
                     ),
                     ElevatedButton.icon(
-                      onPressed: () {
+                      onPressed: () async{
                         // TODO: 7.1.6 Add navigation logic to next class
+                        final success = await mappedinController
+                            .navigateToRoom(classroomController.text);
+                            print(classroomController.text);
+                        if (success) {
+                        
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Failed to navigate to room'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
+                          openMappedinMap();
                       },
                       icon: Icon(Icons.directions_walk,
                           color: appTheme.colorScheme.onPrimary),
