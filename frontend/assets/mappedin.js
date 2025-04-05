@@ -206,3 +206,17 @@ mapView.on("click", async (event) => {
 });
 
 
+
+window.setTheme = async function setTheme(isDark) {
+    try {
+        if (isDark){
+            mapData.getByType('object').forEach((object) => {
+                        mapView.updateState(object, {
+                            topColor: '#203847',
+                       });
+                   });
+        }
+    } catch (err) {
+        console.log("Error with setting the theme for mappedin");
+    }
+};

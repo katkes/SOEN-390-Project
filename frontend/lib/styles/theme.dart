@@ -7,7 +7,6 @@ final ThemeData appTheme = ThemeData(
     primary: Color(0xFF912338),
     onPrimary: Colors.white,
     secondary: Color(0xFF912338),
-
     onSecondary: Colors.white,
     surface: Colors.white,
     onSurface: Colors.black,
