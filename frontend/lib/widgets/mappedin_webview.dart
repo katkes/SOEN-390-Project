@@ -27,7 +27,13 @@ import "package:soen_390/providers/theme_provider.dart";
 class MappedinWebView extends StatefulWidget {
   /// Optional controller override for testing.
   final WebViewController? controllerOverride;
-  const MappedinWebView({super.key, this.controllerOverride});
+
+  final String? mapId;
+  const MappedinWebView({
+    super.key,
+    this.controllerOverride,
+    this.mapId,
+  });
 
   @override
   MappedinWebViewState createState() => MappedinWebViewState();
@@ -35,11 +41,22 @@ class MappedinWebView extends StatefulWidget {
 
 class MappedinWebViewState extends State<MappedinWebView> {
   late final WebViewController controller;
+  final TextEditingController searchController =
+      TextEditingController(); // Add this line
   String statusMessage = "Nothing";
+  String? _currentMapId;
+
+  @override
+  void dispose() {
+    searchController
+        .dispose(); // Dispose the controller to prevent memory leaks
+    super.dispose();
+  }
 
   @override
   void initState() {
     super.initState();
+    _currentMapId = widget.mapId;
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted);
 
@@ -68,6 +85,9 @@ class MappedinWebViewState extends State<MappedinWebView> {
           }
         } catch (e) {
           debugPrint("Error parsing Directions message: $e");
+          setState(() {
+            statusMessage = "Error parsing directions response";
+          });
         }
       },
     );
@@ -97,64 +117,159 @@ class MappedinWebViewState extends State<MappedinWebView> {
           }
         } catch (e) {
           debugPrint("Error parsing Floors message: $e");
+          setState(() {
+            statusMessage = "Error parsing floor response";
+          });
         }
       },
     );
     loadHtmlFromAssets();
   }
 
-  /// Loads the html file into the weview. It also inserts the js file into html and replaces the
-  /// labels with secrets from the .env file
-  Future<void> loadHtmlFromAssets() async {
-    final fileHtmlContents =
-        await rootBundle.loadString('assets/mappedin.html');
-    final fileJsContents = await rootBundle.loadString('assets/mappedin.js');
-    final combinedHtml = fileHtmlContents.replaceFirst(
-      'JAVASCRIPTCODE',
-      fileJsContents,
-    );
-    List<String> apiLabels = [
-      "MAPPEDIN_API_KEY",
-      "MAPPEDIN_API_SECRET",
-      "MAPPEDIN_API_MAP_ID",
-    ];
-    List<String> apiKeys = [
-      dotenv.env['MAPPEDIN_API_KEY'] ?? "",
-      dotenv.env['MAPPEDIN_API_SECRET'] ?? "",
-      "67968294965a13000bcdfe74",
-    ];
-    Map<String, String> keymap = Map.fromIterables(apiLabels, apiKeys);
-    final fileHtmlWithKeys = keymap.entries.fold(
-      combinedHtml,
-      (prev, e) => prev.replaceAll(e.key, e.value),
-    );
+  /// Reloads the WebView with a new map ID
+  Future<void> reloadWithMapId(String mapId) async {
+    setState(() {
+      _currentMapId = mapId;
+    });
+    await loadHtmlFromAssets();
+  }
 
-    controller.loadHtmlString(fileHtmlWithKeys);
+  /// Loads the HTML file into the WebView and injects JavaScript code and API keys.
+  ///
+  /// Throws an exception if:
+  /// - Required assets cannot be loaded
+  /// - Environment variables are missing
+  /// - API keys cannot be injected
+  Future<void> loadHtmlFromAssets() async {
+    try {
+      final fileHtmlContents =
+          await rootBundle.loadString('assets/mappedin.html');
+      final fileJsContents = await rootBundle.loadString('assets/mappedin.js');
+
+      if (fileHtmlContents.isEmpty || fileJsContents.isEmpty) {
+        throw Exception('Failed to load required assets');
+      }
+
+      final combinedHtml = fileHtmlContents.replaceFirst(
+        'JAVASCRIPTCODE',
+        fileJsContents,
+      );
+
+      // Validate environment variables
+      final apiKey = dotenv.env['MAPPEDIN_API_KEY'];
+      final apiSecret = dotenv.env['MAPPEDIN_API_SECRET'];
+      final defaultMapId = '67968294965a13000bcdfe74';
+    
+      final mapId = _currentMapId ?? widget.mapId ?? defaultMapId;
+
+      if (apiKey == null || apiSecret == null) {
+        throw Exception('Missing required environment variables');
+      }
+
+      final keymap = {
+        'MAPPEDIN_API_KEY': apiKey,
+        'MAPPEDIN_API_SECRET': apiSecret,
+        'MAPPEDIN_API_MAP_ID': mapId,
+      };
+
+      final fileHtmlWithKeys = keymap.entries.fold(
+        combinedHtml,
+        (prev, e) => prev.replaceAll(e.key, e.value),
+      );
+
+      await controller.loadHtmlString(fileHtmlWithKeys);
+    } catch (e) {
+      debugPrint('Error loading HTML assets: $e');
+    }
   }
 
   /// Sends a request to the embedded JavaScript to generate directions.
   ///
   /// - [departure]: The starting location name.
   /// - [destination]: The destination location name.
-  /// - [accessible]: If the route should be accessible.
-  showDirections(
+  /// - [accessibility]: If the route should be accessible (currently unused).
+  Future<void> showDirections(
       String departure, String destination, bool accessibility) async {
-    // accessibility is not used, preference will be taken from preference from sharedPreferences
-    bool preference =
-        await IndoorAccessibilityState.getMobilityStatusPreference();
-    await controller.runJavaScript(
-        "getDirections('$departure', '$destination', '$preference')");
+    try {
+      final preference =
+          await IndoorAccessibilityState.getMobilityStatusPreference();
+      await controller.runJavaScript(
+          "getDirections('$departure', '$destination', '$preference')");
+    } catch (e) {
+      debugPrint('Error showing directions: $e');
+      setState(() {
+        statusMessage = 'Failed to show directions: $e';
+      });
+    }
   }
 
   /// Sends a request to the embedded JavaScript to change the visible floor.
   ///
   /// - [floorName]: The name of the floor to switch to.
-  setFloor(String floorName) async {
-    await controller.runJavaScript("setFloor('$floorName')");
+  Future<void> setFloor(String floorName) async {
+    try {
+      await controller.runJavaScript("setFloor('$floorName')");
+    } catch (e) {
+      debugPrint('Error setting floor: $e');
+      setState(() {
+        statusMessage = 'Failed to change floor: $e';
+      });
+    }
+  }
+
+  /// Navigates to a specific room on the map
+  ///
+  /// - [roomNumber]: The room number to navigate to (e.g., "907")
+  Future<void> navigateToRoom(String roomNumber) async {
+    try {
+      await showDirections("Entrance", roomNumber, false);
+    } catch (e) {
+      debugPrint('Error navigating to room: $e');
+      setState(() {
+        statusMessage = 'Failed to navigate to room: $e';
+      });
+    }
+  }
+
+  /// Calls JavaScript function to highlight a room
+  searchRoom(String roomNumber) {
+    controller.runJavaScript("search('$roomNumber')");
+    controller.runJavaScript("setCameraTo('$roomNumber')");
   }
 
   @override
   Widget build(BuildContext context) {
-    return WebViewWidget(controller: controller);
+    return Column(
+      children: [
+        /// Search Bar for Room Numbers
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextField(
+            controller: searchController,
+            decoration: InputDecoration(
+              hintText: "Search room number",
+              prefixIcon: const Icon(Icons.search),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              filled: true,
+              fillColor: Colors.white,
+            ),
+            onSubmitted: (value) {
+              if (value.isNotEmpty) {
+                searchRoom(value);
+              }
+            },
+          ),
+        ),
+
+        /// The Mappedin WebView
+        Expanded(
+          child: WebViewWidget(controller: controller),
+        ),
+      ],
+    );
+
+    // return WebViewWidget(controller: controller);
   }
 }
