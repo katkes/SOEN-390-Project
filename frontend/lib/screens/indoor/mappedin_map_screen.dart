@@ -35,10 +35,6 @@ class _MappedinMapScreenState extends State<MappedinMapScreen> {
     _controller = widget.controller ?? MappedinMapController();
   }
 
-  /// GlobalKey to access the MappedinWebViewState.
-  final GlobalKey<MappedinWebViewState> _webViewKey =
-      GlobalKey<MappedinWebViewState>();
-
   /// Helper method to build Floating Action Buttons with standard styling.
   Widget _buildFABButton(String text, VoidCallback onPressed) {
     return ElevatedButton(
