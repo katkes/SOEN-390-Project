@@ -124,7 +124,6 @@ class MapWidgetState extends State<MapWidget> {
   @override
   void initState() {
     super.initState();
-    //widget.onRoutePointsChanged(routePoints); // this line crashes the map
     _mapController = MapController();
     _mapService = MapService();
 
