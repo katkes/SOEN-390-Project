@@ -348,12 +348,14 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
                           onPressed: () async {
                             final success = await _mappedinController
                                 .selectBuildingByName("Hall");
-                            if (!success && mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text(
-                                        'Failed to switch to Hall Building')),
-                              );
+                            if (!success) {
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text(
+                                          'Failed to switch to Hall Building')),
+                                );
+                              }
                             }
                             if (mounted) {
                               _openMappedinMap();
@@ -368,12 +370,14 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
                           onPressed: () async {
                             final success = await _mappedinController
                                 .navigateToRoom("MBS1.115");
-                            if (!success && mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content:
-                                        Text('Failed to navigate to MBS1.115')),
-                              );
+                            if (!success) {
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text(
+                                          'Failed to navigate to MBS1.115')),
+                                );
+                              }
                             }
                             if (mounted) {
                               _openMappedinMap();
