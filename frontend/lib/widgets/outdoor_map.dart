@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -203,10 +204,81 @@ class MapWidgetState extends State<MapWidget> {
 
   /// Starts the polyline animation by initializing animation variables and setting up a timer to update the animatedPoints
   void _startPolylineAnimation() {
-    _stopPolylineAnimation(); // Stop previous animation
+    _stopPolylineAnimation(); // Stop any previous animation
     animatedPoints.clear(); // Reset animation data
     animationIndex = 0;
     animationProgress = 0.0;
+
+    if (widget.routePoints.isEmpty) return;
+
+    //calculate bounds of the route
+    double minLat = double.infinity, maxLat = -double.infinity;
+    double minLng = double.infinity, maxLng = -double.infinity;
+
+    for (var point in widget.routePoints) {
+      minLat = min(minLat, point.latitude);
+      maxLat = max(maxLat, point.latitude);
+      minLng = min(minLng, point.longitude);
+      maxLng = max(maxLng, point.longitude);
+    }
+
+    final routeCenter = LatLng(
+      (minLat + maxLat) / 2,
+      (minLng + maxLng) / 2,
+    );
+
+    //calculate route distance in meters
+    final Distance distanceCalc = const Distance();
+    double totalDistance = 0.0;
+    for (int i = 0; i < widget.routePoints.length - 1; i++) {
+      totalDistance +=
+          distanceCalc(widget.routePoints[i], widget.routePoints[i + 1]);
+    }
+
+    //determine target zoom level based on distance
+    double targetZoomLevel;
+    if (totalDistance > 20000) {
+      targetZoomLevel = 10.0;
+    } else if (totalDistance > 10000) {
+      targetZoomLevel = 11.5;
+    } else if (totalDistance > 5000) {
+      targetZoomLevel = 13.0;
+    } else if (totalDistance > 1000) {
+      targetZoomLevel = 14.5;
+    } else if (totalDistance > 500) {
+      targetZoomLevel = 15.5;
+    } else {
+      targetZoomLevel = 17.0;
+    }
+
+    //start with a closer zoom to create zoom-out effect
+    double startingZoomLevel = min(19.0, targetZoomLevel + 2.5);
+
+    //center the map with initial zoom
+    _mapController.move(routeCenter, startingZoomLevel);
+
+    //animate zoom smoothly over 2.5 seconds
+    final zoomDuration = const Duration(milliseconds: 2500);
+    final startTime = DateTime.now();
+
+    Timer.periodic(const Duration(milliseconds: 16), (zoomTimer) {
+      final elapsed = DateTime.now().difference(startTime).inMilliseconds;
+      final progress = min(1.0, elapsed / zoomDuration.inMilliseconds);
+
+      // Ease-out animation: fast start, smooth end
+      final eased = 1 - pow(1 - progress, 2).toDouble();
+
+      final currentZoom =
+          startingZoomLevel - (startingZoomLevel - targetZoomLevel) * eased;
+
+      _mapController.move(routeCenter, currentZoom);
+
+      if (progress >= 1.0) {
+        zoomTimer.cancel();
+      }
+    });
+
+    //animate polyline path point by point
     animationTimer = Timer.periodic(const Duration(milliseconds: 14), (timer) {
       if (animationIndex < widget.routePoints.length - 1) {
         animationProgress += 0.7; // Increment animation progress
@@ -214,6 +286,7 @@ class MapWidgetState extends State<MapWidget> {
           animationProgress = 0.0;
           animationIndex++;
         }
+
         setState(() {
           animatedPoints.clear();
           for (int i = 0; i < animationIndex; i++) {
