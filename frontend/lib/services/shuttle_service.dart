@@ -23,135 +23,32 @@ class ShuttleSchedule {
 
 // Service class to manage shuttle schedules and stop locations.
 class ShuttleService {
-  // Static data for shuttle schedules.
-  static final Map<String, dynamic> _scheduleData = {
-    "friday": {
-      "LOY_departures": [
-        "9:15",
-        "9:30",
-        "9:45",
-        "10:15",
-        "10:45",
-        "11:00",
-        "11:15",
-        "12:00",
-        "12:15",
-        "12:45",
-        "13:00",
-        "13:15",
-        "13:45",
-        "14:15",
-        "14:30",
-        "14:45",
-        "15:15",
-        "15:30",
-        "15:45",
-        "16:45",
-        "17:15",
-        "17:45",
-        "18:15"
-      ],
-      "SGW_departures": [
-        "9:45",
-        "10:00",
-        "10:15",
-        "10:45",
-        "11:15",
-        "11:30",
-        "12:15",
-        "12:30",
-        "12:45",
-        "13:15",
-        "13:45",
-        "14:00",
-        "14:15",
-        "14:45",
-        "15:00",
-        "15:15",
-        "15:45",
-        "16:00",
-        "16:45",
-        "17:15",
-        "17:45",
-        "18:15"
-      ],
-      "last_bus": {"LOY": "18:15", "SGW": "18:15"}
-    },
-    "monday_thursday": {
-      "LOY_departures": [
-        "9:15",
-        "9:30",
-        "9:45",
-        "10:00",
-        "10:15",
-        "10:30",
-        "10:45",
-        "11:00",
-        "11:15",
-        "11:30",
-        "11:45",
-        "12:30",
-        "12:45",
-        "13:00",
-        "13:15",
-        "13:30",
-        "13:45",
-        "14:00",
-        "14:15",
-        "14:30",
-        "14:45",
-        "15:00",
-        "15:15",
-        "15:30",
-        "15:45",
-        "16:30",
-        "16:45",
-        "17:00",
-        "17:15",
-        "17:30",
-        "17:45",
-        "18:00",
-        "18:15",
-        "18:30"
-      ],
-      "SGW_departures": [
-        "9:30",
-        "9:45",
-        "10:00",
-        "10:15",
-        "10:30",
-        "10:45",
-        "11:00",
-        "11:15",
-        "11:30",
-        "12:15",
-        "12:30",
-        "12:45",
-        "13:00",
-        "13:15",
-        "13:30",
-        "13:45",
-        "14:00",
-        "14:15",
-        "14:30",
-        "14:45",
-        "15:00",
-        "15:15",
-        "15:30",
-        "16:00",
-        "16:15",
-        "16:45",
-        "17:00",
-        "17:15",
-        "17:30",
-        "17:45",
-        "18:00",
-        "18:15",
-        "18:30"
-      ],
-      "last_bus": {"LOY": "18:30", "SGW": "18:30"}
-    }
-  };
+  // Define time variables for Friday and Monday-Thursday schedules
+  static final List<String> fridayLoyDepartures = [
+    "9:15", "9:30", "9:45", "10:15", "10:45", "11:00", "11:15", "12:00", "12:15", "12:45",
+    "13:00", "13:15", "13:45", "14:15", "14:30", "14:45", "15:15", "15:30", "15:45", "16:45",
+    "17:15", "17:45", "18:15"
+  ];
+  static final List<String> fridaySgwDepartures = [
+    "9:45", "10:00", "10:15", "10:45", "11:15", "11:30", "12:15", "12:30", "12:45", "13:15",
+    "13:45", "14:00", "14:15", "14:45", "15:00", "15:15", "15:45", "16:00", "16:45", "17:15",
+    "17:45", "18:15"
+  ];
+  static final Map<String, String> fridayLastBus = {"LOY": "18:15", "SGW": "18:15"};
+
+  static final List<String> mondayThursdayLoyDepartures = [
+    "9:15", "9:30", "9:45", "10:00", "10:15", "10:30", "10:45", "11:00", "11:15", "11:30",
+    "11:45", "12:30", "12:45", "13:00", "13:15", "13:30", "13:45", "14:00", "14:15", "14:30",
+    "14:45", "15:00", "15:15", "15:30", "15:45", "16:30", "16:45", "17:00", "17:15", "17:30",
+    "17:45", "18:00", "18:15", "18:30"
+  ];
+  static final List<String> mondayThursdaySgwDepartures = [
+    "9:30", "9:45", "10:00", "10:15", "10:30", "10:45", "11:00", "11:15", "11:30", "12:15",
+    "12:30", "12:45", "13:00", "13:15", "13:30", "13:45", "14:00", "14:15", "14:30", "14:45",
+    "15:00", "15:15", "15:30", "16:00", "16:15", "16:45", "17:00", "17:15", "17:30", "17:45",
+    "18:00", "18:15", "18:30"
+  ];
+  static final Map<String, String> mondayThursdayLastBus = {"LOY": "18:30", "SGW": "18:30"};
 
   // Static data for shuttle stop locations.
   static final Map<String, String> _stops = {
@@ -161,12 +58,10 @@ class ShuttleService {
 
   // Retrieves the shuttle schedule for Friday.
   ShuttleSchedule getFridaySchedule() {
-    final data = _scheduleData['friday'];
-
     return ShuttleSchedule(
-      loyDepartures: List<String>.from(data['LOY_departures']),
-      sgwDepartures: List<String>.from(data['SGW_departures']),
-      lastBus: Map<String, String>.from(data['last_bus']),
+      loyDepartures: fridayLoyDepartures,
+      sgwDepartures: fridaySgwDepartures,
+      lastBus: fridayLastBus,
       stops: _stops.map((key, value) {
         return MapEntry(
           key,
@@ -178,12 +73,10 @@ class ShuttleService {
 
   // Retrieves the shuttle schedule for Monday to Thursday.
   ShuttleSchedule getMondayThursdaySchedule() {
-    final data = _scheduleData['monday_thursday'];
-
     return ShuttleSchedule(
-      loyDepartures: List<String>.from(data['LOY_departures']),
-      sgwDepartures: List<String>.from(data['SGW_departures']),
-      lastBus: Map<String, String>.from(data['last_bus']),
+      loyDepartures: mondayThursdayLoyDepartures,
+      sgwDepartures: mondayThursdaySgwDepartures,
+      lastBus: mondayThursdayLastBus,
       stops: _stops.map((key, value) {
         return MapEntry(
           key,
