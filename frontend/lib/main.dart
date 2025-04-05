@@ -246,6 +246,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
           onPressed: () {},
         ),
         backgroundColor: Theme.of(context).primaryColor,
+
         title: Text(widget.title, style: const TextStyle(color: Colors.white)),
         actions: [
           IconButton(
