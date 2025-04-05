@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:soen_390/services/shuttle_service.dart';
-import 'package:soen_390/widgets/shuttle_schedule_dispaly.dart';
+import 'package:soen_390/widgets/shuttle_schedule_display.dart';
 
 void main() {
   late ShuttleSchedule testFridaySchedule;

@@ -1,3 +1,4 @@
+// Represents a shuttle stop location with a name and coordinates.
 class ShuttleStopLocation {
   final String name;
   final String coordinates;
@@ -5,11 +6,12 @@ class ShuttleStopLocation {
   ShuttleStopLocation({required this.name, required this.coordinates});
 }
 
+// Represents the shuttle schedule, including departure times, last bus times, and stop locations.
 class ShuttleSchedule {
-  final List<String> loyDepartures;
-  final List<String> sgwDepartures;
-  final Map<String, String> lastBus;
-  final Map<String, ShuttleStopLocation> stops;
+  final List<String> loyDepartures; // Departure times from Loyola campus.
+  final List<String> sgwDepartures; // Departure times from SGW campus.
+  final Map<String, String> lastBus; // Last bus times for each campus.
+  final Map<String, ShuttleStopLocation> stops; // Shuttle stop locations.
 
   ShuttleSchedule({
     required this.loyDepartures,
@@ -19,7 +21,9 @@ class ShuttleSchedule {
   });
 }
 
+// Service class to manage shuttle schedules and stop locations.
 class ShuttleService {
+  // Static data for shuttle schedules.
   static final Map<String, dynamic> _scheduleData = {
     "friday": {
       "LOY_departures": [
@@ -57,11 +61,13 @@ class ShuttleService {
     }
   };
 
+  // Static data for shuttle stop locations.
   static final Map<String, String> _stops = {
-    "LOY": "45°27'28.2\"N 73°38'20.3\"W",
-    "SGW": "45°29'49.6\"N 73°34'42.5\"W"
+    "LOY": "45°27'28.2\"N 73°38'20.3\"W", // Coordinates for Loyola campus.
+    "SGW": "45°29'49.6\"N 73°34'42.5\"W"  // Coordinates for SGW campus.
   };
 
+  // Retrieves the shuttle schedule for Friday.
   ShuttleSchedule getFridaySchedule() {
     final data = _scheduleData['friday'];
 
@@ -78,6 +84,7 @@ class ShuttleService {
     );
   }
 
+  // Retrieves the shuttle schedule for Monday to Thursday.
   ShuttleSchedule getMondayThursdaySchedule() {
     final data = _scheduleData['monday_thursday'];
 
