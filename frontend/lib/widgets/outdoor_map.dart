@@ -120,6 +120,7 @@ class MapWidgetState extends State<MapWidget> {
   List<LatLng> animatedPoints = [];
   int animationIndex = 0;
   Timer? animationTimer;
+  Timer? zoomAnimationTimer;
   double animationProgress = 0.0; // Track progress between points
 
   @override
@@ -205,69 +206,82 @@ class MapWidgetState extends State<MapWidget> {
   /// Starts the polyline animation by initializing animation variables and setting up a timer to update the animatedPoints
   void _startPolylineAnimation() {
     _stopPolylineAnimation(); // Stop any previous animation
-    animatedPoints.clear(); // Reset animation data
-    animationIndex = 0;
-    animationProgress = 0.0;
+    resetAnimationData();
 
     if (widget.routePoints.isEmpty) return;
 
-    //calculate bounds of the route
+    final routeCenter = _calculateRouteCenter(widget.routePoints);
+    final totalDistance = _calculateTotalDistance(widget.routePoints);
+    final targetZoomLevel = _determineTargetZoomLevel(totalDistance);
+    final startingZoomLevel = min(19.0, targetZoomLevel + 2.5);
+
+    _setInitialMapView(routeCenter, startingZoomLevel);
+    _animateZoom(routeCenter, startingZoomLevel, targetZoomLevel);
+    _animatePolylinePath();
+  }
+
+  void resetAnimationData() {
+    animatedPoints.clear();
+    animationIndex = 0;
+    animationProgress = 0.0;
+  }
+
+  LatLng _calculateRouteCenter(List<LatLng> routePoints) {
     double minLat = double.infinity, maxLat = -double.infinity;
     double minLng = double.infinity, maxLng = -double.infinity;
 
-    for (var point in widget.routePoints) {
+    for (var point in routePoints) {
       minLat = min(minLat, point.latitude);
       maxLat = max(maxLat, point.latitude);
       minLng = min(minLng, point.longitude);
       maxLng = max(maxLng, point.longitude);
     }
 
-    final routeCenter = LatLng(
-      (minLat + maxLat) / 2,
-      (minLng + maxLng) / 2,
-    );
+    return LatLng((minLat + maxLat) / 2, (minLng + maxLng) / 2);
+  }
 
-    //calculate route distance in meters
-    final Distance distanceCalc = const Distance();
+  double _calculateTotalDistance(List<LatLng> routePoints) {
+    const Distance distanceCalc = Distance();
     double totalDistance = 0.0;
-    for (int i = 0; i < widget.routePoints.length - 1; i++) {
-      totalDistance +=
-          distanceCalc(widget.routePoints[i], widget.routePoints[i + 1]);
+
+    for (int i = 0; i < routePoints.length - 1; i++) {
+      totalDistance += distanceCalc(routePoints[i], routePoints[i + 1]);
     }
 
-    //determine target zoom level based on distance
-    double targetZoomLevel;
+    return totalDistance;
+  }
+
+  double _determineTargetZoomLevel(double totalDistance) {
     if (totalDistance > 20000) {
-      targetZoomLevel = 10.0;
+      return 10.0;
     } else if (totalDistance > 10000) {
-      targetZoomLevel = 11.5;
+      return 11.5;
     } else if (totalDistance > 5000) {
-      targetZoomLevel = 13.0;
+      return 13.0;
     } else if (totalDistance > 1000) {
-      targetZoomLevel = 14.5;
+      return 14.5;
     } else if (totalDistance > 500) {
-      targetZoomLevel = 15.5;
+      return 15.5;
     } else {
-      targetZoomLevel = 17.0;
+      return 17.0;
     }
+  }
 
-    //start with a closer zoom to create zoom-out effect
-    double startingZoomLevel = min(19.0, targetZoomLevel + 2.5);
-
-    //center the map with initial zoom
+  void _setInitialMapView(LatLng routeCenter, double startingZoomLevel) {
     _mapController.move(routeCenter, startingZoomLevel);
+  }
 
-    //animate zoom smoothly over 2.5 seconds
-    final zoomDuration = const Duration(milliseconds: 2500);
+  void _animateZoom(
+      LatLng routeCenter, double startingZoomLevel, double targetZoomLevel) {
+    const zoomDuration = Duration(milliseconds: 2500);
     final startTime = DateTime.now();
 
-    Timer.periodic(const Duration(milliseconds: 16), (zoomTimer) {
+    zoomAnimationTimer =
+        Timer.periodic(const Duration(milliseconds: 16), (zoomTimer) {
       final elapsed = DateTime.now().difference(startTime).inMilliseconds;
       final progress = min(1.0, elapsed / zoomDuration.inMilliseconds);
 
-      // Ease-out animation: fast start, smooth end
       final eased = 1 - pow(1 - progress, 2).toDouble();
-
       final currentZoom =
           startingZoomLevel - (startingZoomLevel - targetZoomLevel) * eased;
 
@@ -275,35 +289,41 @@ class MapWidgetState extends State<MapWidget> {
 
       if (progress >= 1.0) {
         zoomTimer.cancel();
+        zoomAnimationTimer = null;
       }
     });
+  }
 
-    //animate polyline path point by point
+  void _animatePolylinePath() {
     animationTimer = Timer.periodic(const Duration(milliseconds: 14), (timer) {
       if (animationIndex < widget.routePoints.length - 1) {
-        animationProgress += 0.7; // Increment animation progress
-        if (animationProgress >= 1.0) {
-          animationProgress = 0.0;
-          animationIndex++;
-        }
-
-        setState(() {
-          animatedPoints.clear();
-          for (int i = 0; i < animationIndex; i++) {
-            animatedPoints.add(widget.routePoints[i]);
-          }
-          if (animationIndex < widget.routePoints.length - 1) {
-            final start = widget.routePoints[animationIndex];
-            final end = widget.routePoints[animationIndex + 1];
-            final lat = start.latitude +
-                (end.latitude - start.latitude) * animationProgress;
-            final lng = start.longitude +
-                (end.longitude - start.longitude) * animationProgress;
-            animatedPoints.add(LatLng(lat, lng));
-          }
-        });
+        _updatePolylineAnimation();
       } else {
         _stopPolylineAnimation();
+      }
+    });
+  }
+
+  void _updatePolylineAnimation() {
+    animationProgress += 0.7; // Increment animation progress
+    if (animationProgress >= 1.0) {
+      animationProgress = 0.0;
+      animationIndex++;
+    }
+
+    setState(() {
+      animatedPoints.clear();
+      for (int i = 0; i < animationIndex; i++) {
+        animatedPoints.add(widget.routePoints[i]);
+      }
+      if (animationIndex < widget.routePoints.length - 1) {
+        final start = widget.routePoints[animationIndex];
+        final end = widget.routePoints[animationIndex + 1];
+        final lat = start.latitude +
+            (end.latitude - start.latitude) * animationProgress;
+        final lng = start.longitude +
+            (end.longitude - start.longitude) * animationProgress;
+        animatedPoints.add(LatLng(lat, lng));
       }
     });
   }
@@ -311,6 +331,7 @@ class MapWidgetState extends State<MapWidget> {
   /// Cancels the animation timer, stopping the polyline animation.
   void _stopPolylineAnimation() {
     animationTimer?.cancel();
+    zoomAnimationTimer?.cancel();
   }
 
   /// Stops the polyline animation and disposes of the widget

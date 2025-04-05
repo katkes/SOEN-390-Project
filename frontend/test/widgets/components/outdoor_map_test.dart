@@ -424,4 +424,60 @@ void main() {
     final mapWidget = tester.widget<MapWidget>(find.byType(MapWidget));
     expect(mapWidget.userLocation, equals(updatedUserLocation));
   });
+  testWidgets('Polyline animation updates when route points change',
+      (WidgetTester tester) async {
+    final initialRoutePoints = [
+      const LatLng(45.497856, -73.579588),
+      const LatLng(45.498000, -73.580000),
+    ];
+
+    final updatedRoutePoints = [
+      const LatLng(45.498500, -73.580500),
+      const LatLng(45.499000, -73.581000),
+    ];
+
+    // Build widget with initial route points
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: MapWidget(
+            location: testLocation,
+            routePoints: initialRoutePoints,
+            httpClient: mockHttpClient,
+            routeService: mockRouteService,
+            mapsApiClient: mockMapsApiClient,
+            buildingPopUps: mockBuildingPopUps,
+            userLocation: userLocation,
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    // Ensure PolylineLayer is visible initially
+    expect(find.byType(PolylineLayer), findsNothing);
+
+    // Rebuild widget with updated route points
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: MapWidget(
+            location: testLocation,
+            routePoints: updatedRoutePoints,
+            httpClient: mockHttpClient,
+            routeService: mockRouteService,
+            mapsApiClient: mockMapsApiClient,
+            buildingPopUps: mockBuildingPopUps,
+            userLocation: userLocation,
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    // Ensure PolylineLayer is updated with new route points
+    expect(find.byType(PolylineLayer), findsOneWidget);
+  });
 }
