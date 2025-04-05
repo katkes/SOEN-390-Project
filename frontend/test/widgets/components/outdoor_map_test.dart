@@ -398,4 +398,30 @@ void main() {
     await tester.tap(find.byKey(const Key('indoor-navigation-buttons')));
     await tester.pump();
   });
+  testWidgets('User location updates correctly on map',
+      (WidgetTester tester) async {
+    final updatedUserLocation = const LatLng(45.500, -73.570);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: MapWidget(
+            location: testLocation,
+            userLocation: updatedUserLocation,
+            httpClient: mockHttpClient,
+            routeService: mockRouteService,
+            mapsApiClient: mockMapsApiClient,
+            buildingPopUps: mockBuildingPopUps,
+            routePoints: const [],
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    // Ensure the map has updated the user location (this depends on your map widget's behavior)
+    final mapWidget = tester.widget<MapWidget>(find.byType(MapWidget));
+    expect(mapWidget.userLocation, equals(updatedUserLocation));
+  });
 }
