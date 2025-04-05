@@ -362,5 +362,4 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
 
     expect(state.startLocation, equals('Your Location'));
   });
-
 }
