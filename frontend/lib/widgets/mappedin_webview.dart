@@ -13,6 +13,8 @@
 /// Usage:
 ///   await _webViewKey.currentState?.showDirections("124", "817");
 ///   await _webViewKey.currentState?.setFloor("Floor 2");
+///   await _webViewKey.currentState?.reloadWithMapId("someMapId");
+
 library;
 
 import 'dart:convert';
@@ -43,14 +45,6 @@ class MappedinWebViewState extends State<MappedinWebView> {
       ..setJavaScriptMode(JavaScriptMode.unrestricted);
 
     /// Registers a JavaScript channel to receive direction updates from the WebView.
-    ///
-    /// - Channel name: `"DirectionsChannel"`
-    /// - Receives: A JSON string with the following structure:
-    ///   {
-    ///     "type": "success" | "error",
-    ///     "payload": String | { "message": String }
-    ///   }
-    /// - Updates the [statusMessage] based on success or error.
     controller.addJavaScriptChannel(
       "DirectionsChannel",
       onMessageReceived: (JavaScriptMessage message) {
@@ -72,14 +66,6 @@ class MappedinWebViewState extends State<MappedinWebView> {
     );
 
     /// Registers a JavaScript channel to receive floor selection events from the WebView.
-    ///
-    /// - Channel name: `"FloorsChannel"`
-    /// - Receives: A JSON string with the following structure:
-    ///   {
-    ///     "type": "success" | "error",
-    ///     "payload": { "floorName": String } | { "message": String }
-    ///   }
-    /// - Updates the [statusMessage] to reflect the current floor or error.
     controller.addJavaScriptChannel(
       "FloorsChannel",
       onMessageReceived: (JavaScriptMessage message) {
@@ -103,9 +89,8 @@ class MappedinWebViewState extends State<MappedinWebView> {
     loadHtmlFromAssets();
   }
 
-  /// Loads the html file into the weview. It also inserts the js file into html and replaces the
-  /// labels with secrets from the .env file
-  Future<void> loadHtmlFromAssets() async {
+  /// Loads the HTML file and inserts secrets from .env
+  Future<void> loadHtmlFromAssets({String? mapIdOverride}) async {
     final fileHtmlContents =
         await rootBundle.loadString('assets/mappedin.html');
     final fileJsContents = await rootBundle.loadString('assets/mappedin.js');
@@ -121,7 +106,7 @@ class MappedinWebViewState extends State<MappedinWebView> {
     List<String> apiKeys = [
       dotenv.env['MAPPEDIN_API_KEY'] ?? "",
       dotenv.env['MAPPEDIN_API_SECRET'] ?? "",
-      "67968294965a13000bcdfe74",
+      mapIdOverride ?? "67968294965a13000bcdfe74",
     ];
     Map<String, String> keymap = Map.fromIterables(apiLabels, apiKeys);
     final fileHtmlWithKeys = keymap.entries.fold(
@@ -132,31 +117,27 @@ class MappedinWebViewState extends State<MappedinWebView> {
     controller.loadHtmlString(fileHtmlWithKeys);
   }
 
-  /// Sends a request to the embedded JavaScript to generate directions.
-  ///
-  /// - [departure]: The starting location name.
-  /// - [destination]: The destination location name.
-  /// - [accessible]: If the route should be accessible.
+  /// Tells JS to generate directions between two rooms
   showDirections(
       String departure, String destination, bool accessibility) async {
-    // accessibility is not used, preference will be taken from preference from sharedPreferences
     bool preference =
         await IndoorAccessibilityState.getMobilityStatusPreference();
     await controller.runJavaScript(
         "getDirections('$departure', '$destination', '$preference')");
   }
 
-  /// Sends a request to the embedded JavaScript to change the visible floor.
-  ///
-  /// - [floorName]: The name of the floor to switch to.
+  /// Tells JS to switch floor
   setFloor(String floorName) async {
     await controller.runJavaScript("setFloor('$floorName')");
+  }
+
+  /// Reloads the WebView with a different building's mapId
+  Future<void> reloadWithMapId(String mapId) async {
+    await loadHtmlFromAssets(mapIdOverride: mapId);
   }
 
   @override
   Widget build(BuildContext context) {
     return WebViewWidget(controller: controller);
   }
-
-  reloadWithMapId(String mapId) {}
 }
