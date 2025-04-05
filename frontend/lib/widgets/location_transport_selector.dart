@@ -298,7 +298,6 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
           style: ElevatedButton.styleFrom(
             backgroundColor: Theme.of(context).colorScheme.surface,
             foregroundColor: Theme.of(context).colorScheme.primary,
-
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
               side: const BorderSide(color: Colors.black),
@@ -336,7 +335,8 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
     );
   }
 
-  Widget _buildTransportMode(BuildContext context, String label, IconData icon, {bool isSelected = false}) {
+  Widget _buildTransportMode(BuildContext context, String label, IconData icon,
+      {bool isSelected = false}) {
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -354,7 +354,9 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
           Icon(
             icon,
             size: 28,
-            color: isSelected ? Theme.of(context).colorScheme.primary : Colors.black54,
+            color: isSelected
+                ? Theme.of(context).colorScheme.primary
+                : Colors.black54,
           ),
           const SizedBox(height: 5),
           Text(
@@ -362,7 +364,9 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w400,
-              color: isSelected ? Theme.of(context).colorScheme.primary : Colors.black54,
+              color: isSelected
+                  ? Theme.of(context).colorScheme.primary
+                  : Colors.black54,
             ),
           ),
         ],

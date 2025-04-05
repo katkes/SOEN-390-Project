@@ -205,9 +205,9 @@ class WaypointSelectionScreenState extends State<WaypointSelectionScreen> {
         // backgroundColor: appTheme.primaryColor,
         title: const Text("Find my Way",
             style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-                // color: Colors.white
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              // color: Colors.white
             )),
         leading: IconButton(
           // icon: const Icon(Icons.arrow_back, color: Colors.white),

@@ -31,7 +31,6 @@ class RouteCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-
       onTap: onCardTapped,
       child: Container(
         width: 382,

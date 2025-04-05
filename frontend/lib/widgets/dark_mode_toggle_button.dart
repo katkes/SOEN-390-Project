@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:soen_390/styles/theme.dart';
 import "package:soen_390/providers/theme_provider.dart";
 
-
 class DarkModeToggleButton extends ConsumerWidget {
   const DarkModeToggleButton({super.key});
 
@@ -18,7 +17,9 @@ class DarkModeToggleButton extends ConsumerWidget {
         child: ElevatedButton(
           onPressed: () => themeNotifier.toggleTheme(),
           child: Text(
-            themeData == darkAppTheme ? 'Switch to Light Mode' : 'Switch to Dark Mode',
+            themeData == darkAppTheme
+                ? 'Switch to Light Mode'
+                : 'Switch to Dark Mode',
           ),
         ),
       ),
