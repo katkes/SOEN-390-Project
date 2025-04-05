@@ -176,10 +176,8 @@ class MappedinWebViewState extends State<MappedinWebView> {
       );
 
       await controller.loadHtmlString(fileHtmlWithKeys);
-
     } catch (e) {
       debugPrint('Error loading HTML assets: $e');
-
     }
   }
 

@@ -60,7 +60,6 @@ class _MappedinMapScreenState extends State<MappedinMapScreen> {
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-
           /// Triggers the `navigateToRoom` method on the WebView.
           /// This button mainly shows how to interact with the code.
           /// TODO: delete for the actual implementation, will be changed in 5.2.2
