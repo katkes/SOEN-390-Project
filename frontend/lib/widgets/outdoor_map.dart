@@ -329,6 +329,7 @@ class MapWidgetState extends State<MapWidget> {
   }
 
   /// Cancels the animation timer, stopping the polyline animation.
+  /// This method is called when the widget is disposed or when the route points change.
   void _stopPolylineAnimation() {
     animationTimer?.cancel();
     zoomAnimationTimer?.cancel();
