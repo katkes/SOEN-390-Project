@@ -158,7 +158,9 @@ class MappedinWebViewState extends State<MappedinWebView> {
       // Validate environment variables
       final apiKey = dotenv.env['MAPPEDIN_API_KEY'];
       final apiSecret = dotenv.env['MAPPEDIN_API_SECRET'];
-      final mapId = _currentMapId ?? widget.mapId ?? '67968294965a13000bcdfe74';
+      final defaultMapId = '67968294965a13000bcdfe74';
+    
+      final mapId = _currentMapId ?? widget.mapId ?? defaultMapId;
 
       if (apiKey == null || apiSecret == null) {
         throw Exception('Missing required environment variables');

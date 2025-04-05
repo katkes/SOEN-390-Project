@@ -360,6 +360,8 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
                           child: const Text("Show Hall"),
                         ),
                         const SizedBox(height: 8),
+
+                        /// TODO: delete for the actual implementation, will be changed in 7.1.2
                         ElevatedButton(
                           onPressed: () async {
                             final success = await _mappedinController

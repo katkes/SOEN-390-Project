@@ -63,7 +63,8 @@ class _MappedinMapScreenState extends State<MappedinMapScreen> {
         children: [
           /// Triggers the `navigateToRoom` method on the WebView.
           /// This button mainly shows how to interact with the code.
-          /// TODO: delete for the actual implementation, will be changed in 5.2.2
+          /// TODO: delete for the actual implementation, will be changed in 7.1.2
+          /// It is here for testing purposes.
           _buildFABButton("Navigate to H813 from Outside", () async {
             await _controller.webViewKey.currentState?.navigateToRoom("813");
           }),
