@@ -16,7 +16,7 @@ class MappedinMapScreen extends StatelessWidget {
 
   /// GlobalKey to access the MappedinWebViewState.
   final GlobalKey<MappedinWebViewState> _webViewKey =
-      GlobalKey<MappedinWebViewState>();
+  GlobalKey<MappedinWebViewState>();
 
   /// Helper method to build Floating Action Buttons with standard styling.
   Widget _buildFABButton(String text, VoidCallback onPressed) {
