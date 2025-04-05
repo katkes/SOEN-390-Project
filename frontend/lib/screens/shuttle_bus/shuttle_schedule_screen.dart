@@ -17,7 +17,8 @@ class ShuttleScheduleScreen extends StatelessWidget {
         foregroundColor: appTheme.colorScheme.onPrimary,
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
+          child: SingleChildScrollView(
+            physics: const ClampingScrollPhysics(),
           padding: const EdgeInsets.all(16.0),
           child: ShuttleScheduleDisplay(fridaySchedule: schedule),
         ),
