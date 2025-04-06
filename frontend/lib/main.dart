@@ -409,7 +409,6 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
     );
   }
 
-
   Widget _buildActionButtons(BuildContext context) {
     final isDarkMode =
         ref.watch(tp.themeProvider).brightness == Brightness.dark;
