@@ -10,10 +10,13 @@ import 'package:soen_390/services/google_poi_service.dart';
 import 'package:soen_390/services/poi_factory.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'package:soen_390/widgets/suggestions.dart';
+import 'package:soen_390/screens/indoor/mappedin_map_controller.dart';
+import 'package:soen_390/screens/indoor/mappedin_map_screen.dart';
 
 import 'package:mockito/mockito.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:soen_390/widgets/location_field.dart';
+import 'dart:async';
 
 @GenerateNiceMocks([
   MockSpec<LocationService>(),
@@ -23,6 +26,27 @@ import 'package:soen_390/widgets/location_field.dart';
   MockSpec<NavigatorObserver>(),
 ])
 import 'location_transport_selector_test.mocks.dart';
+
+// Manual mock for MappedinMapController
+class MockMappedinMapController extends Mock implements MappedinMapController {
+  @override
+  Future<bool> selectBuildingByName(String buildingName) async {
+    return super.noSuchMethod(
+      Invocation.method(#selectBuildingByName, [buildingName]),
+      returnValue: Future.value(true),
+      returnValueForMissingStub: Future.value(true),
+    );
+  }
+
+  @override
+  Future<bool> navigateToRoom(String roomName, bool isStart) async {
+    return super.noSuchMethod(
+      Invocation.method(#navigateToRoom, [roomName, isStart]),
+      returnValue: Future.value(true),
+      returnValueForMissingStub: Future.value(true),
+    );
+  }
+}
 
 class TestLocationTransportSelectorState
     extends LocationTransportSelectorState {
@@ -43,6 +67,8 @@ class TestLocationTransportSelector extends LocationTransportSelector {
     super.onTransportModeChange,
     super.onLocationChanged,
     super.initialDestination,
+    super.hallController,
+    super.libraryController,
   });
 
   @override
@@ -73,6 +99,8 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
     Function(List<String>, String)? onConfirmRoute,
     Function(String)? onTransportModeChange,
     Function()? onLocationChanged,
+    MappedinMapController? hallController,
+    MappedinMapController? libraryController,
   }) {
     return MaterialApp(
       home: Scaffold(
@@ -85,6 +113,8 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
           onTransportModeChange: onTransportModeChange,
           onLocationChanged: onLocationChanged,
           locationUpdater: mockLocationUpdater,
+          hallController: hallController,
+          libraryController: libraryController,
         ),
       ),
     );
@@ -375,4 +405,42 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
 
     expect(state.startLocation, equals('Your Location'));
   });
+
+  group('H843 to LB322 special case', () {
+    testWidgets('Shows error SnackBar when Hall Building selection fails',
+        (WidgetTester tester) async {
+      // Arrange
+      final hallController = MockMappedinMapController();
+      when(hallController.selectBuildingByName("Hall Building"))
+          .thenAnswer((_) => Future.value(false));
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: LocationTransportSelector(
+            locationService: mockLocationService,
+            poiService: mockPoiService,
+            poiFactory: mockPoiFactory,
+            onConfirmRoute: (_, __) {},
+            locationUpdater: mockLocationUpdater,
+            hallController: hallController,
+          ),
+        ),
+      ));
+
+      // Set up the route
+      final state = tester.state(find.byType(LocationTransportSelector))
+          as LocationTransportSelectorState;
+      state.setStartLocation('H843');
+      state.setDestinationLocation('LB322');
+
+      // Act - Call _confirmRoute
+      await tester.tap(find.text('Confirm Route'));
+      await tester.pumpAndSettle();
+
+      // Assert - Verify error SnackBar is shown
+      expect(find.text('Failed to switch to Hall Building'), findsOneWidget);
+    });
+  });
+
+  
 }
