@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:soen_390/styles/theme.dart';
 import "package:soen_390/providers/theme_provider.dart";
 
