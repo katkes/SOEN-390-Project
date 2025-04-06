@@ -172,6 +172,12 @@ class MockMappedinWebViewState extends _i1.Mock
       ) as _i7.Future<void>);
 
   @override
+  _i7.Future<bool> waitForMapLoaded() => (super.noSuchMethod(
+        Invocation.method(#waitForMapLoaded, []),
+        returnValue: _i7.Future<bool>.value(false),
+      ) as _i7.Future<bool>);
+
+  @override
   _i7.Future<void> showDirections(
     String? departure,
     String? destination,

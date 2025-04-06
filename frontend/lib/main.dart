@@ -403,22 +403,12 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
       onPressed: () => _navigateToBuilding("Hall"),
       style: _elevatedButtonStyle(context, isDarkMode),
       child: const Text(
-        "Show Hall",
+        "Indoor Navigation",
         style: TextStyle(fontWeight: FontWeight.bold),
       ),
     );
   }
 
-  Widget _buildNavigateToRoomButton(BuildContext context, bool isDarkMode) {
-    return ElevatedButton(
-      onPressed: () => _navigateToBuilding("MBS1.115"),
-      style: _elevatedButtonStyle(context, isDarkMode),
-      child: const Text(
-        "Go to MBS1.115",
-        style: TextStyle(fontWeight: FontWeight.bold),
-      ),
-    );
-  }
 
   Widget _buildActionButtons(BuildContext context) {
     final isDarkMode =
@@ -432,7 +422,6 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
         children: [
           _buildShowHallButton(context, isDarkMode),
           const SizedBox(height: 8),
-          _buildNavigateToRoomButton(context, isDarkMode),
         ],
       ),
     );

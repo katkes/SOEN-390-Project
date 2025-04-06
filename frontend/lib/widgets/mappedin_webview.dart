@@ -30,10 +30,15 @@ class MappedinWebView extends StatefulWidget {
   final WebViewController? controllerOverride;
 
   final String? mapId;
+
+  /// Callback when the WebView is initialized and ready
+  final VoidCallback? onWebViewReady;
+
   const MappedinWebView({
     super.key,
     this.controllerOverride,
     this.mapId,
+    this.onWebViewReady,
   });
 
   @override
@@ -163,8 +168,25 @@ class MappedinWebViewState extends State<MappedinWebView> {
       );
 
       await controller.loadHtmlString(fileHtmlWithKeys);
+
+      // Wait for the map to load and notify when ready
+      await waitForMapLoaded();
+      widget.onWebViewReady?.call();
     } catch (e) {
       debugPrint('Error loading HTML assets: $e');
+    }
+  }
+
+  Future<bool> waitForMapLoaded() async {
+    // Poll until the mapLoaded flag is true (with a timeout, if needed)
+    while (true) {
+      final result =
+          await controller.runJavaScriptReturningResult("window.mapLoaded");
+      if (result.toString() == "true") {
+        return true;
+      }
+      final timeDelay = 100;
+      await Future.delayed(Duration(milliseconds: timeDelay));
     }
   }
 
@@ -178,6 +200,9 @@ class MappedinWebViewState extends State<MappedinWebView> {
     try {
       final preference =
           await IndoorAccessibilityState.getMobilityStatusPreference();
+
+      await waitForMapLoaded();
+
       await controller.runJavaScript(
           "getDirections('$departure', '$destination', '$preference')");
     } catch (e) {
@@ -202,7 +227,7 @@ class MappedinWebViewState extends State<MappedinWebView> {
     }
   }
 
-  /// Navigates to a specific room on the map
+  /// Navigates to a specific room on the map from the entrance
   ///
   /// - [roomNumber]: The room number to navigate to (e.g., "907")
   Future<void> navigateToRoom(String roomNumber) async {
