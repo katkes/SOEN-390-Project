@@ -203,7 +203,26 @@ class MapWidgetState extends State<MapWidget> {
     }
   }
 
-  /// Starts the polyline animation by initializing animation variables and setting up a timer to update the animatedPoints
+  static const double zoomLevelMax = 19.0;
+  static const double zoomLevelIncrease = 2.5;
+  static const double zoomDurationMillis = 2500.0;
+  static const double polylineAnimationProgressIncrement = 0.7;
+  static const int polylineAnimationIntervalMillis = 14;
+  static const int zoomAnimationIntervalMillis = 16;
+
+  static const double distanceZoomLevelFar = 20000;
+  static const double distanceZoomLevelMediumFar = 10000;
+  static const double distanceZoomLevelMedium = 5000;
+  static const double distanceZoomLevelClose = 1000;
+  static const double distanceZoomLevelVeryClose = 500;
+
+  static const double zoomLevelFar = 10.0;
+  static const double zoomLevelMediumFar = 11.5;
+  static const double zoomLevelMedium = 13.0;
+  static const double zoomLevelClose = 14.5;
+  static const double zoomLevelVeryClose = 15.5;
+  static const double zoomLevelDefault = 17.0;
+
   void _startPolylineAnimation() {
     _stopPolylineAnimation(); // Stop any previous animation
     resetAnimationData();
@@ -213,7 +232,8 @@ class MapWidgetState extends State<MapWidget> {
     final routeCenter = _calculateRouteCenter(widget.routePoints);
     final totalDistance = _calculateTotalDistance(widget.routePoints);
     final targetZoomLevel = _determineTargetZoomLevel(totalDistance);
-    final startingZoomLevel = min(19.0, targetZoomLevel + 2.5);
+    final startingZoomLevel =
+        min(zoomLevelMax, targetZoomLevel + zoomLevelIncrease);
 
     _setInitialMapView(routeCenter, startingZoomLevel);
     _animateZoom(routeCenter, startingZoomLevel, targetZoomLevel);
@@ -252,18 +272,18 @@ class MapWidgetState extends State<MapWidget> {
   }
 
   double _determineTargetZoomLevel(double totalDistance) {
-    if (totalDistance > 20000) {
-      return 10.0;
-    } else if (totalDistance > 10000) {
-      return 11.5;
-    } else if (totalDistance > 5000) {
-      return 13.0;
-    } else if (totalDistance > 1000) {
-      return 14.5;
-    } else if (totalDistance > 500) {
-      return 15.5;
+    if (totalDistance > distanceZoomLevelFar) {
+      return zoomLevelFar;
+    } else if (totalDistance > distanceZoomLevelMediumFar) {
+      return zoomLevelMediumFar;
+    } else if (totalDistance > distanceZoomLevelMedium) {
+      return zoomLevelMedium;
+    } else if (totalDistance > distanceZoomLevelClose) {
+      return zoomLevelClose;
+    } else if (totalDistance > distanceZoomLevelVeryClose) {
+      return zoomLevelVeryClose;
     } else {
-      return 17.0;
+      return zoomLevelDefault;
     }
   }
 
@@ -273,11 +293,11 @@ class MapWidgetState extends State<MapWidget> {
 
   void _animateZoom(
       LatLng routeCenter, double startingZoomLevel, double targetZoomLevel) {
-    const zoomDuration = Duration(milliseconds: 2500);
+    final zoomDuration = Duration(milliseconds: zoomDurationMillis.toInt());
     final startTime = DateTime.now();
 
-    zoomAnimationTimer =
-        Timer.periodic(const Duration(milliseconds: 16), (zoomTimer) {
+    zoomAnimationTimer = Timer.periodic(
+        const Duration(milliseconds: zoomAnimationIntervalMillis), (zoomTimer) {
       final elapsed = DateTime.now().difference(startTime).inMilliseconds;
       final progress = min(1.0, elapsed / zoomDuration.inMilliseconds);
 
@@ -295,7 +315,8 @@ class MapWidgetState extends State<MapWidget> {
   }
 
   void _animatePolylinePath() {
-    animationTimer = Timer.periodic(const Duration(milliseconds: 14), (timer) {
+    animationTimer = Timer.periodic(
+        const Duration(milliseconds: polylineAnimationIntervalMillis), (timer) {
       if (animationIndex < widget.routePoints.length - 1) {
         _updatePolylineAnimation();
       } else {
@@ -305,7 +326,8 @@ class MapWidgetState extends State<MapWidget> {
   }
 
   void _updatePolylineAnimation() {
-    animationProgress += 0.7; // Increment animation progress
+    animationProgress +=
+        polylineAnimationProgressIncrement; // Increment animation progress
     if (animationProgress >= 1.0) {
       animationProgress = 0.0;
       animationIndex++;
