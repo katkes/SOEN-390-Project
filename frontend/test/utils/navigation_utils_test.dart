@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -146,11 +148,9 @@ void main() {
   });
   testWidgets('shows SnackBar on building selection failure',
       (WidgetTester tester) async {
-    // Arrange: building selection will fail
     when(mockMapController.selectBuildingByName('H'))
         .thenAnswer((_) async => false);
 
-    // Act: build the widget tree with necessary context
     await tester.pumpWidget(
       ProviderScope(
         child: MaterialApp(

@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
@@ -23,9 +21,6 @@ class _CUHomeScreenState extends ConsumerState<CUHomeScreen>
   late MappedinMapController _mappedinController;
   List<LatLng> polylinePoints = [];
 
-  // ignore: unused_field
-  late Animation<Offset> _slideAnimation;
-
   @override
   void initState() {
     super.initState();
@@ -37,13 +32,6 @@ class _CUHomeScreenState extends ConsumerState<CUHomeScreen>
       CurvedAnimation(
         parent: _controller,
         curve: const Interval(0.0, 0.8, curve: Curves.easeOut),
-      ),
-    );
-    _slideAnimation =
-        Tween<Offset>(begin: const Offset(0, 0.2), end: Offset.zero).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.2, 1.0, curve: Curves.easeOutCubic),
       ),
     );
     _mappedinController = MappedinMapController();
@@ -80,12 +68,8 @@ class _CUHomeScreenState extends ConsumerState<CUHomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    // Use the theme provider from the main app
     final themeMode = ref.watch(tp.themeProvider);
     final isDarkMode = themeMode.brightness == Brightness.dark;
-
-    // ignore: unused_local_variable
-    final size = MediaQuery.of(context).size;
 
     return Scaffold(
       body: Container(
@@ -226,9 +210,7 @@ class _CUHomeScreenState extends ConsumerState<CUHomeScreen>
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: isDarkMode
-                  ? Colors.black.withOpacity(0.3)
-                  : Colors.grey.withOpacity(0.1),
+              color: isDarkMode ? Colors.black : const Color(0x1A9E9E9E),
               spreadRadius: 0,
               blurRadius: 10,
               offset: const Offset(0, 4),
@@ -274,15 +256,11 @@ class _CUHomeScreenState extends ConsumerState<CUHomeScreen>
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
       decoration: BoxDecoration(
-        color: isDarkMode
-            ? const Color(0xFF2A2D3E).withOpacity(0.8)
-            : Colors.white.withOpacity(0.8),
+        color: isDarkMode ? const Color(0xFF2A2D3E) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: isDarkMode
-                ? Colors.black.withOpacity(0.3)
-                : Colors.grey.withOpacity(0.1),
+            color: isDarkMode ? Colors.black : const Color(0x1A9E9E9E),
             spreadRadius: 0,
             blurRadius: 10,
             offset: const Offset(0, 2),
@@ -295,7 +273,7 @@ class _CUHomeScreenState extends ConsumerState<CUHomeScreen>
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: isDarkMode
-                  ? const Color(0xFF6271EB).withOpacity(0.2)
+                  ? const Color(0xFF6271EB)
                   : const Color(0xFFEDF1FD),
               borderRadius: BorderRadius.circular(12),
             ),
