@@ -246,24 +246,29 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
     );
   }
 
-  AppBar _buildAppBar(BuildContext context) {
-    String appBarTitle = widget.title;
-    final selectedIndex = ref.watch(navigationProvider).selectedIndex;
-    if (selectedIndex == 0) {
-      appBarTitle = 'Home';
-    } else if (selectedIndex == 1) {
-      appBarTitle = 'Campus Map';
-    } else if (selectedIndex == 2) {
-      appBarTitle = 'Profile';
+  String _getAppBarTitle(int selectedIndex) {
+    switch (selectedIndex) {
+      case 0:
+        return 'Home';
+      case 1:
+        return 'Campus Map';
+      case 2:
+        return 'Profile';
+      default:
+        return widget.title;
     }
+  }
 
+  AppBar _buildAppBar(BuildContext context) {
+    final selectedIndex = ref.watch(navigationProvider).selectedIndex;
     return AppBar(
       leading: IconButton(
         icon: const Icon(Icons.menu, color: Colors.white, size: 30),
         onPressed: () {},
       ),
       backgroundColor: Theme.of(context).primaryColor,
-      title: Text(appBarTitle, style: const TextStyle(color: Colors.white)),
+      title: Text(_getAppBarTitle(selectedIndex),
+          style: const TextStyle(color: Colors.white)),
       actions: [
         IconButton(
           icon: const Icon(Icons.more_vert, color: Colors.white, size: 30),
@@ -349,6 +354,19 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
     );
   }
 
+  ButtonStyle _elevatedButtonStyle(BuildContext context, bool isDarkMode) {
+    return ElevatedButton.styleFrom(
+      backgroundColor:
+          isDarkMode ? const Color(0xFF6271EB) : Theme.of(context).primaryColor,
+      foregroundColor: Colors.white,
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    );
+  }
+
   Widget _buildWaypointButton(BuildContext context) {
     final isDarkMode =
         ref.watch(tp.themeProvider).brightness == Brightness.dark;
@@ -358,21 +376,46 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
       right: 21,
       child: ElevatedButton(
         onPressed: _openWaypointSelection,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: isDarkMode
-              ? const Color(0xFF6271EB)
-              : Theme.of(context).primaryColor,
-          foregroundColor: Colors.white,
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        ),
+        style: _elevatedButtonStyle(context, isDarkMode),
         child: const Text(
           "Find My Way",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
+      ),
+    );
+  }
+
+  Future<void> _navigateToBuilding(String buildingName) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final success =
+        await _mappedinController.selectBuildingByName(buildingName);
+    if (!success) {
+      messenger.showSnackBar(
+        SnackBar(content: Text('Failed to switch to $buildingName Building')),
+      );
+      return;
+    }
+    _openMappedinMap();
+  }
+
+  Widget _buildShowHallButton(BuildContext context, bool isDarkMode) {
+    return ElevatedButton(
+      onPressed: () => _navigateToBuilding("Hall"),
+      style: _elevatedButtonStyle(context, isDarkMode),
+      child: const Text(
+        "Show Hall",
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
+  Widget _buildNavigateToRoomButton(BuildContext context, bool isDarkMode) {
+    return ElevatedButton(
+      onPressed: () => _navigateToBuilding("MBS1.115"),
+      style: _elevatedButtonStyle(context, isDarkMode),
+      child: const Text(
+        "Go to MBS1.115",
+        style: TextStyle(fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -391,68 +434,6 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
           const SizedBox(height: 8),
           _buildNavigateToRoomButton(context, isDarkMode),
         ],
-      ),
-    );
-  }
-
-  Widget _buildShowHallButton(BuildContext context, bool isDarkMode) {
-    return ElevatedButton(
-      onPressed: () async {
-        final messenger = ScaffoldMessenger.of(context);
-        final success = await _mappedinController.selectBuildingByName("Hall");
-        if (!success) {
-          messenger.showSnackBar(
-            const SnackBar(content: Text('Failed to switch to Hall Building')),
-          );
-          return;
-        }
-        _openMappedinMap();
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: isDarkMode
-            ? const Color(0xFF6271EB)
-            : Theme.of(context).primaryColor,
-        foregroundColor: Colors.white,
-        elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      ),
-      child: const Text(
-        "Show Hall",
-        style: TextStyle(fontWeight: FontWeight.bold),
-      ),
-    );
-  }
-
-  Widget _buildNavigateToRoomButton(BuildContext context, bool isDarkMode) {
-    return ElevatedButton(
-      onPressed: () async {
-        final messenger = ScaffoldMessenger.of(context);
-        final success = await _mappedinController.navigateToRoom("MBS1.115");
-        if (!success) {
-          messenger.showSnackBar(
-            const SnackBar(content: Text('Failed to navigate to MBS1.115')),
-          );
-          return;
-        }
-        _openMappedinMap();
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: isDarkMode
-            ? const Color(0xFF6271EB)
-            : Theme.of(context).primaryColor,
-        foregroundColor: Colors.white,
-        elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      ),
-      child: const Text(
-        "Go to MBS1.115",
-        style: TextStyle(fontWeight: FontWeight.bold),
       ),
     );
   }
