@@ -1,8 +1,3 @@
-///
-/// Provides UI controls to trigger directions and floor selection via JS interop.
-/// Uses a [GlobalKey] to interact with the underlying [MappedinWebView] state.
-library;
-
 import 'package:flutter/material.dart';
 import 'package:soen_390/widgets/mappedin_webview.dart';
 import 'package:soen_390/screens/indoor/mappedin_map_controller.dart';
@@ -28,11 +23,22 @@ class MappedinMapScreen extends StatefulWidget {
 
 class _MappedinMapScreenState extends State<MappedinMapScreen> {
   late final MappedinMapController _controller;
+  String? _selectedBuilding;
+
+  /// List of available building names and corresponding map IDs
+  final Map<String, String> buildingMapIds = {
+    "Hall Building": "67968294965a13000bcdfe74",
+    "JMSB": "67e1ac8eaa7c59000baf8dcf",
+    "Library Building": "67ba2570a39568000bc4b334",
+  };
 
   @override
   void initState() {
     super.initState();
     _controller = widget.controller ?? MappedinMapController();
+    _selectedBuilding = "Hall Building";
+    final defaultMapId = buildingMapIds[_selectedBuilding]!;
+    _controller.selectBuildingById(defaultMapId);
   }
 
   /// Helper method to build Floating Action Buttons with standard styling.
@@ -47,10 +53,37 @@ class _MappedinMapScreenState extends State<MappedinMapScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Indoor Navigation',
-        ),
-        iconTheme: const IconThemeData(),
+        title: const Text('Indoor Navigation',
+            style: TextStyle(color: Colors.white)),
+        backgroundColor: const Color(0xff912338),
+        iconTheme: const IconThemeData(color: Colors.white),
+        actions: [
+          /// Dropdown to switch buildings by map ID
+          DropdownButton<String>(
+            hint: const Text("Select Building",
+                style: TextStyle(color: Colors.white)),
+            value: _selectedBuilding,
+            dropdownColor: Colors.black,
+            style: const TextStyle(color: Colors.white),
+            underline: Container(),
+            iconEnabledColor: Colors.white,
+            onChanged: (String? buildingName) async {
+              if (buildingName != null) {
+                setState(() => _selectedBuilding = buildingName);
+                final mapId = buildingMapIds[buildingName]!;
+                await _controller.selectBuildingById(mapId);
+                setState(() {}); // Force rebuild to refresh map
+              }
+            },
+            items: buildingMapIds.keys.map((name) {
+              return DropdownMenuItem<String>(
+                value: name,
+                child: Text(name),
+              );
+            }).toList(),
+          ),
+          const SizedBox(width: 12),
+        ],
       ),
       body: widget.webView ??
           MappedinWebView(
