@@ -1,6 +1,7 @@
+// ignore_for_file: unused_field
+
 import 'package:flutter/material.dart';
 import 'package:soen_390/models/route_result.dart';
-import 'package:soen_390/screens/indoor/mappedin_map_screen.dart';
 import 'package:soen_390/screens/waypoint/waypoint_selection_screens.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:soen_390/services/auth_service.dart';
@@ -107,6 +108,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
   // Set initial campus to SGW (default campus)
   String selectedCampus = 'SGW';
   TextEditingController searchController = TextEditingController();
+  // ignore : unused_field
   late MappedinMapController _mappedinController;
 
   //int _selectedIndex = 0;
@@ -241,30 +243,6 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
     });
   }
 
-  /// Opens the Mappedin map screen.
-  /// Returns a Future that completes when the WebView is ready
-  Future<void> _openMappedinMap() async {
-    final completer = Completer<void>();
-
-    // Start navigation without waiting for it to complete
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => MappedinMapScreen(
-          controller: _mappedinController,
-          onWebViewReady: () {
-            if (!completer.isCompleted) {
-              completer.complete();
-            }
-          },
-        ),
-      ),
-    );
-
-    // Wait for the WebView to be ready
-    return completer.future;
-  }
-
   @override
   Widget build(BuildContext context) {
     final selectedIndex = ref.watch(navigationProvider).selectedIndex;
@@ -392,7 +370,6 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
       ),
     );
   }
-
 
   Widget _buildUserProfileScreen(BuildContext context) {
     return UserProfileScreen(

@@ -45,14 +45,6 @@ class _MappedinMapScreenState extends State<MappedinMapScreen> {
     _controller.selectBuildingById(defaultMapId);
   }
 
-  /// Helper method to build Floating Action Buttons with standard styling.
-  Widget _buildFABButton(String text, VoidCallback onPressed) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      child: Text(text),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

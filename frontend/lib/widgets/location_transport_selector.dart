@@ -16,7 +16,6 @@ import 'package:soen_390/widgets/location_field.dart';
 import 'package:soen_390/utils/itinerary_manager.dart';
 import 'package:soen_390/styles/theme.dart';
 import 'package:soen_390/screens/shuttle_bus/shuttle_schedule_screen.dart';
-import 'dart:async';
 
 class LocationTransportSelector extends StatefulWidget {
   final Function(List<String>, String) onConfirmRoute;
