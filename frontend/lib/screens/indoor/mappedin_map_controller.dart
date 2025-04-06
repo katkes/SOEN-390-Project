@@ -87,17 +87,12 @@ class MappedinMapController {
   /// Returns true if navigation was successful
   Future<bool> navigateToRoom(String roomNumber) async {
     try {
-      debugPrint(
-          'Navigating to room: $roomNumber.........................................');
       final building =
           await BuildingConfigManager.findBuildingByRoom(roomNumber);
       if (building == null) {
         debugPrint('Building not found for room: $roomNumber');
         return false;
       }
-
-      debugPrint(
-          'Building found: ${building.mapId}..........................................');
 
       // Switch to the building's map if we're not already there
       if (_currentMapId != building.mapId) {
@@ -106,9 +101,6 @@ class MappedinMapController {
         _currentBuilding = building;
       }
 
-      debugPrint(
-          'Building found: ${building.mapId}..........................................');
-
       // Wait for WebView to be ready
       await waitForWebViewReady();
 
@@ -116,14 +108,10 @@ class MappedinMapController {
       final roomWithoutPrefix =
           BuildingConfigManager.getRoomNumber(roomNumber, building.roomPrefix);
 
-      debugPrint(
-          'Pre-Navigating to room: $roomWithoutPrefix.........................................');
 
       // Show directions to the room
       await webViewKey.currentState?.navigateToRoom(roomWithoutPrefix);
 
-      debugPrint(
-          'Navigated to room: $roomWithoutPrefix.........................................');
 
       return true;
     } catch (e) {
