@@ -160,17 +160,48 @@ class EventEditPopupState extends State<EventEditPopup> {
                     ElevatedButton.icon(
                       onPressed: () async {
                         // TODO: 7.1.6 Add navigation logic to next class
-                        final messenger = ScaffoldMessenger.of(context);
-                        // First open the map screen and wait for it to be ready
-                        await openMappedinMap();
-                        final success = await mappedinController
-                            .navigateToRoom(classroomController.text);
+                        // Step 1: Launch MappedinWebView for H843 to Hall Building bottom
+                        final hallController = MappedinMapController();
+
+                        final success = await hallController
+                            .selectBuildingByName("Hall Building");
                         if (!success) {
-                          messenger.showSnackBar(
+                          ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                                content: Text('Failed to navigate to H813')),
+                                content:
+                                    Text('Failed to switch to Hall Building')),
                           );
+                          return;
                         }
+
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MappedinMapScreen(
+                              controller: hallController,
+                              onWebViewReady: () async {
+                                await Future.delayed(
+                                    const Duration(milliseconds: 1000));
+                                await hallController.navigateToRoom(
+                                    classroomController.text);
+                              },
+                            ),
+                          ),
+                        );
+
+                        // -------
+
+                        // final messenger = ScaffoldMessenger.of(context);
+                        // // First open the map screen and wait for it to be ready
+                        // await openMappedinMap();
+                        // final success = await mappedinController
+                        //     .navigateToRoom(classroomController.text);
+                        // if (!success) {
+                        //   messenger.showSnackBar(
+                        //     const SnackBar(
+                        //         content: Text('Failed to navigate to H813')),
+                        //   );
+                        // }
                       },
                       icon: Icon(Icons.directions_walk,
                           color: appTheme.colorScheme.onPrimary),
