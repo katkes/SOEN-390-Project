@@ -73,14 +73,15 @@ class NavigationUtils {
         return;
       }
     }
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => MappedinMapScreen(
-          controller: mappedinController,
+    if (context.mounted) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MappedinMapScreen(
+            controller: mappedinController,
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 }
