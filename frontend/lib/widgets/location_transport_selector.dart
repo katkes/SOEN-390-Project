@@ -62,6 +62,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   String defaultYourLocationString = 'Your Location';
   String destinationLocation =
       ''; // variable to store destination location address
+  // ignore: unused_field
   late MappedinMapController _mappedinController;
 
   static const int _startLocationIndex = 0;
