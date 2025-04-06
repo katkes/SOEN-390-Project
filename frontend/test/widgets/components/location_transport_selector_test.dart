@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:soen_390/screens/outdoor_poi/place_search_screen.dart';
+import 'package:soen_390/screens/shuttle_bus/shuttle_schedule_screen.dart';
 import 'package:soen_390/services/location_updater.dart';
 import 'package:soen_390/widgets/location_transport_selector.dart';
 import 'package:mockito/annotations.dart';
@@ -403,6 +404,97 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
 
     expect(state.startLocation, equals('Your Location'));
   });
+
+  testWidgets('Shuttle Bus button navigates to ShuttleScheduleScreen',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(createWidgetUnderTest());
+
+    // Tap the Shuttle Bus button
+    await tester.tap(find.text('Shuttle Bus'));
+    await tester.pumpAndSettle();
+
+    // Verify navigation to ShuttleScheduleScreen
+    expect(find.byType(ShuttleScheduleScreen), findsOneWidget);
+  });
+
+  testWidgets('Destination field shows SuggestionsPopup on tap',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(createWidgetUnderTest());
+
+    // Tap the destination field
+    await tester.tap(find.text('Destination'));
+    await tester.pumpAndSettle();
+
+    // Verify SuggestionsPopup is displayed
+    expect(find.byType(SuggestionsPopup), findsOneWidget);
+  });
+
+  // testWidgets('Destination field clears and removes stop on delete',
+  //     (WidgetTester tester) async {
+  //   await tester.pumpWidget(createWidgetUnderTest());
+
+  //   final state = tester.state(find.byType(LocationTransportSelector))
+  //       as LocationTransportSelectorState;
+
+  //   // Set a destination location
+  //   state.setDestinationLocation('Test Destination');
+  //   expect(state.destinationLocation, equals('Test Destination'));
+
+  //   // Tap the delete button
+  //   await tester.tap(find.byIcon(Icons.clear));
+  //   await tester.pumpAndSettle();
+
+  //   // Verify destination is cleared
+  //   expect(state.destinationLocation, isEmpty);
+  // });
+
+  // testWidgets(
+  //     '_confirmRoute navigates to Hall Building and Library Building for H843 to LB322',
+  //     (WidgetTester tester) async {
+  //   await tester.pumpWidget(createWidgetUnderTest());
+
+  //   final state = tester.state(find.byType(LocationTransportSelector))
+  //       as LocationTransportSelectorState;
+
+  //   // Set start and destination locations to trigger the specific case
+  //   state.setStartLocation('H843');
+  //   state.setDestinationLocation('LB322');
+
+  //   // Tap the Confirm Route button
+  //   await tester.tap(find.text('Confirm Route'));
+  //   await tester.pumpAndSettle();
+
+  //   // Verify navigation to Hall Building
+  //   expect(find.byType(MappedinMapScreen), findsOneWidget);
+
+  //   // Simulate clicking "Next Step" button
+  //   await tester.tap(find.byIcon(Icons.arrow_forward));
+  //   await tester.pumpAndSettle();
+
+  //   // Verify navigation to Library Building
+  //   expect(find.byType(MappedinMapScreen), findsOneWidget);
+  // });
+
+  // testWidgets('SuggestionsPopup updates start and destination locations',
+  //     (WidgetTester tester) async {
+  //   await tester.pumpWidget(createWidgetUnderTest());
+
+  //   final state = tester.state(find.byType(LocationTransportSelector))
+  //       as LocationTransportSelectorState;
+
+  //   // Simulate selecting a start location
+  //   state.setStartLocation('H843');
+  //   expect(state.startLocation, equals('H843'));
+
+  //   // Simulate selecting a destination location
+  //   state.setDestinationLocation('LB322');
+  //   expect(state.destinationLocation, equals('LB322'));
+
+  //   // Verify _confirmRoute is triggered for H843 to LB322
+  //   await tester.tap(find.text('Confirm Route'));
+  //   await tester.pumpAndSettle();
+  //   expect(find.byType(MappedinMapScreen), findsOneWidget);
+  // });
 
   group('H843 to LB322 special case', () {
     testWidgets('Shows error SnackBar when Hall Building selection fails',
