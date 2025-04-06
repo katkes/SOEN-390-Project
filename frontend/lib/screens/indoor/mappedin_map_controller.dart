@@ -23,6 +23,21 @@ class MappedinMapController {
   /// The current building being displayed
   BuildingConfig? get currentBuilding => _currentBuilding;
 
+  /// Waits until the WebView is ready to accept commands
+  /// Throws an exception if the WebView state is not initialized
+  Future<void> waitForWebViewReady() async {
+    final webViewState = webViewKey.currentState;
+    if (webViewState == null) {
+      throw Exception('WebView state not initialized');
+    }
+    try {
+      await webViewState.waitForMapLoaded();
+    } catch (e) {
+      debugPrint('Error waiting for WebView readiness: $e');
+      rethrow;
+    }
+  }
+
   /// Changes the current building map being displayed by building name
   ///
   /// [buildingName] - The name of the building to switch to
@@ -72,6 +87,8 @@ class MappedinMapController {
   /// Returns true if navigation was successful
   Future<bool> navigateToRoom(String roomNumber) async {
     try {
+      debugPrint(
+          'Navigating to room: $roomNumber.........................................');
       final building =
           await BuildingConfigManager.findBuildingByRoom(roomNumber);
       if (building == null) {
@@ -88,21 +105,21 @@ class MappedinMapController {
       _currentBuilding = building;
       _currentMapId = building.mapId;
 
-      // Navigate to the room
-      await webViewKey.currentState?.navigateToRoom(roomNumber);
-
-      // TODO: Add camera movement to the room location
-      // This will require additional JavaScript functions in mappedin.js
-      // to handle camera positioning to specific rooms
+      // Wait for WebView to be ready
+      await waitForWebViewReady();
 
       // Get the room number without the building prefix
       final roomWithoutPrefix =
           BuildingConfigManager.getRoomNumber(roomNumber, building.roomPrefix);
 
+      debugPrint(
+          'Pre-Navigating to room: $roomWithoutPrefix.........................................');
+
       // Show directions to the room
       await webViewKey.currentState?.navigateToRoom(roomWithoutPrefix);
 
-      debugPrint('Navigated to room: $roomWithoutPrefix');
+      debugPrint(
+          'Navigated to room: $roomWithoutPrefix.........................................');
 
       return true;
     } catch (e) {

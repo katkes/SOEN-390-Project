@@ -22,6 +22,8 @@ import 'package:soen_390/screens/profile/profile_screen.dart';
 import 'package:soen_390/screens/calendar/calendar_view.dart';
 import 'package:soen_390/providers/navigation_provider.dart';
 import 'package:soen_390/screens/indoor/mappedin_map_controller.dart';
+import 'dart:async';
+import 'package:soen_390/services/mappedin_navigation_service.dart';
 
 /// The entry point of the application.
 ///
@@ -101,6 +103,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
   String selectedCampus = 'SGW';
   TextEditingController searchController = TextEditingController();
   late MappedinMapController _mappedinController;
+  late MappedinNavigationService _mappedinNavigationService;
 
   //int _selectedIndex = 0;
   LatLng currentLocation = const LatLng(45.497856, -73.579588);
@@ -140,6 +143,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
   void initState() {
     super.initState();
     _mappedinController = MappedinMapController();
+    _mappedinNavigationService = MappedinNavigationService(_mappedinController);
     _mapsApiClient = GoogleMapsApiClient(
       apiKey: dotenv.env['GOOGLE_MAPS_API_KEY']!,
       httpClient: widget.httpService,
@@ -242,15 +246,27 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
   }
 
   /// Opens the Mappedin map screen.
-  void _openMappedinMap() async {
+  /// Returns a Future that completes when the WebView is ready
+  Future<void> _openMappedinMap() async {
+    final completer = Completer<void>();
+
+    // Start navigation without waiting for it to complete
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => MappedinMapScreen(
           controller: _mappedinController,
+          onWebViewReady: () {
+            if (!completer.isCompleted) {
+              completer.complete();
+            }
+          },
         ),
       ),
     );
+
+    // Wait for the WebView to be ready
+    return completer.future;
   }
 
   @override
@@ -400,34 +416,18 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
   Widget _buildShowHallButton(BuildContext context) {
     return ElevatedButton(
       onPressed: () async {
-        final messenger = ScaffoldMessenger.of(context);
-        final success = await _mappedinController.selectBuildingByName("Hall");
-        if (!success) {
-          messenger.showSnackBar(
-            const SnackBar(content: Text('Failed to switch to Hall Building')),
-          );
-          return;
-        }
-        _openMappedinMap();
+        await _mappedinNavigationService.showBuilding(context, 'Hall Building');
       },
-      child: const Text("Show Hall"),
+      child: const Text('Show Hall Building'),
     );
   }
 
   Widget _buildNavigateToRoomButton(BuildContext context) {
     return ElevatedButton(
       onPressed: () async {
-        final messenger = ScaffoldMessenger.of(context);
-        final success = await _mappedinController.navigateToRoom("MBS1.115");
-        if (!success) {
-          messenger.showSnackBar(
-            const SnackBar(content: Text('Failed to navigate to MBS1.115')),
-          );
-          return;
-        }
-        _openMappedinMap();
+        await _mappedinNavigationService.navigateToRoom(context, 'H813');
       },
-      child: const Text("Go to MBS1.115"),
+      child: const Text('Navigate to H813'),
     );
   }
 

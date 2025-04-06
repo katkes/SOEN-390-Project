@@ -13,14 +13,18 @@ class MappedinMapScreen extends StatefulWidget {
     super.key,
     this.webView,
     this.controller,
+    this.onWebViewReady,
   });
 
   /// Optionally injected WebView.
   final Widget? webView;
 
-  /// Optional controller for managing the map state both for testing and if there's no need to modify it. 
+  /// Optional controller for managing the map state both for testing and if there's no need to modify it.
   /// If just opening mappedin screen by default, you don't need to update the controller's defaults.
   final MappedinMapController? controller;
+
+  /// Callback when the WebView is initialized and ready
+  final VoidCallback? onWebViewReady;
 
   @override
   State<MappedinMapScreen> createState() => _MappedinMapScreenState();
@@ -58,6 +62,7 @@ class _MappedinMapScreenState extends State<MappedinMapScreen> {
           MappedinWebView(
             key: _controller.webViewKey,
             mapId: _controller.currentMapId,
+            onWebViewReady: widget.onWebViewReady,
           ),
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,

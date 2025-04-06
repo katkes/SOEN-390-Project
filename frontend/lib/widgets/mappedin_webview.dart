@@ -28,10 +28,15 @@ class MappedinWebView extends StatefulWidget {
   final WebViewController? controllerOverride;
 
   final String? mapId;
+
+  /// Callback when the WebView is initialized and ready
+  final VoidCallback? onWebViewReady;
+
   const MappedinWebView({
     super.key,
     this.controllerOverride,
     this.mapId,
+    this.onWebViewReady,
   });
 
   @override
@@ -159,7 +164,7 @@ class MappedinWebViewState extends State<MappedinWebView> {
       final apiKey = dotenv.env['MAPPEDIN_API_KEY'];
       final apiSecret = dotenv.env['MAPPEDIN_API_SECRET'];
       final defaultMapId = '67968294965a13000bcdfe74';
-    
+
       final mapId = _currentMapId ?? widget.mapId ?? defaultMapId;
 
       if (apiKey == null || apiSecret == null) {
@@ -178,8 +183,24 @@ class MappedinWebViewState extends State<MappedinWebView> {
       );
 
       await controller.loadHtmlString(fileHtmlWithKeys);
+
+      // Wait for the map to load and notify when ready
+      await waitForMapLoaded();
+      widget.onWebViewReady?.call();
     } catch (e) {
       debugPrint('Error loading HTML assets: $e');
+    }
+  }
+
+  Future<bool> waitForMapLoaded() async {
+    // Poll until the mapLoaded flag is true (with a timeout, if needed)
+    while (true) {
+      final result =
+          await controller.runJavaScriptReturningResult("window.mapLoaded");
+      if (result.toString() == "true") {
+        return true;
+      }
+      await Future.delayed(Duration(milliseconds: 100));
     }
   }
 
@@ -190,9 +211,19 @@ class MappedinWebViewState extends State<MappedinWebView> {
   /// - [accessibility]: If the route should be accessible (currently unused).
   Future<void> showDirections(
       String departure, String destination, bool accessibility) async {
+    debugPrint(
+        "Showing directions from $departure to $destination............................................");
+
     try {
       final preference =
           await IndoorAccessibilityState.getMobilityStatusPreference();
+
+      debugPrint(
+          "Waiting for map to load............................................");
+      await waitForMapLoaded();
+      debugPrint(
+          "Map loaded, showing directions............................................");
+
       await controller.runJavaScript(
           "getDirections('$departure', '$destination', '$preference')");
     } catch (e) {
@@ -222,6 +253,8 @@ class MappedinWebViewState extends State<MappedinWebView> {
   /// - [roomNumber]: The room number to navigate to (e.g., "907")
   Future<void> navigateToRoom(String roomNumber) async {
     try {
+      debugPrint(
+          "Navigating to room $roomNumber............................................");
       await showDirections("Entrance", roomNumber, false);
     } catch (e) {
       debugPrint('Error navigating to room: $e');
