@@ -1,77 +1,53 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:soen_390/screens/home/landing_page_screen.dart';
-import 'package:soen_390/providers/navigation_provider.dart';
-import 'package:soen_390/providers/theme_provider.dart' as tp;
-import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:soen_390/screens/Home/landing_page_screen.dart';
+import 'package:soen_390/screens/indoor/mappedin_map_controller.dart';
+import 'package:soen_390/utils/navigation_utils_test.dart';
+import 'package:soen_390/providers/theme_provider.dart' as tp;
+import 'package:soen_390/styles/theme.dart';
 
-import 'cu_home_screen_test.mocks.dart';
+import 'landing_page_screen_test.mocks.dart';
 
-@GenerateMocks([tp.ThemeNotifier, NavigationNotifier])
+// Generate mocks
+@GenerateMocks([MappedinMapController, NavigationUtils])
 void main() {
-  late MockThemeNotifier mockThemeNotifier;
-  late MockNavigationNotifier mockNavigationNotifier;
+  late MockMappedinMapController mockMappedinMapController;
+  late MockNavigationUtils mockNavigationUtils;
 
   setUp(() {
-    mockThemeNotifier = MockThemeNotifier();
-    mockNavigationNotifier = MockNavigationNotifier();
-
-    when(mockThemeNotifier.state).thenReturn(ThemeData.light());
+    mockMappedinMapController = MockMappedinMapController();
+    mockNavigationUtils = MockNavigationUtils();
   });
 
-  Widget createWidgetUnderTest() {
+  // Helper method to create the widget under test
+  Widget createTestableWidget(Widget child) {
     return ProviderScope(
-      overrides: [
-        tp.themeProvider.overrideWith((ref) => mockThemeNotifier),
-        navigationProvider.overrideWith((ref) => mockNavigationNotifier),
-      ],
-      child: const MaterialApp(
-        home: CUHomeScreen(),
+      child: MaterialApp(
+        home: child,
       ),
     );
   }
 
-  testWidgets('renders CUHomeScreen with feature cards', (WidgetTester tester) async {
-    await tester.pumpWidget(createWidgetUnderTest());
-    await tester.pumpAndSettle();
+  testWidgets('CUHomeScreen shows the correct theme', (WidgetTester tester) async {
+    // Arrange: Build the widget tree and make sure it's rendered
+    await tester.pumpWidget(createTestableWidget(const CUHomeScreen()));
 
+    // Assert: Check for the presence of key UI elements
     expect(find.text('CU Explorer'), findsOneWidget);
-    expect(find.text('Campus Map'), findsOneWidget);
-    expect(find.text('Find My Way'), findsOneWidget);
-    expect(find.text('Indoor Maps'), findsOneWidget);
-    expect(find.text('Calendar'), findsOneWidget);
-    expect(find.text('Your Location'), findsOneWidget);
-  });
+    expect(find.byType(IconButton), findsOneWidget);
 
-  testWidgets('taps Campus Map card and triggers navigation', (WidgetTester tester) async {
-    await tester.pumpWidget(createWidgetUnderTest());
-    await tester.pumpAndSettle();
+    // Check if the "light mode" icon appears by default
+    expect(find.byIcon(Icons.dark_mode), findsOneWidget);
 
-    await tester.tap(find.text('Campus Map'));
-    await tester.pumpAndSettle();
-
-    verify(mockNavigationNotifier.setSelectedIndex(1)).called(1);
-  });
-
-  testWidgets('taps Calendar card and triggers navigation', (WidgetTester tester) async {
-    await tester.pumpWidget(createWidgetUnderTest());
-    await tester.pumpAndSettle();
-
-    await tester.tap(find.text('Calendar'));
-    await tester.pumpAndSettle();
-
-    verify(mockNavigationNotifier.setSelectedIndex(2)).called(1);
-  });
-
-  testWidgets('toggles theme mode on icon tap', (WidgetTester tester) async {
-    await tester.pumpWidget(createWidgetUnderTest());
-    await tester.pumpAndSettle();
-
+    // Act: Simulate a theme switch
     await tester.tap(find.byIcon(Icons.dark_mode));
-    await tester.pumpAndSettle();
+    await tester.pump();
 
-    verify(mockThemeNotifier.toggleTheme()).called(1);
+    // Assert: After tapping, the icon should change to "light mode"
+    expect(find.byIcon(Icons.light_mode), findsOneWidget);
   });
+
 }

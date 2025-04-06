@@ -7,7 +7,7 @@ import 'package:soen_390/providers/navigation_provider.dart';
 import 'package:soen_390/styles/theme.dart';
 import 'package:soen_390/providers/theme_provider.dart' as tp;
 import 'package:soen_390/screens/indoor/mappedin_map_controller.dart';
-import 'package:soen_390/utils/navigation_utils.dart';
+import 'package:soen_390/utils/navigation_utils_test.dart';
 
 class CUHomeScreen extends ConsumerStatefulWidget {
   const CUHomeScreen({super.key});
