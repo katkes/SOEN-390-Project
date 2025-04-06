@@ -155,8 +155,8 @@ class EventEditPopupState extends State<EventEditPopup> {
                                 onWebViewReady: () async {
                                   await Future.delayed(
                                       const Duration(milliseconds: 1000));
-                                  await hallController
-                                      .navigateToRoom(classroomController.text);
+                                  await hallController.navigateToRoom(
+                                      classroomController.text, false);
                                 },
                               ),
                             ),
