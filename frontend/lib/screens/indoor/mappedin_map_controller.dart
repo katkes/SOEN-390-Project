@@ -78,7 +78,6 @@ class MappedinMapController {
   bool setMapId(String mapId) {
     _currentMapId = mapId;
     return true;
-    // TODO check if map id is valid
   }
 
   /// Navigates to a specific room in a building
