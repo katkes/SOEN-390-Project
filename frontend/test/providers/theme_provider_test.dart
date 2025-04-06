@@ -7,7 +7,6 @@ import 'package:soen_390/styles/theme.dart';
 
 // Test group for ThemeNotifier
 void main() {
-
   // ignore: unused_local_variable
   late ThemeNotifier themeNotifier;
 
