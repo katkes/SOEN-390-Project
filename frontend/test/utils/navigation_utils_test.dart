@@ -8,6 +8,8 @@ import 'package:soen_390/screens/waypoint/waypoint_selection_screens.dart';
 import 'package:soen_390/utils/navigation_utils.dart';
 import 'package:soen_390/providers/navigation_provider.dart';
 
+
+
 // Generate mocks
 @GenerateMocks([WidgetRef, MappedinMapController])
 void main() {
