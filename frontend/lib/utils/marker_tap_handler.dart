@@ -8,7 +8,7 @@ import 'package:soen_390/models/route_result.dart';
 import 'package:soen_390/widgets/building_information_popup.dart';
 import 'package:soen_390/widgets/building_popup.dart';
 
-/// Handles tap interactions with map markers representing buildings.
+/// Handles tap interactions with map polygons representing buildings.
 ///
 /// This class manages:
 /// * Updating building information in the UI
@@ -17,20 +17,20 @@ import 'package:soen_390/widgets/building_popup.dart';
 ///
 /// Example usage:
 /// ```dart
-/// final handler = MarkerTapHandler(
+/// final handler = PolygonTapHandler(
 ///   onBuildingInfoUpdated: (name, address) => updateUI(name, address),
 ///   mapController: mapController,
 ///   buildingPopUps: buildingPopUps,
 /// );
 /// ```
-class MarkerTapHandler {
+class PolygonTapHandler {
   final Function(String? name, String? address) onBuildingInfoUpdated;
   final MapController mapController;
   final BuildingPopUps buildingPopUps;
   bool _hasTapped = false;
   final Function(RouteResult)? onRouteSelected;
 
-  MarkerTapHandler({
+  PolygonTapHandler({
     required this.onBuildingInfoUpdated,
     required this.mapController,
     required this.buildingPopUps,

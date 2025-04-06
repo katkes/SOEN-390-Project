@@ -121,7 +121,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
   String? photoUrl;
 
   void _handleBuildingSelected(LatLng location) async {
-    _mapWidgetKey.currentState?.selectMarker(location);
+    _mapWidgetKey.currentState?.selectPolygon(location);
   }
 
   void handleCampusSelected(String campus) {

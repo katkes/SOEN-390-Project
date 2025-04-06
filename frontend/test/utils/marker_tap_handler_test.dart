@@ -15,7 +15,7 @@ import 'marker_tap_handler_test.mocks.dart';
 void main() {
   late MockMapController mockMapController;
   late MockBuildingPopUps mockBuildingPopUps;
-  late MarkerTapHandler markerTapHandler;
+  late PolygonTapHandler markerTapHandler;
   late Function(String?, String?) onBuildingInfoUpdated;
 
   setUp(() {
@@ -23,7 +23,7 @@ void main() {
     mockBuildingPopUps = MockBuildingPopUps();
     onBuildingInfoUpdated = (name, address) {};
 
-    markerTapHandler = MarkerTapHandler(
+    markerTapHandler = PolygonTapHandler(
       mapController: mockMapController,
       buildingPopUps: mockBuildingPopUps,
       onBuildingInfoUpdated: onBuildingInfoUpdated,

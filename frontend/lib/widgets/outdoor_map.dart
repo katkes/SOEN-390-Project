@@ -58,23 +58,12 @@ class MapWidget extends StatefulWidget {
     this.onRouteSelected,
   });
 
-  // void selectMarker(LatLng location){
-  //   MapWidgetState? state = _mapWidgetKey.currentState;
-
-  //   if (state!= null) {
-  //     state.selectMarker(location);
-  //   }
-
-  // }
-
-  // final GlobalKey<MapWidgetState>
   @override
   State<MapWidget> createState() => MapWidgetState();
 }
 
 class MapWidgetState extends State<MapWidget> {
   late MapController _mapController;
-  List<Marker> _buildingMarkers = [];
   List<Polygon> _buildingPolygons = [];
   // ignore: unused_field
   String? _selectedBuildingName;
@@ -97,17 +86,17 @@ class MapWidgetState extends State<MapWidget> {
 
   bool isPairly = false;
 
-  ///
+  /// The map service responsible for loading building markers and polygons.
   late MapService _mapService;
 
-  ///
-  late MarkerTapHandler _markerTapHandler;
+  /// The tap handler for building markers.
+  late PolygonTapHandler _markerTapHandler;
 
-  MarkerTapHandler get markerTapHandler => _markerTapHandler;
+  PolygonTapHandler get markerTapHandler => _markerTapHandler;
 
-  void selectMarker(LatLng location) {
+  void selectPolygon(LatLng location) {
     // Update selected marker in MapService
-    _mapService.selectMarker(location);
+    _mapService.selectPolygon(location);
 
     // Reload markers to reflect the change
     _loadBuildingLocations();
@@ -133,7 +122,7 @@ class MapWidgetState extends State<MapWidget> {
         _loadBuildingLocations();
       });
     };
-    _markerTapHandler = MarkerTapHandler(
+    _markerTapHandler = PolygonTapHandler(
       onBuildingInfoUpdated: (name, address) {
         setState(() {
           _selectedBuildingName = name;
@@ -153,24 +142,43 @@ class MapWidgetState extends State<MapWidget> {
 
   Future<void> _loadBuildingLocations() async {
     try {
-      final markers = await _mapService
-          .loadBuildingMarkers((lat, lon, name, address, tapPosition) {
-        _markerTapHandler.onMarkerTapped(
-            lat, lon, name, address, tapPosition, context);
-      });
+      // Load building polygons with metadata
+      final polygons = await _mapService.loadBuildingPolygons(
+        (name, address, center) {
+          _markerTapHandler.onMarkerTapped(
+            center.latitude,
+            center.longitude,
+            name,
+            address,
+            Offset.zero, // Replace with actual tap position if needed
+            context,
+          );
+        },
+      );
 
       setState(() {
-        _buildingMarkers = markers;
+        _buildingPolygons = polygons;
       });
     } catch (e) {
-      print('Error loading building markers: $e');
+      print('Error loading building polygons: $e');
     }
   }
 
-  /// Loads the building boundaries from the map service
   Future<void> _loadBuildingBoundaries() async {
     try {
-      final polygons = await _mapService.loadBuildingPolygons();
+      final polygons = await _mapService.loadBuildingPolygons(
+        (name, address, center) {
+          _markerTapHandler.onMarkerTapped(
+            center.latitude,
+            center.longitude,
+            name,
+            address,
+            Offset.zero, // Replace with actual tap position if needed
+            context,
+          );
+        },
+      );
+
       setState(() {
         _buildingPolygons = polygons;
       });
@@ -303,12 +311,6 @@ class MapWidgetState extends State<MapWidget> {
                 if (!widget.routePoints.isNotEmpty)
                   PolygonLayer(
                     polygons: _buildingPolygons,
-                  ),
-                if (!widget.routePoints.isNotEmpty)
-                  MarkerLayer(
-                    markers: [
-                      ..._buildingMarkers,
-                    ],
                   ),
                 if (animatedPoints.isNotEmpty)
                   PolylineLayer(

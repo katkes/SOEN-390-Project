@@ -35,7 +35,7 @@ class MockMapService extends _i1.Mock implements _i2.MapService {
       );
 
   @override
-  void selectMarker(_i3.LatLng? location) => super.noSuchMethod(
+  void selectPolygon(_i3.LatLng? location) => super.noSuchMethod(
         Invocation.method(#selectMarker, [location]),
         returnValueForMissingStub: null,
       );

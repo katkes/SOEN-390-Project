@@ -23,7 +23,7 @@ void main() {
       final MapService mapService = MapService();
 
       // Ensure _selectedMarkerLocation is non-null by selecting a marker location.
-      mapService.selectMarker(const LatLng(45.5017, -73.5673));
+      mapService.selectPolygon(const LatLng(45.5017, -73.5673));
       const String mockGeoJson = '''
       {
         "type": "FeatureCollection",
@@ -104,20 +104,20 @@ void main() {
       final LatLng testLocation = const LatLng(45.5017, -73.5673);
 
       // Set the marker and start the timer.
-      mapService.selectMarker(testLocation);
-      expect(mapService.selectedMarkerLocation, equals(testLocation));
+      mapService.selectPolygon(testLocation);
+      expect(mapService.selectedPolygonLocation, equals(testLocation));
 
       // Pump enough time for the timer to fire.
       await tester.pump(const Duration(seconds: 8));
 
-      expect(mapService.selectedMarkerLocation, isNull);
+      expect(mapService.selectedPolygonLocation, isNull);
     });
 
     testWidgets('startClearTimer calls onMarkerCleared callback',
         (WidgetTester tester) async {
       final MapService mapService = MapService();
       final LatLng testLocation = const LatLng(45.5017, -73.5673);
-      mapService.selectMarker(testLocation);
+      mapService.selectPolygon(testLocation);
 
       bool callbackCalled = false;
       mapService.onMarkerCleared = () {
@@ -134,7 +134,7 @@ void main() {
         (WidgetTester tester) async {
       final MapService mapService = MapService();
       final LatLng testLocation = const LatLng(45.5017, -73.5673);
-      mapService.selectMarker(testLocation);
+      mapService.selectPolygon(testLocation);
 
       bool callbackCalled = false;
       mapService.onMarkerCleared = () {
@@ -150,7 +150,7 @@ void main() {
       await tester.pump(const Duration(seconds: 8));
 
       expect(callbackCalled, isTrue);
-      expect(mapService.selectedMarkerLocation, isNull);
+      expect(mapService.selectedPolygonLocation, isNull);
     });
   });
 }
