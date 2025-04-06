@@ -108,10 +108,8 @@ class MappedinMapController {
       final roomWithoutPrefix =
           BuildingConfigManager.getRoomNumber(roomNumber, building.roomPrefix);
 
-
       // Show directions to the room
       await webViewKey.currentState?.navigateToRoom(roomWithoutPrefix);
-
 
       return true;
     } catch (e) {

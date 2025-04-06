@@ -9,7 +9,6 @@ import 'package:soen_390/screens/indoor/mappedin_map_controller.dart';
 import 'package:soen_390/screens/indoor/mappedin_map_screen.dart';
 import 'dart:async';
 
-
 /// This widget displays a popup dialog for editing an event.
 /// The user can edit the event title, location, description, start time, and end time.
 /// The user can also delete the event.
@@ -71,7 +70,7 @@ class EventEditPopupState extends State<EventEditPopup> {
   }
 
   /// Opens the Mappedin map screen.
- Future<void> openMappedinMap() async {
+  Future<void> openMappedinMap() async {
     final completer = Completer<void>();
 
     // Start navigation without waiting for it to complete
@@ -90,6 +89,7 @@ class EventEditPopupState extends State<EventEditPopup> {
     );
     return completer.future;
   }
+
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -163,8 +163,8 @@ class EventEditPopupState extends State<EventEditPopup> {
                         final messenger = ScaffoldMessenger.of(context);
                         // First open the map screen and wait for it to be ready
                         await openMappedinMap();
-                        final success =
-                            await mappedinController.navigateToRoom(classroomController.text);
+                        final success = await mappedinController
+                            .navigateToRoom(classroomController.text);
                         if (!success) {
                           messenger.showSnackBar(
                             const SnackBar(
