@@ -16,6 +16,7 @@ import 'package:soen_390/widgets/location_field.dart';
 import 'package:soen_390/utils/itinerary_manager.dart';
 import 'package:soen_390/styles/theme.dart';
 import 'package:soen_390/screens/shuttle_bus/shuttle_schedule_screen.dart';
+import 'dart:async';
 
 class LocationTransportSelector extends StatefulWidget {
   final Function(List<String>, String) onConfirmRoute;
@@ -61,6 +62,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   String defaultYourLocationString = 'Your Location';
   String destinationLocation =
       ''; // variable to store destination location address
+  late MappedinMapController _mappedinController;
 
   static const int _startLocationIndex = 0;
   static const int _destinationIndex = 1;
@@ -76,6 +78,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
     }
 
     startLocation = itineraryManager.getStart();
+    _mappedinController = MappedinMapController();
   }
 
   void _handleShuttleBusSelection() {
@@ -194,14 +197,25 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
     // Check for the specific case: H843 to LB322
     if (start == "H843" && destination == "LB322") {
       // Step 1: Launch MappedinWebView for H843 to Hall Building bottom
-      await Navigator.push(
+      final hallController = MappedinMapController();
+
+      final success =
+          await hallController.selectBuildingByName("Hall Building");
+      if (!success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to switch to Hall Building')),
+        );
+        return;
+      }
+
+      Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => MappedinMapScreen(
-            controller: MappedinMapController(),
+            controller: hallController,
             onWebViewReady: () async {
-              final mappedinController = MappedinMapController();
-              await mappedinController.navigateToRoom("H843", true);
+              await Future.delayed(const Duration(milliseconds: 1000));
+              await hallController.navigateToRoom("H843", true);
             },
           ),
         ),
@@ -219,14 +233,25 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
       // );
 
       // Step 3: Launch MappedinWebView for Library bottom to LB322
-      await Navigator.push(
+      final libraryController = MappedinMapController();
+
+      final librarySuccess =
+          await libraryController.selectBuildingByName("Library Building");
+      if (!librarySuccess) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to switch to Library Building')),
+        );
+        return;
+      }
+
+      Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => MappedinMapScreen(
-            controller: MappedinMapController(),
+            controller: libraryController,
             onWebViewReady: () async {
-              final mappedinController = MappedinMapController();
-              await mappedinController.navigateToRoom("LB322", false);
+              await Future.delayed(const Duration(milliseconds: 1000));
+              await libraryController.navigateToRoom("LB322", false);
             },
           ),
         ),
