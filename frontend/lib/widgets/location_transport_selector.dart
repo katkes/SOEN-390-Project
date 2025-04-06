@@ -208,7 +208,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
         return;
       }
 
-      Navigator.push(
+      await Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => MappedinMapScreen(
@@ -236,7 +236,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
       final libraryController = MappedinMapController();
 
       final librarySuccess =
-          await libraryController.selectBuildingByName("Library Building");
+          await libraryController.selectBuildingByName("Library");
       if (!librarySuccess) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Failed to switch to Library Building')),
