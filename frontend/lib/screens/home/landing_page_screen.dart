@@ -1,8 +1,17 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:soen_390/providers/navigation_provider.dart';
 import 'package:soen_390/styles/theme.dart';
 import 'package:soen_390/providers/theme_provider.dart' as tp;
+import 'package:soen_390/screens/indoor/mappedin_map_screen.dart';
+import 'package:soen_390/screens/indoor/mappedin_map_controller.dart';
+import 'package:soen_390/screens/waypoint/waypoint_selection_screens.dart';
+import 'package:soen_390/providers/service_providers.dart';
+import 'package:soen_390/models/route_result.dart';
+
 
 class CUHomeScreen extends ConsumerStatefulWidget {
   const CUHomeScreen({super.key});
@@ -15,6 +24,8 @@ class _CUHomeScreenState extends ConsumerState<CUHomeScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
+  late MappedinMapController _mappedinController;
+  List<LatLng> polylinePoints = [];
 
   // ignore: unused_field
   late Animation<Offset> _slideAnimation;
@@ -39,6 +50,7 @@ class _CUHomeScreenState extends ConsumerState<CUHomeScreen>
         curve: const Interval(0.2, 1.0, curve: Curves.easeOutCubic),
       ),
     );
+    _mappedinController = MappedinMapController();
     _controller.forward();
   }
 
@@ -46,6 +58,71 @@ class _CUHomeScreenState extends ConsumerState<CUHomeScreen>
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  void _openWaypointSelection() async {
+    final buildingToCoordinatesService =
+        ref.watch(buildingToCoordinatesProvider);
+    final locationService = ref.watch(locationServiceProvider);
+    final routeService = ref.watch(routeServiceProvider);
+    final campusRouteChecker = ref.watch(campusRouteCheckerProvider);
+    final waypointValidator = ref.watch(waypointValidatorProvider);
+    final routeCacheManager = ref.watch(routeCacheManagerProvider);
+
+    final RouteResult selectedRouteData = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => WaypointSelectionScreen(
+          routeService: routeService,
+          geocodingService: buildingToCoordinatesService,
+          locationService: locationService,
+          campusRouteChecker: campusRouteChecker,
+          waypointValidator: waypointValidator,
+          routeCacheManager: routeCacheManager,
+        ),
+      ),
+    );
+
+    setState(() {
+      polylinePoints = selectedRouteData.routePoints;
+    });
+    
+    // Switch to map screen after selecting waypoints
+    ref.read(navigationProvider.notifier).setSelectedIndex(1);
+  }
+
+  void _openMappedinMap({String? buildingName, String? roomName}) async {
+    final messenger = ScaffoldMessenger.of(context);
+    bool success = true;
+    
+    if (buildingName != null) {
+      success = await _mappedinController.selectBuildingByName(buildingName);
+      if (!success) {
+        messenger.showSnackBar(
+          SnackBar(content: Text('Failed to switch to $buildingName Building')),
+        );
+        return;
+      }
+    }
+    
+    if (roomName != null) {
+      success = await _mappedinController.navigateToRoom(roomName);
+      if (!success) {
+        messenger.showSnackBar(
+          SnackBar(content: Text('Failed to navigate to $roomName')),
+        );
+        return;
+      }
+    }
+    
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MappedinMapScreen(
+          controller: _mappedinController,
+        ),
+      ),
+    );
   }
 
   @override
@@ -135,15 +212,7 @@ class _CUHomeScreenState extends ConsumerState<CUHomeScreen>
                           'Find My Way',
                           Icons.directions_walk,
                           'Get directions between buildings',
-                          () {
-                            ref
-                                .read(navigationProvider.notifier)
-                                .setSelectedIndex(1);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text(
-                                        'Tap "Find My Way" on the map screen')));
-                          },
+                          _openWaypointSelection,
                           isDarkMode,
                         ),
                         _buildFeatureCard(
@@ -151,15 +220,7 @@ class _CUHomeScreenState extends ConsumerState<CUHomeScreen>
                           'Indoor Maps',
                           Icons.home_outlined,
                           'Explore building interiors',
-                          () {
-                            ref
-                                .read(navigationProvider.notifier)
-                                .setSelectedIndex(1);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text(
-                                        'Use building controls on the map screen')));
-                          },
+                          () => _openMappedinMap(buildingName: "Hall"),
                           isDarkMode,
                         ),
                         _buildFeatureCard(
@@ -213,7 +274,9 @@ class _CUHomeScreenState extends ConsumerState<CUHomeScreen>
           boxShadow: [
             BoxShadow(
               color: isDarkMode
+
                   ? Colors.black.withOpacity(0.3)
+          
                   : Colors.grey.withOpacity(0.1),
               spreadRadius: 0,
               blurRadius: 10,
@@ -261,12 +324,15 @@ class _CUHomeScreenState extends ConsumerState<CUHomeScreen>
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
       decoration: BoxDecoration(
         color: isDarkMode
+           
             ? const Color(0xFF2A2D3E).withOpacity(0.8)
+
             : Colors.white.withOpacity(0.8),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: isDarkMode
+               
                 ? Colors.black.withOpacity(0.3)
                 : Colors.grey.withOpacity(0.1),
             spreadRadius: 0,
