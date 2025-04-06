@@ -137,6 +137,7 @@ class EventEditPopupState extends State<EventEditPopup> {
                           : const Text("Update"),
                     ),
                     ElevatedButton.icon(
+                      key: const Key('goNowButton'),
                       onPressed: () async {
                         final hallController = MappedinMapController();
 
