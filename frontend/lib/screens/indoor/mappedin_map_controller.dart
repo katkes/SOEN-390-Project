@@ -78,14 +78,14 @@ class MappedinMapController {
   bool setMapId(String mapId) {
     _currentMapId = mapId;
     return true;
-    // TODO check if map id is valid
   }
 
   /// Navigates to a specific room in a building
   ///
   /// [roomNumber] - The full room number including building prefix (e.g., "H907")
+  /// [reverse] - If true, navigates in reverse order
   /// Returns true if navigation was successful
-  Future<bool> navigateToRoom(String roomNumber) async {
+  Future<bool> navigateToRoom(String roomNumber, bool reverse) async {
     try {
       final building =
           await BuildingConfigManager.findBuildingByRoom(roomNumber);
@@ -110,7 +110,7 @@ class MappedinMapController {
 
 
       // Show directions to the room
-      await webViewKey.currentState?.navigateToRoom(roomWithoutPrefix);
+      await webViewKey.currentState?.navigateToRoom(roomWithoutPrefix, reverse);
 
 
       return true;

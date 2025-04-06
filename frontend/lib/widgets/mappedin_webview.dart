@@ -230,9 +230,14 @@ class MappedinWebViewState extends State<MappedinWebView> {
   /// Navigates to a specific room on the map from the entrance
   ///
   /// - [roomNumber]: The room number to navigate to (e.g., "907")
-  Future<void> navigateToRoom(String roomNumber) async {
+  Future<void> navigateToRoom(String roomNumber, bool reverse) async {
     try {
-      await showDirections("Entrance", roomNumber, false);
+      if (reverse) {
+        await showDirections(roomNumber, "Entrance", false);
+      } else {
+        await showDirections("Entrance", roomNumber, false);
+      }
+
     } catch (e) {
       debugPrint('Error navigating to room: $e');
       setState(() {

@@ -42,7 +42,8 @@ window.dispatchEvent(new Event("mapLoaded"));
 //a lot of the mappedIN SDK functionality for quick debugging and testing.
 // mapView.enableDebug();
 
-
+const transform = { zoomLevel: 18 };
+mapView.Camera.animateTo(transform);
 
 /**
  * Moves camera to the center of a named space.

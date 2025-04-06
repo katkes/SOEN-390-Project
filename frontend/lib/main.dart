@@ -432,7 +432,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
         final messenger = ScaffoldMessenger.of(context);
         // First open the map screen and wait for it to be ready
         await _openMappedinMap();
-        final success = await _mappedinController.navigateToRoom("H813");
+        final success = await _mappedinController.navigateToRoom("H813", true);
         if (!success) {
           messenger.showSnackBar(
             const SnackBar(content: Text('Failed to navigate to H813')),
