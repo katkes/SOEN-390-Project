@@ -113,6 +113,36 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
         findsOneWidget);
   });
 
+  testWidgets('_confirmRoute executes default behavior for other routes',
+      (WidgetTester tester) async {
+    // Arrange
+    List<String>? confirmedWaypoints;
+    String? confirmedMode;
+
+    await tester.pumpWidget(createWidgetUnderTest(
+      onConfirmRoute: (waypoints, mode) {
+        confirmedWaypoints = waypoints;
+        confirmedMode = mode;
+      },
+    ));
+
+    final state = tester.state(find.byType(LocationTransportSelector))
+        as LocationTransportSelectorState;
+
+    // Set start and destination locations to a non-specific case
+    state.setStartLocation('Start Location');
+    state.setDestinationLocation('Destination Location');
+
+    // Act - Call _confirmRoute
+    await tester.tap(find.text('Confirm Route'));
+    await tester.pumpAndSettle();
+
+    // Assert - Verify default behavior
+    expect(confirmedWaypoints,
+        containsAll(['Start Location', 'Destination Location']));
+    expect(confirmedMode, equals('Train or Bus'));
+  });
+
   testWidgets('Transport mode changes when tapped',
       (WidgetTester tester) async {
     String? selectedMode;
