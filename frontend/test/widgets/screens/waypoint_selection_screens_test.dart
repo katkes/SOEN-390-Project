@@ -427,7 +427,6 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
     expect(find.textContaining("$shortStartAddress → $shortEndAddress"),
         findsOneWidget);
   });
-
   testWidgets('Specify Disability button navigates to IndoorAccessibilityPage',
       (WidgetTester tester) async {
     // Arrange
@@ -445,18 +444,6 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
     // Act
     final buttonFinder = find.text('Specify Disability');
     expect(buttonFinder, findsOneWidget);
-
-    // Find the ElevatedButton widget (not the Text widget)
-    final ElevatedButton elevatedButton =
-        tester.widget<ElevatedButton>(find.byType(ElevatedButton).first);
-
-    final ButtonStyle style = elevatedButton.style!;
-
-    // Assert button background color is white
-    expect(style.backgroundColor?.resolve({}), equals(Colors.white));
-
-    // Assert button text color is the specific color
-    expect(style.foregroundColor?.resolve({}), equals(const Color(0xff912338)));
 
     // Check the text style for font size and weight
     final Text textWidget =

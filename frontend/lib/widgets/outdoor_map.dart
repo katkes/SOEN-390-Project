@@ -14,6 +14,7 @@ import 'package:soen_390/widgets/building_popup.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:soen_390/widgets/indoor_navigation_button.dart';
 import 'package:http/http.dart' as http;
+// import "package:soen_390/providers/theme_provider.dart";
 
 /// A widget that displays an interactive map with routing functionality.
 ///
@@ -360,6 +361,11 @@ class MapWidgetState extends State<MapWidget> {
   /// Builds the map widget with the FlutterMap and its children
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final tileUrl = isDark
+        ? "https://api.maptiler.com/maps/streets-v2-dark/{z}/{x}/{y}.png?key=dNrRaCzvW960GhB3n3bW"
+        : "https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=dNrRaCzvW960GhB3n3bW";
+
     return Stack(
       children: [
         SizedBox(
@@ -380,7 +386,7 @@ class MapWidgetState extends State<MapWidget> {
               ),
               children: [
                 TileLayer(
-                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  urlTemplate: tileUrl,
                   additionalOptions: const {},
                   tileProvider: NetworkTileProvider(
                     httpClient: widget.httpClient is HttpService
