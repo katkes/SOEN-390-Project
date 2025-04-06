@@ -108,7 +108,6 @@ class MappedinWebViewState extends State<MappedinWebView> {
         }
       },
     );
-
     loadHtmlFromAssets();
   }
 
