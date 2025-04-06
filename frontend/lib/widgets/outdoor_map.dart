@@ -116,7 +116,7 @@ class MapWidgetState extends State<MapWidget> {
     _mapController = MapController();
     _mapService = MapService();
 
-    _mapService.onMarkerCleared = () {
+    _mapService.onPolygonCleared = () {
       // Use onMarkerCleared
       setState(() {
         _loadBuildingLocations();
