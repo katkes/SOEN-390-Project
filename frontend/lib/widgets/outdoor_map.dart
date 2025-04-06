@@ -90,9 +90,9 @@ class MapWidgetState extends State<MapWidget> {
   late MapService _mapService;
 
   /// The tap handler for building markers.
-  late PolygonTapHandler _polygonTapHandler;
+  late PolygonTapHandler _markerTapHandler;
 
-  PolygonTapHandler get polygonTapHandler => _polygonTapHandler;
+  PolygonTapHandler get markerTapHandler => _markerTapHandler;
 
   void selectPolygon(LatLng location) {
     // Update selected marker in MapService
@@ -116,12 +116,13 @@ class MapWidgetState extends State<MapWidget> {
     _mapController = MapController();
     _mapService = MapService();
 
-    _mapService.onPolygonCleared = () {
+    _mapService.onMarkerCleared = () {
+      // Use onMarkerCleared
       setState(() {
         _loadBuildingLocations();
       });
     };
-    _polygonTapHandler = PolygonTapHandler(
+    _markerTapHandler = PolygonTapHandler(
       onBuildingInfoUpdated: (name, address) {
         setState(() {
           _selectedBuildingName = name;
@@ -144,7 +145,7 @@ class MapWidgetState extends State<MapWidget> {
       // Load building polygons with metadata
       final polygons = await _mapService.loadBuildingPolygons(
         (name, address, center) {
-          _polygonTapHandler.onPolygonTapped(
+          _markerTapHandler.onMarkerTapped(
             center.latitude,
             center.longitude,
             name,
@@ -167,7 +168,7 @@ class MapWidgetState extends State<MapWidget> {
     try {
       final polygons = await _mapService.loadBuildingPolygons(
         (name, address, center) {
-          _polygonTapHandler.onPolygonTapped(
+          _markerTapHandler.onMarkerTapped(
             center.latitude,
             center.longitude,
             name,
