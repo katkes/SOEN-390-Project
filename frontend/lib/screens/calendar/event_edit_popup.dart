@@ -5,6 +5,9 @@ import 'package:soen_390/services/calendar_service.dart';
 import 'calendar_event_service.dart';
 import '../../utils/building_search.dart';
 import 'package:soen_390/styles/theme.dart';
+import 'package:soen_390/screens/indoor/mappedin_map_controller.dart';
+import 'package:soen_390/screens/indoor/mappedin_map_screen.dart';
+import 'dart:async';
 
 /// This widget displays a popup dialog for editing an event.
 /// The user can edit the event title, location, description, start time, and end time.
@@ -39,6 +42,7 @@ class EventEditPopupState extends State<EventEditPopup> {
   late TextEditingController locationController;
   late TextEditingController descriptionController;
   late TextEditingController classroomController;
+  late MappedinMapController mappedinController;
   late DateTime _startDate;
   late DateTime _endDate;
 
@@ -50,6 +54,7 @@ class EventEditPopupState extends State<EventEditPopup> {
     super.initState();
     titleController = TextEditingController(text: widget.event.summary);
     locationController = TextEditingController();
+    mappedinController = MappedinMapController();
     descriptionController =
         TextEditingController(text: widget.event.description);
     _startDate = widget.event.start?.dateTime ?? DateTime.now();
@@ -132,8 +137,31 @@ class EventEditPopupState extends State<EventEditPopup> {
                           : const Text("Update"),
                     ),
                     ElevatedButton.icon(
-                      onPressed: () {
-                        // TODO: 7.1.6 Add navigation logic to next class
+                      key: const Key('goNowButton'),
+                      onPressed: () async {
+                        final hallController = MappedinMapController();
+
+                        final success = await hallController
+                            .selectBuildingByName("Hall Building");
+                        if (!success) {
+                          return;
+                        }
+                        if (context.mounted) {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MappedinMapScreen(
+                                controller: hallController,
+                                onWebViewReady: () async {
+                                  await Future.delayed(
+                                      const Duration(milliseconds: 1000));
+                                  await hallController
+                                      .navigateToRoom(classroomController.text);
+                                },
+                              ),
+                            ),
+                          );
+                        }
                       },
                       icon: Icon(Icons.directions_walk,
                           color: appTheme.colorScheme.onPrimary),
@@ -278,7 +306,7 @@ class EventEditPopupState extends State<EventEditPopup> {
       widget.onEventDeleted?.call();
 
       if (mounted) {
-        Navigator.of(context).pop(); // Close the edit dialog
+        Navigator.of(context).pop();
       }
     } catch (e) {
       if (mounted) {
