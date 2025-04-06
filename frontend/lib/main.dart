@@ -24,6 +24,7 @@ import 'package:soen_390/providers/navigation_provider.dart';
 import "package:soen_390/providers/theme_provider.dart";
 import "package:soen_390/widgets/dark_mode_toggle_button.dart";
 import 'package:soen_390/screens/indoor/mappedin_map_controller.dart';
+import 'dart:async';
 
 /// The entry point of the application.
 ///
@@ -241,15 +242,27 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
   }
 
   /// Opens the Mappedin map screen.
-  void _openMappedinMap() async {
+  /// Returns a Future that completes when the WebView is ready
+  Future<void> _openMappedinMap() async {
+    final completer = Completer<void>();
+
+    // Start navigation without waiting for it to complete
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => MappedinMapScreen(
           controller: _mappedinController,
+          onWebViewReady: () {
+            if (!completer.isCompleted) {
+              completer.complete();
+            }
+          },
         ),
       ),
     );
+
+    // Wait for the WebView to be ready
+    return completer.future;
   }
 
   @override
@@ -417,16 +430,16 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
     return ElevatedButton(
       onPressed: () async {
         final messenger = ScaffoldMessenger.of(context);
-        final success = await _mappedinController.navigateToRoom("MBS1.115");
+        // First open the map screen and wait for it to be ready
+        await _openMappedinMap();
+        final success = await _mappedinController.navigateToRoom("H813");
         if (!success) {
           messenger.showSnackBar(
-            const SnackBar(content: Text('Failed to navigate to MBS1.115')),
+            const SnackBar(content: Text('Failed to navigate to H813')),
           );
-          return;
         }
-        _openMappedinMap();
       },
-      child: const Text("Go to MBS1.115"),
+      child: const Text("Go to H813"),
     );
   }
 

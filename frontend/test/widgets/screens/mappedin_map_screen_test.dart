@@ -23,7 +23,7 @@ void main() {
     await tester.pumpWidget(const MaterialApp(home: TestMappedinMapScreen()));
 
     expect(find.text('Indoor Navigation'), findsOneWidget);
-    expect(find.text('Navigate to H813 from Outside'), findsOneWidget);
+    expect(find.text('Navigate to 813 from Outside'), findsOneWidget);
   });
 
   testWidgets('selecting from dropdown changes building map ID',
