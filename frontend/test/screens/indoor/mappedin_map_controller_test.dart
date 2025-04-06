@@ -54,6 +54,9 @@ void main() {
     mockWebViewState = MockMappedinWebViewState();
     // Inject our mock web view state into the controller using a fake GlobalKey.
     controller.webViewKey = FakeGlobalKey(mockWebViewState);
+
+    // Add stub for waitForMapLoaded
+    when(mockWebViewState.waitForMapLoaded()).thenAnswer((_) async => true);
   });
 
   group('MappedinMapController', () {
@@ -102,9 +105,9 @@ void main() {
         expect(controller.currentBuilding, isNotNull);
         expect(controller.currentBuilding?.displayName, 'Test Building');
 
-        // The method calls navigateToRoom twice:
-        // once with the original room number ('H907') and then with the room number without the prefix ('907').
-        verify(mockWebViewState.navigateToRoom('H907')).called(1);
+        // Verify the actual calls being made
+        verify(mockWebViewState.reloadWithMapId('test-map-id')).called(1);
+        verify(mockWebViewState.waitForMapLoaded()).called(1);
         verify(mockWebViewState.navigateToRoom('907')).called(1);
       });
 

@@ -4,14 +4,20 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:soen_390/screens/indoor/mappedin_map_controller.dart';
 
 class FakeMappedinMapController extends MappedinMapController {
-  FakeMappedinMapController() : super();
+  String? selectedMapId;
 
   @override
-  String get currentMapId => 'test-map-id';
+  Future<bool> selectBuildingById(String mapId) async {
+    selectedMapId = mapId;
+    return true;
+  }
+
+  @override
+  String? get currentMapId => selectedMapId ?? 'test-map-id';
 }
 
 class FakeMappedinWebView extends MappedinWebView {
-  FakeMappedinWebView({super.key});
+  const FakeMappedinWebView({super.key});
 
   @override
   FakeMappedinWebViewState createState() => FakeMappedinWebViewState();
@@ -56,13 +62,16 @@ class FakeMappedinWebViewState extends State<MappedinWebView>
 
   @override
   Future<void> navigateToRoom(String roomNumber) {
-    // TODO: implement navigateToRoom
     throw UnimplementedError();
   }
 
   @override
   Future<void> reloadWithMapId(String mapId) {
-    // TODO: implement reloadWithMapId
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> waitForMapLoaded() {
     throw UnimplementedError();
   }
 }

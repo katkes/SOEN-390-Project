@@ -7,7 +7,7 @@ import 'package:soen_390/services/auth_service.dart';
 import 'package:soen_390/widgets/building_popup.dart';
 import 'package:soen_390/widgets/nav_bar.dart';
 import 'package:soen_390/widgets/search_bar.dart';
-import 'package:soen_390/styles/theme.dart';
+// import 'package:soen_390/styles/theme.dart';
 import 'package:soen_390/widgets/campus_switch_button.dart';
 import 'package:soen_390/widgets/outdoor_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -21,7 +21,10 @@ import 'package:soen_390/screens/login/login_screen.dart';
 import 'package:soen_390/screens/profile/profile_screen.dart';
 import 'package:soen_390/screens/calendar/calendar_view.dart';
 import 'package:soen_390/providers/navigation_provider.dart';
+import "package:soen_390/providers/theme_provider.dart";
+import "package:soen_390/widgets/dark_mode_toggle_button.dart";
 import 'package:soen_390/screens/indoor/mappedin_map_controller.dart';
+import 'dart:async';
 
 /// The entry point of the application.
 ///
@@ -54,9 +57,13 @@ class MyApp extends ConsumerWidget {
     final httpService = ref.watch(httpServiceProvider);
     final authService = ref.watch(authServiceProvider);
 
+    //get the theme provider
+    final themeData = ref.watch(themeProvider);
+
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: appTheme,
+      theme: themeData,
+      // darkTheme: darkAppTheme,
       home: MyHomePage(
         title: 'Campus Map',
         routeService: routeService,
@@ -163,13 +170,6 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
     _locationService.stopListening();
   }
 
-  // void _onItemTapped(int index) {
-  //   polylinePoints = [];
-  //   setState(() {
-  //     _selectedIndex = index;
-  //   });
-  // }
-
   Future<void> signIn() async {
     setState(() {
       isLoading = true;
@@ -242,15 +242,27 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
   }
 
   /// Opens the Mappedin map screen.
-  void _openMappedinMap() async {
+  /// Returns a Future that completes when the WebView is ready
+  Future<void> _openMappedinMap() async {
+    final completer = Completer<void>();
+
+    // Start navigation without waiting for it to complete
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => MappedinMapScreen(
           controller: _mappedinController,
+          onWebViewReady: () {
+            if (!completer.isCompleted) {
+              completer.complete();
+            }
+          },
         ),
       ),
     );
+
+    // Wait for the WebView to be ready
+    return completer.future;
   }
 
   @override
@@ -262,7 +274,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
       body: IndexedStack(
         index: selectedIndex,
         children: [
-          const Center(child: Text('Home Page')),
+          const Center(child: DarkModeToggleButton()),
           _buildMapScreen(context),
           isLoggedIn
               ? _buildUserProfileScreen(context)
@@ -418,16 +430,16 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
     return ElevatedButton(
       onPressed: () async {
         final messenger = ScaffoldMessenger.of(context);
-        final success = await _mappedinController.navigateToRoom("MBS1.115");
+        // First open the map screen and wait for it to be ready
+        await _openMappedinMap();
+        final success = await _mappedinController.navigateToRoom("H813");
         if (!success) {
           messenger.showSnackBar(
-            const SnackBar(content: Text('Failed to navigate to MBS1.115')),
+            const SnackBar(content: Text('Failed to navigate to H813')),
           );
-          return;
         }
-        _openMappedinMap();
       },
-      child: const Text("Go to MBS1.115"),
+      child: const Text("Go to H813"),
     );
   }
 

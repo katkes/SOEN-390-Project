@@ -11,7 +11,6 @@ import 'package:flutter/material.dart' as _i3;
 import 'package:flutter/services.dart' as _i9;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i6;
-import 'package:soen_390/models/building_config.dart' as _i10;
 import 'package:soen_390/widgets/mappedin_webview.dart' as _i4;
 import 'package:webview_flutter/webview_flutter.dart' as _i2;
 
@@ -32,19 +31,19 @@ import 'package:webview_flutter/webview_flutter.dart' as _i2;
 class _FakeWebViewController_0 extends _i1.SmartFake
     implements _i2.WebViewController {
   _FakeWebViewController_0(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
+    : super(parent, parentInvocation);
 }
 
 class _FakeTextEditingController_1 extends _i1.SmartFake
     implements _i3.TextEditingController {
   _FakeTextEditingController_1(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
+    : super(parent, parentInvocation);
 }
 
 class _FakeMappedinWebView_2 extends _i1.SmartFake
     implements _i4.MappedinWebView {
   _FakeMappedinWebView_2(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
+    : super(parent, parentInvocation);
 
   @override
   String toString({_i3.DiagnosticLevel? minLevel = _i3.DiagnosticLevel.info}) =>
@@ -53,12 +52,12 @@ class _FakeMappedinWebView_2 extends _i1.SmartFake
 
 class _FakeBuildContext_3 extends _i1.SmartFake implements _i3.BuildContext {
   _FakeBuildContext_3(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
+    : super(parent, parentInvocation);
 }
 
 class _FakeWidget_4 extends _i1.SmartFake implements _i3.Widget {
   _FakeWidget_4(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
+    : super(parent, parentInvocation);
 
   @override
   String toString({_i3.DiagnosticLevel? minLevel = _i3.DiagnosticLevel.info}) =>
@@ -68,14 +67,13 @@ class _FakeWidget_4 extends _i1.SmartFake implements _i3.Widget {
 class _FakeDiagnosticsNode_5 extends _i1.SmartFake
     implements _i3.DiagnosticsNode {
   _FakeDiagnosticsNode_5(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
+    : super(parent, parentInvocation);
 
   @override
   String toString({
     _i5.TextTreeConfiguration? parentConfiguration,
     _i3.DiagnosticLevel? minLevel = _i3.DiagnosticLevel.info,
-  }) =>
-      super.toString();
+  }) => super.toString();
 }
 
 /// A class which mocks [MappedinWebViewState].
@@ -88,58 +86,68 @@ class MockMappedinWebViewState extends _i1.Mock
   }
 
   @override
-  _i2.WebViewController get controller => (super.noSuchMethod(
-        Invocation.getter(#controller),
-        returnValue: _FakeWebViewController_0(
-          this,
-          Invocation.getter(#controller),
-        ),
-      ) as _i2.WebViewController);
+  _i2.WebViewController get controller =>
+      (super.noSuchMethod(
+            Invocation.getter(#controller),
+            returnValue: _FakeWebViewController_0(
+              this,
+              Invocation.getter(#controller),
+            ),
+          )
+          as _i2.WebViewController);
 
   @override
   set controller(_i2.WebViewController? _controller) => super.noSuchMethod(
-        Invocation.setter(#controller, _controller),
-        returnValueForMissingStub: null,
-      );
+    Invocation.setter(#controller, _controller),
+    returnValueForMissingStub: null,
+  );
 
   @override
-  _i3.TextEditingController get searchController => (super.noSuchMethod(
-        Invocation.getter(#searchController),
-        returnValue: _FakeTextEditingController_1(
-          this,
-          Invocation.getter(#searchController),
-        ),
-      ) as _i3.TextEditingController);
+  _i3.TextEditingController get searchController =>
+      (super.noSuchMethod(
+            Invocation.getter(#searchController),
+            returnValue: _FakeTextEditingController_1(
+              this,
+              Invocation.getter(#searchController),
+            ),
+          )
+          as _i3.TextEditingController);
 
   @override
-  String get statusMessage => (super.noSuchMethod(
-        Invocation.getter(#statusMessage),
-        returnValue: _i6.dummyValue<String>(
-          this,
-          Invocation.getter(#statusMessage),
-        ),
-      ) as String);
+  String get statusMessage =>
+      (super.noSuchMethod(
+            Invocation.getter(#statusMessage),
+            returnValue: _i6.dummyValue<String>(
+              this,
+              Invocation.getter(#statusMessage),
+            ),
+          )
+          as String);
 
   @override
   set statusMessage(String? _statusMessage) => super.noSuchMethod(
-        Invocation.setter(#statusMessage, _statusMessage),
-        returnValueForMissingStub: null,
-      );
+    Invocation.setter(#statusMessage, _statusMessage),
+    returnValueForMissingStub: null,
+  );
 
   @override
-  _i4.MappedinWebView get widget => (super.noSuchMethod(
-        Invocation.getter(#widget),
-        returnValue: _FakeMappedinWebView_2(
-          this,
-          Invocation.getter(#widget),
-        ),
-      ) as _i4.MappedinWebView);
+  _i4.MappedinWebView get widget =>
+      (super.noSuchMethod(
+            Invocation.getter(#widget),
+            returnValue: _FakeMappedinWebView_2(
+              this,
+              Invocation.getter(#widget),
+            ),
+          )
+          as _i4.MappedinWebView);
 
   @override
-  _i3.BuildContext get context => (super.noSuchMethod(
-        Invocation.getter(#context),
-        returnValue: _FakeBuildContext_3(this, Invocation.getter(#context)),
-      ) as _i3.BuildContext);
+  _i3.BuildContext get context =>
+      (super.noSuchMethod(
+            Invocation.getter(#context),
+            returnValue: _FakeBuildContext_3(this, Invocation.getter(#context)),
+          )
+          as _i3.BuildContext);
 
   @override
   bool get mounted =>
@@ -148,29 +156,41 @@ class MockMappedinWebViewState extends _i1.Mock
 
   @override
   void dispose() => super.noSuchMethod(
-        Invocation.method(#dispose, []),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#dispose, []),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void initState() => super.noSuchMethod(
-        Invocation.method(#initState, []),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#initState, []),
+    returnValueForMissingStub: null,
+  );
 
   @override
-  _i7.Future<void> reloadWithMapId(String? mapId) => (super.noSuchMethod(
-        Invocation.method(#reloadWithMapId, [mapId]),
-        returnValue: _i7.Future<void>.value(),
-        returnValueForMissingStub: _i7.Future<void>.value(),
-      ) as _i7.Future<void>);
+  _i7.Future<void> reloadWithMapId(String? mapId) =>
+      (super.noSuchMethod(
+            Invocation.method(#reloadWithMapId, [mapId]),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
+          )
+          as _i7.Future<void>);
 
   @override
-  _i7.Future<void> loadHtmlFromAssets() => (super.noSuchMethod(
-        Invocation.method(#loadHtmlFromAssets, []),
-        returnValue: _i7.Future<void>.value(),
-        returnValueForMissingStub: _i7.Future<void>.value(),
-      ) as _i7.Future<void>);
+  _i7.Future<void> loadHtmlFromAssets() =>
+      (super.noSuchMethod(
+            Invocation.method(#loadHtmlFromAssets, []),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
+          )
+          as _i7.Future<void>);
+
+  @override
+  _i7.Future<bool> waitForMapLoaded() =>
+      (super.noSuchMethod(
+            Invocation.method(#waitForMapLoaded, []),
+            returnValue: _i7.Future<bool>.value(false),
+          )
+          as _i7.Future<bool>);
 
   @override
   _i7.Future<void> showDirections(
@@ -179,77 +199,84 @@ class MockMappedinWebViewState extends _i1.Mock
     bool? accessibility,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(#showDirections, [
-          departure,
-          destination,
-          accessibility,
-        ]),
-        returnValue: _i7.Future<void>.value(),
-        returnValueForMissingStub: _i7.Future<void>.value(),
-      ) as _i7.Future<void>);
+            Invocation.method(#showDirections, [
+              departure,
+              destination,
+              accessibility,
+            ]),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
+          )
+          as _i7.Future<void>);
 
   @override
-  _i7.Future<void> setFloor(String? floorName) => (super.noSuchMethod(
-        Invocation.method(#setFloor, [floorName]),
-        returnValue: _i7.Future<void>.value(),
-        returnValueForMissingStub: _i7.Future<void>.value(),
-      ) as _i7.Future<void>);
+  _i7.Future<void> setFloor(String? floorName) =>
+      (super.noSuchMethod(
+            Invocation.method(#setFloor, [floorName]),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
+          )
+          as _i7.Future<void>);
 
   @override
-  _i7.Future<void> navigateToRoom(String? roomNumber) => (super.noSuchMethod(
-        Invocation.method(#navigateToRoom, [roomNumber]),
-        returnValue: _i7.Future<void>.value(),
-        returnValueForMissingStub: _i7.Future<void>.value(),
-      ) as _i7.Future<void>);
+  _i7.Future<void> navigateToRoom(String? roomNumber) =>
+      (super.noSuchMethod(
+            Invocation.method(#navigateToRoom, [roomNumber]),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
+          )
+          as _i7.Future<void>);
 
   @override
   dynamic searchRoom(String? roomNumber) =>
       super.noSuchMethod(Invocation.method(#searchRoom, [roomNumber]));
 
   @override
-  _i3.Widget build(_i3.BuildContext? context) => (super.noSuchMethod(
-        Invocation.method(#build, [context]),
-        returnValue: _FakeWidget_4(
-          this,
-          Invocation.method(#build, [context]),
-        ),
-      ) as _i3.Widget);
+  _i3.Widget build(_i3.BuildContext? context) =>
+      (super.noSuchMethod(
+            Invocation.method(#build, [context]),
+            returnValue: _FakeWidget_4(
+              this,
+              Invocation.method(#build, [context]),
+            ),
+          )
+          as _i3.Widget);
 
   @override
   void didUpdateWidget(_i4.MappedinWebView? oldWidget) => super.noSuchMethod(
-        Invocation.method(#didUpdateWidget, [oldWidget]),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#didUpdateWidget, [oldWidget]),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void reassemble() => super.noSuchMethod(
-        Invocation.method(#reassemble, []),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#reassemble, []),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void setState(_i8.VoidCallback? fn) => super.noSuchMethod(
-        Invocation.method(#setState, [fn]),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#setState, [fn]),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void deactivate() => super.noSuchMethod(
-        Invocation.method(#deactivate, []),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#deactivate, []),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void activate() => super.noSuchMethod(
-        Invocation.method(#activate, []),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#activate, []),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void didChangeDependencies() => super.noSuchMethod(
-        Invocation.method(#didChangeDependencies, []),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#didChangeDependencies, []),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void debugFillProperties(_i9.DiagnosticPropertiesBuilder? properties) =>
@@ -263,13 +290,15 @@ class MockMappedinWebViewState extends _i1.Mock
       super.toString();
 
   @override
-  String toStringShort() => (super.noSuchMethod(
-        Invocation.method(#toStringShort, []),
-        returnValue: _i6.dummyValue<String>(
-          this,
-          Invocation.method(#toStringShort, []),
-        ),
-      ) as String);
+  String toStringShort() =>
+      (super.noSuchMethod(
+            Invocation.method(#toStringShort, []),
+            returnValue: _i6.dummyValue<String>(
+              this,
+              Invocation.method(#toStringShort, []),
+            ),
+          )
+          as String);
 
   @override
   _i3.DiagnosticsNode toDiagnosticsNode({
@@ -277,62 +306,17 @@ class MockMappedinWebViewState extends _i1.Mock
     _i5.DiagnosticsTreeStyle? style,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(#toDiagnosticsNode, [], {
-          #name: name,
-          #style: style,
-        }),
-        returnValue: _FakeDiagnosticsNode_5(
-          this,
-          Invocation.method(#toDiagnosticsNode, [], {
-            #name: name,
-            #style: style,
-          }),
-        ),
-      ) as _i3.DiagnosticsNode);
-}
-
-/// A class which mocks [BuildingConfig].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockBuildingConfig extends _i1.Mock implements _i10.BuildingConfig {
-  MockBuildingConfig() {
-    _i1.throwOnMissingStub(this);
-  }
-
-  @override
-  String get displayName => (super.noSuchMethod(
-        Invocation.getter(#displayName),
-        returnValue: _i6.dummyValue<String>(
-          this,
-          Invocation.getter(#displayName),
-        ),
-      ) as String);
-
-  @override
-  String get mapId => (super.noSuchMethod(
-        Invocation.getter(#mapId),
-        returnValue: _i6.dummyValue<String>(
-          this,
-          Invocation.getter(#mapId),
-        ),
-      ) as String);
-
-  @override
-  List<String> get keys =>
-      (super.noSuchMethod(Invocation.getter(#keys), returnValue: <String>[])
-          as List<String>);
-
-  @override
-  String get roomPrefix => (super.noSuchMethod(
-        Invocation.getter(#roomPrefix),
-        returnValue: _i6.dummyValue<String>(
-          this,
-          Invocation.getter(#roomPrefix),
-        ),
-      ) as String);
-
-  @override
-  List<String> get rooms =>
-      (super.noSuchMethod(Invocation.getter(#rooms), returnValue: <String>[])
-          as List<String>);
+            Invocation.method(#toDiagnosticsNode, [], {
+              #name: name,
+              #style: style,
+            }),
+            returnValue: _FakeDiagnosticsNode_5(
+              this,
+              Invocation.method(#toDiagnosticsNode, [], {
+                #name: name,
+                #style: style,
+              }),
+            ),
+          )
+          as _i3.DiagnosticsNode);
 }
