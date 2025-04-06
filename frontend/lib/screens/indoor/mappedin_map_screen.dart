@@ -18,7 +18,7 @@ class MappedinMapScreen extends StatefulWidget {
   /// Optionally injected WebView.
   final Widget? webView;
 
-  /// Optional controller for managing the map state both for testing and if there's no need to modify it. 
+  /// Optional controller for managing the map state both for testing and if there's no need to modify it.
   /// If just opening mappedin screen by default, you don't need to update the controller's defaults.
   final MappedinMapController? controller;
 
