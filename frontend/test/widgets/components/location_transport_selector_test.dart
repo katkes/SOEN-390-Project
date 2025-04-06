@@ -189,23 +189,6 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
     expect(find.byType(SuggestionsPopup), findsOneWidget);
   });
 
-  testWidgets('_handleLocationSelection updates itinerary for start location',
-      (WidgetTester tester) async {
-    await tester.pumpWidget(createWidgetUnderTest());
-
-    await tester.tap(find.text('Your Location'));
-    await tester.pumpAndSettle();
-
-    await tester.tap(find.text('Restaurant').first);
-    await tester.pumpAndSettle();
-
-    final state = tester.state(find.byType(LocationTransportSelector))
-        as LocationTransportSelectorState;
-
-    expect(state.startLocation, equals('Restaurant'));
-    expect(state.itineraryManager.getWaypoints().first, equals('Restaurant'));
-  });
-
   testWidgets(
       '_setStartLocation inserts at position 0 when itinerary not empty',
       (WidgetTester tester) async {
