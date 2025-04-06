@@ -34,7 +34,7 @@ class PolygonTapHandler {
     required this.buildingPopUps,
     this.onRouteSelected,
   });
-  void onPolygonTapped(
+  void onMarkerTapped(
     double lat,
     double lon,
     String name,

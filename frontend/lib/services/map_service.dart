@@ -41,10 +41,13 @@ class MapService {
 
   // Load building information from GeoJSON and add to the polygons
   Future<List<Polygon>> loadBuildingInformation(
-      Function onPolygonTapped) async {
+    Function onPolygonTapped,
+    List<Polygon> outdoorMapPolygons, // Accept polygons from OutdoorMap
+  ) async {
     try {
       final jsonData = await _geoJsonRepository.loadBuildingList();
-      return _parseBuildingPolygons(jsonData, onPolygonTapped);
+      return _parseBuildingPolygons(
+          jsonData, onPolygonTapped, outdoorMapPolygons);
     } catch (e) {
       debugPrint('Error loading building list: $e');
       return [];
@@ -53,41 +56,36 @@ class MapService {
 
   // Parse the GeoJSON data and add to existing polygons
   List<Polygon> _parseBuildingPolygons(
-      Map<String, dynamic> jsonData, Function onMarkerTapped) {
+    Map<String, dynamic> jsonData,
+    Function onMarkerTapped,
+    List<Polygon> outdoorMapPolygons, // Accept polygons from OutdoorMap
+  ) {
     List<Polygon> polygons = [];
 
+    // Use the polygons from the OutdoorMap widget
+    for (var polygon in outdoorMapPolygons) {
+      polygons.add(polygon);
+    }
+
+    // Parse additional polygons from the GeoJSON data
     if (jsonData['features'] is List) {
       for (var feature in jsonData['features']) {
         var geometry = feature['geometry'];
-        var properties = feature['properties'];
 
-        if (geometry?['type'] == 'Point' && geometry['coordinates'] is List) {
-          double lon = geometry['coordinates'][0];
-          double lat = geometry['coordinates'][1];
-          String name = properties?[_buildingLongName] ?? "Unknown";
-          String address = properties?['Address'] ?? "No address available";
+        // Only process MultiPolygon geometries
+        if (geometry?['type'] == 'MultiPolygon' &&
+            geometry['coordinates'] is List) {
+          for (var polygonRings in geometry['coordinates']) {
+            List<LatLng> polygonPoints = _extractPolygonPoints(polygonRings[0]);
+            _ensureClosedPolygon(polygonPoints);
 
-          final currentLocation = LatLng(lat, lon);
-
-          polygons.add(
-            Marker(
-              point: currentLocation,
-              width: markerSize,
-              height: markerSize,
-              child: GestureDetector(
-                onTapDown: (TapDownDetails details) {
-                  onMarkerTapped(
-                      lat, lon, name, address, details.globalPosition);
-                },
-                child: Icon(Icons.location_pin,
-                    color: markerColor, size: markerSize),
-              ),
-            ),
-          );
+            polygons.add(_createPolygon(polygonPoints));
+          }
         }
       }
     }
-    return markers;
+
+    return polygons;
   }
 
   // List<Polygon> _parsa(Map<String, dynamic> jsonData,

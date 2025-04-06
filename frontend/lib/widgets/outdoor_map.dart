@@ -135,8 +135,8 @@ class MapWidgetState extends State<MapWidget> {
       buildingPopUps: widget.buildingPopUps,
       onRouteSelected: widget.onRouteSelected,
     );
-    _loadBuildingBoundaries();
     _loadBuildingLocations();
+    _loadBuildingBoundaries();
     from = widget.location;
     to = LatLng(
         widget.location.latitude + 0.005, widget.location.longitude + 0.005);
@@ -146,11 +146,14 @@ class MapWidgetState extends State<MapWidget> {
   // and sets the state with the loaded polygons.
   Future<void> _loadBuildingLocations() async {
     try {
-      final polygons = await _mapService
-          .loadBuildingInformation((lat, lon, name, address, tapPosition) {
-        _markerTapHandler.onMarkerTapped(
-            lat, lon, name, address, tapPosition, context);
-      });
+      // Pass the current polygons (boundaries) from the OutdoorMap state
+      final polygons = await _mapService.loadBuildingInformation(
+        (lat, lon, name, address, tapPosition) {
+          _markerTapHandler.onMarkerTapped(
+              lat, lon, name, address, tapPosition, context);
+        },
+        _buildingPolygons, // Pass the current polygons
+      );
 
       setState(() {
         _buildingPolygons = polygons;
