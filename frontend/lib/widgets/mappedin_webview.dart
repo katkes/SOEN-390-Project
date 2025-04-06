@@ -159,7 +159,7 @@ class MappedinWebViewState extends State<MappedinWebView> {
       final apiKey = dotenv.env['MAPPEDIN_API_KEY'];
       final apiSecret = dotenv.env['MAPPEDIN_API_SECRET'];
       final defaultMapId = '67968294965a13000bcdfe74';
-    
+
       final mapId = _currentMapId ?? widget.mapId ?? defaultMapId;
 
       if (apiKey == null || apiSecret == null) {

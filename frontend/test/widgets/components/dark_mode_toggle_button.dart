@@ -21,16 +21,19 @@ class MockThemeNotifier extends Mock implements StateNotifier<ThemeData> {
 
 void main() {
   late MockThemeNotifier mockThemeNotifier;
-  late StateNotifierProvider<StateNotifier<ThemeData>, ThemeData> mockThemeProvider;
+  late StateNotifierProvider<StateNotifier<ThemeData>, ThemeData>
+      mockThemeProvider;
 
   setUp(() {
     mockThemeNotifier = MockThemeNotifier();
-    mockThemeProvider = StateNotifierProvider<StateNotifier<ThemeData>, ThemeData>((ref) {
+    mockThemeProvider =
+        StateNotifierProvider<StateNotifier<ThemeData>, ThemeData>((ref) {
       return mockThemeNotifier;
     });
   });
 
-  testWidgets('DarkModeToggleButton shows correct text based on current theme', (WidgetTester tester) async {
+  testWidgets('DarkModeToggleButton shows correct text based on current theme',
+      (WidgetTester tester) async {
     // Build our widget in light mode
     await tester.pumpWidget(
       ProviderScope(
@@ -56,7 +59,8 @@ void main() {
     expect(find.text('Switch to Dark Mode'), findsNothing);
   });
 
-  testWidgets('Tapping the button calls toggleTheme', (WidgetTester tester) async {
+  testWidgets('Tapping the button calls toggleTheme',
+      (WidgetTester tester) async {
     // Build our widget
     await tester.pumpWidget(
       ProviderScope(
@@ -87,7 +91,8 @@ void main() {
     expect(mockThemeNotifier._isDark, initialIsDark);
   });
 
-  testWidgets('Widget renders with Scaffold and ElevatedButton', (WidgetTester tester) async {
+  testWidgets('Widget renders with Scaffold and ElevatedButton',
+      (WidgetTester tester) async {
     // Build our widget
     await tester.pumpWidget(
       ProviderScope(

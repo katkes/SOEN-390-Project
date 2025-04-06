@@ -36,7 +36,9 @@ void main() {
   });
 
   group('ThemeNotifier Initialization', () {
-    test('should initialize with light theme as default when preferences is null', () async {
+    test(
+        'should initialize with light theme as default when preferences is null',
+        () async {
       // Setup
       when(mockPrefs.getBool('isDarkMode')).thenReturn(null);
 
@@ -48,7 +50,9 @@ void main() {
       verify(mockPrefs.getBool('isDarkMode')).called(1);
     });
 
-    test('should initialize with light theme when preferences is explicitly false', () async {
+    test(
+        'should initialize with light theme when preferences is explicitly false',
+        () async {
       // Setup
       when(mockPrefs.getBool('isDarkMode')).thenReturn(false);
 
@@ -117,7 +121,8 @@ void main() {
     test('should toggle from dark to light theme', () async {
       // Setup
       when(mockPrefs.getBool('isDarkMode')).thenReturn(true);
-      when(mockPrefs.setBool('isDarkMode', false)).thenAnswer((_) async => true);
+      when(mockPrefs.setBool('isDarkMode', false))
+          .thenAnswer((_) async => true);
 
       // Force the provider to reload with the new mock setup
       container = ProviderContainer(
@@ -143,7 +148,8 @@ void main() {
       // Setup
       when(mockPrefs.getBool('isDarkMode')).thenReturn(false);
       when(mockPrefs.setBool('isDarkMode', true)).thenAnswer((_) async => true);
-      when(mockPrefs.setBool('isDarkMode', false)).thenAnswer((_) async => true);
+      when(mockPrefs.setBool('isDarkMode', false))
+          .thenAnswer((_) async => true);
 
       final notifier = container.read(themeProvider.notifier);
 
@@ -161,7 +167,8 @@ void main() {
     test('should handle SharedPreferences failure during toggle', () async {
       // Setup
       when(mockPrefs.getBool('isDarkMode')).thenReturn(false);
-      when(mockPrefs.setBool('isDarkMode', true)).thenThrow(Exception('Failed to save preference'));
+      when(mockPrefs.setBool('isDarkMode', true))
+          .thenThrow(Exception('Failed to save preference'));
 
       // Act & Assert
       final notifier = container.read(themeProvider.notifier);
@@ -178,7 +185,8 @@ void main() {
   group('ThemeNotifier Error Handling', () {
     test('should handle SharedPreferences get errors gracefully', () async {
       // Setup
-      when(mockPrefs.getBool('isDarkMode')).thenThrow(Exception('SharedPreferences error'));
+      when(mockPrefs.getBool('isDarkMode'))
+          .thenThrow(Exception('SharedPreferences error'));
 
       // Force the provider to reload with the new mock setup
       container = ProviderContainer(
@@ -196,10 +204,12 @@ void main() {
       expect(themeData, equals(appTheme));
     });
 
-    test('should handle SharedPreferences set errors during toggleTheme', () async {
+    test('should handle SharedPreferences set errors during toggleTheme',
+        () async {
       // Setup
       when(mockPrefs.getBool('isDarkMode')).thenReturn(false);
-      when(mockPrefs.setBool(any, any)).thenThrow(Exception('SharedPreferences set error'));
+      when(mockPrefs.setBool(any, any))
+          .thenThrow(Exception('SharedPreferences set error'));
 
       final notifier = container.read(themeProvider.notifier);
 
@@ -215,7 +225,8 @@ void main() {
 
     test('should handle _loadTheme errors explicitly', () async {
       // Setup
-      when(mockPrefs.getBool('isDarkMode')).thenThrow(Exception('SharedPreferences load error'));
+      when(mockPrefs.getBool('isDarkMode'))
+          .thenThrow(Exception('SharedPreferences load error'));
 
       // Create notifier directly
       final notifier = TestThemeNotifier(mockPrefs);
@@ -241,7 +252,7 @@ void main() {
       final themeChanges = <ThemeData>[];
       final subscription = container.listen(
         themeProvider,
-            (_, next) => themeChanges.add(next),
+        (_, next) => themeChanges.add(next),
         fireImmediately: true,
       );
 
@@ -257,7 +268,9 @@ void main() {
       expect(themeChanges[1], equals(darkAppTheme)); // After toggle
     });
 
-    test('should not notify listeners if toggling does not change state due to error', () async {
+    test(
+        'should not notify listeners if toggling does not change state due to error',
+        () async {
       // Setup
       when(mockPrefs.getBool('isDarkMode')).thenReturn(false);
 
@@ -275,7 +288,7 @@ void main() {
       final themeChanges = <ThemeData>[];
       final subscription = container.listen(
         themeProvider,
-            (_, next) => themeChanges.add(next),
+        (_, next) => themeChanges.add(next),
         fireImmediately: true,
       );
 
@@ -299,7 +312,7 @@ void main() {
       final themeChanges = <ThemeData>[];
       final subscription = container.listen(
         themeProvider,
-            (_, next) => themeChanges.add(next),
+        (_, next) => themeChanges.add(next),
         fireImmediately: true,
       );
 
@@ -322,7 +335,8 @@ void main() {
   });
 
   group('ThemeNotifier Integration Tests', () {
-    testWidgets('Widget should respond to theme changes', (WidgetTester tester) async {
+    testWidgets('Widget should respond to theme changes',
+        (WidgetTester tester) async {
       // Setup
       when(mockPrefs.getBool('isDarkMode')).thenReturn(false);
       when(mockPrefs.setBool(any, any)).thenAnswer((_) async => true);
@@ -341,7 +355,8 @@ void main() {
                 home: Scaffold(
                   body: const Text('Test'),
                   floatingActionButton: FloatingActionButton(
-                    onPressed: () => ref.read(themeProvider.notifier).toggleTheme(),
+                    onPressed: () =>
+                        ref.read(themeProvider.notifier).toggleTheme(),
                     child: const Icon(Icons.brightness_6),
                   ),
                 ),
@@ -458,7 +473,8 @@ class TestThemeNotifier extends ThemeNotifier {
 
 // Special notifier that fails during toggle for testing error cases
 class FailingToggleThemeNotifier extends TestThemeNotifier {
-  FailingToggleThemeNotifier(MockSharedPreferences mockPrefs) : super(mockPrefs);
+  FailingToggleThemeNotifier(MockSharedPreferences mockPrefs)
+      : super(mockPrefs);
 
   @override
   Future<void> toggleTheme() async {

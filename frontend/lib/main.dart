@@ -261,7 +261,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
       body: IndexedStack(
         index: selectedIndex,
         children: [
-          const Center(child: Text('Home Page')),
+          const Center(child: DarkModeToggleButton()),
           _buildMapScreen(context),
           isLoggedIn
               ? _buildUserProfileScreen(context)
