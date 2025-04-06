@@ -11,6 +11,7 @@ import 'package:soen_390/styles/theme.dart';
 
 import 'landing_page_screen_test.mocks.dart';
 
+
 // Generate mocks
 @GenerateMocks([MappedinMapController, NavigationUtils])
 void main() {
