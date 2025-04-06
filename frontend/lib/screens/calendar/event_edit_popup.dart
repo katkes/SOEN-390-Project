@@ -145,21 +145,22 @@ class EventEditPopupState extends State<EventEditPopup> {
                         if (!success) {
                           return;
                         }
-
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => MappedinMapScreen(
-                              controller: hallController,
-                              onWebViewReady: () async {
-                                await Future.delayed(
-                                    const Duration(milliseconds: 1000));
-                                await hallController
-                                    .navigateToRoom(classroomController.text);
-                              },
+                        if (context.mounted) {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MappedinMapScreen(
+                                controller: hallController,
+                                onWebViewReady: () async {
+                                  await Future.delayed(
+                                      const Duration(milliseconds: 1000));
+                                  await hallController
+                                      .navigateToRoom(classroomController.text);
+                                },
+                              ),
                             ),
-                          ),
-                        );
+                          );
+                        }
                       },
                       icon: Icon(Icons.directions_walk,
                           color: appTheme.colorScheme.onPrimary),
