@@ -66,7 +66,7 @@ class BuildingInformationPopup extends StatelessWidget {
 
   Widget _buildBuildingInfo(BuildContext context, String name, String address) {
     final textTheme = Theme.of(context).textTheme;
-    
+
     final textColor = Colors.black;
 
     return Column(
@@ -76,7 +76,7 @@ class BuildingInformationPopup extends StatelessWidget {
           style: textTheme.bodyLarge?.copyWith(
             fontSize: 14,
             fontWeight: FontWeight.bold,
-            color: textColor,  
+            color: textColor,
           ),
         ),
         const SizedBox(height: 5),
@@ -85,7 +85,7 @@ class BuildingInformationPopup extends StatelessWidget {
           style: textTheme.bodySmall?.copyWith(
             fontSize: 12,
             // ignore: deprecated_member_use
-            color: textColor.withOpacity(0.6), 
+            color: textColor.withOpacity(0.6),
           ),
           textAlign: TextAlign.center,
         ),
