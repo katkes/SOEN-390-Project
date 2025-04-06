@@ -13,6 +13,7 @@ import 'package:soen_390/widgets/suggestions.dart';
 import 'package:soen_390/widgets/location_field.dart';
 import 'package:soen_390/utils/itinerary_manager.dart';
 import 'package:soen_390/styles/theme.dart';
+import 'package:soen_390/screens/shuttle_bus/shuttle_schedule_screen.dart';
 
 class LocationTransportSelector extends StatefulWidget {
   final Function(List<String>, String) onConfirmRoute;
@@ -76,11 +77,11 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   }
 
   void _handleShuttleBusSelection() {
-    setState(() {
-      selectedMode = "Shuttle Bus";
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Shuttle Bus selected!")),
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ShuttleScheduleScreen(),
+      ),
     );
   }
 
