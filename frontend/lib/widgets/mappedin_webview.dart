@@ -185,7 +185,8 @@ class MappedinWebViewState extends State<MappedinWebView> {
       if (result.toString() == "true") {
         return true;
       }
-      await Future.delayed(Duration(milliseconds: 100));
+      final timeDelay = 100;
+      await Future.delayed(Duration(milliseconds: timeDelay));
     }
   }
 
