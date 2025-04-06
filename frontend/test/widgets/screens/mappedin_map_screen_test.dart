@@ -23,6 +23,29 @@ void main() {
     await tester.pumpWidget(const MaterialApp(home: TestMappedinMapScreen()));
 
     expect(find.text('Indoor Navigation'), findsOneWidget);
-    expect(find.text('Navigate to H813 from Outside'), findsOneWidget);
+    expect(find.text('Navigate to 813 from Outside'), findsOneWidget);
+  });
+
+  testWidgets('selecting from dropdown changes building map ID',
+      (tester) async {
+    final fakeController = FakeMappedinMapController();
+
+    await tester.pumpWidget(MaterialApp(
+      home: MappedinMapScreen(
+        controller: fakeController,
+        webView: const FakeMappedinWebView(),
+      ),
+    ));
+
+    // Open the dropdown
+    await tester.tap(find.byType(DropdownButton<String>));
+    await tester.pumpAndSettle();
+
+    // Select "JMSB"
+    await tester.tap(find.text('JMSB').last);
+    await tester.pumpAndSettle();
+
+    // Check if the controller received the correct mapId
+    expect(fakeController.selectedMapId, equals("67e1ac8eaa7c59000baf8dcf"));
   });
 }

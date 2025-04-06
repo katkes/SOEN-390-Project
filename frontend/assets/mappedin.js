@@ -22,6 +22,9 @@ const options = {
     mapId: "MAPPEDIN_API_MAP_ID",
 };
 
+window.mapLoaded = false;
+
+
 // Load map data and render 3D view
 const mapData = await getMapData(options);
 const mapView = await show3dMap(
@@ -30,6 +33,10 @@ const mapView = await show3dMap(
 );
 
 mapView.Labels.all();
+console.log("Map data loaded: ", mapData);
+window.mapLoaded = true;
+window.dispatchEvent(new Event("mapLoaded"));
+
 
 //This is the functionality which adds the "black box" at the top and allows us to access
 //a lot of the mappedIN SDK functionality for quick debugging and testing.
@@ -103,10 +110,12 @@ window.getDirections = async function getDirections(startName, destinationName, 
 
         if (!start || !destination) throw new Error("Invalid start or destination");
 
+        console.log("Start space:", start.name);
+        console.log("Destination space:", destination.name);
+
 
         const directions = await mapData.getDirections(start, destination, { accessible: accessible });
         if (!directions?.path) throw new Error("Directions not found");
-
         mapView.Navigation.clear();
         mapView.Navigation.draw(directions);
 
@@ -288,5 +297,3 @@ mapView.on("click", async (event) => {
         console.log("Path cleared. Tap to start again.");
     }
 });
-
-

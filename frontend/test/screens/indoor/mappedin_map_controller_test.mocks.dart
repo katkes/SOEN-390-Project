@@ -11,7 +11,6 @@ import 'package:flutter/material.dart' as _i3;
 import 'package:flutter/services.dart' as _i9;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i6;
-import 'package:soen_390/models/building_config.dart' as _i10;
 import 'package:soen_390/widgets/mappedin_webview.dart' as _i4;
 import 'package:webview_flutter/webview_flutter.dart' as _i2;
 
@@ -173,6 +172,12 @@ class MockMappedinWebViewState extends _i1.Mock
       ) as _i7.Future<void>);
 
   @override
+  _i7.Future<bool> waitForMapLoaded() => (super.noSuchMethod(
+        Invocation.method(#waitForMapLoaded, []),
+        returnValue: _i7.Future<bool>.value(false),
+      ) as _i7.Future<bool>);
+
+  @override
   _i7.Future<void> showDirections(
     String? departure,
     String? destination,
@@ -289,50 +294,4 @@ class MockMappedinWebViewState extends _i1.Mock
           }),
         ),
       ) as _i3.DiagnosticsNode);
-}
-
-/// A class which mocks [BuildingConfig].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockBuildingConfig extends _i1.Mock implements _i10.BuildingConfig {
-  MockBuildingConfig() {
-    _i1.throwOnMissingStub(this);
-  }
-
-  @override
-  String get displayName => (super.noSuchMethod(
-        Invocation.getter(#displayName),
-        returnValue: _i6.dummyValue<String>(
-          this,
-          Invocation.getter(#displayName),
-        ),
-      ) as String);
-
-  @override
-  String get mapId => (super.noSuchMethod(
-        Invocation.getter(#mapId),
-        returnValue: _i6.dummyValue<String>(
-          this,
-          Invocation.getter(#mapId),
-        ),
-      ) as String);
-
-  @override
-  List<String> get keys =>
-      (super.noSuchMethod(Invocation.getter(#keys), returnValue: <String>[])
-          as List<String>);
-
-  @override
-  String get roomPrefix => (super.noSuchMethod(
-        Invocation.getter(#roomPrefix),
-        returnValue: _i6.dummyValue<String>(
-          this,
-          Invocation.getter(#roomPrefix),
-        ),
-      ) as String);
-
-  @override
-  List<String> get rooms =>
-      (super.noSuchMethod(Invocation.getter(#rooms), returnValue: <String>[])
-          as List<String>);
 }

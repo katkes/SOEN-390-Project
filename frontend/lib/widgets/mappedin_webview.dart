@@ -13,6 +13,8 @@
 /// Usage:
 ///   await _webViewKey.currentState?.showDirections("124", "817");
 ///   await _webViewKey.currentState?.setFloor("Floor 2");
+///   await _webViewKey.currentState?.reloadWithMapId("someMapId");
+
 library;
 
 import 'dart:convert';
@@ -28,10 +30,15 @@ class MappedinWebView extends StatefulWidget {
   final WebViewController? controllerOverride;
 
   final String? mapId;
+
+  /// Callback when the WebView is initialized and ready
+  final VoidCallback? onWebViewReady;
+
   const MappedinWebView({
     super.key,
     this.controllerOverride,
     this.mapId,
+    this.onWebViewReady,
   });
 
   @override
@@ -60,14 +67,6 @@ class MappedinWebViewState extends State<MappedinWebView> {
       ..setJavaScriptMode(JavaScriptMode.unrestricted);
 
     /// Registers a JavaScript channel to receive direction updates from the WebView.
-    ///
-    /// - Channel name: `"DirectionsChannel"`
-    /// - Receives: A JSON string with the following structure:
-    ///   {
-    ///     "type": "success" | "error",
-    ///     "payload": String | { "message": String }
-    ///   }
-    /// - Updates the [statusMessage] based on success or error.
     controller.addJavaScriptChannel(
       "DirectionsChannel",
       onMessageReceived: (JavaScriptMessage message) {
@@ -92,14 +91,6 @@ class MappedinWebViewState extends State<MappedinWebView> {
     );
 
     /// Registers a JavaScript channel to receive floor selection events from the WebView.
-    ///
-    /// - Channel name: `"FloorsChannel"`
-    /// - Receives: A JSON string with the following structure:
-    ///   {
-    ///     "type": "success" | "error",
-    ///     "payload": { "floorName": String } | { "message": String }
-    ///   }
-    /// - Updates the [statusMessage] to reflect the current floor or error.
     controller.addJavaScriptChannel(
       "FloorsChannel",
       onMessageReceived: (JavaScriptMessage message) {
@@ -122,7 +113,6 @@ class MappedinWebViewState extends State<MappedinWebView> {
         }
       },
     );
-
     loadHtmlFromAssets();
   }
 
@@ -178,8 +168,25 @@ class MappedinWebViewState extends State<MappedinWebView> {
       );
 
       await controller.loadHtmlString(fileHtmlWithKeys);
+
+      // Wait for the map to load and notify when ready
+      await waitForMapLoaded();
+      widget.onWebViewReady?.call();
     } catch (e) {
       debugPrint('Error loading HTML assets: $e');
+    }
+  }
+
+  Future<bool> waitForMapLoaded() async {
+    // Poll until the mapLoaded flag is true (with a timeout, if needed)
+    while (true) {
+      final result =
+          await controller.runJavaScriptReturningResult("window.mapLoaded");
+      if (result.toString() == "true") {
+        return true;
+      }
+      final timeDelay = 100;
+      await Future.delayed(Duration(milliseconds: timeDelay));
     }
   }
 
@@ -193,6 +200,9 @@ class MappedinWebViewState extends State<MappedinWebView> {
     try {
       final preference =
           await IndoorAccessibilityState.getMobilityStatusPreference();
+
+      await waitForMapLoaded();
+
       await controller.runJavaScript(
           "getDirections('$departure', '$destination', '$preference')");
     } catch (e) {
@@ -217,7 +227,7 @@ class MappedinWebViewState extends State<MappedinWebView> {
     }
   }
 
-  /// Navigates to a specific room on the map
+  /// Navigates to a specific room on the map from the entrance
   ///
   /// - [roomNumber]: The room number to navigate to (e.g., "907")
   Future<void> navigateToRoom(String roomNumber) async {

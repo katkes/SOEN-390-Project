@@ -7,6 +7,7 @@ import '../../utils/building_search.dart';
 import 'package:soen_390/styles/theme.dart';
 import 'package:soen_390/screens/indoor/mappedin_map_controller.dart';
 import 'package:soen_390/screens/indoor/mappedin_map_screen.dart';
+import 'dart:async';
 
 /// This widget displays a popup dialog for editing an event.
 /// The user can edit the event title, location, description, start time, and end time.
@@ -69,15 +70,24 @@ class EventEditPopupState extends State<EventEditPopup> {
   }
 
   /// Opens the Mappedin map screen.
-  void openMappedinMap() async {
+  Future<void> openMappedinMap() async {
+    final completer = Completer<void>();
+
+    // Start navigation without waiting for it to complete
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => MappedinMapScreen(
           controller: mappedinController,
+          onWebViewReady: () {
+            if (!completer.isCompleted) {
+              completer.complete();
+            }
+          },
         ),
       ),
     );
+    return completer.future;
   }
 
   @override
@@ -150,19 +160,17 @@ class EventEditPopupState extends State<EventEditPopup> {
                     ElevatedButton.icon(
                       onPressed: () async {
                         // TODO: 7.1.6 Add navigation logic to next class
+                        final messenger = ScaffoldMessenger.of(context);
+                        // First open the map screen and wait for it to be ready
+                        await openMappedinMap();
                         final success = await mappedinController
                             .navigateToRoom(classroomController.text);
-                        print(classroomController.text);
-                        if (success) {
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
+                        if (!success) {
+                          messenger.showSnackBar(
                             const SnackBar(
-                              content: Text('Failed to navigate to room'),
-                              backgroundColor: Colors.red,
-                            ),
+                                content: Text('Failed to navigate to H813')),
                           );
                         }
-                        openMappedinMap();
                       },
                       icon: Icon(Icons.directions_walk,
                           color: appTheme.colorScheme.onPrimary),
