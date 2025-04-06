@@ -69,27 +69,6 @@ class EventEditPopupState extends State<EventEditPopup> {
     classroomController = TextEditingController(text: classroom);
   }
 
-  /// Opens the Mappedin map screen.
-  Future<void> openMappedinMap() async {
-    final completer = Completer<void>();
-
-    // Start navigation without waiting for it to complete
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => MappedinMapScreen(
-          controller: mappedinController,
-          onWebViewReady: () {
-            if (!completer.isCompleted) {
-              completer.complete();
-            }
-          },
-        ),
-      ),
-    );
-    return completer.future;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -159,18 +138,11 @@ class EventEditPopupState extends State<EventEditPopup> {
                     ),
                     ElevatedButton.icon(
                       onPressed: () async {
-                        // TODO: 7.1.6 Add navigation logic to next class
-                        // Step 1: Launch MappedinWebView for H843 to Hall Building bottom
                         final hallController = MappedinMapController();
 
                         final success = await hallController
                             .selectBuildingByName("Hall Building");
                         if (!success) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content:
-                                    Text('Failed to switch to Hall Building')),
-                          );
                           return;
                         }
 
@@ -182,26 +154,12 @@ class EventEditPopupState extends State<EventEditPopup> {
                               onWebViewReady: () async {
                                 await Future.delayed(
                                     const Duration(milliseconds: 1000));
-                                await hallController.navigateToRoom(
-                                    classroomController.text);
+                                await hallController
+                                    .navigateToRoom(classroomController.text);
                               },
                             ),
                           ),
                         );
-
-                        // -------
-
-                        // final messenger = ScaffoldMessenger.of(context);
-                        // // First open the map screen and wait for it to be ready
-                        // await openMappedinMap();
-                        // final success = await mappedinController
-                        //     .navigateToRoom(classroomController.text);
-                        // if (!success) {
-                        //   messenger.showSnackBar(
-                        //     const SnackBar(
-                        //         content: Text('Failed to navigate to H813')),
-                        //   );
-                        // }
                       },
                       icon: Icon(Icons.directions_walk,
                           color: appTheme.colorScheme.onPrimary),
@@ -346,7 +304,7 @@ class EventEditPopupState extends State<EventEditPopup> {
       widget.onEventDeleted?.call();
 
       if (mounted) {
-        Navigator.of(context).pop(); // Close the edit dialog
+        Navigator.of(context).pop();
       }
     } catch (e) {
       if (mounted) {
