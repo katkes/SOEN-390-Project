@@ -215,7 +215,6 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
           builder: (context) => MappedinMapScreen(
             controller: hallController,
             onWebViewReady: () async {
-              await Future.delayed(const Duration(milliseconds: 1000));
               await hallController.navigateToRoom("H843", true);
             },
           ),
@@ -235,23 +234,13 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
 
       // Step 3: Launch MappedinWebView for Library bottom to LB322
       final libraryController = MappedinMapController();
-
-      final librarySuccess =
-          await libraryController.selectBuildingByName("Library");
-      if (!librarySuccess) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to switch to Library Building')),
-        );
-        return;
-      }
-
+      await libraryController.selectBuildingByName("library");
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => MappedinMapScreen(
             controller: libraryController,
             onWebViewReady: () async {
-              await Future.delayed(const Duration(milliseconds: 1000));
               await libraryController.navigateToRoom("LB322", false);
             },
           ),

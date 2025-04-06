@@ -316,7 +316,6 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
             _buildCampusSwitch(),
             _buildSearchBar(),
             _buildWaypointButton(context),
-            _buildActionButtons(context),
           ],
         );
       },
@@ -394,54 +393,6 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
     );
   }
 
-  Widget _buildActionButtons(BuildContext context) {
-    return Positioned(
-      bottom: 150,
-      right: 21,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildShowHallButton(context),
-          const SizedBox(height: 8),
-          _buildNavigateToRoomButton(context),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildShowHallButton(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () async {
-        final messenger = ScaffoldMessenger.of(context);
-        final success = await _mappedinController.selectBuildingByName("Hall");
-        if (!success) {
-          messenger.showSnackBar(
-            const SnackBar(content: Text('Failed to switch to Hall Building')),
-          );
-          return;
-        }
-        _openMappedinMap();
-      },
-      child: const Text("Show Hall"),
-    );
-  }
-
-  Widget _buildNavigateToRoomButton(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () async {
-        final messenger = ScaffoldMessenger.of(context);
-        // First open the map screen and wait for it to be ready
-        await _openMappedinMap();
-        final success = await _mappedinController.navigateToRoom("H813", false);
-        if (!success) {
-          messenger.showSnackBar(
-            const SnackBar(content: Text('Failed to navigate to H813')),
-          );
-        }
-      },
-      child: const Text("Go to H813"),
-    );
-  }
 
   Widget _buildUserProfileScreen(BuildContext context) {
     return UserProfileScreen(

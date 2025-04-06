@@ -95,19 +95,6 @@ class _MappedinMapScreenState extends State<MappedinMapScreen> {
             mapId: _controller.currentMapId,
             onWebViewReady: widget.onWebViewReady,
           ),
-      floatingActionButton: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          /// Triggers the `navigateToRoom` method on the WebView.
-          /// This button mainly shows how to interact with the code.
-          /// TODO: delete for the actual implementation, will be changed in 7.1.2
-          /// It is here for testing purposes.
-          _buildFABButton("Navigate to 813 from Outside", () async {
-            await _controller.webViewKey.currentState
-                ?.navigateToRoom("813", false);
-          }),
-        ],
-      ),
     );
   }
 }
