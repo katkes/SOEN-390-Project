@@ -429,72 +429,39 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
     expect(find.byType(SuggestionsPopup), findsOneWidget);
   });
 
-  // testWidgets('Destination field clears and removes stop on delete',
-  //     (WidgetTester tester) async {
-  //   await tester.pumpWidget(createWidgetUnderTest());
+  testWidgets('Destination field shows SuggestionsPopup on tap',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(createWidgetUnderTest());
 
-  //   final state = tester.state(find.byType(LocationTransportSelector))
-  //       as LocationTransportSelectorState;
+    // Tap the destination field
+    await tester.tap(find.text('Destination'));
+    await tester.pumpAndSettle();
 
-  //   // Set a destination location
-  //   state.setDestinationLocation('Test Destination');
-  //   expect(state.destinationLocation, equals('Test Destination'));
+    // Verify SuggestionsPopup is displayed
+    expect(find.byType(SuggestionsPopup), findsOneWidget);
+  });
 
-  //   // Tap the delete button
-  //   await tester.tap(find.byIcon(Icons.clear));
-  //   await tester.pumpAndSettle();
+  testWidgets('_showLocationSuggestions displays SuggestionsPopup',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(createWidgetUnderTest());
 
-  //   // Verify destination is cleared
-  //   expect(state.destinationLocation, isEmpty);
-  // });
+    // Tap the start location field
+    await tester.tap(find.text('Your Location'));
+    await tester.pumpAndSettle();
 
-  // testWidgets(
-  //     '_confirmRoute navigates to Hall Building and Library Building for H843 to LB322',
-  //     (WidgetTester tester) async {
-  //   await tester.pumpWidget(createWidgetUnderTest());
+    // Verify SuggestionsPopup is displayed
+    expect(find.byType(SuggestionsPopup), findsOneWidget);
 
-  //   final state = tester.state(find.byType(LocationTransportSelector))
-  //       as LocationTransportSelectorState;
+    // Simulate selecting a location
+    final state = tester.state(find.byType(LocationTransportSelector))
+        as LocationTransportSelectorState;
+    state.setStartLocation('H843');
+    state.setDestinationLocation('LB322');
 
-  //   // Set start and destination locations to trigger the specific case
-  //   state.setStartLocation('H843');
-  //   state.setDestinationLocation('LB322');
-
-  //   // Tap the Confirm Route button
-  //   await tester.tap(find.text('Confirm Route'));
-  //   await tester.pumpAndSettle();
-
-  //   // Verify navigation to Hall Building
-  //   expect(find.byType(MappedinMapScreen), findsOneWidget);
-
-  //   // Simulate clicking "Next Step" button
-  //   await tester.tap(find.byIcon(Icons.arrow_forward));
-  //   await tester.pumpAndSettle();
-
-  //   // Verify navigation to Library Building
-  //   expect(find.byType(MappedinMapScreen), findsOneWidget);
-  // });
-
-  // testWidgets('SuggestionsPopup updates start and destination locations',
-  //     (WidgetTester tester) async {
-  //   await tester.pumpWidget(createWidgetUnderTest());
-
-  //   final state = tester.state(find.byType(LocationTransportSelector))
-  //       as LocationTransportSelectorState;
-
-  //   // Simulate selecting a start location
-  //   state.setStartLocation('H843');
-  //   expect(state.startLocation, equals('H843'));
-
-  //   // Simulate selecting a destination location
-  //   state.setDestinationLocation('LB322');
-  //   expect(state.destinationLocation, equals('LB322'));
-
-  //   // Verify _confirmRoute is triggered for H843 to LB322
-  //   await tester.tap(find.text('Confirm Route'));
-  //   await tester.pumpAndSettle();
-  //   expect(find.byType(MappedinMapScreen), findsOneWidget);
-  // });
+    // Verify that the start and destination locations are updated
+    expect(state.startLocation, equals('H843'));
+    expect(state.destinationLocation, equals('LB322'));
+  });
 
   group('H843 to LB322 special case', () {
     testWidgets('Shows error SnackBar when Hall Building selection fails',
