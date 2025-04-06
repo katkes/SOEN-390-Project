@@ -14,7 +14,8 @@ void main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   final int elapsedTime = 4;
   await dotenv.load(fileName: ".env");
-  final String hallBuildingAddress = "Hall Building Auditorium, Boulevard De Maisonneuve Ouest, Montreal, QC, Canada";
+  final String hallBuildingAddress =
+      "Hall Building Auditorium, Boulevard De Maisonneuve Ouest, Montreal, QC, Canada";
 
   // Function to find the map icon in navbar and tapping on it to switch to map section
   Future<void> navigatingToOutdoorMap(WidgetTester tester) async {
@@ -47,10 +48,9 @@ void main() async {
     await Future.delayed(Duration(seconds: elapsedTime));
   }
 
-
   // Function to enter start address and destination address
-  Future<void> selectLocation(WidgetTester tester, String option,
-      String location) async {
+  Future<void> selectLocation(
+      WidgetTester tester, String option, String location) async {
     final startLocationFinder = find.text(option);
     await tester.tap(startLocationFinder);
     await tester.pumpAndSettle();
@@ -175,14 +175,12 @@ void main() async {
 
     // Checks for displaying of route
     expect(find.byType(RouteCard), findsWidgets);
-    final routeCardFinder = find
-        .byType(RouteCard)
-        .first;
+    final routeCardFinder = find.byType(RouteCard).first;
     await tester.tap(routeCardFinder);
     await tester.pumpAndSettle();
     await Future.delayed(const Duration(
         seconds:
-        8)); // Reason why the elapsed time is longer is because the route is being rendered
+            8)); // Reason why the elapsed time is longer is because the route is being rendered
 
     expect(find.byType(PolylineLayer), findsOneWidget);
   }
@@ -192,81 +190,76 @@ void main() async {
     // Target user stories: 2.1, 2.2, 2.3
     testWidgets(
         'Testing ability to switch campuses, screens, and building pop-ups',
-            (tester) async {
-          await loadingApp(tester);
-          await navigatingToOutdoorMap(tester);
+        (tester) async {
+      await loadingApp(tester);
+      await navigatingToOutdoorMap(tester);
 
-          // Finding the campuses toggle buttons
-          final sgwToggleButton =
-              find
-                  .text('SGW')
-                  .first; // Retrieves first element it sees
-          final loyolaToggleButton =
-              find
-                  .text('Loyola')
-                  .first; // Retrieves first element it sees
+      // Finding the campuses toggle buttons
+      final sgwToggleButton =
+          find.text('SGW').first; // Retrieves first element it sees
+      final loyolaToggleButton =
+          find.text('Loyola').first; // Retrieves first element it sees
 
-          // Tapping on loyola and waiting till it settled
-          await tester.tap(loyolaToggleButton);
-          await tester.pumpAndSettle();
-          await Future.delayed(Duration(seconds: elapsedTime));
+      // Tapping on loyola and waiting till it settled
+      await tester.tap(loyolaToggleButton);
+      await tester.pumpAndSettle();
+      await Future.delayed(Duration(seconds: elapsedTime));
 
-          // Verifying that the loyola campus is being rendered
-          expect(find.byType(MapWidget), findsOneWidget);
+      // Verifying that the loyola campus is being rendered
+      expect(find.byType(MapWidget), findsOneWidget);
 
-          // Tapping on sgw and waiting till it settled
-          await tester.tap(sgwToggleButton);
-          await tester.pumpAndSettle();
-          await Future.delayed(Duration(seconds: elapsedTime));
+      // Tapping on sgw and waiting till it settled
+      await tester.tap(sgwToggleButton);
+      await tester.pumpAndSettle();
+      await Future.delayed(Duration(seconds: elapsedTime));
 
-          // Verifying that the sgw campus is being rendered
-          expect(find.byType(MapWidget), findsOneWidget);
+      // Verifying that the sgw campus is being rendered
+      expect(find.byType(MapWidget), findsOneWidget);
 
-          // Verifying that if you click on another section, the last campus rendered stays the same
-          await navigatingToProfileSection(tester);
+      // Verifying that if you click on another section, the last campus rendered stays the same
+      await navigatingToProfileSection(tester);
 
-          // Tapping on a random building marker and waiting for information to be retrieved
-          await navigatingToOutdoorMap(tester);
-          final buildingMarkerFinder = find.byIcon(Icons.location_pin);
-          final markerElements = buildingMarkerFinder.evaluate().toList();
-          final markersLength = markerElements.length;
-          final randomIndex = Random().nextInt(markersLength);
-          final markerPreciseLocation = tester.getCenter(
-              buildingMarkerFinder.at(
-                  randomIndex)); // Adding this line to get precise location of marker and ensuring pop-up is triggered
-          await tester.tapAt(markerPreciseLocation);
-          await tester.pumpAndSettle();
-          await Future.delayed(Duration(seconds: elapsedTime));
-        });
+      // Tapping on a random building marker and waiting for information to be retrieved
+      await navigatingToOutdoorMap(tester);
+      final buildingMarkerFinder = find.byIcon(Icons.location_pin);
+      final markerElements = buildingMarkerFinder.evaluate().toList();
+      final markersLength = markerElements.length;
+      final randomIndex = Random().nextInt(markersLength);
+      final markerPreciseLocation = tester.getCenter(buildingMarkerFinder.at(
+          randomIndex)); // Adding this line to get precise location of marker and ensuring pop-up is triggered
+      await tester.tapAt(markerPreciseLocation);
+      await tester.pumpAndSettle();
+      await Future.delayed(Duration(seconds: elapsedTime));
+    });
 
     // Target user stories: 3.1, 3.3, 3.4, 3.5
     testWidgets('Test route planning - car option', (tester) async {
-      await routePlanning(
-          tester, Icons.directions_car, isUsingLiveLocation: false);
+      await routePlanning(tester, Icons.directions_car,
+          isUsingLiveLocation: false);
     });
 
     // Target user stories: 3.1, 3.3, 3.4, 3.5
     testWidgets('Test route planning - bike option', (tester) async {
-      await routePlanning(
-          tester, Icons.directions_bike, isUsingLiveLocation: false);
+      await routePlanning(tester, Icons.directions_bike,
+          isUsingLiveLocation: false);
     });
 
     // Target user stories: 3.1, 3.3, 3.4, 3.5
     testWidgets('Test route planning - public transport option',
-            (tester) async {
-          await routePlanning(tester, Icons.train, isUsingLiveLocation: false);
-        });
+        (tester) async {
+      await routePlanning(tester, Icons.train, isUsingLiveLocation: false);
+    });
 
     // Target user stories: 3.1, 3.3, 3.4, 3.5
     testWidgets('Test route planning - walk option', (tester) async {
-      await routePlanning(
-          tester, Icons.directions_walk, isUsingLiveLocation: false);
+      await routePlanning(tester, Icons.directions_walk,
+          isUsingLiveLocation: false);
     });
 
     // User stories targeted: 2.4
     testWidgets('Test tracking user live location feature', (tester) async {
-      await routePlanning(
-          tester, Icons.directions_car, isUsingLiveLocation: true);
+      await routePlanning(tester, Icons.directions_car,
+          isUsingLiveLocation: true);
     });
 
     // Target user stories: none (additional feature)
@@ -292,25 +285,63 @@ void main() async {
       final buildingSuggestion = find.byKey(const Key("123"));
       await tester.tap(buildingSuggestion);
       await tester.pumpAndSettle();
-
     });
 
     // Target user stories: 4.1
-    // testWidgets('Testing connection to google calendar', (WidgetTester tester) async {
-    //   // Loading app and navigating to profile section
-    //   await loadingApp(tester);
-    //   await navigatingToProfileSection(tester);
-    //
-    //   // Clicking on "Sign in with Google" button
-    //   final String googleSignInButtonLabel = "Sign in with Google";
-    //   final signInButton = find.text(googleSignInButtonLabel);
-    //   await tester.tap(signInButton);
-    //   await tester.pumpAndSettle();
-    //   await Future.delayed(const Duration(seconds: 10)); // Takes more time to load google sign in page
-    // });
+    testWidgets('Testing connection to google calendar',
+        (WidgetTester tester) async {
+      // Loading app and navigating to profile section
+      await loadingApp(tester);
+      await navigatingToProfileSection(tester);
+
+      // Clicking on "Sign in with Google" button
+      final String googleSignInButtonLabel = "Sign in with Google";
+      final signInButton = find.text(googleSignInButtonLabel);
+      await tester.tap(signInButton);
+      await tester.pumpAndSettle();
+      await Future.delayed(Duration(
+          seconds: elapsedTime)); // Takes more time to load google sign in page
+
+      // view calendar button
+      final String viewCalendarButtonLabel = "View My Calendar";
+      final viewCalendarButton = find.text(viewCalendarButtonLabel);
+      await tester.tap(viewCalendarButton);
+      await tester.pumpAndSettle();
+      await Future.delayed(Duration(seconds: elapsedTime));
+
+// Select a date with known events (e.g., today's date)
+      final tomorrow = DateTime.now().add(const Duration(days: 1));
+      final dateFinder = find
+          .text('${tomorrow.day}'); // Assumes calendar uses day number as text
+
+// Tap on that date
+      await tester.tap(dateFinder);
+      await tester.pumpAndSettle();
+
+// Wait a bit for UI update
+      await Future.delayed(Duration(seconds: elapsedTime));
+
+      //Click on the event Class
+      final String eventName = "Class";
+      final eventFinder = find.text(eventName);
+      await tester.tap(eventFinder);
+      await tester.pumpAndSettle();
+      await Future.delayed(Duration(seconds: elapsedTime));
+
+      //click on the go now button
+      final String goButton = "Go Now";
+      final goButtonFinder = find.text(goButton);
+      await tester.tap(goButtonFinder);
+      await tester.pumpAndSettle();
+      await Future.delayed(Duration(seconds: elapsedTime));
+
+      //todo jump to mappedin page
+    });
 
     // Target user stories: 6.1
-    testWidgets('Testing outdoor points of interests with current location - place categories', (WidgetTester tester) async {
+    testWidgets(
+        'Testing outdoor points of interests with current location - place categories',
+        (WidgetTester tester) async {
       // Loading app and navigating to points of interests screen
       await navigatingToPointOfInterestsScreen(tester);
 
@@ -341,7 +372,6 @@ void main() async {
 
       // Clicking on dark mode button to switch to light mode
       await enablingLightMode(tester);
-
     });
 
     testWidgets('Testing shuttle bus service', (WidgetTester tester) async {
@@ -366,8 +396,5 @@ void main() async {
       await tester.pumpAndSettle();
       await Future.delayed(Duration(seconds: elapsedTime));
     });
-
   });
 }
-
-
