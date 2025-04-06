@@ -22,6 +22,7 @@ import 'package:soen_390/screens/profile/profile_screen.dart';
 import 'package:soen_390/screens/calendar/calendar_view.dart';
 import 'package:soen_390/providers/navigation_provider.dart';
 import 'package:soen_390/screens/indoor/mappedin_map_controller.dart';
+import 'package:soen_390/screens/home/landing_page_screen.dart';
 
 /// The entry point of the application.
 ///
@@ -262,7 +263,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
       body: IndexedStack(
         index: selectedIndex,
         children: [
-          const Center(child: Text('Home Page')),
+          const CUHomeScreen(),
           _buildMapScreen(context),
           isLoggedIn
               ? _buildUserProfileScreen(context)
@@ -279,13 +280,23 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
   }
 
   AppBar _buildAppBar(BuildContext context) {
+    String appBarTitle = widget.title;
+    final selectedIndex = ref.watch(navigationProvider).selectedIndex;
+    if (selectedIndex == 0) {
+      appBarTitle = 'Home';
+    } else if (selectedIndex == 1) {
+      appBarTitle = 'Campus Map';
+    } else if (selectedIndex == 2) {
+      appBarTitle = 'Profile';
+    }
+
     return AppBar(
       leading: IconButton(
         icon: const Icon(Icons.menu, color: Colors.white, size: 30),
         onPressed: () {},
       ),
       backgroundColor: Theme.of(context).primaryColor,
-      title: Text(widget.title, style: const TextStyle(color: Colors.white)),
+      title: Text(appBarTitle, style: const TextStyle(color: Colors.white)),
       actions: [
         IconButton(
           icon: const Icon(Icons.more_vert, color: Colors.white, size: 30),
