@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:google_places_autocomplete_text_field/google_places_autocomplete_text_field.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:soen_390/main.dart' as app;
-import 'package:soen_390/services/map_service.dart';
-import 'package:soen_390/widgets/building_information_popup.dart';
 import 'package:soen_390/widgets/outdoor_map.dart';
-import 'package:soen_390/widgets/poi_list_view.dart';
-import 'package:soen_390/widgets/poi_search_bar.dart';
 import 'package:soen_390/widgets/route_card.dart';
 import 'dart:math';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
