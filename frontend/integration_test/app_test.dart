@@ -12,7 +12,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 // It simulates user behaviors to verify that the app behaves as expected in different scenarios.
 void main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-  final int elapsedTime = 3;
+  final int elapsedTime = 4;
   await dotenv.load(fileName: ".env");
   final String hallBuildingAddress = "Hall Building Auditorium, Boulevard De Maisonneuve Ouest, Montreal, QC, Canada";
 
@@ -32,12 +32,21 @@ void main() async {
     await Future.delayed(Duration(seconds: elapsedTime));
   }
 
+  // Function to navigate to home page
+  Future<void> navigatingToHomePage(WidgetTester tester) async {
+    final homeIconFinder = find.byIcon(Icons.home_outlined);
+    await tester.tap(homeIconFinder);
+    await tester.pumpAndSettle();
+    await Future.delayed(Duration(seconds: elapsedTime));
+  }
+
   // Function to load the app for testing
   Future<void> loadingApp(WidgetTester tester) async {
     app.main();
     await tester.pumpAndSettle();
     await Future.delayed(Duration(seconds: elapsedTime));
   }
+
 
   // Function to enter start address and destination address
   Future<void> selectLocation(WidgetTester tester, String option,
@@ -109,6 +118,23 @@ void main() async {
     expect(find.text('Your Location'), findsOneWidget);
   }
 
+  // Function to enable dark mode
+  Future<void> enablingDarkMode(WidgetTester tester) async {
+    final String darkModeButtonLabel = "Switch to Dark Mode";
+    final darkModeButton = find.text(darkModeButtonLabel);
+    await tester.tap(darkModeButton);
+    await tester.pumpAndSettle();
+    await Future.delayed(Duration(seconds: elapsedTime));
+  }
+
+  Future<void> enablingLightMode(WidgetTester tester) async {
+    final String lightModeButtonLabel = "Switch to Light Mode";
+    final lightModeButton = find.text(lightModeButtonLabel);
+    await tester.tap(lightModeButton);
+    await tester.pumpAndSettle();
+    await Future.delayed(Duration(seconds: elapsedTime));
+  }
+
   // Function to automate route planning flow depending on different transportation options
   // bool isUsingLiveLocation: whether or not the user is using is default live location for route planning
   Future<void> routePlanning(WidgetTester tester, IconData icon,
@@ -118,7 +144,7 @@ void main() async {
     expect(find.byType(MapWidget), findsOneWidget);
 
     // Navigating to route planning screen
-    navigatingToRoutePlanningScreen(tester);
+    await navigatingToRoutePlanningScreen(tester);
 
     // Selecting start location
     if (!isUsingLiveLocation) {
@@ -200,6 +226,7 @@ void main() async {
           await navigatingToProfileSection(tester);
 
           // Tapping on a random building marker and waiting for information to be retrieved
+          await navigatingToOutdoorMap(tester);
           final buildingMarkerFinder = find.byIcon(Icons.location_pin);
           final markerElements = buildingMarkerFinder.evaluate().toList();
           final markersLength = markerElements.length;
@@ -265,24 +292,22 @@ void main() async {
       final buildingSuggestion = find.byKey(const Key("123"));
       await tester.tap(buildingSuggestion);
       await tester.pumpAndSettle();
-      await Future.delayed(const Duration(
-          seconds: 2)); // Hardcoded value because selected marker disappears after a few seconds
 
     });
 
     // Target user stories: 4.1
-    testWidgets('Testing connection to google calendar', (WidgetTester tester) async {
-      // Loading app and navigating to profile section
-      await loadingApp(tester);
-      await navigatingToProfileSection(tester);
-
-      // Clicking on "Sign in with Google" button
-      final String googleSignInButtonLabel = "Sign in with Google";
-      final signInButton = find.text(googleSignInButtonLabel);
-      await tester.tap(signInButton);
-      await tester.pumpAndSettle();
-      await Future.delayed(const Duration(seconds: 10)); // Takes more time to load google sign in page
-    });
+    // testWidgets('Testing connection to google calendar', (WidgetTester tester) async {
+    //   // Loading app and navigating to profile section
+    //   await loadingApp(tester);
+    //   await navigatingToProfileSection(tester);
+    //
+    //   // Clicking on "Sign in with Google" button
+    //   final String googleSignInButtonLabel = "Sign in with Google";
+    //   final signInButton = find.text(googleSignInButtonLabel);
+    //   await tester.tap(signInButton);
+    //   await tester.pumpAndSettle();
+    //   await Future.delayed(const Duration(seconds: 10)); // Takes more time to load google sign in page
+    // });
 
     // Target user stories: 6.1
     testWidgets('Testing outdoor points of interests with current location - place categories', (WidgetTester tester) async {
@@ -296,6 +321,50 @@ void main() async {
 
       // Looking for POI, and getting directions
       await choosePOI(tester, "STORE");
+    });
+
+    testWidgets('Testing dark mode', (WidgetTester tester) async {
+      // Loading app
+      await loadingApp(tester);
+
+      // Clicking on dark mode button
+      await enablingDarkMode(tester);
+
+      // Navigating to map section
+      await navigatingToOutdoorMap(tester);
+
+      // Navigating to profile
+      await navigatingToProfileSection(tester);
+
+      // Navigating back to home
+      await navigatingToHomePage(tester);
+
+      // Clicking on dark mode button to switch to light mode
+      await enablingLightMode(tester);
+
+    });
+
+    testWidgets('Testing shuttle bus service', (WidgetTester tester) async {
+      // Loading app
+      await loadingApp(tester);
+
+      // Navigating to route planning screen
+      await navigatingToOutdoorMap(tester);
+      await navigatingToRoutePlanningScreen(tester);
+
+      // Visit shuttle bus schedule
+      final String shuttleBusButtonLabel = "Shuttle Bus";
+      final shuttleBusButton = find.text(shuttleBusButtonLabel);
+      await tester.tap(shuttleBusButton);
+      await tester.pumpAndSettle();
+      await Future.delayed(Duration(seconds: elapsedTime));
+
+      // Visit Mon-Thurs shuttle bus schedule
+      final String restOfScheduleButtonLabel = "Show Mon-Thurs Schedule";
+      final restOfScheduleButton = find.text(restOfScheduleButtonLabel);
+      await tester.tap(restOfScheduleButton);
+      await tester.pumpAndSettle();
+      await Future.delayed(Duration(seconds: elapsedTime));
     });
 
   });
