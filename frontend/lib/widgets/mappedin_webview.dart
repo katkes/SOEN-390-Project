@@ -223,11 +223,6 @@ class MappedinWebViewState extends State<MappedinWebView> {
     controller.runJavaScript("setCameraTo('$roomNumber')");
   }
 
-  /// Reloads the WebView with a different building's mapId
-  Future<void> reloadWithMapId(String mapId) async {
-    await loadHtmlFromAssets(mapIdOverride: mapId);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
