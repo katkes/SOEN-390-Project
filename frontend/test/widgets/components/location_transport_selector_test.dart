@@ -11,12 +11,10 @@ import 'package:soen_390/services/poi_factory.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'package:soen_390/widgets/suggestions.dart';
 import 'package:soen_390/screens/indoor/mappedin_map_controller.dart';
-import 'package:soen_390/screens/indoor/mappedin_map_screen.dart';
 
 import 'package:mockito/mockito.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:soen_390/widgets/location_field.dart';
-import 'dart:async';
 
 @GenerateNiceMocks([
   MockSpec<LocationService>(),
@@ -441,6 +439,4 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
       expect(find.text('Failed to switch to Hall Building'), findsOneWidget);
     });
   });
-
-  
 }
