@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
-import 'package:mockito/annotations.dart';
 import 'package:soen_390/providers/theme_provider.dart';
 import 'package:soen_390/styles/theme.dart';
 import 'package:soen_390/widgets/dark_mode_toggle_button.dart'; // Adjust path as needed
@@ -10,6 +8,7 @@ import 'package:soen_390/widgets/dark_mode_toggle_button.dart'; // Adjust path a
 // Create a mock ThemeNotifier class
 class MockThemeNotifier extends StateNotifier<ThemeData>
     implements ThemeNotifier {
+  // ignore:use_super_parameters
   MockThemeNotifier(ThemeData initialTheme) : super(initialTheme);
 
   bool toggleCalled = false;
@@ -28,10 +27,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          themeProvider.overrideWithProvider(
-            StateNotifierProvider<ThemeNotifier, ThemeData>(
-                (ref) => MockThemeNotifier(appTheme)),
-          ),
+          themeProvider.overrideWith((ref) => MockThemeNotifier(appTheme)),
         ],
         child: const MaterialApp(
           home: DarkModeToggleButton(),
@@ -50,10 +46,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          themeProvider.overrideWithProvider(
-            StateNotifierProvider<ThemeNotifier, ThemeData>(
-                (ref) => MockThemeNotifier(darkAppTheme)),
-          ),
+          themeProvider.overrideWith((ref) => MockThemeNotifier(darkAppTheme)),
         ],
         child: const MaterialApp(
           home: DarkModeToggleButton(),
@@ -76,10 +69,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          themeProvider.overrideWithProvider(
-            StateNotifierProvider<ThemeNotifier, ThemeData>(
-                (ref) => mockNotifier),
-          ),
+          themeProvider.overrideWith((ref) => mockNotifier),
         ],
         child: const MaterialApp(
           home: DarkModeToggleButton(),
@@ -109,9 +99,8 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          themeProvider.overrideWithProvider(
-            StateNotifierProvider<ThemeNotifier, ThemeData>(
-                (ref) => mockNotifier),
+          themeProvider.overrideWith(
+            (ref) => mockNotifier,
           ),
         ],
         child: const MaterialApp(
@@ -139,10 +128,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          themeProvider.overrideWithProvider(
-            StateNotifierProvider<ThemeNotifier, ThemeData>(
-                (ref) => MockThemeNotifier(appTheme)),
-          ),
+          themeProvider.overrideWith((ref) => MockThemeNotifier(appTheme)),
         ],
         child: const MaterialApp(
           home: DarkModeToggleButton(),
@@ -156,7 +142,6 @@ void main() {
 
     // Verify the button is inside the Center widget
     final centerFinder = find.byType(Center);
-    final buttonFinder = find.byType(ElevatedButton);
     expect(tester.widget<Center>(centerFinder).child, isA<ElevatedButton>());
   });
 }
