@@ -96,7 +96,8 @@ class MappedinMapController {
         return false;
       }
 
-      debugPrint('Building found: ${building.mapId}..........................................');
+      debugPrint(
+          'Building found: ${building.mapId}..........................................');
 
       // Switch to the building's map if we're not already there
       if (_currentMapId != building.mapId) {
@@ -105,7 +106,8 @@ class MappedinMapController {
         _currentBuilding = building;
       }
 
-      debugPrint('Building found: ${building.mapId}..........................................');
+      debugPrint(
+          'Building found: ${building.mapId}..........................................');
 
       // Wait for WebView to be ready
       await waitForWebViewReady();

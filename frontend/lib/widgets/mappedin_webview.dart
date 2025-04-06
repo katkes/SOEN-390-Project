@@ -196,7 +196,6 @@ class MappedinWebViewState extends State<MappedinWebView> {
   /// - [accessibility]: If the route should be accessible (currently unused).
   Future<void> showDirections(
       String departure, String destination, bool accessibility) async {
-
     try {
       final preference =
           await IndoorAccessibilityState.getMobilityStatusPreference();
