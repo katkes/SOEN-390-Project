@@ -211,18 +211,12 @@ class MappedinWebViewState extends State<MappedinWebView> {
   /// - [accessibility]: If the route should be accessible (currently unused).
   Future<void> showDirections(
       String departure, String destination, bool accessibility) async {
-    debugPrint(
-        "Showing directions from $departure to $destination............................................");
 
     try {
       final preference =
           await IndoorAccessibilityState.getMobilityStatusPreference();
 
-      debugPrint(
-          "Waiting for map to load............................................");
       await waitForMapLoaded();
-      debugPrint(
-          "Map loaded, showing directions............................................");
 
       await controller.runJavaScript(
           "getDirections('$departure', '$destination', '$preference')");
@@ -248,13 +242,11 @@ class MappedinWebViewState extends State<MappedinWebView> {
     }
   }
 
-  /// Navigates to a specific room on the map
+  /// Navigates to a specific room on the map from the entrance
   ///
   /// - [roomNumber]: The room number to navigate to (e.g., "907")
   Future<void> navigateToRoom(String roomNumber) async {
     try {
-      debugPrint(
-          "Navigating to room $roomNumber............................................");
       await showDirections("Entrance", roomNumber, false);
     } catch (e) {
       debugPrint('Error navigating to room: $e');

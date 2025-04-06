@@ -71,7 +71,7 @@ class _MappedinMapScreenState extends State<MappedinMapScreen> {
           /// This button mainly shows how to interact with the code.
           /// TODO: delete for the actual implementation, will be changed in 7.1.2
           /// It is here for testing purposes.
-          _buildFABButton("Navigate to H813 from Outside", () async {
+          _buildFABButton("Navigate to 813 from Outside", () async {
             await _controller.webViewKey.currentState?.navigateToRoom("813");
           }),
         ],

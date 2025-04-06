@@ -23,7 +23,6 @@ import 'package:soen_390/screens/calendar/calendar_view.dart';
 import 'package:soen_390/providers/navigation_provider.dart';
 import 'package:soen_390/screens/indoor/mappedin_map_controller.dart';
 import 'dart:async';
-import 'package:soen_390/services/mappedin_navigation_service.dart';
 
 /// The entry point of the application.
 ///
@@ -103,7 +102,6 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
   String selectedCampus = 'SGW';
   TextEditingController searchController = TextEditingController();
   late MappedinMapController _mappedinController;
-  late MappedinNavigationService _mappedinNavigationService;
 
   //int _selectedIndex = 0;
   LatLng currentLocation = const LatLng(45.497856, -73.579588);
@@ -143,7 +141,6 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
   void initState() {
     super.initState();
     _mappedinController = MappedinMapController();
-    _mappedinNavigationService = MappedinNavigationService(_mappedinController);
     _mapsApiClient = GoogleMapsApiClient(
       apiKey: dotenv.env['GOOGLE_MAPS_API_KEY']!,
       httpClient: widget.httpService,
@@ -416,18 +413,34 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
   Widget _buildShowHallButton(BuildContext context) {
     return ElevatedButton(
       onPressed: () async {
-        await _mappedinNavigationService.showBuilding(context, 'Hall Building');
+        final messenger = ScaffoldMessenger.of(context);
+        final success = await _mappedinController.selectBuildingByName("Hall");
+        if (!success) {
+          messenger.showSnackBar(
+            const SnackBar(content: Text('Failed to switch to Hall Building')),
+          );
+          return;
+        }
+        _openMappedinMap();
       },
-      child: const Text('Show Hall Building'),
+      child: const Text("Show Hall"),
     );
   }
 
   Widget _buildNavigateToRoomButton(BuildContext context) {
     return ElevatedButton(
       onPressed: () async {
-        await _mappedinNavigationService.navigateToRoom(context, 'H813');
+        final messenger = ScaffoldMessenger.of(context);
+        // First open the map screen and wait for it to be ready
+        await _openMappedinMap();
+        final success = await _mappedinController.navigateToRoom("H813");
+        if (!success) {
+          messenger.showSnackBar(
+            const SnackBar(content: Text('Failed to navigate to H813')),
+          );
+        }
       },
-      child: const Text('Navigate to H813'),
+      child: const Text("Go to H813"),
     );
   }
 

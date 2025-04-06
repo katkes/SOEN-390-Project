@@ -110,9 +110,12 @@ window.getDirections = async function getDirections(startName, destinationName, 
 
         if (!start || !destination) throw new Error("Invalid start or destination");
 
+        console.log("Start space:", start.name);
+        console.log("Destination space:", destination.name);
+
 
         const directions = await mapData.getDirections(start, destination, { accessible: accessible });
-        if (!directions?.path) throw new Error("Directions not found");
+        if (!directions?.path) console.log("Directions not found");
 
         mapView.Navigation.clear();
         mapView.Navigation.draw(directions);

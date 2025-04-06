@@ -6,6 +6,7 @@
 /// - BuildingConfig: A data class representing a single building's configuration
 /// - BuildingConfigManager: A utility class for managing and accessing building configurations
 library;
+
 import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/foundation.dart';
