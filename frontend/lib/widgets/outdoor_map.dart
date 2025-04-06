@@ -252,7 +252,6 @@ class MapWidgetState extends State<MapWidget> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-
     final tileUrl = isDark
         ? "https://api.maptiler.com/maps/streets-v2-dark/{z}/{x}/{y}.png?key=dNrRaCzvW960GhB3n3bW"
         : "https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=dNrRaCzvW960GhB3n3bW";

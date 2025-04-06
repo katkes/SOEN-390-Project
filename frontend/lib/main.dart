@@ -93,10 +93,10 @@ class MyHomePage extends ConsumerStatefulWidget {
   /// Creates an instance of `MyHomePage`.
   const MyHomePage(
       {super.key,
-      required this.title,
-      required this.routeService,
-      required this.httpService,
-      required this.authService});
+        required this.title,
+        required this.routeService,
+        required this.httpService,
+        required this.authService});
 
   @override
   ConsumerState<MyHomePage> createState() => MyHomePageState();
@@ -214,7 +214,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
 
   void _openWaypointSelection() async {
     final buildingToCoordinatesService =
-        ref.watch(buildingToCoordinatesProvider);
+    ref.watch(buildingToCoordinatesProvider);
     final locationService = ref.watch(locationServiceProvider);
     final routeService = ref.watch(routeServiceProvider);
     final campusRouteChecker = ref.watch(campusRouteCheckerProvider);
