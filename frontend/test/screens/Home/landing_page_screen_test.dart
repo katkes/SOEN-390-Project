@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:soen_390/screens/Home/landing_page_screen.dart';
 import 'package:soen_390/screens/indoor/mappedin_map_controller.dart';
-import 'package:soen_390/utils/navigation_utils_test.dart';
-import 'package:soen_390/providers/theme_provider.dart' as tp;
-import 'package:soen_390/styles/theme.dart';
+import 'package:soen_390/utils/navigation_utils.dart';
 
 import 'landing_page_screen_test.mocks.dart';
-
 
 // Generate mocks
 @GenerateMocks([MappedinMapController, NavigationUtils])
 void main() {
+  // ignore: unused_local_variable
   late MockMappedinMapController mockMappedinMapController;
+  // ignore: unused_local_variable
   late MockNavigationUtils mockNavigationUtils;
 
   setUp(() {
@@ -32,7 +31,8 @@ void main() {
     );
   }
 
-  testWidgets('CUHomeScreen shows the correct theme', (WidgetTester tester) async {
+  testWidgets('CUHomeScreen shows the correct theme',
+      (WidgetTester tester) async {
     // Arrange: Build the widget tree and make sure it's rendered
     await tester.pumpWidget(createTestableWidget(const CUHomeScreen()));
 
@@ -50,5 +50,4 @@ void main() {
     // Assert: After tapping, the icon should change to "light mode"
     expect(find.byIcon(Icons.light_mode), findsOneWidget);
   });
-
 }
