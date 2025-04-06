@@ -1,6 +1,7 @@
-/// This file provides the functionality (with shared preferences flutter package) to provide
-/// a theme toggle functionality. This is done by the "isDarkMode" variable via sharedPreference package
-
+/*
+This file provides the functionality (with shared preferences flutter package) to provide
+a theme toggle functionality. This is done by the "isDarkMode" variable via sharedPreference package
+ */
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soen_390/styles/theme.dart';

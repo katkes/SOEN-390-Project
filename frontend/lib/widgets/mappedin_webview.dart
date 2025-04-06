@@ -22,7 +22,6 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import "package:soen_390/screens/indoor_accessibility/indoor_accessibility_preference.dart";
-import "package:soen_390/providers/theme_provider.dart";
 
 class MappedinWebView extends StatefulWidget {
   /// Optional controller override for testing.

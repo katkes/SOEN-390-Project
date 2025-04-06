@@ -4,7 +4,6 @@
 // The card is styled with rounded corners, padding, and a shadow for a clean UI appearance.
 
 import 'package:flutter/material.dart';
-import 'package:soen_390/styles/theme.dart';
 
 class RouteCard extends StatelessWidget {
   final String title;

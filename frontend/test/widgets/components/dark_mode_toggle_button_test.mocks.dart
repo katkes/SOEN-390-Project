@@ -86,6 +86,7 @@ class MockStateNotifierProvider<NotifierT extends _i3.StateNotifier<T>, T>
 
   @override
   _i2.Override overrideWith(
+      //ignore: invalid_use_of_internal_member
     _i2.Create<NotifierT, _i2.StateNotifierProviderRef<NotifierT, T>>? create,
   ) =>
       (super.noSuchMethod(

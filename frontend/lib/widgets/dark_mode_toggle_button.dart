@@ -1,5 +1,7 @@
-/// A toggle button (UI) for the user to click and be able to toggle between Darkmode and lightmode themes.
-/// Uses the theme provider to make the preference persists.
+/*
+A toggle button (UI) for the user to click and be able to toggle between Darkmode and lightmode themes.
+Uses the theme provider to make the preference persists.
+ */
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
