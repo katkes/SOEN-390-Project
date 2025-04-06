@@ -27,6 +27,8 @@ class LocationTransportSelector extends StatefulWidget {
   final GooglePOIService poiService;
   final PointOfInterestFactory poiFactory;
   final LocationUpdater locationUpdater;
+  final MappedinMapController? hallController;
+  final MappedinMapController? libraryController;
 
   const LocationTransportSelector({
     super.key,
@@ -38,6 +40,8 @@ class LocationTransportSelector extends StatefulWidget {
     required this.onConfirmRoute,
     this.onTransportModeChange,
     this.initialDestination,
+    this.hallController,
+    this.libraryController,
   });
 
   @override
@@ -197,17 +201,19 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
     // Check for the specific case: H843 to LB322
     if (start == "H843" && destination == "LB322") {
       // Step 1: Launch MappedinWebView for H843 to Hall Building bottom
-      final hallController = MappedinMapController();
+      final hallController = widget.hallController ?? MappedinMapController();
 
       final success =
           await hallController.selectBuildingByName("Hall Building");
       if (!success) {
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Failed to switch to Hall Building')),
         );
         return;
       }
 
+      if (!mounted) return;
       await Navigator.push(
         context,
         MaterialPageRoute(
@@ -221,8 +227,10 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
       );
 
       // Step 2: Launch MappedinWebView for Library bottom to LB322
-      final libraryController = MappedinMapController();
+      final libraryController =
+          widget.libraryController ?? MappedinMapController();
       await libraryController.selectBuildingByName("library");
+      if (!mounted) return;
       Navigator.push(
         context,
         MaterialPageRoute(
