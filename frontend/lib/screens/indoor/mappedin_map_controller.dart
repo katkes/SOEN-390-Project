@@ -78,7 +78,6 @@ class MappedinMapController {
   bool setMapId(String mapId) {
     _currentMapId = mapId;
     return true;
-    // TODO check if map id is valid
   }
 
   /// Navigates to a specific room in a building
@@ -108,10 +107,8 @@ class MappedinMapController {
       final roomWithoutPrefix =
           BuildingConfigManager.getRoomNumber(roomNumber, building.roomPrefix);
 
-
       // Show directions to the room
       await webViewKey.currentState?.navigateToRoom(roomWithoutPrefix);
-
 
       return true;
     } catch (e) {
