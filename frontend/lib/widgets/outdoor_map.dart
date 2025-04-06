@@ -135,52 +135,35 @@ class MapWidgetState extends State<MapWidget> {
       buildingPopUps: widget.buildingPopUps,
       onRouteSelected: widget.onRouteSelected,
     );
-    _loadBuildingLocations();
     _loadBuildingBoundaries();
+    _loadBuildingLocations();
     from = widget.location;
     to = LatLng(
         widget.location.latitude + 0.005, widget.location.longitude + 0.005);
   }
 
+  // Loads building location information from the map service
+  // and sets the state with the loaded polygons.
   Future<void> _loadBuildingLocations() async {
     try {
-      // Load building polygons with metadata
-      final polygons = await _mapService.loadBuildingPolygons(
-        (name, address, center) {
-          _markerTapHandler.onMarkerTapped(
-            center.latitude,
-            center.longitude,
-            name,
-            address,
-            Offset.zero, // Replace with actual tap position if needed
-            context,
-          );
-        },
-      );
+      final polygons = await _mapService
+          .loadBuildingInformation((lat, lon, name, address, tapPosition) {
+        _markerTapHandler.onMarkerTapped(
+            lat, lon, name, address, tapPosition, context);
+      });
 
       setState(() {
         _buildingPolygons = polygons;
       });
     } catch (e) {
-      print('Error loading building polygons: $e');
+      print('Error loading building markers: $e');
     }
   }
 
+  /// Loads the building boundaries from the map service
   Future<void> _loadBuildingBoundaries() async {
     try {
-      final polygons = await _mapService.loadBuildingPolygons(
-        (name, address, center) {
-          _markerTapHandler.onMarkerTapped(
-            center.latitude,
-            center.longitude,
-            name,
-            address,
-            Offset.zero, // Replace with actual tap position if needed
-            context,
-          );
-        },
-      );
-
+      final polygons = await _mapService.loadBuildingPolygons();
       setState(() {
         _buildingPolygons = polygons;
       });

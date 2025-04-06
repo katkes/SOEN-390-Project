@@ -39,60 +39,100 @@ class MapService {
     });
   }
 
-  Future<List<Polygon>> loadBuildingPolygons(
-      Function(String, String, LatLng) onPolygonTapped) async {
+  // Load building information from GeoJSON and add to the polygons
+  Future<List<Polygon>> loadBuildingInformation(
+      Function onPolygonTapped) async {
     try {
-      final jsonData = await _geoJsonRepository.loadBuildingBoundaries();
-      return _parsePolygons(jsonData, onPolygonTapped);
+      final jsonData = await _geoJsonRepository.loadBuildingList();
+      return _parseBuildingPolygons(jsonData, onPolygonTapped);
     } catch (e) {
-      debugPrint('Error loading building polygons: $e');
+      debugPrint('Error loading building list: $e');
       return [];
     }
   }
 
-  List<Polygon> _parsePolygons(Map<String, dynamic> jsonData,
-      Function(String, String, LatLng) onPolygonTapped) {
+  // Parse the GeoJSON data and add to existing polygons
+  List<Polygon> _parseBuildingPolygons(
+      Map<String, dynamic> jsonData, Function onMarkerTapped) {
     List<Polygon> polygons = [];
 
     if (jsonData['features'] is List) {
       for (var feature in jsonData['features']) {
-        var properties = feature['properties'];
         var geometry = feature['geometry'];
+        var properties = feature['properties'];
 
-        // Extract building metadata
-        String name = properties?[_buildingLongName] ?? "Unknown";
-        String address = properties?['Address'] ?? "No address available";
+        if (geometry?['type'] == 'Point' && geometry['coordinates'] is List) {
+          double lon = geometry['coordinates'][0];
+          double lat = geometry['coordinates'][1];
+          String name = properties?[_buildingLongName] ?? "Unknown";
+          String address = properties?['Address'] ?? "No address available";
 
-        if (geometry?['type'] == 'MultiPolygon' &&
-            geometry['coordinates'] is List) {
-          for (var polygonRings in geometry['coordinates']) {
-            List<LatLng> polygonPoints = _extractPolygonPoints(polygonRings[0]);
-            _ensureClosedPolygon(polygonPoints);
+          final currentLocation = LatLng(lat, lon);
 
-            // Calculate the center of the polygon for metadata
-            LatLng center = _calculatePolygonCenter(polygonPoints);
-
-            // Add the polygon to the list
-            polygons.add(
-              Polygon(
-                  points: polygonPoints,
-                  color: polygonFillColor,
-                  borderColor: polygonBorderColor,
-                  borderStrokeWidth: borderStrokeWidth),
-            );
-
-            // Store metadata for the polygon
-            _polygonMetadata[polygonPoints] = {
-              'name': name,
-              'address': address,
-              'center': center,
-            };
-          }
+          polygons.add(
+            Marker(
+              point: currentLocation,
+              width: markerSize,
+              height: markerSize,
+              child: GestureDetector(
+                onTapDown: (TapDownDetails details) {
+                  onMarkerTapped(
+                      lat, lon, name, address, details.globalPosition);
+                },
+                child: Icon(Icons.location_pin,
+                    color: markerColor, size: markerSize),
+              ),
+            ),
+          );
         }
       }
     }
-    return polygons;
+    return markers;
   }
+
+  // List<Polygon> _parsa(Map<String, dynamic> jsonData,
+  //     Function(String, String, LatLng) onPolygonTapped) {
+  //   List<Polygon> polygons = [];
+
+  //   if (jsonData['features'] is List) {
+  //     for (var feature in jsonData['features']) {
+  //       var properties = feature['properties'];
+  //       var geometry = feature['geometry'];
+
+  //       // Extract building metadata
+  //       String name = properties?[_buildingLongName] ?? "Unknown";
+  //       String address = properties?['Address'] ?? "No address available";
+
+  //       if (geometry?['type'] == 'MultiPolygon' &&
+  //           geometry['coordinates'] is List) {
+  //         for (var polygonRings in geometry['coordinates']) {
+  //           List<LatLng> polygonPoints = _extractPolygonPoints(polygonRings[0]);
+  //           _ensureClosedPolygon(polygonPoints);
+
+  //           // Calculate the center of the polygon for metadata
+  //           LatLng center = _calculatePolygonCenter(polygonPoints);
+
+  //           // Add the polygon to the list
+  //           polygons.add(
+  //             Polygon(
+  //                 points: polygonPoints,
+  //                 color: polygonFillColor,
+  //                 borderColor: polygonBorderColor,
+  //                 borderStrokeWidth: borderStrokeWidth),
+  //           );
+
+  //           // Store metadata for the polygon
+  //           _polygonMetadata[polygonPoints] = {
+  //             'name': name,
+  //             'address': address,
+  //             'center': center,
+  //           };
+  //         }
+  //       }
+  //     }
+  //   }
+  //   return polygons;
+  // }
 
 // Helper method to calculate the center of a polygon
   LatLng _calculatePolygonCenter(List<LatLng> points) {
@@ -107,6 +147,39 @@ class MapService {
 
 // Metadata map to store polygon details
   final Map<List<LatLng>, Map<String, dynamic>> _polygonMetadata = {};
+
+  Future<List<Polygon>> loadBuildingPolygons() async {
+    try {
+      final jsonData = await _geoJsonRepository.loadBuildingBoundaries();
+      return _parsePolygons(jsonData);
+    } catch (e) {
+      debugPrint('Error loading building polygons: $e');
+      return [];
+    }
+  }
+
+  List<Polygon> _parsePolygons(Map<String, dynamic> jsonData) {
+    List<Polygon> polygons = [];
+
+    if (jsonData['features'] is List) {
+      for (var feature in jsonData['features']) {
+        _processFeature(feature, polygons);
+      }
+    }
+    return polygons;
+  }
+
+  void _processFeature(Map<String, dynamic> feature, List<Polygon> polygons) {
+    var geometry = feature['geometry'];
+
+    if (geometry?['type'] == 'MultiPolygon' &&
+        geometry['coordinates'] is List) {
+      _processMultiPolygon(geometry['coordinates'], polygons);
+    } else {
+      debugPrint(
+          'Unexpected geometry type or format: ${geometry?['type']}, coordinates type: ${geometry?['coordinates']?.runtimeType}');
+    }
+  }
 
   void _processMultiPolygon(
       List multiPolygonCoordinates, List<Polygon> polygons) {
