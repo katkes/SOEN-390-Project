@@ -115,8 +115,7 @@ window.getDirections = async function getDirections(startName, destinationName, 
 
 
         const directions = await mapData.getDirections(start, destination, { accessible: accessible });
-        if (!directions?.path) console.log("Directions not found");
-
+        if (!directions?.path) throw new Error("Directions not found");
         mapView.Navigation.clear();
         mapView.Navigation.draw(directions);
 
