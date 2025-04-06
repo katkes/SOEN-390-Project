@@ -298,5 +298,3 @@ mapView.on("click", async (event) => {
         console.log("Path cleared. Tap to start again.");
     }
 });
-
-

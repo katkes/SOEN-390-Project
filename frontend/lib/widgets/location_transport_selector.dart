@@ -13,6 +13,7 @@ import 'package:soen_390/widgets/suggestions.dart';
 import 'package:soen_390/widgets/location_field.dart';
 import 'package:soen_390/utils/itinerary_manager.dart';
 import 'package:soen_390/styles/theme.dart';
+import 'package:soen_390/screens/shuttle_bus/shuttle_schedule_screen.dart';
 
 class LocationTransportSelector extends StatefulWidget {
   final Function(List<String>, String) onConfirmRoute;
@@ -76,11 +77,11 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   }
 
   void _handleShuttleBusSelection() {
-    setState(() {
-      selectedMode = "Shuttle Bus";
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Shuttle Bus selected!")),
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ShuttleScheduleScreen(),
+      ),
     );
   }
 
@@ -92,7 +93,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        color: appTheme.colorScheme.onPrimary,
+        color: Theme.of(context).colorScheme.surface,
         boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
       ),
       child: Column(
@@ -100,7 +101,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
           _buildLocationInput(),
           const SizedBox(height: 10),
           const SizedBox(height: 20),
-          _buildTransportModeSelection(),
+          _buildTransportModeSelection(context),
           const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -108,7 +109,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
               ElevatedButton(
                 onPressed: _confirmRoute,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: appTheme.primaryColor,
+                  backgroundColor: Theme.of(context).colorScheme.secondary,
                   foregroundColor: appTheme.colorScheme.onPrimary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
@@ -170,7 +171,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
           showDelete: destinationLocation.isNotEmpty,
         ),
         const SizedBox(height: 10),
-        _buildNearbyAndTimeSelector(), //
+        _buildNearbyAndTimeSelector(context), //
       ],
     );
   }
@@ -251,11 +252,12 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
     itineraryManager.setDestination(selectedLocation);
   }
 
-  Widget _buildTransportModeSelection() {
+  Widget _buildTransportModeSelection(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: _transportOptions.map((option) {
         return _buildTransportMode(
+          context,
           option["label"],
           option["icon"],
           isSelected: selectedMode == option["label"],
@@ -264,7 +266,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
     );
   }
 
-  Widget _buildNearbyAndTimeSelector() {
+  Widget _buildNearbyAndTimeSelector(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -295,11 +297,11 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
             );
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.white,
-            foregroundColor: const Color(0xff912338),
+            backgroundColor: Theme.of(context).colorScheme.surface,
+            foregroundColor: Theme.of(context).colorScheme.primary,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
-              side: const BorderSide(color: Color(0xff912338)),
+              side: const BorderSide(color: Colors.black),
             ),
           ),
           child: const Text("What's Nearby?"),
@@ -308,7 +310,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             border: Border.all(color: Colors.black26),
-            color: Colors.white,
+            //color: Colors.white,
           ),
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
           child: DropdownButtonHideUnderline(
@@ -334,7 +336,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
     );
   }
 
-  Widget _buildTransportMode(String label, IconData icon,
+  Widget _buildTransportMode(BuildContext context, String label, IconData icon,
       {bool isSelected = false}) {
     return GestureDetector(
       onTap: () {
@@ -353,7 +355,9 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
           Icon(
             icon,
             size: 28,
-            color: isSelected ? const Color(0xFF912338) : Colors.black54,
+            color: isSelected
+                ? Theme.of(context).colorScheme.primary
+                : Colors.black54,
           ),
           const SizedBox(height: 5),
           Text(
@@ -361,7 +365,9 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w400,
-              color: isSelected ? const Color(0xFF912338) : Colors.black54,
+              color: isSelected
+                  ? Theme.of(context).colorScheme.primary
+                  : Colors.black54,
             ),
           ),
         ],

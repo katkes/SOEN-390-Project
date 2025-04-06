@@ -13,6 +13,8 @@
 /// Usage:
 ///   await _webViewKey.currentState?.showDirections("124", "817");
 ///   await _webViewKey.currentState?.setFloor("Floor 2");
+///   await _webViewKey.currentState?.reloadWithMapId("someMapId");
+
 library;
 
 import 'dart:convert';
@@ -65,14 +67,6 @@ class MappedinWebViewState extends State<MappedinWebView> {
       ..setJavaScriptMode(JavaScriptMode.unrestricted);
 
     /// Registers a JavaScript channel to receive direction updates from the WebView.
-    ///
-    /// - Channel name: `"DirectionsChannel"`
-    /// - Receives: A JSON string with the following structure:
-    ///   {
-    ///     "type": "success" | "error",
-    ///     "payload": String | { "message": String }
-    ///   }
-    /// - Updates the [statusMessage] based on success or error.
     controller.addJavaScriptChannel(
       "DirectionsChannel",
       onMessageReceived: (JavaScriptMessage message) {
@@ -97,14 +91,6 @@ class MappedinWebViewState extends State<MappedinWebView> {
     );
 
     /// Registers a JavaScript channel to receive floor selection events from the WebView.
-    ///
-    /// - Channel name: `"FloorsChannel"`
-    /// - Receives: A JSON string with the following structure:
-    ///   {
-    ///     "type": "success" | "error",
-    ///     "payload": { "floorName": String } | { "message": String }
-    ///   }
-    /// - Updates the [statusMessage] to reflect the current floor or error.
     controller.addJavaScriptChannel(
       "FloorsChannel",
       onMessageReceived: (JavaScriptMessage message) {
@@ -127,7 +113,6 @@ class MappedinWebViewState extends State<MappedinWebView> {
         }
       },
     );
-
     loadHtmlFromAssets();
   }
 

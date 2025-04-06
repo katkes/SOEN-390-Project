@@ -68,7 +68,7 @@ class MappedinMapController {
     try {
       _currentMapId = mapId;
       // Reload the WebView with the new map ID
-      // await webViewKey.currentState?.reloadWithMapId(mapId);
+      await webViewKey.currentState?.reloadWithMapId(mapId);
       return true;
     } catch (e) {
       return false;
