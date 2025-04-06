@@ -69,4 +69,9 @@ class FakeMappedinWebViewState extends State<MappedinWebView>
   Future<void> reloadWithMapId(String mapId) {
     throw UnimplementedError();
   }
+
+  @override
+  Future<bool> waitForMapLoaded() {
+    throw UnimplementedError();
+  }
 }
