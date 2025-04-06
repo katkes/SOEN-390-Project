@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:soen_390/models/route_result.dart';
-import 'package:soen_390/screens/indoor/mappedin_map_screen.dart';
-import 'package:soen_390/screens/waypoint/waypoint_selection_screens.dart';
 import 'package:soen_390/services/auth_service.dart';
+import 'package:soen_390/utils/navigation_utils.dart';
 import 'package:soen_390/widgets/building_popup.dart';
 import 'package:soen_390/widgets/nav_bar.dart';
 import 'package:soen_390/widgets/search_bar.dart';
@@ -202,43 +201,23 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
   }
 
   void _openWaypointSelection() async {
-    final buildingToCoordinatesService =
-        ref.watch(buildingToCoordinatesProvider);
-    final locationService = ref.watch(locationServiceProvider);
-    final routeService = ref.watch(routeServiceProvider);
-    final campusRouteChecker = ref.watch(campusRouteCheckerProvider);
-    final waypointValidator = ref.watch(waypointValidatorProvider);
-    final routeCacheManager = ref.watch(routeCacheManagerProvider);
-
-    final RouteResult selectedRouteData = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => WaypointSelectionScreen(
-          routeService: routeService,
-          geocodingService: buildingToCoordinatesService,
-          locationService: locationService,
-          campusRouteChecker: campusRouteChecker,
-          waypointValidator: waypointValidator,
-          routeCacheManager: routeCacheManager,
-        ),
-      ),
+    await NavigationUtils.openWaypointSelection(
+      context: context,
+      ref: ref,
+      onRouteSelected: (routePoints) {
+        setState(() {
+          polylinePoints = routePoints;
+        });
+      },
+      inMain: true,
     );
-
-    polylinePoints = selectedRouteData.routePoints;
-    setState(() {
-      polylinePoints = selectedRouteData.routePoints;
-    });
   }
 
   /// Opens the Mappedin map screen.
   void _openMappedinMap() async {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => MappedinMapScreen(
-          controller: _mappedinController,
-        ),
-      ),
+    await NavigationUtils.openMappedinMap(
+      context: context,
+      mappedinController: _mappedinController,
     );
   }
 
