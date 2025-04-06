@@ -220,18 +220,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
         ),
       );
 
-      // Step 2: Show outdoor directions from Hall to Library
-      // await Navigator.push(
-      //   context,
-      //   MaterialPageRoute(
-      //     builder: (context) => OutdoorMapScreen(
-      //       startLocation: const LatLng(45.4973, -73.5784), // Hall Building
-      //       endLocation: const LatLng(45.4971, -73.5788), // Library Building
-      //     ),
-      //   ),
-      // );
-
-      // Step 3: Launch MappedinWebView for Library bottom to LB322
+      // Step 2: Launch MappedinWebView for Library bottom to LB322
       final libraryController = MappedinMapController();
       await libraryController.selectBuildingByName("library");
       Navigator.push(
