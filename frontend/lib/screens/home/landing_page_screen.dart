@@ -227,7 +227,9 @@ class _CUHomeScreenState extends ConsumerState<CUHomeScreen>
             BoxShadow(
               // ignore: deprecated_member_use
               color: isDarkMode
+                  // ignore: deprecated_member_use
                   ? Colors.black.withOpacity(0.3)
+                  // ignore: deprecated_member_use
                   : Colors.grey.withOpacity(0.1),
               spreadRadius: 0,
               blurRadius: 10,
@@ -284,7 +286,9 @@ class _CUHomeScreenState extends ConsumerState<CUHomeScreen>
           BoxShadow(
             // ignore: deprecated_member_use
             color: isDarkMode
+                // ignore: deprecated_member_use
                 ? Colors.black.withOpacity(0.3)
+                // ignore: deprecated_member_use
                 : Colors.grey.withOpacity(0.1),
             spreadRadius: 0,
             blurRadius: 10,
@@ -299,6 +303,7 @@ class _CUHomeScreenState extends ConsumerState<CUHomeScreen>
             decoration: BoxDecoration(
               // ignore: deprecated_member_use
               color: isDarkMode
+                  // ignore: deprecated_member_use
                   ? const Color(0xFF6271EB).withOpacity(0.2)
                   : const Color(0xFFEDF1FD),
               borderRadius: BorderRadius.circular(12),
