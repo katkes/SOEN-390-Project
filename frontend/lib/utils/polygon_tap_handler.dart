@@ -1,5 +1,3 @@
-// marker_tap_handler.dart
-
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:popover/popover.dart';
@@ -36,7 +34,7 @@ class PolygonTapHandler {
     required this.buildingPopUps,
     this.onRouteSelected,
   });
-  void onMarkerTapped(
+  void onPolygonTapped(
     double lat,
     double lon,
     String name,

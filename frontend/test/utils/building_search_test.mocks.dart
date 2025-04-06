@@ -29,7 +29,7 @@ import 'package:soen_390/services/map_service.dart' as _i2;
 /// See the documentation for Mockito's code generation for more information.
 class MockMapService extends _i1.Mock implements _i2.MapService {
   @override
-  set onMarkerCleared(Function? _onMarkerCleared) => super.noSuchMethod(
+  set onPolygonCleared(Function? _onMarkerCleared) => super.noSuchMethod(
         Invocation.setter(#onMarkerCleared, _onMarkerCleared),
         returnValueForMissingStub: null,
       );

@@ -5,40 +5,37 @@ import 'package:flutter/material.dart';
 import 'package:soen_390/repositories/geojson_repository.dart';
 
 class MapService {
-  static const Color markerColor = Color(0xFF912338);
   static const Color polygonFillColor = Color(0x33FF0000);
-  static const Color secondaryMarkerColor = Color.fromARGB(255, 255, 39, 39);
   static const Color polygonBorderColor = Colors.red;
-  static const double markerSize = 40.0;
   static const double borderStrokeWidth = 2.0;
   static const String _buildingLongName = 'Building Long Name';
 
   final GeoJsonRepository _geoJsonRepository;
 
-  LatLng? _selectedMarkerLocation;
-  Timer? _markerClearTimer;
-  Function? onMarkerCleared;
+  LatLng? _selectedPolygonLocation;
+  Timer? _polygonClearTimer;
+  Function? onPolygonCleared;
 
   MapService({GeoJsonRepository? geoJsonRepository})
       : _geoJsonRepository = geoJsonRepository ?? GeoJsonRepository();
 
   void selectPolygon(LatLng location) {
-    _selectedMarkerLocation = location;
+    _selectedPolygonLocation = location;
     startClearTimer();
   }
 
-  LatLng? get selectedPolygonLocation => _selectedMarkerLocation;
+  LatLng? get selectedPolygonLocation => _selectedPolygonLocation;
 
   Map<String, dynamic>? getPolygonMetadata(List<LatLng> polygonPoints) {
     return _polygonMetadata[polygonPoints];
   }
 
   void startClearTimer() {
-    _markerClearTimer?.cancel();
-    _markerClearTimer = Timer(const Duration(seconds: 7), () {
-      _selectedMarkerLocation = null;
-      _markerClearTimer = null;
-      onMarkerCleared?.call();
+    _polygonClearTimer?.cancel();
+    _polygonClearTimer = Timer(const Duration(seconds: 7), () {
+      _selectedPolygonLocation = null;
+      _polygonClearTimer = null;
+      onPolygonCleared?.call();
     });
   }
 

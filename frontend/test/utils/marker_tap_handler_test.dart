@@ -4,7 +4,7 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:flutter_map/flutter_map.dart';
 
-import 'package:soen_390/utils/marker_tap_handler.dart';
+import 'package:soen_390/utils/polygon_tap_handler.dart';
 import 'package:soen_390/widgets/building_popup.dart';
 import 'marker_tap_handler_test.mocks.dart';
 
@@ -46,7 +46,7 @@ void main() {
       home: Scaffold(body: Container()),
     ));
 
-    markerTapHandler.onMarkerTapped(lat, lon, name, address, tapPosition,
+    markerTapHandler.onPolygonTapped(lat, lon, name, address, tapPosition,
         tester.element(find.byType(Container)));
 
     await tester.pumpAndSettle();
@@ -72,7 +72,7 @@ void main() {
       home: Scaffold(body: Container()),
     ));
 
-    markerTapHandler.onMarkerTapped(lat, lon, name, address, tapPosition,
+    markerTapHandler.onPolygonTapped(lat, lon, name, address, tapPosition,
         tester.element(find.byType(Container)));
 
     await tester.pumpAndSettle();

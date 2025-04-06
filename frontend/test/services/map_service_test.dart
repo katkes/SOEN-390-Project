@@ -120,7 +120,7 @@ void main() {
       mapService.selectPolygon(testLocation);
 
       bool callbackCalled = false;
-      mapService.onMarkerCleared = () {
+      mapService.onPolygonCleared = () {
         callbackCalled = true;
       };
 
@@ -137,7 +137,7 @@ void main() {
       mapService.selectPolygon(testLocation);
 
       bool callbackCalled = false;
-      mapService.onMarkerCleared = () {
+      mapService.onPolygonCleared = () {
         callbackCalled = true;
       };
 

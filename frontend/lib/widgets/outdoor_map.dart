@@ -8,7 +8,7 @@ import 'package:soen_390/services/interfaces/route_service_interface.dart';
 import 'package:soen_390/services/interfaces/http_client_interface.dart';
 import 'package:soen_390/services/http_service.dart';
 import 'package:soen_390/services/map_service.dart';
-import 'package:soen_390/utils/marker_tap_handler.dart';
+import 'package:soen_390/utils/polygon_tap_handler.dart';
 import 'package:soen_390/widgets/building_popup.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:soen_390/widgets/indoor_navigation_button.dart';
@@ -90,9 +90,9 @@ class MapWidgetState extends State<MapWidget> {
   late MapService _mapService;
 
   /// The tap handler for building markers.
-  late PolygonTapHandler _markerTapHandler;
+  late PolygonTapHandler _polygonTapHandler;
 
-  PolygonTapHandler get markerTapHandler => _markerTapHandler;
+  PolygonTapHandler get polygonTapHandler => _polygonTapHandler;
 
   void selectPolygon(LatLng location) {
     // Update selected marker in MapService
@@ -116,13 +116,13 @@ class MapWidgetState extends State<MapWidget> {
     _mapController = MapController();
     _mapService = MapService();
 
-    _mapService.onMarkerCleared = () {
+    _mapService.onPolygonCleared = () {
       // Use onMarkerCleared
       setState(() {
         _loadBuildingLocations();
       });
     };
-    _markerTapHandler = PolygonTapHandler(
+    _polygonTapHandler = PolygonTapHandler(
       onBuildingInfoUpdated: (name, address) {
         setState(() {
           _selectedBuildingName = name;
@@ -145,7 +145,7 @@ class MapWidgetState extends State<MapWidget> {
       // Load building polygons with metadata
       final polygons = await _mapService.loadBuildingPolygons(
         (name, address, center) {
-          _markerTapHandler.onMarkerTapped(
+          _polygonTapHandler.onPolygonTapped(
             center.latitude,
             center.longitude,
             name,
@@ -168,7 +168,7 @@ class MapWidgetState extends State<MapWidget> {
     try {
       final polygons = await _mapService.loadBuildingPolygons(
         (name, address, center) {
-          _markerTapHandler.onMarkerTapped(
+          _polygonTapHandler.onPolygonTapped(
             center.latitude,
             center.longitude,
             name,
