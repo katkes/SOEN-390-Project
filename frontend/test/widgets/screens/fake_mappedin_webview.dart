@@ -72,7 +72,6 @@ class FakeMappedinWebViewState extends State<MappedinWebView>
 
   @override
   Future<bool> waitForMapLoaded() {
-    // TODO: implement waitForMapLoaded
     throw UnimplementedError();
   }
 }
