@@ -280,12 +280,8 @@ mapView.on("click", async (event) => {
 
         // Clear Navigation (in case dropdown was used before)
         mapView.Navigation.clear();
+        mapView.Navigation.draw(directions);
 
-        path = mapView.Paths.add(directions.coordinates, {
-            nearRadius: 0.5,
-            farRadius: 0.5,
-            color: "#912338",
-        });
 
         updateDirectionsPanel(directions);
         setSpacesInteractive(false);
