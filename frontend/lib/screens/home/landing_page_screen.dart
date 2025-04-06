@@ -2,18 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:soen_390/providers/navigation_provider.dart';
 import 'package:soen_390/styles/theme.dart';
-
-final themeProvider = StateNotifierProvider<ThemeNotifier, ThemeMode>((ref) {
-  return ThemeNotifier();
-});
-
-class ThemeNotifier extends StateNotifier<ThemeMode> {
-  ThemeNotifier() : super(ThemeMode.light);
-
-  void toggleTheme() {
-    state = state == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
-  }
-}
+import 'package:soen_390/providers/theme_provider.dart' as tp;
 
 class CUHomeScreen extends ConsumerStatefulWidget {
   const CUHomeScreen({super.key});
@@ -26,6 +15,7 @@ class _CUHomeScreenState extends ConsumerState<CUHomeScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
+
   // ignore: unused_field
   late Animation<Offset> _slideAnimation;
 
@@ -36,14 +26,12 @@ class _CUHomeScreenState extends ConsumerState<CUHomeScreen>
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
-
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller,
         curve: const Interval(0.0, 0.8, curve: Curves.easeOut),
       ),
     );
-
     _slideAnimation =
         Tween<Offset>(begin: const Offset(0, 0.2), end: Offset.zero).animate(
       CurvedAnimation(
@@ -51,7 +39,6 @@ class _CUHomeScreenState extends ConsumerState<CUHomeScreen>
         curve: const Interval(0.2, 1.0, curve: Curves.easeOutCubic),
       ),
     );
-
     _controller.forward();
   }
 
@@ -63,8 +50,10 @@ class _CUHomeScreenState extends ConsumerState<CUHomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    final themeMode = ref.watch(themeProvider);
-    final isDarkMode = themeMode == ThemeMode.dark;
+    // Use the theme provider from the main app
+    final themeMode = ref.watch(tp.themeProvider);
+    final isDarkMode = themeMode.brightness == Brightness.dark;
+
     // ignore: unused_local_variable
     final size = MediaQuery.of(context).size;
 
@@ -114,7 +103,7 @@ class _CUHomeScreenState extends ConsumerState<CUHomeScreen>
                         color: isDarkMode ? Colors.amber : Colors.blueGrey,
                       ),
                       onPressed: () {
-                        ref.read(themeProvider.notifier).toggleTheme();
+                        ref.read(tp.themeProvider.notifier).toggleTheme();
                       },
                     ),
                   ],
@@ -151,10 +140,9 @@ class _CUHomeScreenState extends ConsumerState<CUHomeScreen>
                                 .read(navigationProvider.notifier)
                                 .setSelectedIndex(1);
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text(
-                                      'Tap "Find My Way" on the map screen')),
-                            );
+                                const SnackBar(
+                                    content: Text(
+                                        'Tap "Find My Way" on the map screen')));
                           },
                           isDarkMode,
                         ),
@@ -168,10 +156,9 @@ class _CUHomeScreenState extends ConsumerState<CUHomeScreen>
                                 .read(navigationProvider.notifier)
                                 .setSelectedIndex(1);
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text(
-                                      'Use building controls on the map screen')),
-                            );
+                                const SnackBar(
+                                    content: Text(
+                                        'Use building controls on the map screen')));
                           },
                           isDarkMode,
                         ),
@@ -225,11 +212,8 @@ class _CUHomeScreenState extends ConsumerState<CUHomeScreen>
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              // ignore: deprecated_member_use
               color: isDarkMode
-                  // ignore: deprecated_member_use
                   ? Colors.black.withOpacity(0.3)
-                  // ignore: deprecated_member_use
                   : Colors.grey.withOpacity(0.1),
               spreadRadius: 0,
               blurRadius: 10,
@@ -277,18 +261,13 @@ class _CUHomeScreenState extends ConsumerState<CUHomeScreen>
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
       decoration: BoxDecoration(
         color: isDarkMode
-            // ignore: deprecated_member_use
             ? const Color(0xFF2A2D3E).withOpacity(0.8)
-            // ignore: deprecated_member_use
             : Colors.white.withOpacity(0.8),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            // ignore: deprecated_member_use
             color: isDarkMode
-                // ignore: deprecated_member_use
                 ? Colors.black.withOpacity(0.3)
-                // ignore: deprecated_member_use
                 : Colors.grey.withOpacity(0.1),
             spreadRadius: 0,
             blurRadius: 10,
@@ -301,9 +280,7 @@ class _CUHomeScreenState extends ConsumerState<CUHomeScreen>
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              // ignore: deprecated_member_use
               color: isDarkMode
-                  // ignore: deprecated_member_use
                   ? const Color(0xFF6271EB).withOpacity(0.2)
                   : const Color(0xFFEDF1FD),
               borderRadius: BorderRadius.circular(12),
@@ -339,16 +316,23 @@ class _CUHomeScreenState extends ConsumerState<CUHomeScreen>
               ],
             ),
           ),
-          TextButton(
+          ElevatedButton(
             onPressed: () {
               ref.read(navigationProvider.notifier).setSelectedIndex(1);
             },
-            child: Text(
+            style: ElevatedButton.styleFrom(
+              backgroundColor:
+                  isDarkMode ? const Color(0xFF6271EB) : appTheme.primaryColor,
+              foregroundColor: Colors.white,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            ),
+            child: const Text(
               'View Map',
               style: TextStyle(
-                color: isDarkMode
-                    ? const Color(0xFF6271EB)
-                    : appTheme.primaryColor,
                 fontWeight: FontWeight.bold,
               ),
             ),

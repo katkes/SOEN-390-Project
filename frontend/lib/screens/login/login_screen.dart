@@ -57,7 +57,7 @@ class LoginScreen extends StatelessWidget {
 
               const Text(
                 'Sign in with Google to access your calendars and events',
-                style: TextStyle(fontSize: 16, color: Colors.black54),
+                style: TextStyle(fontSize: 16),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 48),

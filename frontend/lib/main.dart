@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:soen_390/models/route_result.dart';
 import 'package:soen_390/screens/indoor/mappedin_map_screen.dart';
 import 'package:soen_390/screens/waypoint/waypoint_selection_screens.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:soen_390/services/auth_service.dart';
 import 'package:soen_390/widgets/building_popup.dart';
 import 'package:soen_390/widgets/nav_bar.dart';
 import 'package:soen_390/widgets/search_bar.dart';
-import 'package:soen_390/styles/theme.dart';
+import 'package:soen_390/providers/theme_provider.dart' as tp;
 import 'package:soen_390/widgets/campus_switch_button.dart';
 import 'package:soen_390/widgets/outdoor_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -54,15 +54,16 @@ class MyApp extends ConsumerWidget {
     final routeService = ref.watch(routeServiceProvider);
     final httpService = ref.watch(httpServiceProvider);
     final authService = ref.watch(authServiceProvider);
+    final themeData = ref.watch(tp.themeProvider);
 
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: appTheme,
+      theme: themeData,
       home: MyHomePage(
         title: 'Campus Map',
         routeService: routeService,
         httpService: httpService,
-        authService: authService, // Inject AuthService
+        authService: authService,
       ),
     );
   }
@@ -83,7 +84,7 @@ class MyHomePage extends ConsumerStatefulWidget {
   final HttpService httpService;
 
   // the service responsible for handling authentication
-  final AuthService authService; // Add AuthService
+  final AuthService authService;
 
   /// Creates an instance of `MyHomePage`.
   const MyHomePage(
@@ -102,18 +103,13 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
   String selectedCampus = 'SGW';
   TextEditingController searchController = TextEditingController();
   late MappedinMapController _mappedinController;
-
-  //int _selectedIndex = 0;
   LatLng currentLocation = const LatLng(45.497856, -73.579588);
   LatLng _userLiveLocation = const LatLng(5.497856, -73.579588);
   late LocationService _locationService;
-
   late BuildingPopUps _buildingPopUps;
   late GoogleMapsApiClient _mapsApiClient;
-
   List<LatLng> polylinePoints = [];
   final GlobalKey<MapWidgetState> _mapWidgetKey = GlobalKey<MapWidgetState>();
-
   bool isLoggedIn = false;
   bool isLoading = false;
   String? errorMessage;
@@ -146,7 +142,6 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
       httpClient: widget.httpService,
     );
     _buildingPopUps = BuildingPopUps(mapsApiClient: _mapsApiClient);
-
     //This initializes the location service and listens for updates
     _locationService = LocationService.instance;
     _locationService.startUp().then((_) {
@@ -164,18 +159,10 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
     _locationService.stopListening();
   }
 
-  // void _onItemTapped(int index) {
-  //   polylinePoints = [];
-  //   setState(() {
-  //     _selectedIndex = index;
-  //   });
-  // }
-
   Future<void> signIn() async {
     setState(() {
       isLoading = true;
     });
-
     final authClient = await widget.authService.signIn();
     if (authClient != null) {
       print("Sign-in successful");
@@ -236,6 +223,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
         ),
       ),
     );
+
     polylinePoints = selectedRouteData.routePoints;
     setState(() {
       polylinePoints = selectedRouteData.routePoints;
@@ -263,7 +251,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
       body: IndexedStack(
         index: selectedIndex,
         children: [
-          const CUHomeScreen(),
+          const CUHomeScreen(), // Using the landing page screen here
           _buildMapScreen(context),
           isLoggedIn
               ? _buildUserProfileScreen(context)
@@ -383,32 +371,52 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
   }
 
   Widget _buildWaypointButton(BuildContext context) {
+    final isDarkMode =
+        ref.watch(tp.themeProvider).brightness == Brightness.dark;
+
     return Positioned(
       bottom: 80,
       right: 21,
       child: ElevatedButton(
         onPressed: _openWaypointSelection,
-        child: const Text("Find My Way"),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: isDarkMode
+              ? const Color(0xFF6271EB)
+              : Theme.of(context).primaryColor,
+          foregroundColor: Colors.white,
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        ),
+        child: const Text(
+          "Find My Way",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
     );
   }
 
   Widget _buildActionButtons(BuildContext context) {
+    final isDarkMode =
+        ref.watch(tp.themeProvider).brightness == Brightness.dark;
+
     return Positioned(
       bottom: 150,
       right: 21,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _buildShowHallButton(context),
+          _buildShowHallButton(context, isDarkMode),
           const SizedBox(height: 8),
-          _buildNavigateToRoomButton(context),
+          _buildNavigateToRoomButton(context, isDarkMode),
         ],
       ),
     );
   }
 
-  Widget _buildShowHallButton(BuildContext context) {
+  Widget _buildShowHallButton(BuildContext context, bool isDarkMode) {
     return ElevatedButton(
       onPressed: () async {
         final messenger = ScaffoldMessenger.of(context);
@@ -421,11 +429,25 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
         }
         _openMappedinMap();
       },
-      child: const Text("Show Hall"),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: isDarkMode
+            ? const Color(0xFF6271EB)
+            : Theme.of(context).primaryColor,
+        foregroundColor: Colors.white,
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      ),
+      child: const Text(
+        "Show Hall",
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
     );
   }
 
-  Widget _buildNavigateToRoomButton(BuildContext context) {
+  Widget _buildNavigateToRoomButton(BuildContext context, bool isDarkMode) {
     return ElevatedButton(
       onPressed: () async {
         final messenger = ScaffoldMessenger.of(context);
@@ -438,7 +460,21 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
         }
         _openMappedinMap();
       },
-      child: const Text("Go to MBS1.115"),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: isDarkMode
+            ? const Color(0xFF6271EB)
+            : Theme.of(context).primaryColor,
+        foregroundColor: Colors.white,
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      ),
+      child: const Text(
+        "Go to MBS1.115",
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
     );
   }
 
