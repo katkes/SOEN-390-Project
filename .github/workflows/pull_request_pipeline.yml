@@ -1,6 +1,12 @@
 name: Flutter CI/CD Pipeline
 
 on:
+  push:
+    branches-ignore:
+      - main  # Ignore merges into main
+    paths:
+      - frontend/**
+      - .github/**
   pull_request:
     branches:
       - main
