@@ -73,7 +73,8 @@ void main() {
     });
 
     test('darkAppTheme has correct scaffold background color', () {
-      expect(darkAppTheme.scaffoldBackgroundColor, equals(const Color(0xFF1F2636)));
+      expect(darkAppTheme.scaffoldBackgroundColor,
+          equals(const Color(0xFF1F2636)));
     });
 
     group('darkAppTheme ColorScheme tests', () {
@@ -90,7 +91,8 @@ void main() {
       });
 
       test('has correct secondary color', () {
-        expect(darkAppTheme.colorScheme.secondary, equals(const Color(0xFF1F2636)));
+        expect(darkAppTheme.colorScheme.secondary,
+            equals(const Color(0xFF1F2636)));
       });
 
       test('has correct onSecondary color', () {
@@ -98,7 +100,8 @@ void main() {
       });
 
       test('has correct surface color', () {
-        expect(darkAppTheme.colorScheme.surface, equals(const Color(0xFF1F2636)));
+        expect(
+            darkAppTheme.colorScheme.surface, equals(const Color(0xFF1F2636)));
       });
 
       test('has correct onSurface color', () {
@@ -124,10 +127,12 @@ void main() {
   });
 
   test('Light and dark themes have different brightness', () {
-    expect(appTheme.colorScheme.brightness, isNot(darkAppTheme.colorScheme.brightness));
+    expect(appTheme.colorScheme.brightness,
+        isNot(darkAppTheme.colorScheme.brightness));
   });
 
   test('Light and dark themes have different scaffold background colors', () {
-    expect(appTheme.scaffoldBackgroundColor, isNot(darkAppTheme.scaffoldBackgroundColor));
+    expect(appTheme.scaffoldBackgroundColor,
+        isNot(darkAppTheme.scaffoldBackgroundColor));
   });
 }

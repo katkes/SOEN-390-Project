@@ -25,14 +25,11 @@ import 'package:state_notifier/state_notifier.dart' as _i3;
 class _FakeAlwaysAliveRefreshable_0<T1> extends _i1.SmartFake
     implements _i2.AlwaysAliveRefreshable<T1> {
   _FakeAlwaysAliveRefreshable_0(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 class _FakeStateNotifierProviderElement_1<
-  NotifierT1 extends _i3.StateNotifier<T1>,
-  T1
->
-    extends _i1.SmartFake
+        NotifierT1 extends _i3.StateNotifier<T1>, T1> extends _i1.SmartFake
     implements _i2.StateNotifierProviderElement<NotifierT1, T1> {
   _FakeStateNotifierProviderElement_1(
     Object parent,
@@ -42,13 +39,13 @@ class _FakeStateNotifierProviderElement_1<
 
 class _FakeOverride_2 extends _i1.SmartFake implements _i2.Override {
   _FakeOverride_2(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 class _FakeProviderSubscription_3<State> extends _i1.SmartFake
     implements _i2.ProviderSubscription<State> {
   _FakeProviderSubscription_3(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 class _FakeAlwaysAliveProviderListenable_4<State> extends _i1.SmartFake
@@ -63,46 +60,41 @@ class _FakeAlwaysAliveProviderListenable_4<State> extends _i1.SmartFake
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockStateNotifierProvider<NotifierT extends _i3.StateNotifier<T>, T>
-    extends _i1.Mock
-    implements _i2.StateNotifierProvider<NotifierT, T> {
+    extends _i1.Mock implements _i2.StateNotifierProvider<NotifierT, T> {
   MockStateNotifierProvider() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i2.AlwaysAliveRefreshable<NotifierT> get notifier =>
-      (super.noSuchMethod(
-            Invocation.getter(#notifier),
-            returnValue: _FakeAlwaysAliveRefreshable_0<NotifierT>(
-              this,
-              Invocation.getter(#notifier),
-            ),
-          )
-          as _i2.AlwaysAliveRefreshable<NotifierT>);
+  _i2.AlwaysAliveRefreshable<NotifierT> get notifier => (super.noSuchMethod(
+        Invocation.getter(#notifier),
+        returnValue: _FakeAlwaysAliveRefreshable_0<NotifierT>(
+          this,
+          Invocation.getter(#notifier),
+        ),
+      ) as _i2.AlwaysAliveRefreshable<NotifierT>);
 
   @override
   _i2.StateNotifierProviderElement<NotifierT, T> createElement() =>
       (super.noSuchMethod(
-            Invocation.method(#createElement, []),
-            returnValue: _FakeStateNotifierProviderElement_1<NotifierT, T>(
-              this,
-              Invocation.method(#createElement, []),
-            ),
-          )
-          as _i2.StateNotifierProviderElement<NotifierT, T>);
+        Invocation.method(#createElement, []),
+        returnValue: _FakeStateNotifierProviderElement_1<NotifierT, T>(
+          this,
+          Invocation.method(#createElement, []),
+        ),
+      ) as _i2.StateNotifierProviderElement<NotifierT, T>);
 
   @override
   _i2.Override overrideWith(
     _i2.Create<NotifierT, _i2.StateNotifierProviderRef<NotifierT, T>>? create,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#overrideWith, [create]),
-            returnValue: _FakeOverride_2(
-              this,
-              Invocation.method(#overrideWith, [create]),
-            ),
-          )
-          as _i2.Override);
+        Invocation.method(#overrideWith, [create]),
+        returnValue: _FakeOverride_2(
+          this,
+          Invocation.method(#overrideWith, [create]),
+        ),
+      ) as _i2.Override);
 
   @override
   _i2.ProviderSubscription<T> addListener(
@@ -113,51 +105,47 @@ class MockStateNotifierProvider<NotifierT extends _i3.StateNotifier<T>, T>
     required bool? fireImmediately,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(
-              #addListener,
-              [node, listener],
-              {
-                #onError: onError,
-                #onDependencyMayHaveChanged: onDependencyMayHaveChanged,
-                #fireImmediately: fireImmediately,
-              },
-            ),
-            returnValue: _FakeProviderSubscription_3<T>(
-              this,
-              Invocation.method(
-                #addListener,
-                [node, listener],
-                {
-                  #onError: onError,
-                  #onDependencyMayHaveChanged: onDependencyMayHaveChanged,
-                  #fireImmediately: fireImmediately,
-                },
-              ),
-            ),
-          )
-          as _i2.ProviderSubscription<T>);
+        Invocation.method(
+          #addListener,
+          [node, listener],
+          {
+            #onError: onError,
+            #onDependencyMayHaveChanged: onDependencyMayHaveChanged,
+            #fireImmediately: fireImmediately,
+          },
+        ),
+        returnValue: _FakeProviderSubscription_3<T>(
+          this,
+          Invocation.method(
+            #addListener,
+            [node, listener],
+            {
+              #onError: onError,
+              #onDependencyMayHaveChanged: onDependencyMayHaveChanged,
+              #fireImmediately: fireImmediately,
+            },
+          ),
+        ),
+      ) as _i2.ProviderSubscription<T>);
 
   @override
-  T read(_i2.Node? node) =>
-      (super.noSuchMethod(
-            Invocation.method(#read, [node]),
-            returnValue: _i4.dummyValue<T>(
-              this,
-              Invocation.method(#read, [node]),
-            ),
-          )
-          as T);
+  T read(_i2.Node? node) => (super.noSuchMethod(
+        Invocation.method(#read, [node]),
+        returnValue: _i4.dummyValue<T>(
+          this,
+          Invocation.method(#read, [node]),
+        ),
+      ) as T);
 
   @override
   _i2.AlwaysAliveProviderListenable<Selected> select<Selected>(
     Selected Function(T)? selector,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#select, [selector]),
-            returnValue: _FakeAlwaysAliveProviderListenable_4<Selected>(
-              this,
-              Invocation.method(#select, [selector]),
-            ),
-          )
-          as _i2.AlwaysAliveProviderListenable<Selected>);
+        Invocation.method(#select, [selector]),
+        returnValue: _FakeAlwaysAliveProviderListenable_4<Selected>(
+          this,
+          Invocation.method(#select, [selector]),
+        ),
+      ) as _i2.AlwaysAliveProviderListenable<Selected>);
 }

@@ -8,28 +8,29 @@ import 'package:soen_390/styles/theme.dart';
 import 'package:soen_390/widgets/dark_mode_toggle_button.dart'; // Adjust path as needed
 
 // Create a mock ThemeNotifier class
-class MockThemeNotifier extends StateNotifier<ThemeData> implements ThemeNotifier {
+class MockThemeNotifier extends StateNotifier<ThemeData>
+    implements ThemeNotifier {
   MockThemeNotifier(ThemeData initialTheme) : super(initialTheme);
 
   bool toggleCalled = false;
 
   @override
-  Future<void> toggleTheme() async{
+  Future<void> toggleTheme() async {
     toggleCalled = true;
     state = state == appTheme ? darkAppTheme : appTheme;
   }
 }
 
 void main() {
-  testWidgets('DarkModeToggleButton displays correct text in light mode', (WidgetTester tester) async {
+  testWidgets('DarkModeToggleButton displays correct text in light mode',
+      (WidgetTester tester) async {
     // Build our app with a mock provider
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
           themeProvider.overrideWithProvider(
-            StateNotifierProvider<ThemeNotifier, ThemeData>((ref) =>
-                MockThemeNotifier(appTheme)
-            ),
+            StateNotifierProvider<ThemeNotifier, ThemeData>(
+                (ref) => MockThemeNotifier(appTheme)),
           ),
         ],
         child: const MaterialApp(
@@ -43,15 +44,15 @@ void main() {
     expect(find.text('Switch to Light Mode'), findsNothing);
   });
 
-  testWidgets('DarkModeToggleButton displays correct text in dark mode', (WidgetTester tester) async {
+  testWidgets('DarkModeToggleButton displays correct text in dark mode',
+      (WidgetTester tester) async {
     // Build our app with a mock provider in dark mode
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
           themeProvider.overrideWithProvider(
-            StateNotifierProvider<ThemeNotifier, ThemeData>((ref) =>
-                MockThemeNotifier(darkAppTheme)
-            ),
+            StateNotifierProvider<ThemeNotifier, ThemeData>(
+                (ref) => MockThemeNotifier(darkAppTheme)),
           ),
         ],
         child: const MaterialApp(
@@ -65,78 +66,82 @@ void main() {
     expect(find.text('Switch to Dark Mode'), findsNothing);
   });
 
-  testWidgets('DarkModeToggleButton calls toggleTheme when pressed in light mode',
-          (WidgetTester tester) async {
-        // Create a mock notifier we can reference later
-        final mockNotifier = MockThemeNotifier(appTheme);
+  testWidgets(
+      'DarkModeToggleButton calls toggleTheme when pressed in light mode',
+      (WidgetTester tester) async {
+    // Create a mock notifier we can reference later
+    final mockNotifier = MockThemeNotifier(appTheme);
 
-        // Build with our test provider
-        await tester.pumpWidget(
-          ProviderScope(
-            overrides: [
-              themeProvider.overrideWithProvider(
-                StateNotifierProvider<ThemeNotifier, ThemeData>((ref) => mockNotifier),
-              ),
-            ],
-            child: const MaterialApp(
-              home: DarkModeToggleButton(),
-            ),
+    // Build with our test provider
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          themeProvider.overrideWithProvider(
+            StateNotifierProvider<ThemeNotifier, ThemeData>(
+                (ref) => mockNotifier),
           ),
-        );
+        ],
+        child: const MaterialApp(
+          home: DarkModeToggleButton(),
+        ),
+      ),
+    );
 
-        // Find and tap the button
-        final buttonFinder = find.byType(ElevatedButton);
-        expect(buttonFinder, findsOneWidget);
+    // Find and tap the button
+    final buttonFinder = find.byType(ElevatedButton);
+    expect(buttonFinder, findsOneWidget);
 
-        await tester.tap(buttonFinder);
-        await tester.pump();
+    await tester.tap(buttonFinder);
+    await tester.pump();
 
-        // Verify the theme was toggled
-        expect(mockNotifier.toggleCalled, true);
-        expect(mockNotifier.state, darkAppTheme);
-      });
+    // Verify the theme was toggled
+    expect(mockNotifier.toggleCalled, true);
+    expect(mockNotifier.state, darkAppTheme);
+  });
 
-  testWidgets('DarkModeToggleButton calls toggleTheme when pressed in dark mode',
-          (WidgetTester tester) async {
-        // Create a mock notifier we can reference later
-        final mockNotifier = MockThemeNotifier(darkAppTheme);
+  testWidgets(
+      'DarkModeToggleButton calls toggleTheme when pressed in dark mode',
+      (WidgetTester tester) async {
+    // Create a mock notifier we can reference later
+    final mockNotifier = MockThemeNotifier(darkAppTheme);
 
-        // Build with our test provider
-        await tester.pumpWidget(
-          ProviderScope(
-            overrides: [
-              themeProvider.overrideWithProvider(
-                StateNotifierProvider<ThemeNotifier, ThemeData>((ref) => mockNotifier),
-              ),
-            ],
-            child: const MaterialApp(
-              home: DarkModeToggleButton(),
-            ),
+    // Build with our test provider
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          themeProvider.overrideWithProvider(
+            StateNotifierProvider<ThemeNotifier, ThemeData>(
+                (ref) => mockNotifier),
           ),
-        );
+        ],
+        child: const MaterialApp(
+          home: DarkModeToggleButton(),
+        ),
+      ),
+    );
 
-        // Verify we're in dark mode
-        expect(find.text('Switch to Light Mode'), findsOneWidget);
+    // Verify we're in dark mode
+    expect(find.text('Switch to Light Mode'), findsOneWidget);
 
-        // Find and tap the button
-        final buttonFinder = find.byType(ElevatedButton);
-        await tester.tap(buttonFinder);
-        await tester.pump();
+    // Find and tap the button
+    final buttonFinder = find.byType(ElevatedButton);
+    await tester.tap(buttonFinder);
+    await tester.pump();
 
-        // Verify the theme was toggled
-        expect(mockNotifier.toggleCalled, true);
-        expect(mockNotifier.state, appTheme);
-      });
+    // Verify the theme was toggled
+    expect(mockNotifier.toggleCalled, true);
+    expect(mockNotifier.state, appTheme);
+  });
 
-  testWidgets('DarkModeToggleButton has a Scaffold and is centered', (WidgetTester tester) async {
+  testWidgets('DarkModeToggleButton has a Scaffold and is centered',
+      (WidgetTester tester) async {
     // Build widget
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
           themeProvider.overrideWithProvider(
-            StateNotifierProvider<ThemeNotifier, ThemeData>((ref) =>
-                MockThemeNotifier(appTheme)
-            ),
+            StateNotifierProvider<ThemeNotifier, ThemeData>(
+                (ref) => MockThemeNotifier(appTheme)),
           ),
         ],
         child: const MaterialApp(

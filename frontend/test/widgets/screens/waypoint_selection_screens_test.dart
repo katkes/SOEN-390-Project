@@ -427,7 +427,8 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
     expect(find.textContaining("$shortStartAddress → $shortEndAddress"),
         findsOneWidget);
   });
-  testWidgets('Specify Disability button navigates to IndoorAccessibilityPage', (WidgetTester tester) async {
+  testWidgets('Specify Disability button navigates to IndoorAccessibilityPage',
+      (WidgetTester tester) async {
     // Arrange
     await tester.pumpWidget(MaterialApp(
       home: WaypointSelectionScreen(

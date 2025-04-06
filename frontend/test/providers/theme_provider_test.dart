@@ -29,7 +29,9 @@ void main() {
       expect(notifier.state, appTheme);
     });
 
-    test('should initialize with darkAppTheme when isDarkMode is true in preferences', () async {
+    test(
+        'should initialize with darkAppTheme when isDarkMode is true in preferences',
+        () async {
       // Set up mock shared preferences with dark mode enabled
       SharedPreferences.setMockInitialValues({'isDarkMode': true});
 
@@ -52,7 +54,8 @@ void main() {
 
       // Create the notifier with initial light theme
       final notifier = ThemeNotifier();
-      await Future.delayed(const Duration(milliseconds: 100)); // Wait for _loadTheme
+      await Future.delayed(
+          const Duration(milliseconds: 100)); // Wait for _loadTheme
 
       // Verify starting state is light theme
       expect(notifier.state, appTheme);
@@ -74,7 +77,8 @@ void main() {
 
       // Create the notifier with initial dark theme
       final notifier = ThemeNotifier();
-      await Future.delayed(const Duration(milliseconds: 100)); // Wait for _loadTheme
+      await Future.delayed(
+          const Duration(milliseconds: 100)); // Wait for _loadTheme
 
       // Verify starting state is dark theme
       expect(notifier.state, darkAppTheme);
@@ -105,7 +109,8 @@ void main() {
       expect(notifier.state, appTheme);
     });
 
-    test('should load light theme when isDarkMode is explicitly false', () async {
+    test('should load light theme when isDarkMode is explicitly false',
+        () async {
       // Set up mock shared preferences with dark mode disabled
       SharedPreferences.setMockInitialValues({'isDarkMode': false});
 
@@ -158,7 +163,8 @@ void main() {
 
       // Create the notifier
       final notifier = ThemeNotifier();
-      await Future.delayed(const Duration(milliseconds: 100)); // Wait for _loadTheme
+      await Future.delayed(
+          const Duration(milliseconds: 100)); // Wait for _loadTheme
 
       // Initial state should be light
       expect(notifier.state, appTheme);
@@ -183,7 +189,8 @@ void main() {
 
       // Create the notifier
       final notifier = ThemeNotifier();
-      await Future.delayed(const Duration(milliseconds: 100)); // Wait for _loadTheme
+      await Future.delayed(
+          const Duration(milliseconds: 100)); // Wait for _loadTheme
 
       // Toggle to dark
       await notifier.toggleTheme();
