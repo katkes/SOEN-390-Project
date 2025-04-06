@@ -35,6 +35,7 @@ class _MappedinMapScreenState extends State<MappedinMapScreen> {
     "JMSB": "67e1ac8eaa7c59000baf8dcf",
     "Library Building": "67ba2570a39568000bc4b334",
     "Vanier Extension": "67f1f4f13060f8000b74964b",
+    "Vanier Library": "67f2ebec0b03ee000b42fd40",
   };
 
   @override
