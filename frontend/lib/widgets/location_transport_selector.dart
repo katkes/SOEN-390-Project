@@ -4,6 +4,8 @@
 // The confirmed waypoints and transport mode are sent to the routing system for processing.
 
 import 'package:flutter/material.dart';
+import 'package:soen_390/screens/indoor/mappedin_map_controller.dart';
+import 'package:soen_390/screens/indoor/mappedin_map_screen.dart';
 import 'package:soen_390/screens/outdoor_poi/place_search_screen.dart';
 import 'package:soen_390/services/google_poi_service.dart';
 import 'package:soen_390/services/location_updater.dart';
@@ -176,7 +178,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
     );
   }
 
-  void _confirmRoute() {
+  _confirmRoute() async {
     if (!itineraryManager.isValid()) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -185,6 +187,55 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
       return;
     }
 
+    final waypoints = itineraryManager.getWaypoints();
+    final start = waypoints.first;
+    final destination = waypoints.last;
+
+    // Check for the specific case: H843 to LB322
+    if (start == "H843" && destination == "LB322") {
+      // Step 1: Launch MappedinWebView for H843 to Hall Building bottom
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MappedinMapScreen(
+            controller: MappedinMapController(),
+            onWebViewReady: () async {
+              final mappedinController = MappedinMapController();
+              await mappedinController.navigateToRoom("H843", true);
+            },
+          ),
+        ),
+      );
+
+      // Step 2: Show outdoor directions from Hall to Library
+      // await Navigator.push(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (context) => OutdoorMapScreen(
+      //       startLocation: const LatLng(45.4973, -73.5784), // Hall Building
+      //       endLocation: const LatLng(45.4971, -73.5788), // Library Building
+      //     ),
+      //   ),
+      // );
+
+      // Step 3: Launch MappedinWebView for Library bottom to LB322
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MappedinMapScreen(
+            controller: MappedinMapController(),
+            onWebViewReady: () async {
+              final mappedinController = MappedinMapController();
+              await mappedinController.navigateToRoom("LB322", false);
+            },
+          ),
+        ),
+      );
+
+      return;
+    }
+
+    // Default behavior for other routes
     widget.onConfirmRoute(itineraryManager.getWaypoints(), selectedMode);
   }
 
@@ -201,6 +252,11 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
                 } else {
                   _setDestinationLocation(selectedLocation);
                 }
+
+                if (startLocation == "H843" && destinationLocation == "LB322") {
+                  _confirmRoute();
+                }
+
                 widget.onLocationChanged?.call();
               });
             }

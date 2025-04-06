@@ -85,7 +85,7 @@ class MappedinMapController {
   ///
   /// [roomNumber] - The full room number including building prefix (e.g., "H907")
   /// Returns true if navigation was successful
-  Future<bool> navigateToRoom(String roomNumber) async {
+  Future<bool> navigateToRoom(String roomNumber, bool reverse) async {
     try {
       final building =
           await BuildingConfigManager.findBuildingByRoom(roomNumber);
@@ -108,10 +108,8 @@ class MappedinMapController {
       final roomWithoutPrefix =
           BuildingConfigManager.getRoomNumber(roomNumber, building.roomPrefix);
 
-
       // Show directions to the room
-      await webViewKey.currentState?.navigateToRoom(roomWithoutPrefix);
-
+      await webViewKey.currentState?.navigateToRoom(roomWithoutPrefix, reverse);
 
       return true;
     } catch (e) {
