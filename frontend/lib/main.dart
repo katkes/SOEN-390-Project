@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:soen_390/models/route_result.dart';
 import 'package:soen_390/screens/waypoint/waypoint_selection_screens.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:soen_390/models/route_result.dart';
 import 'package:soen_390/services/auth_service.dart';
+import 'package:soen_390/utils/navigation_utils.dart';
 import 'package:soen_390/widgets/building_popup.dart';
 import 'package:soen_390/widgets/nav_bar.dart';
 import 'package:soen_390/widgets/search_bar.dart';
-// import 'package:soen_390/styles/theme.dart';
+import 'package:soen_390/providers/theme_provider.dart' as tp;
 import 'package:soen_390/widgets/campus_switch_button.dart';
 import 'package:soen_390/widgets/outdoor_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -22,10 +24,8 @@ import 'package:soen_390/screens/login/login_screen.dart';
 import 'package:soen_390/screens/profile/profile_screen.dart';
 import 'package:soen_390/screens/calendar/calendar_view.dart';
 import 'package:soen_390/providers/navigation_provider.dart';
-import "package:soen_390/providers/theme_provider.dart";
-import "package:soen_390/widgets/dark_mode_toggle_button.dart";
 import 'package:soen_390/screens/indoor/mappedin_map_controller.dart';
-import 'dart:async';
+import 'package:soen_390/screens/home/landing_page_screen.dart';
 
 /// The entry point of the application.
 ///
@@ -57,19 +57,16 @@ class MyApp extends ConsumerWidget {
     final routeService = ref.watch(routeServiceProvider);
     final httpService = ref.watch(httpServiceProvider);
     final authService = ref.watch(authServiceProvider);
-
-    //get the theme provider
-    final themeData = ref.watch(themeProvider);
+    final themeData = ref.watch(tp.themeProvider);
 
     return MaterialApp(
       title: 'Flutter Demo',
       theme: themeData,
-      // darkTheme: darkAppTheme,
       home: MyHomePage(
         title: 'Campus Map',
         routeService: routeService,
         httpService: httpService,
-        authService: authService, // Inject AuthService
+        authService: authService,
       ),
     );
   }
@@ -90,7 +87,7 @@ class MyHomePage extends ConsumerStatefulWidget {
   final HttpService httpService;
 
   // the service responsible for handling authentication
-  final AuthService authService; // Add AuthService
+  final AuthService authService;
 
   /// Creates an instance of `MyHomePage`.
   const MyHomePage(
@@ -110,18 +107,13 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
   TextEditingController searchController = TextEditingController();
   // ignore : unused_field
   late MappedinMapController _mappedinController;
-
-  //int _selectedIndex = 0;
   LatLng currentLocation = const LatLng(45.497856, -73.579588);
   LatLng _userLiveLocation = const LatLng(5.497856, -73.579588);
   late LocationService _locationService;
-
   late BuildingPopUps _buildingPopUps;
   late GoogleMapsApiClient _mapsApiClient;
-
   List<LatLng> polylinePoints = [];
   final GlobalKey<MapWidgetState> _mapWidgetKey = GlobalKey<MapWidgetState>();
-
   bool isLoggedIn = false;
   bool isLoading = false;
   String? errorMessage;
@@ -154,7 +146,6 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
       httpClient: widget.httpService,
     );
     _buildingPopUps = BuildingPopUps(mapsApiClient: _mapsApiClient);
-
     //This initializes the location service and listens for updates
     _locationService = LocationService.instance;
     _locationService.startUp().then((_) {
@@ -176,7 +167,6 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
     setState(() {
       isLoading = true;
     });
-
     final authClient = await widget.authService.signIn();
     if (authClient != null) {
       print("Sign-in successful");
@@ -216,31 +206,16 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
   }
 
   void _openWaypointSelection() async {
-    final buildingToCoordinatesService =
-        ref.watch(buildingToCoordinatesProvider);
-    final locationService = ref.watch(locationServiceProvider);
-    final routeService = ref.watch(routeServiceProvider);
-    final campusRouteChecker = ref.watch(campusRouteCheckerProvider);
-    final waypointValidator = ref.watch(waypointValidatorProvider);
-    final routeCacheManager = ref.watch(routeCacheManagerProvider);
-
-    final RouteResult selectedRouteData = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => WaypointSelectionScreen(
-          routeService: routeService,
-          geocodingService: buildingToCoordinatesService,
-          locationService: locationService,
-          campusRouteChecker: campusRouteChecker,
-          waypointValidator: waypointValidator,
-          routeCacheManager: routeCacheManager,
-        ),
-      ),
+    await NavigationUtils.openWaypointSelection(
+      context: context,
+      ref: ref,
+      onRouteSelected: (routePoints) {
+        setState(() {
+          polylinePoints = routePoints;
+        });
+      },
+      inMain: true,
     );
-    polylinePoints = selectedRouteData.routePoints;
-    setState(() {
-      polylinePoints = selectedRouteData.routePoints;
-    });
   }
 
   @override
@@ -252,7 +227,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
       body: IndexedStack(
         index: selectedIndex,
         children: [
-          const Center(child: DarkModeToggleButton()),
+          const CUHomeScreen(), // Using the landing page screen here
           _buildMapScreen(context),
           isLoggedIn
               ? _buildUserProfileScreen(context)
@@ -268,14 +243,29 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
     );
   }
 
+  String _getAppBarTitle(int selectedIndex) {
+    switch (selectedIndex) {
+      case 0:
+        return 'Home';
+      case 1:
+        return 'Campus Map';
+      case 2:
+        return 'Profile';
+      default:
+        return widget.title;
+    }
+  }
+
   AppBar _buildAppBar(BuildContext context) {
+    final selectedIndex = ref.watch(navigationProvider).selectedIndex;
     return AppBar(
       leading: IconButton(
         icon: const Icon(Icons.menu, color: Colors.white, size: 30),
         onPressed: () {},
       ),
       backgroundColor: Theme.of(context).primaryColor,
-      title: Text(widget.title, style: const TextStyle(color: Colors.white)),
+      title: Text(_getAppBarTitle(selectedIndex),
+          style: const TextStyle(color: Colors.white)),
       actions: [
         IconButton(
           icon: const Icon(Icons.more_vert, color: Colors.white, size: 30),
@@ -360,13 +350,57 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
     );
   }
 
+  ButtonStyle _elevatedButtonStyle(BuildContext context, bool isDarkMode) {
+    return ElevatedButton.styleFrom(
+      backgroundColor:
+          isDarkMode ? const Color(0xFF6271EB) : Theme.of(context).primaryColor,
+      foregroundColor: Colors.white,
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    );
+  }
+
   Widget _buildWaypointButton(BuildContext context) {
+    final isDarkMode =
+        ref.watch(tp.themeProvider).brightness == Brightness.dark;
+
     return Positioned(
       bottom: 80,
       right: 21,
       child: ElevatedButton(
         onPressed: _openWaypointSelection,
-        child: const Text("Find My Way"),
+        style: _elevatedButtonStyle(context, isDarkMode),
+        child: const Text(
+          "Find My Way",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _navigateToBuilding(String buildingName) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final success =
+        await _mappedinController.selectBuildingByName(buildingName);
+    if (!success) {
+      messenger.showSnackBar(
+        SnackBar(content: Text('Failed to switch to $buildingName Building')),
+      );
+      return;
+    }
+    _openMappedinMap();
+  }
+
+  Widget _buildShowHallButton(BuildContext context, bool isDarkMode) {
+    return ElevatedButton(
+      onPressed: () => _navigateToBuilding("Hall"),
+      style: _elevatedButtonStyle(context, isDarkMode),
+      child: const Text(
+        "Indoor Navigation",
+        style: TextStyle(fontWeight: FontWeight.bold),
       ),
     );
   }

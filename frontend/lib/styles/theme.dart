@@ -25,15 +25,15 @@ final ThemeData darkAppTheme = ThemeData(
     brightness: Brightness.dark,
     primary: Colors.white,
     onPrimary: Colors.white,
-    secondary: Color(0xFF1F2636), // Slightly lighter shade for contrast
+    secondary: Color(0xFF1F2636),
     onSecondary: Colors.white,
-    surface: Color(0xFF1F2636), // Dark background
+    surface: Color(0xFF1F2636),
     onSurface: Colors.white,
     error: Colors.red,
     onError: Colors.white,
     outline: Colors.grey,
     scrim: Color(0xFF1F2636),
   ),
-  scaffoldBackgroundColor: const Color(0xFF1F2636), // Dark background
+  scaffoldBackgroundColor: const Color(0xFF1F2636),
   useMaterial3: true,
 );
