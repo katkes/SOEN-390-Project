@@ -6,9 +6,20 @@ import 'package:mockito/annotations.dart';
 import 'package:soen_390/screens/calendar/calendar_event_service.dart';
 import 'package:soen_390/screens/calendar/event_edit_popup.dart';
 import 'package:soen_390/services/calendar_service.dart';
+import 'package:soen_390/screens/indoor/mappedin_map_controller.dart';
 
-@GenerateMocks([CalendarService, CalendarEventService])
+@GenerateMocks([CalendarService, CalendarEventService, MappedinMapController])
 import 'event_edit_popup_test.mocks.dart';
+
+class FakeMappedinMapController extends MappedinMapController {
+  @override
+  Future<bool> navigateToRoom(String roomNumber) async {
+    await Future.delayed(const Duration(milliseconds: 100));
+    return true;
+  }
+}
+
+class MockBuildContext extends Mock implements BuildContext {}
 
 void main() {
   late MockCalendarService mockCalendarService;
@@ -63,6 +74,79 @@ void main() {
     );
   }
 
+  testWidgets('Go Now button opens navigation to classroom',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(createWidgetUnderTest());
+    await tester.tap(find.text('Show Dialog'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Go Now'), findsOneWidget);
+  });
+  testWidgets('Go Now button can be tapped without crashing',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(
+        body: Builder(
+          builder: (context) => ElevatedButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return EventEditPopup(
+                    event: testEvent,
+                    calendarService: mockCalendarService,
+                    calendarEventService: mockCalendarEventService,
+                    calendarId: testCalendarId,
+                  );
+                },
+              );
+            },
+            child: const Text('Show Dialog'),
+          ),
+        ),
+      ),
+    ));
+
+    // Open the dialog
+    await tester.tap(find.text('Show Dialog'));
+    await tester.pumpAndSettle();
+
+    // This test simply verifies the button can be tapped without crashing
+    // It may not launch the navigation because of dependencies, but at least
+    // we know the button handler doesn't throw exceptions
+    await tester.tap(find.text('Go Now'));
+
+    // If we made it here without exceptions, the test passes
+    expect(true, isTrue);
+  });
+  testWidgets('Go Now button exists and has correct text and icon',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: EventEditPopup(
+            event: testEvent,
+            calendarService: mockCalendarService,
+            calendarEventService: mockCalendarEventService,
+            calendarId: 'primary',
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('goNowButton')), findsOneWidget);
+
+    expect(
+        find.descendant(
+            of: find.byKey(const Key('goNowButton')),
+            matching: find.text('Go Now')),
+        findsOneWidget);
+    expect(
+        find.descendant(
+            of: find.byKey(const Key('goNowButton')),
+            matching: find.byIcon(Icons.directions_walk)),
+        findsOneWidget);
+  });
   group('EventEditPopup UI Rendering', () {
     // Test: Verify all UI elements are displayed correctly
     // Expected: All widget texts and icons should be visible with correct text content

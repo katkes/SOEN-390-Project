@@ -34,6 +34,9 @@ class _MappedinMapScreenState extends State<MappedinMapScreen> {
     "Hall Building": "67968294965a13000bcdfe74",
     "JMSB": "67e1ac8eaa7c59000baf8dcf",
     "Library Building": "67ba2570a39568000bc4b334",
+    "Vanier Extension": "67f1f4f13060f8000b74964b",
+    "Vanier Library": "67f2ebec0b03ee000b42fd40",
+    "Central Building": "67f2f0370b03ee000b42fd41"
   };
 
   @override
@@ -43,14 +46,6 @@ class _MappedinMapScreenState extends State<MappedinMapScreen> {
     _selectedBuilding = "Hall Building";
     final defaultMapId = buildingMapIds[_selectedBuilding]!;
     _controller.selectBuildingById(defaultMapId);
-  }
-
-  /// Helper method to build Floating Action Buttons with standard styling.
-  Widget _buildFABButton(String text, VoidCallback onPressed) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      child: Text(text),
-    );
   }
 
   @override
@@ -95,18 +90,6 @@ class _MappedinMapScreenState extends State<MappedinMapScreen> {
             mapId: _controller.currentMapId,
             onWebViewReady: widget.onWebViewReady,
           ),
-      floatingActionButton: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          /// Triggers the `navigateToRoom` method on the WebView.
-          /// This button mainly shows how to interact with the code.
-          /// TODO: delete for the actual implementation, will be changed in 7.1.2
-          /// It is here for testing purposes.
-          _buildFABButton("Navigate to 813 from Outside", () async {
-            await _controller.webViewKey.currentState?.navigateToRoom("813");
-          }),
-        ],
-      ),
     );
   }
 }
