@@ -1,6 +1,9 @@
+// ignore_for_file: unused_field, unused_import
+
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:soen_390/models/route_result.dart';
+import 'package:soen_390/screens/waypoint/waypoint_selection_screens.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:soen_390/services/auth_service.dart';
 import 'package:soen_390/utils/navigation_utils.dart';
 import 'package:soen_390/widgets/building_popup.dart';
@@ -101,6 +104,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
   // Set initial campus to SGW (default campus)
   String selectedCampus = 'SGW';
   TextEditingController searchController = TextEditingController();
+  // ignore : unused_field
   late MappedinMapController _mappedinController;
   LatLng currentLocation = const LatLng(45.497856, -73.579588);
   LatLng _userLiveLocation = const LatLng(5.497856, -73.579588);
@@ -213,14 +217,6 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
     );
   }
 
-  /// Opens the Mappedin map screen.
-  void _openMappedinMap() async {
-    await NavigationUtils.openMappedinMap(
-      context: context,
-      mappedinController: _mappedinController,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final selectedIndex = ref.watch(navigationProvider).selectedIndex;
@@ -287,7 +283,6 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
             _buildCampusSwitch(),
             _buildSearchBar(),
             _buildWaypointButton(context),
-            _buildActionButtons(context),
           ],
         );
       },
@@ -381,47 +376,6 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
           "Find My Way",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-      ),
-    );
-  }
-
-  Future<void> _navigateToBuilding(String buildingName) async {
-    final messenger = ScaffoldMessenger.of(context);
-    final success =
-        await _mappedinController.selectBuildingByName(buildingName);
-    if (!success) {
-      messenger.showSnackBar(
-        SnackBar(content: Text('Failed to switch to $buildingName Building')),
-      );
-      return;
-    }
-    _openMappedinMap();
-  }
-
-  Widget _buildShowHallButton(BuildContext context, bool isDarkMode) {
-    return ElevatedButton(
-      onPressed: () => _navigateToBuilding("Hall"),
-      style: _elevatedButtonStyle(context, isDarkMode),
-      child: const Text(
-        "Indoor Navigation",
-        style: TextStyle(fontWeight: FontWeight.bold),
-      ),
-    );
-  }
-
-  Widget _buildActionButtons(BuildContext context) {
-    final isDarkMode =
-        ref.watch(tp.themeProvider).brightness == Brightness.dark;
-
-    return Positioned(
-      bottom: 150,
-      right: 21,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildShowHallButton(context, isDarkMode),
-          const SizedBox(height: 8),
-        ],
       ),
     );
   }

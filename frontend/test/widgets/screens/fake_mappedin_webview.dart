@@ -61,7 +61,7 @@ class FakeMappedinWebViewState extends State<MappedinWebView>
   }
 
   @override
-  Future<void> navigateToRoom(String roomNumber) {
+  Future<void> navigateToRoom(String roomNumber, bool reverse) {
     throw UnimplementedError();
   }
 
