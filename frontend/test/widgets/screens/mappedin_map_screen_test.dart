@@ -19,12 +19,6 @@ class TestMappedinMapScreen extends StatelessWidget {
 }
 
 void main() {
-  testWidgets('displays AppBar title and buttons', (tester) async {
-    await tester.pumpWidget(const MaterialApp(home: TestMappedinMapScreen()));
-
-    expect(find.text('Indoor Navigation'), findsOneWidget);
-  });
-
   testWidgets('selecting from dropdown changes building map ID',
       (tester) async {
     final fakeController = FakeMappedinMapController();

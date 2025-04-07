@@ -3,14 +3,7 @@ import 'package:google_places_autocomplete_text_field/google_places_autocomplete
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// Symbolic constants for default suggestions
-const List<String> kDefaultSuggestions = [
-  "Restaurant",
-  "Fast Food",
-  "Coffee",
-  "Dessert",
-  "Shopping",
-  "Bar",
-];
+const List<String> kDefaultSuggestions = ["H843", "LB322"];
 
 /// Pure filtering function
 List<String> filterSuggestions(List<String> source, String input) {

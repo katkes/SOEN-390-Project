@@ -201,7 +201,8 @@ class MockMappedinWebViewState extends _i1.Mock
       ) as _i7.Future<void>);
 
   @override
-  _i7.Future<void> navigateToRoom(String? roomNumber) => (super.noSuchMethod(
+  _i7.Future<void> navigateToRoom(String? roomNumber, bool reverse) =>
+      (super.noSuchMethod(
         Invocation.method(#navigateToRoom, [roomNumber]),
         returnValue: _i7.Future<void>.value(),
         returnValueForMissingStub: _i7.Future<void>.value(),
