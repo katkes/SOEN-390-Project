@@ -6,20 +6,18 @@ import 'package:soen_390/main.dart' as app;
 import 'package:soen_390/widgets/outdoor_map.dart';
 import 'package:soen_390/widgets/route_card.dart';
 import 'dart:math';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 // The purpose of this test is to automate user interactions with the app's map and navigation features, ensuring they function correctly in a real or emulated environment.
 // It simulates user behaviors to verify that the app behaves as expected in different scenarios.
 void main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   final int elapsedTime = 4;
-  await dotenv.load(fileName: ".env");
   final String hallBuildingAddress =
       "Hall Building Auditorium, Boulevard De Maisonneuve Ouest, Montreal, QC, Canada";
 
   // Function to find the map icon in navbar and tapping on it to switch to map section
   Future<void> navigatingToOutdoorMap(WidgetTester tester) async {
-    final mapIconFinder = find.byIcon(Icons.map_outlined);
+    final mapIconFinder = find.byIcon(Icons.map_outlined).last;
     await tester.tap(mapIconFinder);
     await tester.pumpAndSettle();
     await Future.delayed(Duration(seconds: elapsedTime));
@@ -35,7 +33,7 @@ void main() async {
 
   // Function to navigate to home page
   Future<void> navigatingToHomePage(WidgetTester tester) async {
-    final homeIconFinder = find.byIcon(Icons.home_outlined);
+    final homeIconFinder = find.byIcon(Icons.home_outlined).last;
     await tester.tap(homeIconFinder);
     await tester.pumpAndSettle();
     await Future.delayed(Duration(seconds: elapsedTime));
@@ -120,16 +118,14 @@ void main() async {
 
   // Function to enable dark mode
   Future<void> enablingDarkMode(WidgetTester tester) async {
-    final String darkModeButtonLabel = "Switch to Dark Mode";
-    final darkModeButton = find.text(darkModeButtonLabel);
+    final darkModeButton = find.byIcon(Icons.dark_mode);
     await tester.tap(darkModeButton);
     await tester.pumpAndSettle();
     await Future.delayed(Duration(seconds: elapsedTime));
   }
 
   Future<void> enablingLightMode(WidgetTester tester) async {
-    final String lightModeButtonLabel = "Switch to Light Mode";
-    final lightModeButton = find.text(lightModeButtonLabel);
+    final lightModeButton = find.byIcon(Icons.light_mode);
     await tester.tap(lightModeButton);
     await tester.pumpAndSettle();
     await Future.delayed(Duration(seconds: elapsedTime));
