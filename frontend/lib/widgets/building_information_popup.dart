@@ -64,17 +64,29 @@ class BuildingInformationPopup extends StatelessWidget {
     }
   }
 
-  Widget _buildBuildingInfo(String name, String address) {
+  Widget _buildBuildingInfo(BuildContext context, String name, String address) {
+    final textTheme = Theme.of(context).textTheme;
+
+    final textColor = Colors.black;
+
     return Column(
       children: [
         Text(
           name,
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          style: textTheme.bodyLarge?.copyWith(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: textColor,
+          ),
         ),
         const SizedBox(height: 5),
         Text(
           address,
-          style: const TextStyle(fontSize: 12, color: Colors.black54),
+          style: textTheme.bodySmall?.copyWith(
+            fontSize: 12,
+            // ignore: deprecated_member_use
+            color: textColor.withOpacity(0.6),
+          ),
           textAlign: TextAlign.center,
         ),
       ],
@@ -94,8 +106,7 @@ class BuildingInformationPopup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final abbreviatedName =
-        abbreviateBuildingName(buildingName); // ✅ Usage updated
+    final abbreviatedName = abbreviateBuildingName(buildingName);
     final burgundyColor = Theme.of(context).primaryColor;
 
     return Padding(
@@ -108,7 +119,7 @@ class BuildingInformationPopup extends StatelessWidget {
             children: [
               _buildImage(),
               const SizedBox(height: 10),
-              _buildBuildingInfo(abbreviatedName, buildingAddress),
+              _buildBuildingInfo(context, abbreviatedName, buildingAddress),
             ],
           ),
           Positioned(

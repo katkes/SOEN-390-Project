@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:soen_390/styles/theme.dart'; // Update this import to match your project structure
+import 'package:soen_390/styles/theme.dart';
 
 void main() {
   group('Light App Theme Tests', () {
