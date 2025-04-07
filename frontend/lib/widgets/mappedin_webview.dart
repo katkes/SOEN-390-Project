@@ -148,7 +148,7 @@ class MappedinWebViewState extends State<MappedinWebView> {
       // Validate environment variables
       final apiKey = dotenv.env['MAPPEDIN_API_KEY'];
       final apiSecret = dotenv.env['MAPPEDIN_API_SECRET'];
-      final defaultMapId = '67968294965a13000bcdfe74';
+      const defaultMapId = '67968294965a13000bcdfe74';
 
       final mapId = _currentMapId ?? widget.mapId ?? defaultMapId;
 
@@ -185,8 +185,8 @@ class MappedinWebViewState extends State<MappedinWebView> {
       if (result.toString() == "true") {
         return true;
       }
-      final timeDelay = 100;
-      await Future.delayed(Duration(milliseconds: timeDelay));
+      const timeDelay = 100;
+      await Future.delayed(const Duration(milliseconds: timeDelay));
     }
   }
 
