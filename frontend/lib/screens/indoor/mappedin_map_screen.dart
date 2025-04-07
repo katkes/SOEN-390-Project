@@ -4,12 +4,13 @@ import 'package:soen_390/screens/indoor/mappedin_map_controller.dart';
 
 class MappedinMapScreen extends StatefulWidget {
   /// To allow injection of a custom webView (for testing)
-  MappedinMapScreen({
+const MappedinMapScreen({
     super.key,
     this.webView,
     this.controller,
     this.onWebViewReady,
   });
+
 
   /// Optionally injected WebView.
   final Widget? webView;

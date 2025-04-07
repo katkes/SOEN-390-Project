@@ -67,7 +67,7 @@ class BuildingInformationPopup extends StatelessWidget {
   Widget _buildBuildingInfo(BuildContext context, String name, String address) {
     final textTheme = Theme.of(context).textTheme;
 
-    final textColor = Colors.black;
+    const textColor = Colors.black;
 
     return Column(
       children: [
