@@ -50,13 +50,14 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
     {"label": "Train or Bus", "icon": Icons.train},
     {"label": "Walk", "icon": Icons.directions_walk},
   ];
+  static const String _defaultLocation = "Your Location";
   late ItineraryManager itineraryManager;
   String selectedMode = "Train or Bus";
   String selectedTimeOption = "Leave Now"; // Default time selection
   String selectedLocation = ''; //variable to store selected location address
   String startLocation =
-      'Your Location'; // variable to store start location address
-  String defaultYourLocationString = 'Your Location';
+      _defaultLocation; // variable to store start location address
+  String defaultYourLocationString = _defaultLocation;
   String destinationLocation =
       ''; // variable to store destination location address
 
@@ -151,8 +152,8 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
             // ignore: unused_local_variable
             final currentLocation = widget.locationService.getCurrentLocation();
             setState(() {
-              startLocation = 'Your Location';
-              itineraryManager.setStart('Your Location');
+              startLocation = _defaultLocation;
+              itineraryManager.setStart(_defaultLocation);
             });
           },
           showDelete: startLocation != defaultYourLocationString,
