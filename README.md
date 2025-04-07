@@ -41,7 +41,7 @@ Please refer to the [INSTALLATION.md](./INSTALLATION.md) file for detailed instr
 - **Jeremy Crete** (40246576)
 - **Arnab Das** (40245873)
 - **Tahsin Islam** (40248733)
-- **Keshan Kathiripilay** (40249407)
+- **Keshan Kathiripilay** (40249407) - **Project Lead**
 - **Tymofiy Kovalenko** (40093918)
 - **David Mateus** (40247018)
 - **Roberto Rodriguez** (40238989)
