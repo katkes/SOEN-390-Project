@@ -99,7 +99,7 @@ void main() {
 
     group('navigateToRoom', () {
       test('successful room navigation', () async {
-        final result = await controller.navigateToRoom('H907');
+        final result = await controller.navigateToRoom('H907', false);
         expect(result, isTrue);
         expect(controller.currentMapId, 'test-map-id');
         expect(controller.currentBuilding, isNotNull);
@@ -108,12 +108,12 @@ void main() {
         // Verify the actual calls being made
         verify(mockWebViewState.reloadWithMapId('test-map-id')).called(1);
         verify(mockWebViewState.waitForMapLoaded()).called(1);
-        verify(mockWebViewState.navigateToRoom('907')).called(1);
+        verify(mockWebViewState.navigateToRoom('907', false)).called(1);
       });
 
       test('building not found for room', () async {
         // Room "X123" does not match the test building's roomPrefix ("H").
-        final result = await controller.navigateToRoom('X123');
+        final result = await controller.navigateToRoom('X123', false);
         expect(result, isFalse);
         expect(controller.currentMapId, isNull);
         expect(controller.currentBuilding, isNull);
@@ -121,10 +121,10 @@ void main() {
 
       test('failed navigation due to exception', () async {
         // Simulate an exception in the WebView state.
-        when(mockWebViewState.navigateToRoom(any))
+        when(mockWebViewState.navigateToRoom(any, false))
             .thenThrow(Exception('Navigation error'));
 
-        final result = await controller.navigateToRoom('H907');
+        final result = await controller.navigateToRoom('H907', false);
         expect(result, isFalse);
       });
     });

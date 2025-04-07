@@ -4,6 +4,8 @@
 // The confirmed waypoints and transport mode are sent to the routing system for processing.
 
 import 'package:flutter/material.dart';
+import 'package:soen_390/screens/indoor/mappedin_map_controller.dart';
+import 'package:soen_390/screens/indoor/mappedin_map_screen.dart';
 import 'package:soen_390/screens/outdoor_poi/place_search_screen.dart';
 import 'package:soen_390/services/google_poi_service.dart';
 import 'package:soen_390/services/location_updater.dart';
@@ -25,6 +27,8 @@ class LocationTransportSelector extends StatefulWidget {
   final GooglePOIService poiService;
   final PointOfInterestFactory poiFactory;
   final LocationUpdater locationUpdater;
+  final MappedinMapController? hallController;
+  final MappedinMapController? libraryController;
 
   const LocationTransportSelector({
     super.key,
@@ -36,6 +40,8 @@ class LocationTransportSelector extends StatefulWidget {
     required this.onConfirmRoute,
     this.onTransportModeChange,
     this.initialDestination,
+    this.hallController,
+    this.libraryController,
   });
 
   @override
@@ -59,6 +65,8 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
   String defaultYourLocationString = 'Your Location';
   String destinationLocation =
       ''; // variable to store destination location address
+  // ignore: unused_field
+  late MappedinMapController _mappedinController;
 
   static const int _startLocationIndex = 0;
   static const int _destinationIndex = 1;
@@ -74,6 +82,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
     }
 
     startLocation = itineraryManager.getStart();
+    _mappedinController = MappedinMapController();
   }
 
   void _handleShuttleBusSelection() {
@@ -176,7 +185,7 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
     );
   }
 
-  void _confirmRoute() {
+  _confirmRoute() async {
     if (!itineraryManager.isValid()) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -185,6 +194,59 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
       return;
     }
 
+    final waypoints = itineraryManager.getWaypoints();
+    final start = waypoints.first;
+    final destination = waypoints.last;
+
+    // Check for the specific case: H843 to LB322
+    if (start == "H843" && destination == "LB322") {
+      // Step 1: Launch MappedinWebView for H843 to Hall Building bottom
+      final hallController = widget.hallController ?? MappedinMapController();
+
+      final success =
+          await hallController.selectBuildingByName("Hall Building");
+      if (!success) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to switch to Hall Building')),
+        );
+        return;
+      }
+
+      if (!mounted) return;
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MappedinMapScreen(
+            controller: hallController,
+            onWebViewReady: () async {
+              await hallController.navigateToRoom("H843", true);
+            },
+          ),
+        ),
+      );
+
+      // Step 2: Launch MappedinWebView for Library bottom to LB322
+      final libraryController =
+          widget.libraryController ?? MappedinMapController();
+      await libraryController.selectBuildingByName("library");
+      if (!mounted) return;
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MappedinMapScreen(
+            controller: libraryController,
+            onWebViewReady: () async {
+              await libraryController.navigateToRoom("LB322", false);
+            },
+          ),
+        ),
+      );
+
+      return;
+    }
+
+    // Default behavior for other routes
     widget.onConfirmRoute(itineraryManager.getWaypoints(), selectedMode);
   }
 
@@ -201,6 +263,11 @@ class LocationTransportSelectorState extends State<LocationTransportSelector> {
                 } else {
                   _setDestinationLocation(selectedLocation);
                 }
+
+                if (startLocation == "H843" && destinationLocation == "LB322") {
+                  _confirmRoute();
+                }
+
                 widget.onLocationChanged?.call();
               });
             }

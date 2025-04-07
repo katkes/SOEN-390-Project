@@ -13,7 +13,7 @@ import 'event_edit_popup_test.mocks.dart';
 
 class FakeMappedinMapController extends MappedinMapController {
   @override
-  Future<bool> navigateToRoom(String roomNumber) async {
+  Future<bool> navigateToRoom(String roomNumber, bool reverse) async {
     await Future.delayed(const Duration(milliseconds: 100));
     return true;
   }

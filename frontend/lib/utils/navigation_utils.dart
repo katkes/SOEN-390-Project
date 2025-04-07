@@ -65,7 +65,7 @@ class NavigationUtils {
     }
 
     if (roomName != null) {
-      success = await mappedinController.navigateToRoom(roomName);
+      success = await mappedinController.navigateToRoom(roomName, false);
       if (!success) {
         messenger.showSnackBar(
           SnackBar(content: Text('Failed to navigate to $roomName')),

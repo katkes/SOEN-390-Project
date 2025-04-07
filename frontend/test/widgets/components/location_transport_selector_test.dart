@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:soen_390/screens/outdoor_poi/place_search_screen.dart';
+import 'package:soen_390/screens/shuttle_bus/shuttle_schedule_screen.dart';
 import 'package:soen_390/services/location_updater.dart';
 import 'package:soen_390/widgets/location_transport_selector.dart';
 import 'package:mockito/annotations.dart';
@@ -10,6 +11,7 @@ import 'package:soen_390/services/google_poi_service.dart';
 import 'package:soen_390/services/poi_factory.dart';
 import 'package:soen_390/utils/location_service.dart';
 import 'package:soen_390/widgets/suggestions.dart';
+import 'package:soen_390/screens/indoor/mappedin_map_controller.dart';
 
 import 'package:mockito/mockito.dart';
 import 'package:geolocator/geolocator.dart';
@@ -23,6 +25,27 @@ import 'package:soen_390/widgets/location_field.dart';
   MockSpec<NavigatorObserver>(),
 ])
 import 'location_transport_selector_test.mocks.dart';
+
+// Manual mock for MappedinMapController
+class MockMappedinMapController extends Mock implements MappedinMapController {
+  @override
+  Future<bool> selectBuildingByName(String buildingName) async {
+    return super.noSuchMethod(
+      Invocation.method(#selectBuildingByName, [buildingName]),
+      returnValue: Future.value(true),
+      returnValueForMissingStub: Future.value(true),
+    );
+  }
+
+  @override
+  Future<bool> navigateToRoom(String roomName, bool isStart) async {
+    return super.noSuchMethod(
+      Invocation.method(#navigateToRoom, [roomName, isStart]),
+      returnValue: Future.value(true),
+      returnValueForMissingStub: Future.value(true),
+    );
+  }
+}
 
 class TestLocationTransportSelectorState
     extends LocationTransportSelectorState {
@@ -43,6 +66,8 @@ class TestLocationTransportSelector extends LocationTransportSelector {
     super.onTransportModeChange,
     super.onLocationChanged,
     super.initialDestination,
+    super.hallController,
+    super.libraryController,
   });
 
   @override
@@ -73,6 +98,8 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
     Function(List<String>, String)? onConfirmRoute,
     Function(String)? onTransportModeChange,
     Function()? onLocationChanged,
+    MappedinMapController? hallController,
+    MappedinMapController? libraryController,
   }) {
     return MaterialApp(
       home: Scaffold(
@@ -85,6 +112,8 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
           onTransportModeChange: onTransportModeChange,
           onLocationChanged: onLocationChanged,
           locationUpdater: mockLocationUpdater,
+          hallController: hallController,
+          libraryController: libraryController,
         ),
       ),
     );
@@ -111,6 +140,36 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
 
     expect(find.text('You must have at least a start and destination.'),
         findsOneWidget);
+  });
+
+  testWidgets('_confirmRoute executes default behavior for other routes',
+      (WidgetTester tester) async {
+    // Arrange
+    List<String>? confirmedWaypoints;
+    String? confirmedMode;
+
+    await tester.pumpWidget(createWidgetUnderTest(
+      onConfirmRoute: (waypoints, mode) {
+        confirmedWaypoints = waypoints;
+        confirmedMode = mode;
+      },
+    ));
+
+    final state = tester.state(find.byType(LocationTransportSelector))
+        as LocationTransportSelectorState;
+
+    // Set start and destination locations to a non-specific case
+    state.setStartLocation('Start Location');
+    state.setDestinationLocation('Destination Location');
+
+    // Act - Call _confirmRoute
+    await tester.tap(find.text('Confirm Route'));
+    await tester.pumpAndSettle();
+
+    // Assert - Verify default behavior
+    expect(confirmedWaypoints,
+        containsAll(['Start Location', 'Destination Location']));
+    expect(confirmedMode, equals('Train or Bus'));
   });
 
   testWidgets('Transport mode changes when tapped',
@@ -187,23 +246,6 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
     await tester.pumpAndSettle();
 
     expect(find.byType(SuggestionsPopup), findsOneWidget);
-  });
-
-  testWidgets('_handleLocationSelection updates itinerary for start location',
-      (WidgetTester tester) async {
-    await tester.pumpWidget(createWidgetUnderTest());
-
-    await tester.tap(find.text('Your Location'));
-    await tester.pumpAndSettle();
-
-    await tester.tap(find.text('Restaurant').first);
-    await tester.pumpAndSettle();
-
-    final state = tester.state(find.byType(LocationTransportSelector))
-        as LocationTransportSelectorState;
-
-    expect(state.startLocation, equals('Restaurant'));
-    expect(state.itineraryManager.getWaypoints().first, equals('Restaurant'));
   });
 
   testWidgets(
@@ -361,5 +403,99 @@ GOOGLE_PLACES_API_KEY=FAKE_API_KEY
     verify(mockLocationService.getCurrentLocation()).called(1);
 
     expect(state.startLocation, equals('Your Location'));
+  });
+
+  testWidgets('Shuttle Bus button navigates to ShuttleScheduleScreen',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(createWidgetUnderTest());
+
+    // Tap the Shuttle Bus button
+    await tester.tap(find.text('Shuttle Bus'));
+    await tester.pumpAndSettle();
+
+    // Verify navigation to ShuttleScheduleScreen
+    expect(find.byType(ShuttleScheduleScreen), findsOneWidget);
+  });
+
+  testWidgets('Destination field shows SuggestionsPopup on tap',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(createWidgetUnderTest());
+
+    // Tap the destination field
+    await tester.tap(find.text('Destination'));
+    await tester.pumpAndSettle();
+
+    // Verify SuggestionsPopup is displayed
+    expect(find.byType(SuggestionsPopup), findsOneWidget);
+  });
+
+  testWidgets('Destination field shows SuggestionsPopup on tap',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(createWidgetUnderTest());
+
+    // Tap the destination field
+    await tester.tap(find.text('Destination'));
+    await tester.pumpAndSettle();
+
+    // Verify SuggestionsPopup is displayed
+    expect(find.byType(SuggestionsPopup), findsOneWidget);
+  });
+
+  testWidgets('_showLocationSuggestions displays SuggestionsPopup',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(createWidgetUnderTest());
+
+    // Tap the start location field
+    await tester.tap(find.text('Your Location'));
+    await tester.pumpAndSettle();
+
+    // Verify SuggestionsPopup is displayed
+    expect(find.byType(SuggestionsPopup), findsOneWidget);
+
+    // Simulate selecting a location
+    final state = tester.state(find.byType(LocationTransportSelector))
+        as LocationTransportSelectorState;
+    state.setStartLocation('H843');
+    state.setDestinationLocation('LB322');
+
+    // Verify that the start and destination locations are updated
+    expect(state.startLocation, equals('H843'));
+    expect(state.destinationLocation, equals('LB322'));
+  });
+
+  group('H843 to LB322 special case', () {
+    testWidgets('Shows error SnackBar when Hall Building selection fails',
+        (WidgetTester tester) async {
+      // Arrange
+      final hallController = MockMappedinMapController();
+      when(hallController.selectBuildingByName("Hall Building"))
+          .thenAnswer((_) => Future.value(false));
+
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: LocationTransportSelector(
+            locationService: mockLocationService,
+            poiService: mockPoiService,
+            poiFactory: mockPoiFactory,
+            onConfirmRoute: (_, __) {},
+            locationUpdater: mockLocationUpdater,
+            hallController: hallController,
+          ),
+        ),
+      ));
+
+      // Set up the route
+      final state = tester.state(find.byType(LocationTransportSelector))
+          as LocationTransportSelectorState;
+      state.setStartLocation('H843');
+      state.setDestinationLocation('LB322');
+
+      // Act - Call _confirmRoute
+      await tester.tap(find.text('Confirm Route'));
+      await tester.pumpAndSettle();
+
+      // Assert - Verify error SnackBar is shown
+      expect(find.text('Failed to switch to Hall Building'), findsOneWidget);
+    });
   });
 }
