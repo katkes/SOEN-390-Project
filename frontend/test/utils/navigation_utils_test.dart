@@ -57,7 +57,7 @@ void main() {
 
   testWidgets('shows SnackBar on room navigation failure',
       (WidgetTester tester) async {
-    when(mockMapController.navigateToRoom('H860'))
+    when(mockMapController.navigateToRoom('H860', false))
         .thenAnswer((_) async => false);
     await tester.pumpWidget(
       ProviderScope(
@@ -115,7 +115,7 @@ void main() {
   testWidgets('shows SnackBar on room navigation failure in openMappedinMap',
       (WidgetTester tester) async {
     // Arrange: Create a mock failure for room navigation
-    when(mockMapController.navigateToRoom('H860'))
+    when(mockMapController.navigateToRoom('H860', false))
         .thenAnswer((_) async => false);
 
     // Act: Trigger the function to open the map

@@ -1,10 +1,9 @@
-// ignore_for_file: unused_field
+// ignore_for_file: unused_field, unused_import
 
 import 'package:flutter/material.dart';
 import 'package:soen_390/models/route_result.dart';
 import 'package:soen_390/screens/waypoint/waypoint_selection_screens.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:soen_390/models/route_result.dart';
 import 'package:soen_390/services/auth_service.dart';
 import 'package:soen_390/utils/navigation_utils.dart';
 import 'package:soen_390/widgets/building_popup.dart';
@@ -377,30 +376,6 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
           "Find My Way",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-      ),
-    );
-  }
-
-  Future<void> _navigateToBuilding(String buildingName) async {
-    final messenger = ScaffoldMessenger.of(context);
-    final success =
-        await _mappedinController.selectBuildingByName(buildingName);
-    if (!success) {
-      messenger.showSnackBar(
-        SnackBar(content: Text('Failed to switch to $buildingName Building')),
-      );
-      return;
-    }
-    _openMappedinMap();
-  }
-
-  Widget _buildShowHallButton(BuildContext context, bool isDarkMode) {
-    return ElevatedButton(
-      onPressed: () => _navigateToBuilding("Hall"),
-      style: _elevatedButtonStyle(context, isDarkMode),
-      child: const Text(
-        "Indoor Navigation",
-        style: TextStyle(fontWeight: FontWeight.bold),
       ),
     );
   }

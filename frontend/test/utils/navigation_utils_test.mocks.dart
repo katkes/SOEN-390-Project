@@ -163,7 +163,8 @@ class MockMappedinMapController extends _i2.Mock
       ) as bool);
 
   @override
-  _i14.Future<bool> navigateToRoom(String? roomNumber) => (super.noSuchMethod(
+  _i14.Future<bool> navigateToRoom(String? roomNumber, bool reverse) =>
+      (super.noSuchMethod(
         Invocation.method(#navigateToRoom, [roomNumber]),
         returnValue: _i14.Future<bool>.value(false),
       ) as _i14.Future<bool>);
