@@ -1,29 +1,32 @@
-## Issue: #{Issue Number} - {Title}
-
-### Description  
-Please include a summary of the changes and the related issue. Please also include relevant motivation and context. List any dependencies that are required for this change.
-
-### Main Files Affected
-- List files 
-
-### Completion Criteria
-- [ ] 
+## Title
+<!-- Provide a concise title, prefixed by type (e.g., “fix”, “feat”): -->
+<!-- Example: “fix: resolve null pointer on login” -->
 
 
-### Type of Change
-- [ ] New feature
-- [ ] Bug fix
-- [ ] Refactoring
-- [ ] Added tests to existing code
-- [ ] This change requires a documentation update
+### Context
+<!-- Briefly describe what changed and why. -->
 
-### How Has This Been Tested?
+### Description of changes
+<!-- List key changes: -->
+- 
 
-Please describe the tests that you ran to verify your changes. Provide instructions so we can reproduce. Please also list any relevant details for your test configuration. Please mention type of testing used as well.
+### Dependencies
+<!-- List related PRs, packages, or migrations: -->
+- 
 
-### Tests Added
-- List test files added 
+### How was AI used?
+<!-- Describe any AI tools used, if applicable. -->
 
+### Checklist
+- [ ] I have read the [SOEN 490 Coding Standard](https://docs.google.com/document/d/1i5lagupvG2BQyDyaUEKm_9QbPgA2jNyo-7Yu4SWaWbg/edit?tab=t.0)
+- [ ] I added or updated tests
+- [ ] All tests pass locally (`npm test` / `gradle build`)
 
-### **Screenshots / Logs ** 
-- <!-- Attach relevant screenshots or logs. -->  
+### Testing
+<!-- Please describe the tests that you ran to verify your changes. Provide instructions so we can reproduce. -->
+
+### Screenshots
+<!-- Attach any relevant screenshots or GIFs. -->
+
+## Related Issue
+- Closes #<issue number>  <!-- remove if none -->
